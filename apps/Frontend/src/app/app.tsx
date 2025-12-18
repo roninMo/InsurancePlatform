@@ -6,8 +6,8 @@ import { Route, Routes, Link } from 'react-router-dom';
 
 export function App() {
   return (
-    <div>
-      <NxWelcome title="@insurance-platform/Frontend" />
+    <div className="bg-gray-800">
+      <NxWelcome title="home page" />
 
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
