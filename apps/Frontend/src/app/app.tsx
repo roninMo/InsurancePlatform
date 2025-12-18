@@ -1,12 +1,17 @@
-// Uncomment this line to use CSS modules
-// import styles from './app.module.scss';
+import { Route, Routes, Link } from 'react-router-dom';
+import styled from '@emotion/styled';
+
 import Home from './components/home';
 
-import { Route, Routes, Link } from 'react-router-dom';
+
+const StyledApp = styled.div`
+  margin: 0;
+  padding: 0;
+`;
 
 export function App() {
   return (
-    <div>
+    <StyledApp>
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
       {/* Feel free to move and update them to fit your needs */}
@@ -55,7 +60,7 @@ export function App() {
       <br />
       {/* END: routes */}
 
-    </div>
+    </StyledApp>
   );
 }
 
