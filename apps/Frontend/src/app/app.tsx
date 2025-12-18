@@ -1,7 +1,8 @@
 import { Route, Routes, Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import Home from './components/home';
+import { Home } from './components/Home/Home';
+import { Navbar } from './components/Navbar/Navbar';
 
 
 const StyledApp = styled.div`
@@ -9,12 +10,33 @@ const StyledApp = styled.div`
   padding: 0;
 `;
 
+
+export interface TokenInformation {
+  issuedAt: number;
+  exp: number;
+
+  payload?: string;
+}
+
+export interface UserTokenInformation extends TokenInformation {
+  username: string;
+  id: number;
+  email: string;
+  name: string;
+}
+
+export interface CookieData {
+  name: string;
+  value: string;
+}
+
+
+
 export function App() {
   return (
     <StyledApp>
-      {/* START: routes */}
-      {/* These routes and navigation have been generated for you */}
-      {/* Feel free to move and update them to fit your needs */}
+      <Navbar />
+
       <br />
       <hr />
       <br />
@@ -58,7 +80,6 @@ export function App() {
       <br />
       <hr />
       <br />
-      {/* END: routes */}
 
     </StyledApp>
   );
