@@ -580,7 +580,7 @@ export function NxWelcome({ title }: { title: string }) {
                   </svg>
                 </a>
                 <a
-                  href="https://nx.dev/recipes/react/remix#remix-with-nx"
+                  href="https://nx.dev/react-tutorial/1-code-generation?utm_source=nx-project"
                   target="_blank"
                   rel="noreferrer"
                   className="list-item-link"
@@ -720,11 +720,7 @@ export function NxWelcome({ title }: { title: string }) {
                 </div>
                 <p>Your Nx Cloud remote cache setup is almost complete.</p>
 
-                <a
-                  href="https://cloud.nx.app/connect/f3lXjyvUvG"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="" target="_blank" rel="noreferrer">
                   Click here to finish
                 </a>
               </div>

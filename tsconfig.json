@@ -4,10 +4,10 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/InsurancePlatform-e2e"
+      "path": "./apps/Frontend-e2e"
     },
     {
-      "path": "./apps/InsurancePlatform"
+      "path": "./apps/Frontend"
     }
   ]
 }
