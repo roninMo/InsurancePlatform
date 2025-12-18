@@ -8,6 +8,12 @@
     },
     {
       "path": "./apps/Frontend"
+    },
+    {
+      "path": "./Libraries/Classes"
+    },
+    {
+      "path": "./Libraries/Utils"
     }
   ]
 }

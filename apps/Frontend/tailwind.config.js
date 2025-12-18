@@ -7,6 +7,7 @@ module.exports = {
     join(
       __dirname,
       '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}',
+      // join(__dirname, '../../libs/**/*.{ts,tsx,js,jsx}'), // TODO: Find if this really handles other library dependencies 
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],

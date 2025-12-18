@@ -1,14 +1,12 @@
 // Uncomment this line to use CSS modules
 // import styles from './app.module.scss';
-import NxWelcome from './nx-welcome';
+import Home from './components/home';
 
 import { Route, Routes, Link } from 'react-router-dom';
 
 export function App() {
   return (
-    <div className="bg-gray-800">
-      <NxWelcome title="home page" />
-
+    <div>
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
       {/* Feel free to move and update them to fit your needs */}
@@ -25,15 +23,23 @@ export function App() {
           </li>
         </ul>
       </div>
+
+      
+      <br />
+      <hr />
+      <br />
       <Routes>
-        <Route
+        {/* <Route path="/">
+          <Home />
+        </Route> */}
+        
+        <Route 
           path="/"
           element={
             <div>
-              This is the generated root route.{' '}
-              <Link to="/page-2">Click here for page 2.</Link>
+              <Home />
             </div>
-          }
+          } 
         />
         <Route
           path="/page-2"
@@ -44,7 +50,11 @@ export function App() {
           }
         />
       </Routes>
+      <br />
+      <hr />
+      <br />
       {/* END: routes */}
+
     </div>
   );
 }
