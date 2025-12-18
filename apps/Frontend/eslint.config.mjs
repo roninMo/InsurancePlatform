@@ -8,7 +8,8 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     // Override or add rules here
     rules: {
-      // "javascript.validate.lint.unusedVariables": "ignore"
+      "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off"
+      "unused-imports/no-unused-imports": "off",
     },
   },
 ];
