@@ -130,6 +130,18 @@ export function App() {
           {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
           {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}
           {/* TODO: Create the login/sign in pages and the dashboard */}
+
+          {/* Different platforms to navigate to: */}
+          {/* 
+            This project
+              - User dashboard
+              - Landing page -> with links to navigate to the other portals
+          */}
+
+          {/* Submit a claim, for home and auto */}
+          {/* The Agent portal for accessing and handling user claims (no clue what to build here) */}
+          
+          {/* Backends for handling data, and try out clustering */}
           
           <Route 
             path="/"
