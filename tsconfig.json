@@ -10,10 +10,16 @@
       "path": "./apps/Frontend"
     },
     {
+      "path": "./Libaries/Components"
+    },
+    {
       "path": "./Libraries/Classes"
     },
     {
-      "path": "./Libraries/Utils"
+      "path": "./Libraries/Components"
+    },
+    {
+      "path": "./shared-styles"
     }
   ]
 }

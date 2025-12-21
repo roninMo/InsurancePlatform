@@ -9,8 +9,8 @@ import  { useCookies } from 'react-cookie';
 import styled from '@emotion/styled';
 import axios from 'axios';
 
-import { Home } from '../../../../InsurancePlatform/apps/Frontend/src/app/Home/Home';
-import { Navbar } from '../../../../InsurancePlatform/apps/Frontend/src/app/Navbar/Navbar';
+// import { Home } from './components/Home/Home';
+// import { Navbar } from './components/Navbar/Navbar';
 
 
 const StyledApp = styled.div`

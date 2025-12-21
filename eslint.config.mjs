@@ -8,11 +8,9 @@ export default [
     ignores: [
       '**/dist',
       '**/out-tsc',
-      '**/build',
-      '**/.react-router',
+      '**/test-output',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
-      '**/test-output',
     ],
   },
   {
@@ -45,9 +43,6 @@ export default [
       '**/*.mjs',
     ],
     // Override or add rules here
-    rules: {
-      'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off"
-      'unused-imports/no-unused-imports': 'off',
-    },
+    rules: {},
   },
 ];

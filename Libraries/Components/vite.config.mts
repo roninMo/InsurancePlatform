@@ -6,7 +6,7 @@ import * as path from 'path';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../node_modules/.vite/Libaries/Components',
+  cacheDir: '../../node_modules/.vite/Libraries/Components',
   plugins: [
     react(),
     dts({

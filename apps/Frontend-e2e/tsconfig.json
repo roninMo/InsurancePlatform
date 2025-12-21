@@ -21,10 +21,5 @@
     "eslint.config.js",
     "eslint.config.mjs",
     "eslint.config.cjs"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.e2e.json"
-    }
   ]
 }

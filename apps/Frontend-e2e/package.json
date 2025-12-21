@@ -1,10 +1,10 @@
 {
-  "name": "@insurance-platform/Frontend-e2e",
+  "name": "@org/Frontend-e2e",
   "version": "0.0.1",
   "private": true,
   "nx": {
     "implicitDependencies": [
-      "@insurance-platform/Frontend"
+      "@org/Frontend"
     ]
   }
 }
