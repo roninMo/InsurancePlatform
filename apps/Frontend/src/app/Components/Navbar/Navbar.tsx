@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { ElDialog, ElDialogPanel, ElDisclosure, ElPopover, ElPopoverGroup } from '@tailwindplus/elements/react';
 import styles from './Navbar.module.scss';
 

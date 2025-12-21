@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 // import styles from './Header.module.scss';
 
 // import { useState } from 'react';
