@@ -4,7 +4,8 @@
 import { useState, createContext, useEffect } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import  { useCookies } from 'react-cookie';
+// import  { useCookies } from 'react-cookie';
+import Cookies from 'js-cookie';
 
 import styled from '@emotion/styled';
 import axios from 'axios';
@@ -55,7 +56,8 @@ export const LoginContext = createContext<LoginContextProps>({});
 export function App() {
   const [userTokenInformation, setUserTokenInformation] = useState<UserTokenInformation | null>(null);
   const [accessToken, setAccessToken] = useState<string>();
-  const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
+  // const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
+  Cookies.get('metadata');
 
   useEffect(() => {
     // Retrieve login information
@@ -101,7 +103,7 @@ export function App() {
   return (
     <StyledApp>
       <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
-        <Navbar />
+        {/* <Navbar /> */}
 
         <br />
         <hr />
