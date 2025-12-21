@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */  
 
 
@@ -10,8 +9,8 @@ import  { useCookies } from 'react-cookie';
 import styled from '@emotion/styled';
 import axios from 'axios';
 
-import { Home } from './components/Home/Home';
-import { Navbar } from './components/Navbar/Navbar';
+import { Home } from '../../../../InsurancePlatform/apps/Frontend/src/app/Home/Home';
+import { Navbar } from '../../../../InsurancePlatform/apps/Frontend/src/app/Navbar/Navbar';
 
 
 const StyledApp = styled.div`
@@ -81,9 +80,9 @@ export function App() {
         tokenInformation = jwtDecode<UserTokenInformation>(token);
         setUserTokenInformation(tokenInformation);
         if (tokenInformation.email) {
-          await axios.post(`http://localhost:3333/stillLoggedIn`, { accessToken: token })
+          await axios.post(`http://localhost:3333/loggedIn`, { accessToken: token })
             .then(res => {
-              console.log('user still logged in response: ', res);
+              console.log('already logged in response: ', res);
               if (res.status !== 200) {
                 localStorage.setItem('accessToken', '');
                 tokenInformation = null;

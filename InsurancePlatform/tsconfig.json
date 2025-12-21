@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/Frontend-e2e"
+    },
+    {
+      "path": "./apps/Frontend"
+    },
+    {
+      "path": "./Libaries/Components"
+    },
+    {
+      "path": "./Libraries/Classes"
+    }
+  ]
+}
