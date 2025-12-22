@@ -1,1 +1,1 @@
-export * from './lib/ReactComponents';
+export * from './ReactComponents';

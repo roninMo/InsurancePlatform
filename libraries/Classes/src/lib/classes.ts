@@ -2,6 +2,6 @@ export function classes(): string {
   return 'Classes';
 }
 
-export interface TokenInformation {
+export interface UserTokenInformation {
   token: string;
 }

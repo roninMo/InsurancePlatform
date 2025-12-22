@@ -39,6 +39,7 @@
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/ui": "^4.0.0",
     "ajv": "^8.0.0",
+    "autoprefixer": "10.4.13",
     "babel-jest": "^30.0.2",
     "eslint": "~8.57.0",
     "jest": "^30.0.2",
@@ -48,9 +49,11 @@
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
     "nx": "22.3.1",
+    "postcss": "8.4.38",
     "prettier": "^2.6.2",
     "sass": "^1.55.0",
     "storybook": "10.1.10",
+    "tailwindcss": "3.4.3",
     "ts-jest": "^29.4.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
@@ -67,6 +70,10 @@
     "libraries/*"
   ],
   "dependencies": {
+    "@emotion/styled": "^11.14.1",
+    "axios": "^1.13.2",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
