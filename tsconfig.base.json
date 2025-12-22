@@ -17,7 +17,7 @@
     // "skipDefaultLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@org/source"],
+    "customConditions": ["@Project/source"],
     // "baseUrl": ".",
     // "paths": {
     //   "@Project/ReactComponents": ["libraries/Components/React/src/index.ts"]
