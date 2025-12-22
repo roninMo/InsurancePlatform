@@ -71,7 +71,7 @@ Ref: users.id < follows.followed_user_id
   email: string;
 
   company: string;
-  compensatedPolicies: {
+  managedPolicies: {
     autoPolicies: Array<AutoPolicy>
     homePolicies: Array<HomePolicy>
   }
@@ -148,10 +148,10 @@ Ref: users.id < follows.followed_user_id
       Specific high-value items (jewelry, art).
       Ordinance or law coverage to bring a rebuilt home up to current building codes. 
     }
+    
+    CreationDate: Date;
+    ExpirationDate: Date;
 }
-
-  CreationDate: Date;
-  ExpirationDate: Date;
 */
 
 
