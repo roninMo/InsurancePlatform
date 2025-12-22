@@ -115,3 +115,4 @@ Init Applications
 Init Libraries
 
 - `nx g @nx/js:library libraries/Classes --bundler "tsc" --publishable true --importPath @Project/Classes --unitTestRunner "jest"`
+- `nx g @nx/react:library .\libraries\Components\React --bundler "vite" --e2eTestRunner "playwright" --unitTestRunner "vitest" --linter "none" --style "scss"`
