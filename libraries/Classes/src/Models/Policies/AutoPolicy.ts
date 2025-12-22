@@ -29,7 +29,7 @@ export interface AutoPolicy extends Policy {
     LiabilityCoverage: AutoLiability; // Mandatory in almost every state, this pays for injuries and property damage you cause to others in an at-fault accident.
     BodilyInjuryLiability: BI_Liability; // Covers the medical expenses, lost wages, and pain and suffering of the other parties involved.
     PropertyDamageLiability: PD_Liability; // Pays for damage to another person's property, which typically includes their vehicle but can also include items like fences or utility poles.
-    UmUimCov: UninsuredMotoristCov; // Uninsured/Underinsured Motorist (UM/UIM) Coverage: Protects you if you are hit by a driver who has no insurance or insufficient insurance to cover the full extent of the damages or your medical bills. This is required in some states and optional in others.
+    UmUimCov: UninsuredMotoristCov; // Uninsured/UnderInsured Motorist (UM/UIM) Coverage: Protects you if you are hit by a driver who has no insurance or insufficient insurance to cover the full extent of the damages or your medical bills. This is required in some states and optional in others.
     MedPay: MedPay; // Medical Payments (MedPay) / Personal Injury Protection (PIP): These cover medical bills and sometimes other expenses like lost wages or childcare for you and your passengers after an accident, regardless of who was at fault. PIP is mandatory in "no-fault" states. 
   }
 
