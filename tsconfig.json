@@ -2,18 +2,5 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": [
-    {
-      "path": "./apps/Frontend-e2e"
-    },
-    {
-      "path": "./apps/Frontend"
-    },
-    {
-      "path": "./Libraries/Classes"
-    },
-    {
-      "path": "./Libraries/Components"
-    }
-  ]
+  "references": []
 }
