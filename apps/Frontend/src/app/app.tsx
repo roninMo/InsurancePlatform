@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import NxWelcome from './nx-welcome';
 import { TokenInformation } from '@Project/Classes';
+import { ProjectReactComponents } from '@Project/ReactComponents';
 
 export function App() {
   const [value, setValue] = useState<string>("");
@@ -14,6 +15,7 @@ export function App() {
 
   return (
     <div>
+      <ProjectReactComponents></ProjectReactComponents>
       <NxWelcome title="@org/Frontend" />
     </div>
   );

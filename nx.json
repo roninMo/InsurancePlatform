@@ -82,6 +82,14 @@
       "options": {
         "targetName": "test"
       }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "test",
+        "ciTargetName": "test-ci",
+        "testMode": "watch"
+      }
     }
   ],
   "nxCloudId": "694992412b628f2e88e97cbb",
@@ -103,7 +111,8 @@
       },
       "library": {
         "style": "scss",
-        "linter": "none"
+        "linter": "none",
+        "unitTestRunner": "vitest"
       }
     }
   },
