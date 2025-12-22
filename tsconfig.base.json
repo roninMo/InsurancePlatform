@@ -18,9 +18,9 @@
     "strict": true,
     "target": "es2022",
     "customConditions": ["@org/source"],
-    "baseUrl": ".",
-    "paths": {
-      "@Project/ReactComponents": ["libraries/Components/React/src/index.ts"]
-    }
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@Project/ReactComponents": ["libraries/Components/React/src/index.ts"]
+    // }
   }
 }
