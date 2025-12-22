@@ -102,3 +102,16 @@ And join the Nx community:
 - [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
 - [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+## Saved commands for building publishable libraries and applications
+
+Init Applications
+
+- `npx create-nx-workspace InsurancePlatform --bundler "vite" --linter "none"`
+- `nx add @nx/react @nx/storybook @nx/webpack @nx/web @nx/workspace @nx/nest @nx/plugin @nx/eslint @nx/vite @nx/playwright @nx/jest`
+- `nx g @nx/react:application apps/Frontend --bundler "vite" --port 4200 --e2eTestRunner "playwright" --unitTestRunner "jest" --style "scss" --useReactRouter true`
+- `nx g @nx/react:setup-tailwind`
+
+Init Libraries
+
+- `nx g @nx/js:library libraries/Classes --bundler "tsc" --publishable true --importPath @Project/Classes --unitTestRunner "jest"`
