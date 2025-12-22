@@ -16,6 +16,10 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@org/source"]
+    "customConditions": ["@org/source"],
+    "paths": {
+      "@org/Classes": ["Libraries/Classes/src/index.ts"],
+      "@org/Components": ["Libraries/Components/src/index.ts"],
+    }
   }
 }
