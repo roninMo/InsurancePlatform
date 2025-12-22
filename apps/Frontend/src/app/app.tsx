@@ -1,46 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */  
+
 
 
 import { useState, createContext, useEffect } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-// import  { useCookies } from 'react-cookie';
-import Cookies from 'js-cookie';
-
-import styled from '@emotion/styled';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import styled from '@emotion/styled';
+import { UserTokenInformation } from '@insurance-platform/Classes';
 
-import { Navbar } from './Components/Navbar/Navbar';
-import { Home } from './Components/Home/Home';
 
+// import { Button, Input } from "@nx-react-library/Components";
 
-const StyledApp = styled.div`
+const AppSpacing = styled.div`
   margin: 0;
   padding: 0;
+  min-width: 100vh;
+  min-height: 100vh;
 `;
-
-
-// https://www.npmjs.com/package/jwt-decode
-export interface TokenInformation {
-  issuedAt: number;
-  exp: number;
-
-  payload?: string;
-}
-
-export interface UserTokenInformation extends TokenInformation {
-  username: string;
-  id: number;
-  email: string;
-  name: string;
-}
-
-
-// http://npmjs.com/package/react-cookie
-export interface CookieData { 
-  name: string;
-  value: string;
-}
+// p-2 pb-4 text-sm/6 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8
 
 
 // Authentication Context
@@ -54,23 +32,30 @@ export const LoginContext = createContext<LoginContextProps>({});
 
 
 export function App() {
+  const [currentTheme, SetCurrentTheme] = useState<string>(localStorage.getItem('theme') || '');
   const [userTokenInformation, setUserTokenInformation] = useState<UserTokenInformation | null>(null);
   const [accessToken, setAccessToken] = useState<string>();
-  // const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
-  Cookies.get('metadata');
 
   useEffect(() => {
+    // Themes and display settings
+    if (!currentTheme) {
+      const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      localStorage.setItem('theme', userPreferenceTheme);
+      SetCurrentTheme(userPreferenceTheme);
+    }
+    updateTheme(currentTheme);
+
     // Retrieve login information
     if (!accessToken || !userTokenInformation) {
       getAccessToken();
     }
 
-    // Retrieve Cookies -> metadata, theme info, etc.
-    // Cookies.Get('thisWebsite-currentTheme');
+    // Retrieve Cookies -> metadata, etc.
+    Cookies.get('thisWebsite-metadata');
 
     // Console Information
-    console.log('\ninformation: ', { userTokenInformation, accessToken });
-  }, [accessToken, userTokenInformation]);
+    console.log('\ninformation: ', { userTokenInformation, accessToken, currentTheme });
+  }, [accessToken, currentTheme, userTokenInformation]);
 
   // Retrieve the access token (login info) in the event the user is already logged in.
   const getAccessToken = async () => {
@@ -100,75 +85,93 @@ export function App() {
       }
   };
 
+  const setTheme = () => {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme', newTheme);
+    SetCurrentTheme(newTheme);
+    updateTheme(currentTheme);
+    // console.log('theme status: ', {currentTheme, newTheme});
+  }
+
+  const updateTheme = (theme: 'light' | 'dark' | string) => {
+    if (theme === 'dark') document.documentElement.classList.add('dark')
+    else document.documentElement.classList.remove('dark')
+  }
+
   return (
-    <StyledApp>
-      <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
-        {/* <Navbar /> */}
+    <AppSpacing className={themeContainerStyles + ``}>
+      <div className='bg-white dark:bg-gray-800'>
 
-        <br />
-        <hr />
-        <br />
-        <div role="navigation">
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/page-2">Page 2</Link>
-            </li>
-          </ul>
-        </div>
+        <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
+          <div role="navigation" className='p-2'>
+            <ul>
+              <li className='pb-1'>
+                <Link to="/">Home</Link>
+              </li>
+              <li className='pb-1'>
+                <Link to="/page-2">Page 2</Link>
+              </li>
+            </ul>
+          </div>
 
-        
-        <br />
-        <hr />
-        <br />
-        <Routes>
-          {/* <Route path="/">
-            <Home />
-          </Route> */}
+          <div className='m-10'>
+            <Routes>
+              <Route 
+                path="/"
+                element={
+                  <div className={`p-2 pb-4 text-sm/6`}>
+                    
+                  <div>
+                    <h2 className={themeHeaderStyles + ` mb-2`}>Home Page</h2>
+                    <p className={themeTextStyles + ` mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                  
+                    <button onClick={setTheme}>{currentTheme === "dark" ? 'set to light' : 'set to dark'}</button>
+                  </div>
 
 
-          {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
-          {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}
-          {/* TODO: Create the login/sign in pages and the dashboard */}
 
-          {/* Different platforms to navigate to: */}
-          {/* 
-            This project
-              - User dashboard
-              - Landing page -> with links to navigate to the other portals
-          */}
-
-          {/* Submit a claim, for home and auto */}
-          {/* The Agent portal for accessing and handling user claims (no clue what to build here) */}
+                  </div>
+                } 
+              />
+              
+              <Route
+                path="/page-2"
+                element={
+                  <div className={`p-2 pb-4 text-sm/6`}>
+                    <Link to="/">Click here to go back to root page.</Link>
+                  </div>
+                }
+              />
+            </Routes>
+          </div>
           
-          {/* Backends for handling data, and try out clustering */}
-          
-          <Route 
-            path="/"
-            element={
-              <div>
-                <Home />
-              </div>
-            } 
-          />
-          <Route
-            path="/page-2"
-            element={
-              <div>
-                <Link to="/">Click here to go back to root page.</Link>
-              </div>
-            }
-          />
-        </Routes>
-        <br />
-        <hr />
-        <br />
 
-      </LoginContext.Provider>
-    </StyledApp>
+
+            {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
+            {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}
+            {/* TODO: Create the login/sign in pages and the dashboard */}
+
+            {/* Different platforms to navigate to: */}
+            {/* 
+              This project
+                - User dashboard
+                - Landing page -> with links to navigate to the other portals
+            */}
+
+            {/* Submit a claim, for home and auto */}
+            {/* The Agent portal for accessing and handling user claims (no clue what to build here) */}
+            
+            {/* Backends for handling data, and try out clustering */}
+
+        </LoginContext.Provider>
+      </div>
+    </AppSpacing>
   );
 }
+
+
+const themeContainerStyles = `bg-white text-slate-800  dark:bg-gray-800 text-slate-600 dark:text-slate-400`;
+const themeHeaderStyles = `text-slate-800  dark:text-slate-200`;
+const themeTextStyles = `text-slate-600  dark:text-slate-400`;
 
 export default App;
