@@ -8,6 +8,9 @@
     },
     {
       "path": "./apps/Frontend"
+    },
+    {
+      "path": "./libraries/Classes"
     }
   ]
 }
