@@ -1,4 +1,4 @@
-import { createContext, useEffect, useId, useState } from 'react';
+import { ChangeEvent, createContext, SyntheticEvent, useEffect, useId, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 
 import { UserTokenInformation } from '@Project/Classes';
@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Input, ProjectReactComponents } from '@Project/ReactComponents';
+import { Button, Input, ProjectReactComponents } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div`
@@ -100,9 +100,21 @@ export function App() {
   const InputId = useId();
   const [input, setInput] = useState<string>("");
 
-  const InputChanged = (newValue: string) => {
+  const InputChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e?.target?.value;
     setInput(newValue);
-    console.log("input changed: ", newValue);
+
+    // console.log({Event: e, newValue});
+  }
+
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const buttonPress = (e: any) => {
+    setError(!error); 
+    setErrorMessage("Invalid text."); 
+    
+    console.log('set error to ', !error);
   }
 
   return (
@@ -153,24 +165,36 @@ export function App() {
 
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
-            <div className=' grid grid-cols-12 gap-x-6 gap-y-8 px-6 py-4 bg-slate-900'>
+            <div className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
               <div className='col-span-6 md:col-span-6'>
-
                 <Input 
-                name="Input"
-                label="Input"
-                // placeholder="Input value"
-                value={input}
-                onValueChanged={InputChanged}
+                  type="text"
+                  name="Input"
+                  label="Input"
+                  description=""
+                  value={input}
+                  placeholder="Input value"
+                  id={InputId}
 
-                // autocomplete='email'
-                id={InputId}
-                >
+                  onChange={InputChanged}
+                  // onBlur={onBlur}
+                  // onFocus={onFocus}
+                  // onClick={mouseClick}
 
-                </Input>
+                  error={error}
+                  errorMessage={errorMessage}
+                  required={false}
+                  disabled={false}
 
-                <div className='pb-10'></div>
+                  autocomplete='email'
+                />
               </div>
+
+              <div className='col-span-12 mt-2'>
+                <Button displayText="Toggle Error" onClick={buttonPress} />
+              </div>
+              
+              <div className='pb-10'></div>
             </div>
           </div>
           

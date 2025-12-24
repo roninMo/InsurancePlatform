@@ -1,3 +1,4 @@
+export * from './Forms/Select/Select';
 export * from './Forms/CCInformation/CCInformation';
 export * from './Forms/Address/AddressInfo';
 export * from './Forms/Textarea/Textarea';
