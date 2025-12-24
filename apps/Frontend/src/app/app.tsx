@@ -121,8 +121,8 @@ export function App() {
                   <div className={`p-2 pb-4 text-sm/6`}>
                     
                   <div>
-                    <h2 className={themeHeaderStyles + ` mb-2`}>Home Page</h2>
-                    <p className={themeTextStyles + ` mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <h2 className={`mb-2`}>Home Page</h2>
+                    <p className={`mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                   
                     <button onClick={setTheme}>{currentTheme === "dark" ? 'set to light' : 'set to dark'}</button>
                   </div>
@@ -169,8 +169,6 @@ export function App() {
 }
 
 
-const themeContainerStyles = `bg-white text-slate-800  dark:bg-gray-800 text-slate-600 dark:text-slate-400`;
-const themeHeaderStyles = `text-slate-800  dark:text-slate-200`;
-const themeTextStyles = `text-slate-600  dark:text-slate-400`;
+const themeContainerStyles = `bg-white dark:bg-gray-800`;
 
 export default App;

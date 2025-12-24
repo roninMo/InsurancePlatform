@@ -117,6 +117,10 @@ Init Libraries
 - `nx g @nx/js:library libraries/Classes --bundler "tsc" --publishable true --importPath @Project/Classes --unitTestRunner "jest"`
 - `nx g @nx/react:library .\libraries\Components\React --bundler "vite" --publishable true --importPath @Project/Components/React --unitTestRunner "vitest" --linter "none" --style "scss"`
 
+React Component Creation
+
+- `nx g @nx/react:component --export true src/component`
+
 Note: you need to build component libraries for their import references to properly work
 
 - `npm run serve`
