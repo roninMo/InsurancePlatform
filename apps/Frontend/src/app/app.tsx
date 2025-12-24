@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useId, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 
 import { UserTokenInformation } from '@Project/Classes';
@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { ProjectReactComponents } from '@Project/ReactComponents';
+import { Input, ProjectReactComponents } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div`
@@ -97,6 +97,14 @@ export function App() {
     else document.documentElement.classList.remove('dark')
   }
 
+  const InputId = useId();
+  const [input, setInput] = useState<string>("");
+
+  const InputChanged = (newValue: string) => {
+    setInput(newValue);
+    console.log("input changed: ", newValue);
+  }
+
   return (
     <AppSpacing className={themeContainerStyles + ``}>
       <div className='bg-white dark:bg-gray-800'>
@@ -142,6 +150,28 @@ export function App() {
                 }
               />
             </Routes>
+
+
+            {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
+            <div className=' grid grid-cols-12 gap-x-6 gap-y-8 px-6 py-4 bg-slate-900'>
+              <div className='col-span-6 md:col-span-6'>
+
+                <Input 
+                name="Input"
+                label="Input"
+                // placeholder="Input value"
+                value={input}
+                onValueChanged={InputChanged}
+
+                // autocomplete='email'
+                id={InputId}
+                >
+
+                </Input>
+
+                <div className='pb-10'></div>
+              </div>
+            </div>
           </div>
           
 

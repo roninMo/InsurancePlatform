@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "serve": "nx run ReactComponents:build && nx run Frontend:serve"
+    "serve": "nx run ReactComponents:build && nx run Frontend:serve",
+    "reloadDeps": "nx watch --projects=ReactComponents --includeDependentProjects -- nx run-many -t build -p ReactComponents"
   },
   "private": true,
   "devDependencies": {

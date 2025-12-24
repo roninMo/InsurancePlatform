@@ -1,30 +1,33 @@
-import { useState } from 'react';
+import { ChangeEvent, FocusEvent, MouseEvent, useState } from 'react';
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
 
 interface InputProps {
-  label: string;
-  id: string;
-  name: string;
-  placeholder?: string;
-  autocomplete?: "email"  | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
   type?: 'text' | 'email' | 'password' | 'phone' | 'currency' | 'policyNumber' | 'search';
-  required?: boolean;
+  
+  name: string;
+  label: string;
   value: string;
-  onValueChanged: (newValue: string) => void;
+  placeholder?: string;
+  id: string;
+
+  required?: boolean;
+  disabled?: boolean;
+
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement, Element>) => void;
+  onFocus?: (e: FocusEvent<HTMLInputElement, Element>) => void;
+  onClick?: (e: MouseEvent<HTMLInputElement, Element>) => void;
+
+  autocomplete?: "email"  | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
+  aria?: string | null;
 }
 
-
 export const Input = ({
-  label,
-  id,
-  name,
-  placeholder = '',
-  autocomplete,
-  type = 'text',
-  required = false,
-  value,
-  onValueChanged,
+  type = 'text', name, label, value, placeholder, id,
+  required = false, disabled = false,
+  onChange, onBlur, onFocus, onClick,
+  autocomplete, aria
 }: InputProps) => {
   const [displayText, setDisplayText] = useState<string>(label);
 
@@ -59,7 +62,31 @@ export const Input = ({
     <TextInput>
       <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">Email</label>
       <div className="mt-2">
-        <input id="email" type="email" name="email" placeholder="you@example.com" aria-describedby="email-description" className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500" />
+        <input 
+          type={type}
+          name={name}
+          value={value}
+          placeholder={placeholder}
+          id={id} 
+          
+          required={required}
+          disabled={disabled}
+
+          autoComplete={autocomplete}
+          aria-describedby={aria || ''}
+
+          onChange={(e) => onChange ? onChange(e) : null}
+          onBlur={(e) => onBlur ? onBlur(e) : null}
+          onFocus={(e) => onFocus ? onFocus : null}
+          onClick={(e) => onClick ? onClick : null}
+          // onMouseEnter={() => {}}
+          // onMouseLeave={() => {}}
+
+
+
+
+      
+        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500" />
       </div>
       <p id="email-description" className="mt-2 text-sm text-gray-500 dark:text-gray-400">We'll only use this for spam.</p>
     </TextInput>

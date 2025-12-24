@@ -121,6 +121,6 @@ React Component Creation
 
 - `nx g @nx/react:component --export true src/component`
 
-Note: you need to build component libraries for their import references to properly work
+Note: you need to build component libraries for their import references to properly work during reloads
 
 - `npm run serve`
