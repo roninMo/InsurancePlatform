@@ -17,5 +17,8 @@
   "files": [
     "dist",
     "!**/*.tsbuildinfo"
-  ]
+  ],
+  "devDependencies": {
+    "@types/react-input-mask": "^3.0.6"
+  }
 }

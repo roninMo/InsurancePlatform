@@ -1,5 +1,8 @@
 {
   "name": "@org/Frontend",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6"
+  }
 }

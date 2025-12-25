@@ -1,3 +1,4 @@
+export * from './Forms/Select/SelectItem/SelectItem';
 export * from './Forms/Select/Select';
 export * from './Forms/CCInformation/CCInformation';
 export * from './Forms/Address/AddressInfo';

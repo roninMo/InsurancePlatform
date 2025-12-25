@@ -104,7 +104,7 @@ export function App() {
     const newValue = e?.target?.value;
     setInput(newValue);
 
-    // console.log({Event: e, newValue});
+    console.log({Event: e, newValue});
   }
 
   const [error, setError] = useState<boolean>(false);
@@ -168,12 +168,12 @@ export function App() {
             <div className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
               <div className='col-span-6 md:col-span-6'>
                 <Input 
-                  type="text"
+                  type="currency"
                   name="Input"
                   label="Input"
                   description=""
                   value={input}
-                  placeholder="Input value"
+                  placeholder=""
                   id={InputId}
 
                   onChange={InputChanged}
