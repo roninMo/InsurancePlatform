@@ -2,7 +2,7 @@ import { IconAttributes } from "../Icon";
 
 export const Icon_LightTheme = ({ styles }: IconAttributes) => {
   return (
-    <svg viewBox="0 0 28 28" fill="none">
+    <svg viewBox="0 0 28 28" fill="none" className={styles}>
       <circle cx="14" cy="14" r="3.5" stroke="currentColor"></circle>
       <path d="M14 8.5V6.5" stroke="currentColor" strokeLinecap="round"></path>
       <path d="M17.889 10.1115L19.3032 8.69727" stroke="currentColor" strokeLinecap="round"></path>

@@ -1,4 +1,4 @@
-import { ChangeEvent, createContext, SyntheticEvent, useEffect, useId, useState } from 'react';
+import { ChangeEvent, createContext, SyntheticEvent, useEffect, useId, useRef, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 
 import { UserTokenInformation } from '@Project/Classes';
@@ -8,8 +8,9 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Button, Input, ProjectReactComponents, TooltipIcon } from '@Project/ReactComponents';
+import { Button, Input, ProjectReactComponents, TooltipContainer, TooltipService } from '@Project/ReactComponents';
 import { ElDropdown, ElMenu, ElOption, ElOptions, ElSelect, ElSelectedcontent } from '@tailwindplus/elements/react';
+import { Icon } from '../../../../libraries/ReactComponents/src/Common/Icons/Icon';
 
 
 const AppSpacing = styled.div`
@@ -85,6 +86,7 @@ export function App() {
       }
   };
 
+  // #region Theme
   const setTheme = () => {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     localStorage.setItem('theme', newTheme);
@@ -97,26 +99,37 @@ export function App() {
     if (theme === 'dark') document.documentElement.classList.add('dark')
     else document.documentElement.classList.remove('dark')
   }
+  // #endregion
 
+  // #region Text Input
   const InputId = useId();
   const [input, setInput] = useState<string>("");
-
   const InputChanged = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e?.target?.value;
     setInput(newValue);
 
     console.log({Event: e, newValue});
   }
+  // #endregion
 
+  // #region Error Toggling
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const buttonPress = (e: any) => {
+  const toggleError = (e: any) => {
     setError(!error); 
     setErrorMessage("Invalid text."); 
     
     console.log('set error to ', !error);
   }
+  // #endregion
+
+  const [displayTooltip, setDisplayTooltip] = useState<boolean>(false);
+  const tooltipService = useRef<TooltipService>(new TooltipService(setDisplayTooltip));
+  console.log('tooltipService: ', { tooltipService });
+
+  const [email, setEmail] = useState<string>("");
+  const emailId = useId();
+  const emailChanged = (e: ChangeEvent<HTMLInputElement>) => setEmail(e?.target?.value);
 
   return (
     <AppSpacing className={themeContainerStyles + ``}>
@@ -167,99 +180,108 @@ export function App() {
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
             <div className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
-              <div className='col-span-6 md:col-span-6'>
+              <div className='col-span-4 md:col-span-6'>
                 <Input 
-                  type="email"
+                  type="search"
                   name="Input"
                   label="Input"
                   description=""
                   value={input}
-                  placeholder="yourname@email.com"
+                  placeholder="Input text..."
                   id={InputId}
-
                   onChange={InputChanged}
-                  // onBlur={onBlur}
-                  // onFocus={onFocus}
-                  // onClick={mouseClick}
-
-                  error={error}
-                  errorMessage={errorMessage}
-                  required={false}
-                  disabled={false}
-
-                  autocomplete='email'
                 />
               </div>
 
               <div className='col-span-12 mt-2'>
-                <Button displayText="Toggle Error" onClick={buttonPress} />
+                <Button displayText="Toggle Error" onClick={toggleError} />
               </div>
               
-              <div className='pb-10'></div>
               
 
-                <button className="
-                  flex flex-row justify-end items-end gap-2 rounded-md 
-                  bg-white dark:bg-slate-800
-                  *:bg-white *:dark:bg-slate-800
-                  border border-zinc-300 dark:border-white/10 
-                  w-max h-max p-2 
-                  
-                  relative 
-                  group 
-                  transition-all duration-200 ease-in
-                  *:transition-all *:duration-200 *:ease-in
-                  
-                  overflow-hidden 
-                  focus:overflow-visible 
-                  
-                  *:opacity-0
-                  *:focus:opacity-100
-                  "
-                  // *:opacity-0 *:focus:opacity-100 
-                >
-                  
+              <div className='col-span-12 mt-2 pt-4 grid grid-cols-12 gap-x-8'>
+                <div className='col-span-4'>
+                      <Input 
+                        type="email"
+                        name="email"
+                        label="Email"
+                        description="What is your email?"
+                        value={email}
+                        placeholder="yourname@email.com"
+                        id={emailId}
+    
+                        onChange={emailChanged}
+                        // onBlur={onBlur}
+                        // onFocus={onFocus}
+                        // onClick={mouseClick}
+    
+                        error={error}
+                        errorMessage={errorMessage}
+                        required={false}
+                        disabled={false}
+                        tooltip
+    
+                        autocomplete='email'
+                      />
+                </div>
+                <div className='col-span-8'></div>
+              </div>
 
-                  <span>
-                    Dropdowngfdfsgds
-                  </span>
-                  <svg className="rotate-90 group-focus:rotate-180" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                    viewBox="0 0 24 24">
-                    <path fill="currentColor"
-                      d="m12 10.8l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.3-.3.7-.3t.7.3l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
-                  </svg>
+                <div className='col-span-3 flex flex-row items-center'>
+                  <button className="
+                    flex flex-row justify-end items-end gap-2 rounded-md 
+                    bg-white dark:bg-slate-800
+                    *:bg-white *:dark:bg-slate-800
+                    border border-zinc-300 dark:border-white/10 
+                    w-max h-max p-2 
+                    
+                    relative 
+                    group 
+                    transition-all duration-200 ease-in
+                    *:transition-all *:duration-200 *:ease-in
+                    
+                    overflow-hidden 
+                    focus:overflow-visible 
+                    
+                    *:opacity-0
+                    *:focus:opacity-100
 
-                  {/* Dropdown items */}
-                  <div className="absolute shadow-lg -bottom-40 left-0 w-full h-max p-2 bg-white border border-zinc-200 dark:border-white/10  rounded-lg flex flex-col gap-2">
-                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                          d="M12 5q-.425 0-.712-.288T11 4V2q0-.425.288-.712T12 1q.425 0 .713.288T13 2v2q0 .425-.288.713T12 5m4.95 2.05q-.275-.275-.275-.687t.275-.713l1.4-1.425q.3-.3.712-.3t.713.3q.275.275.275.7t-.275.7L18.35 7.05q-.275.275-.7.275t-.7-.275M20 13q-.425 0-.713-.288T19 12q0-.425.288-.712T20 11h2q.425 0 .713.288T23 12q0 .425-.288.713T22 13zm-8 10q-.425 0-.712-.288T11 22v-2q0-.425.288-.712T12 19q.425 0 .713.288T13 20v2q0 .425-.288.713T12 23M5.65 7.05l-1.425-1.4q-.3-.3-.3-.725t.3-.7q.275-.275.7-.275t.7.275L7.05 5.65q.275.275.275.7t-.275.7q-.3.275-.7.275t-.7-.275m12.7 12.725l-1.4-1.425q-.275-.3-.275-.712t.275-.688q.275-.275.688-.275t.712.275l1.425 1.4q.3.275.288.7t-.288.725q-.3.3-.725.3t-.7-.3M2 13q-.425 0-.712-.288T1 12q0-.425.288-.712T2 11h2q.425 0 .713.288T5 12q0 .425-.288.713T4 13zm2.225 6.775q-.275-.275-.275-.7t.275-.7L5.65 16.95q.275-.275.687-.275t.713.275q.3.3.3.713t-.3.712l-1.4 1.4q-.3.3-.725.3t-.7-.3M12 18q-2.5 0-4.25-1.75T6 12q0-2.5 1.75-4.25T12 6q2.5 0 4.25 1.75T18 12q0 2.5-1.75 4.25T12 18m0-2q1.65 0 2.825-1.175T16 12q0-1.65-1.175-2.825T12 8q-1.65 0-2.825 1.175T8 12q0 1.65 1.175 2.825T12 16m0-4" />
-                      </svg>
-                      <p>Light</p>
+                    [&_.dont-hide-me]:opacity-100
+                    "
+                    // *:opacity-0 *:focus:opacity-100 
+                  >
+                    
+
+                    <span className='dont-hide-me'>
+                      Dropdowngfdfsgds
                     </span>
+                    <svg className="rotate-90 group-focus:rotate-180" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                      viewBox="0 0 24 24">
+                      <path fill="currentColor"
+                        d="m12 10.8l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.3-.3.7-.3t.7.3l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
+                    </svg>
 
-                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                          d="M12 21q-3.775 0-6.387-2.613T3 12q0-3.45 2.25-5.988T11 3.05q.325-.05.575.088t.4.362q.15.225.163.525t-.188.575q-.425.65-.638 1.375T11.1 7.5q0 2.25 1.575 3.825T16.5 12.9q.775 0 1.538-.225t1.362-.625q.275-.175.563-.162t.512.137q.25.125.388.375t.087.6q-.35 3.45-2.937 5.725T12 21m0-2q2.2 0 3.95-1.213t2.55-3.162q-.5.125-1 .2t-1 .075q-3.075 0-5.238-2.163T9.1 7.5q0-.5.075-1t.2-1q-1.95.8-3.163 2.55T5 12q0 2.9 2.05 4.95T12 19m-.25-6.75" />
-                      </svg>
-                      <p>Dark</p>
-                    </span>
+                    {/* Dropdown items */}
+                    <div className="absolute shadow-lg -bottom-40 left-0 w-full h-max p-2 bg-white border border-zinc-200 dark:border-white/10  rounded-lg flex flex-col gap-2">
+                      <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
+                        <Icon variant='LightTheme' />
+                        <p>Light</p>
+                      </span>
 
-                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 48 48">
-                        <g fill="none" stroke="currentColor" strokeWidth="4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 32h10v9H19z" />
-                          <rect width="38" height="24" x="5" y="8" rx="2" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M22 27h4M14 41h20" />
-                        </g>
-                      </svg>
-                      <p>System</p>
-                    </span>
+                      <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
+                        <Icon variant='DarkTheme' />
+                        <p>Dark</p>
+                      </span>
 
-                  </div>
-                </button>
+                      <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
+                        <Icon variant='System' />
+                        <p>System</p>
+                      </span>
+
+                    </div>
+                  </button>
+                </div>
+              </div>
 
 
 
@@ -267,6 +289,9 @@ export function App() {
           </div>
           
 
+            {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
+            {/* TODO: Add a sidebar for displaying and debugging save state, that captures both saved and retrieved information that's sent to the backend when autosaved during submissions and during retrieval */}
+            {/* TODO: Add debugging and your own util function that overrides console logging (and learn how to use other libraries for capturing and diagnostics, and how to have it as a universal import) */}
 
             {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
             {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}

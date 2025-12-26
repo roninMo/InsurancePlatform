@@ -3,6 +3,7 @@ import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
+import { Icon } from '../../Common/Icons/Icon';
 
 
 export type TextInputTypes = 'text' | 'email' | 'password' | 'phone' | 'creditCard' | 'currency' | 'policyNumber' | 'search';
@@ -29,6 +30,7 @@ interface InputProps {
   errorMessage?: string | null;
   required?: boolean;
   disabled?: boolean;
+  tooltip?: boolean;
 
   autocomplete?: TextInputAutoCompleteTypes;
   aria?: string | null;
@@ -37,7 +39,7 @@ interface InputProps {
 
 export const Input = ({
   type = 'text', name, label, description, value, placeholder, id,
-  required = false, disabled = false, error = false, errorMessage,
+  error = false, errorMessage, required = false, disabled = false, tooltip = false, 
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, aria
 }: InputProps) => {
@@ -90,6 +92,7 @@ export const Input = ({
   }
   // #endregion
 
+  // TODO: just add the tooltip here
   const toolTipHover = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>, state: 'onEnter' | 'onLeave'): void => {
     console.log('tooltip hover: ', {Event: e, state});
 
@@ -99,11 +102,10 @@ export const Input = ({
 
     }
 
-    // https://tailwindcss.com/plus/ui-blocks/application-ui/forms/select-menus
   }
 
   return (
-    <TextInput>
+    <TextInput className='input'>
       <label htmlFor={type} className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{label}</label>
       <div className="mt-2 grid grid-cols-1">
         <input 
@@ -132,59 +134,43 @@ export const Input = ({
         />
 
         {/* Elements preceding the input */}
-        { type == 'email' && 
-          <EmailIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4 dark:text-gray-500">
-            <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-            <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-          </EmailIcon>
-        }
+        { type == 'email' && <Icon variant='Envelope' styles='pointer-events-none col-start-1 row-start-1 ml-3 size-4 justify-center self-center' /> }
+        { type == 'policyNumber' && <Icon variant='Profile' styles='pointer-events-none col-start-1 row-start-1 ml-3 size-4 justify-center self-center' /> }
+        {/* TODO: custom icons preceding input */}
+
 
         {/* Elements at the end of the input */}
+        { error || tooltip && 
+          <div className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
+            { error ? <Icon variant='Error' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 text-red-500 dark:text-red-400' /> 
+              :       <Icon variant='InfoBox' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 justify-end' /> }
+          </div>
+        }
+
         { type == 'currency' ? 
           <CurrencyDropdown className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
             <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
-              <option>USD</option>
-              <option>CAD</option>
-              <option>EUR</option>
+              <option>USD</option> <option>CAD</option> <option>EUR</option>
             </CurrencySelect>
-            <DropdownArrowIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-              <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" fillRule="evenodd" />
-            </DropdownArrowIcon>
+            <Icon variant='DropdownArrow' />
           </CurrencyDropdown>
 
-        : type == 'search' ? 
-          <SortSearchResults className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
-            <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
-              <SearchListIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="-ml-0.5 size-4 text-gray-400">
-                <path d="M2 2.75A.75.75 0 0 1 2.75 2h9.5a.75.75 0 0 1 0 1.5h-9.5A.75.75 0 0 1 2 2.75ZM2 6.25a.75.75 0 0 1 .75-.75h5.5a.75.75 0 0 1 0 1.5h-5.5A.75.75 0 0 1 2 6.25Zm0 3.5A.75.75 0 0 1 2.75 9h3.5a.75.75 0 0 1 0 1.5h-3.5A.75.75 0 0 1 2 9.75ZM9.22 9.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V8.56l-.97.97a.75.75 0 0 1-1.06 0Z" clipRule="evenodd" fillRule="evenodd" />
-              </SearchListIcon>
-              Sort
-            </button>
-          </SortSearchResults>
-
-        : error &&
-          <TooltipContainer className="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end ">
-            <ErrorIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="text-red-500 sm:size-4 dark:text-red-400">
-              <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" fillRule="evenodd" />
-            </ErrorIcon>
-
-          {/* : tooltip && 
-            <TooltipIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="text-gray-400 sm:size-4 dark:text-gray-500">
-              <path d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-6 3.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.293 5.293a1 1 0 1 1 .99 1.667c-.459.134-1.033.566-1.033 1.29v.25a.75.75 0 1 0 1.5 0v-.115a2.5 2.5 0 1 0-2.518-4.153.75.75 0 1 0 1.061 1.06Z" clipRule="evenodd" fillRule="evenodd" />
-            </TooltipIcon> */}
-          </TooltipContainer>
+          : type == 'search' ? 
+            <SortSearchResults className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
+              <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
+                <Icon variant='Sort' />
+                Sort
+              </button>
+            </SortSearchResults>
+          : <></>
         }
       </div>
 
       {/* Error / Description messages */}
       { error && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 text-sm text-red-600 dark:text-red-400">
-          {errorMessage}
-        </p>
+        <p id={`${id}-error-message`} className="mt-2 text-sm text-red-600 dark:text-red-400"> { errorMessage } </p>
       : description && 
-        <p id={`${id}-email-description`} className="mt-2 text-sm">
-          {description}
-        </p>
+        <p id={`${id}-email-description`} className="mt-2 text-sm"> { description } </p>
       }
     </TextInput>
   );
