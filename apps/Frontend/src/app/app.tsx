@@ -14,11 +14,13 @@ import { Icon } from '../../../../libraries/ReactComponents/src/Common/Icons/Ico
 
 
 const AppSpacing = styled.div`
-  margin: 0;
-  padding: 0;
-  min-width: 100vh;
-  min-height: 100vh;
+margin: 0;
+padding: 0;
+min-width: 100vh;
+min-height: 100vh;
 `;
+const RoutesSpacing = styled.div``;
+const MainContent = styled.div``;
 // p-2 pb-4 text-sm/6 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8
 
 
@@ -147,7 +149,7 @@ export function App() {
             </ul>
           </div>
 
-          <div className='m-10'>
+          <RoutesSpacing className='m-10'>
             <Routes>
               <Route 
                 path="/"
@@ -176,10 +178,11 @@ export function App() {
                 }
               />
             </Routes>
+          </RoutesSpacing>
 
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
-            <div className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
+            <MainContent className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
               <div className='col-span-4 md:col-span-6'>
                 <Input 
                   type="search"
@@ -196,8 +199,7 @@ export function App() {
               <div className='col-span-12 mt-2'>
                 <Button displayText="Toggle Error" onClick={toggleError} />
               </div>
-              
-              
+
 
               <div className='col-span-12 mt-2 pt-4 grid grid-cols-12 gap-x-8'>
                 <div className='col-span-4'>
@@ -226,68 +228,63 @@ export function App() {
                 </div>
                 <div className='col-span-8'></div>
               </div>
+              
+              <div className='col-span-3 flex flex-row items-center'>
+                <button className="
+                  flex flex-row justify-end items-end gap-2 rounded-md 
+                  bg-white dark:bg-slate-800
+                  *:bg-white *:dark:bg-slate-800
+                  border border-zinc-300 dark:border-white/10 
+                  w-max h-max p-2 
+                  
+                  relative 
+                  group 
+                  transition-all duration-200 ease-in
+                  *:transition-all *:duration-200 *:ease-in
+                  
+                  overflow-hidden 
+                  focus:overflow-visible 
+                  
+                  *:opacity-0
+                  *:focus:opacity-100
 
-                <div className='col-span-3 flex flex-row items-center'>
-                  <button className="
-                    flex flex-row justify-end items-end gap-2 rounded-md 
-                    bg-white dark:bg-slate-800
-                    *:bg-white *:dark:bg-slate-800
-                    border border-zinc-300 dark:border-white/10 
-                    w-max h-max p-2 
-                    
-                    relative 
-                    group 
-                    transition-all duration-200 ease-in
-                    *:transition-all *:duration-200 *:ease-in
-                    
-                    overflow-hidden 
-                    focus:overflow-visible 
-                    
-                    *:opacity-0
-                    *:focus:opacity-100
+                  [&_.dont-hide-me]:opacity-100
+                  "
+                  // *:opacity-0 *:focus:opacity-100 
+                >
+                  
 
-                    [&_.dont-hide-me]:opacity-100
-                    "
-                    // *:opacity-0 *:focus:opacity-100 
-                  >
-                    
+                  <span className='dont-hide-me'>
+                    Dropdowngfdfsgds
+                  </span>
+                  <svg className="rotate-90 group-focus:rotate-180" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                    viewBox="0 0 24 24">
+                    <path fill="currentColor"
+                      d="m12 10.8l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.3-.3.7-.3t.7.3l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
+                  </svg>
 
-                    <span className='dont-hide-me'>
-                      Dropdowngfdfsgds
+                  {/* Dropdown items */}
+                  <div className="absolute shadow-lg -bottom-40 left-0 w-full h-max p-2 bg-white border border-zinc-200 dark:border-white/10  rounded-lg flex flex-col gap-2">
+                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
+                      <Icon variant='LightTheme' />
+                      <p>Light</p>
                     </span>
-                    <svg className="rotate-90 group-focus:rotate-180" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                      viewBox="0 0 24 24">
-                      <path fill="currentColor"
-                        d="m12 10.8l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.3-.3.7-.3t.7.3l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
-                    </svg>
 
-                    {/* Dropdown items */}
-                    <div className="absolute shadow-lg -bottom-40 left-0 w-full h-max p-2 bg-white border border-zinc-200 dark:border-white/10  rounded-lg flex flex-col gap-2">
-                      <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                        <Icon variant='LightTheme' />
-                        <p>Light</p>
-                      </span>
+                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
+                      <Icon variant='DarkTheme' />
+                      <p>Dark</p>
+                    </span>
 
-                      <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                        <Icon variant='DarkTheme' />
-                        <p>Dark</p>
-                      </span>
+                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
+                      <Icon variant='System' />
+                      <p>System</p>
+                    </span>
 
-                      <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                        <Icon variant='System' />
-                        <p>System</p>
-                      </span>
-
-                    </div>
-                  </button>
-                </div>
+                  </div>
+                </button>
               </div>
+            </MainContent>
 
-
-
-            </div>
-          </div>
-          
 
             {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
             {/* TODO: Add a sidebar for displaying and debugging save state, that captures both saved and retrieved information that's sent to the backend when autosaved during submissions and during retrieval */}
