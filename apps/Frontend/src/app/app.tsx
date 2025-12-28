@@ -1,4 +1,4 @@
-import { ChangeEvent, createContext, SyntheticEvent, useEffect, useId, useRef, useState } from 'react';
+import { ChangeEvent, createContext, useEffect, useId, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 
 import { UserTokenInformation } from '@Project/Classes';
@@ -8,9 +8,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Button, Input, ProjectReactComponents, TooltipContainer, TooltipService } from '@Project/ReactComponents';
-import { ElDropdown, ElMenu, ElOption, ElOptions, ElSelect, ElSelectedcontent } from '@tailwindplus/elements/react';
-import { Icon } from '../../../../libraries/ReactComponents/src/Common/Icons/Icon';
+import { Button, Icon, Input, InputProps_Email, ProjectReactComponents } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div`
@@ -125,14 +123,12 @@ export function App() {
   }
   // #endregion
 
-  const [displayTooltip, setDisplayTooltip] = useState<boolean>(false);
-  const tooltipService = useRef<TooltipService>(new TooltipService(setDisplayTooltip));
-// console.log('tooltipService: ', { tooltipService });
-
+  // Input elements
   const [email, setEmail] = useState<string>("");
   const emailId = useId();
   const emailChanged = (e: ChangeEvent<HTMLInputElement>) => setEmail(e?.target?.value);
-
+  
+  
   return (
     <AppSpacing className={themeContainerStyles + ``}>
       <div className='bg-white dark:bg-gray-800'>
@@ -149,22 +145,18 @@ export function App() {
             </ul>
           </div>
 
-          {/* <RoutesSpacing className='m-10'>
+          <RoutesSpacing className='m-10'>
             <Routes>
               <Route 
                 path="/"
                 element={
                   <div className={`p-2 pb-4 text-sm/6`}>
+                    <div>
+                      <h2 className={`mb-2`}>Home Page</h2>
+                      <p className={`mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                     
-                  <div>
-                    <h2 className={`mb-2`}>Home Page</h2>
-                    <p className={`mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  
-                    <button onClick={setTheme}>{currentTheme === "dark" ? 'set to light' : 'set to dark'}</button>
-                  </div>
-
-
-
+                      <button onClick={setTheme}>{currentTheme === "dark" ? 'set to light' : 'set to dark'}</button>
+                    </div>
                   </div>
                 } 
               />
@@ -178,14 +170,14 @@ export function App() {
                 }
               />
             </Routes>
-          </RoutesSpacing> */}
+          </RoutesSpacing>
 
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
             <MainContent className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
               <div className='col-span-4 md:col-span-6'>
                 <Input 
-                  type="search"
+                  type="policyNumber"
                   name="Input"
                   label="Input"
                   description=""
@@ -202,87 +194,13 @@ export function App() {
 
 
               <div className='col-span-12 mt-2 pt-4 grid grid-cols-12 gap-x-8'>
-                <div className='col-span-4'>
-                      <Input 
-                        type="email"
-                        name="email"
-                        label="Email"
-                        description="What is your email?"
-                        value={email}
-                        placeholder="yourname@email.com"
-                        id={emailId}
-    
-                        onChange={emailChanged}
-                        // onBlur={onBlur}
-                        // onFocus={onFocus}
-                        // onClick={mouseClick}
-    
-                        error={error}
-                        errorMessage={errorMessage}
-                        required={false}
-                        disabled={false}
-                        tooltip
-                        tooltipText='hello'
-    
-                        autocomplete='email'
-                      />
+                <div className='col-span-4 pb-2'>
+                  <Input 
+                    { ...InputProps_Email } value={email}id={emailId}onChange={emailChanged}
+                    error={error} errorMessage={errorMessage} required={false} disabled={false}
+                  />
                 </div>
                 <div className='col-span-8'></div>
-              </div>
-              
-              <div className='col-span-3 flex flex-row items-center'>
-                <button className="
-                  flex flex-row justify-end items-end gap-2 rounded-md 
-                  bg-white dark:bg-slate-800
-                  *:bg-white *:dark:bg-slate-800
-                  border border-zinc-300 dark:border-white/10 
-                  w-max h-max p-2 
-                  
-                  relative 
-                  group 
-                  transition-all duration-200 ease-in
-                  *:transition-all *:duration-200 *:ease-in
-                  
-                  overflow-hidden 
-                  focus:overflow-visible 
-                  
-                  *:opacity-0
-                  *:focus:opacity-100
-
-                  [&_.dont-hide-me]:opacity-100
-                  "
-                  // *:opacity-0 *:focus:opacity-100 
-                >
-                  
-
-                  <span className='dont-hide-me'>
-                    Dropdowngfdfsgds
-                  </span>
-                  <svg className="rotate-90 group-focus:rotate-180" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                    viewBox="0 0 24 24">
-                    <path fill="currentColor"
-                      d="m12 10.8l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.3-.3.7-.3t.7.3l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
-                  </svg>
-
-                  {/* Dropdown items */}
-                  <div className="absolute shadow-lg -bottom-40 left-0 w-full h-max p-2 bg-white border border-zinc-200 dark:border-white/10  rounded-lg flex flex-col gap-2">
-                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                      <Icon variant='LightTheme' />
-                      <p>Light</p>
-                    </span>
-
-                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                      <Icon variant='DarkTheme' />
-                      <p>Dark</p>
-                    </span>
-
-                    <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                      <Icon variant='System' />
-                      <p>System</p>
-                    </span>
-
-                  </div>
-                </button>
               </div>
             </MainContent>
 

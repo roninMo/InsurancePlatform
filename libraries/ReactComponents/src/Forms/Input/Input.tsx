@@ -7,7 +7,7 @@ import { Icon } from '../../Common/Icons/Icon';
 
 
 export type TextInputTypes = 'text' | 'email' | 'password' | 'phone' | 'creditCard' | 'currency' | 'policyNumber' | 'search';
-export type TextInputAutoCompleteTypes = "email"  | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
+export type TextInputAutoCompleteTypes = "email"  | "tel" | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
 
 interface InputProps {
   type?: TextInputTypes
@@ -140,21 +140,24 @@ export const Input = ({
 
           className={getInputClasses(error, type)}
         />
+
         {/* Elements preceding the input */}
-        { type == 'email' && <Icon variant='Envelope' styles='pointer-events-none col-start-1 row-start-1 ml-3 size-4 justify-center self-center' /> }
-        { type == 'policyNumber' && <Icon variant='Profile' styles='pointer-events-none col-start-1 row-start-1 ml-3 size-4 justify-center self-center' /> }
-        {/* TODO: custom icons preceding input */}
+        <PrecedingInputElements className={`pointer-events-none col-start-1 row-start-1 justify-center self-center`}>
+          { type == 'email' && <Icon variant='Envelope' styles='size-4 ml-3' /> }
+          { type == 'policyNumber' && <Icon variant='Profile' styles='size-4 ml-3' /> }
+          {/* TODO: custom icons preceding input */}
+        </PrecedingInputElements>
 
 
-        {/* Elements at the end of the input */}
+        {/* Elements after the input */}
         <SubsequentInputElements className={`${iconContainerStyles}`}>
           <div className={`flex flex-row flex-grow justify-items-end items-center`}>
             { error ?
-                <Icon variant='Error' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 text-red-500 dark:text-red-400' /> 
-              : 
-                <div onMouseEnter={e => tooltip && tooltipMouseEnter(e)} onMouseOver={e => tooltip && toolTipHover(e)} onMouseLeave={e => tooltip && tooltipMouseLeave(e)} className={`cursor-pointer`}>
-                  <Icon variant='InfoBox' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 justify-end' /> 
-                </div>
+              <Icon variant='Error' styles='mr-3 size-4 text-red-500 dark:text-red-400' /> 
+            : 
+              <div onMouseEnter={e => tooltip && tooltipMouseEnter(e)} onMouseOver={e => tooltip && toolTipHover(e)} onMouseLeave={e => tooltip && tooltipMouseLeave(e)} className={`cursor-pointer`}>
+                <Icon variant='InfoBox' styles='mr-3 size-4' /> 
+              </div>
             }
 
             { type == 'currency' ? 
@@ -165,14 +168,14 @@ export const Input = ({
                 <Icon variant='DropdownArrow' />
               </CurrencyDropdown>
 
-              : type == 'search' ? 
-                <SortSearchResults>
-                  <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
-                    <Icon variant='Sort' />
-                    Sort
-                  </button>
-                </SortSearchResults>
-              : <></>
+            : type == 'search' ? 
+              <SortSearchResults>
+                <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
+                  <Icon variant='Sort' />
+                  Sort
+                </button>
+              </SortSearchResults>
+            : <></>
             }
           </div>
         </SubsequentInputElements>
@@ -180,9 +183,9 @@ export const Input = ({
 
       {/* Error / Description messages */}
       { error && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 text-sm text-red-600 dark:text-red-400"> { errorMessage } </p>
+        <p id={`${id}-error-message`} className="mt-2 text-xs text-red-600 dark:text-red-400"> { errorMessage } </p>
       : description && 
-        <p id={`${id}-email-description`} className="mt-2 text-sm"> { description } </p>
+        <p id={`${id}-email-description`} className="mt-2 text-xs"> { description } </p>
       }
 
 
@@ -190,7 +193,7 @@ export const Input = ({
       {tooltip && 
         <Tooltip 
           style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
-          className={`${tooltipHoverStyles} ${tooltipTheme_Styles} ${tooltipCoordinates} pointer-events-none `} // {`${tooltipStyling} ` + tooltipActive ? tooltipVisible : tooltipHidden}> */}
+          className={`${tooltipHoverStyles} ${tooltipTheme_Styles} ${tooltipCoordinates} pointer-events-none transition-all ${tooltipActive ? tooltipVisible : tooltipHidden}`}
         >
             {tooltipText}
         </Tooltip>
@@ -200,20 +203,28 @@ export const Input = ({
   );
 }
 
-const tooltipHoverStyles = `
-  absolute top-0 left-0 z-10 
-  transition:opacity ease-in duration-200 *:transition-opacity *:duration-200 *:ease-in 
-`;
-const tooltipTheme_Styles = ` 
-  text-xs italic shadow-lg border rounded-md p-2 pr-4 
-  bg-white dark:bg-slate-800 
-  border-gray-300 dark:border-white/10 
-  focus:border-indigo-600 dark:focus:border-indigo-500 
-  
-  `;
 
 
 
+// #region Component Styles
+// Elements 
+const TextInput = styled.div``;
+const EmailInput = styled.div``;
+const PasswordInput = styled.div``;
+const PhoneInput = styled.div``;
+const CurrencyInput = styled.div``;
+const PolicyNumberInput = styled.div``;
+const SearchInput = styled.div``;
+
+const PrecedingInputElements = styled.div``;
+const SubsequentInputElements = styled.div``;
+const SortSearchResults = styled.div``;
+const CurrencyDropdown = styled.div``;
+const CurrencySelect = styled.select`pointer-events: all;`;
+const iconContainerStyles = `grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
+
+
+// Input themes and error styles
 const getInputClasses = (error: boolean, type: string): string => {
   let classes = `col-start-1 row-start-1 block w-full 
     rounded-md sm:text-sm/6 px-3 py-1.5 text-base 
@@ -223,7 +234,7 @@ const getInputClasses = (error: boolean, type: string): string => {
   `;
 
   // Icon spacing
-  if (type == 'email') classes += ` pl-9`; 
+  if (type == 'email' || type == 'policyNumber') classes += ` pl-9`; 
 
   // Static themes for default/error display
   if (error) {
@@ -277,76 +288,59 @@ const getErrorThemes = (): string => {
 }
 
 
-const TextInput = styled.div``;
-const EmailInput = styled.div``;
-const PasswordInput = styled.div``;
-const PhoneInput = styled.div``;
-const CurrencyInput = styled.div``;
-const PolicyNumberInput = styled.div``;
-const SearchInput = styled.div``;
-
-const SubsequentInputElements = styled.div``;
-const SortSearchResults = styled.div``;
-const CurrencyDropdown = styled.div``;
-const CurrencySelect = styled.select`pointer-events: all;`;
-
-const ErrorIcon = styled.svg``;
-const SearchListIcon = styled.svg``;
-const TooltipIcon = styled.svg``;
-const EmailIcon = styled.svg``;
-const DropdownArrowIcon = styled.svg``;
-
-
-const iconContainerStyles = `grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
-
-const Tooltip = styled.div``;
-const tooltipStyling = `
-  absolute top-0 left-0 z-10 
-  transition:all ease-in duration-200 *:transition-all *:duration-200 *:ease-in 
-
-  text-xs italic shadow-lg border rounded-md 
-  bg-white dark:bg-slate-800 
-  border-gray-300 dark:border-white/10 
-  focus:border-indigo-600 dark:focus:border-indigo-500 
-`;
-// flex flex-grow flex-col justify-start gap-2
-
-const tooltipHidden = `opacity-0 *:opacity-0`;
-const tooltipVisible = `opacity-100 *:opacity-100`;
-
-
-
-
-
-
 // Tooltip Styling
-const toolTipContainerStyles = `
-  relative group 
-  overflow-hidden focus:overflow-visible 
-  w-max h-max p-2 flex flex-grow justify-start gap-2 
-`;
+const Tooltip = styled.div``;
 
-// If you're building it traditionally, only this is necessary
-const transitionStyles = `
-  transition:all ease-in duration-200  *:transition-all *:duration-200 *:ease-in 
-  *:opacity-0 *:focus:opacity-100 
+const tooltipHoverStyles = `
+  absolute top-0 left-0 z-10 duration-200 ease-in
 `;
-
-const tooltipStyles = `
-    absolute left-0 -bottom-40 
-    w-full h-max p-2
-    flex flex-col gap-2
-    shadow-lg 
-`;
-
-const tooltipThemeStyles = `
-  text-xs italic
+const tooltipTheme_Styles = ` 
+  text-xs italic shadow-lg border rounded-md p-2 pr-4 max-w-64
   bg-white dark:bg-slate-800 
-  border rounded-md 
   border-gray-300 dark:border-white/10 
   focus:border-indigo-600 dark:focus:border-indigo-500 
 `;
 
-const tooltipChildrenStyles = `
-  *:flex *:flex-row *:gap-2 *:justify-start *:items-center
-`;
+const tooltipHidden = `opacity-0 *:opacity-0 transition-all`;
+const tooltipVisible = `opacity-100 *:opacity-100 transition-opacity`;
+// #endregion 
+
+
+// #region Input Type Props
+type InputPropsPartial = Partial<InputProps> & { type: TextInputTypes } & any;
+export const InputProps_Text: InputPropsPartial = {
+  type: 'text',
+  name: 'text',
+}
+
+export const InputProps_Email: InputPropsPartial = {
+  type: 'email',
+  name: 'email',
+  label: 'Email',
+  description: 'What is your email address?',
+  placeholder: 'yourname@email.com',
+  tooltip: true,
+  tooltipText: 'The email used to create your account.',
+  autocomplete: 'email',
+}
+
+export const InputProps_Password: InputPropsPartial = {
+  type: 'password',
+  name: 'password',
+  label: 'Password',
+  description: 'Create your password.',
+  tooltip: true,
+  tooltipText: 'The used for your account.',
+  autocomplete: 'password',
+}
+
+export const InputProps_Phone: InputPropsPartial = {
+  type: 'phone',
+  name: 'phone',
+  label: 'Phone',
+  description: 'What is your phone number?',
+  tooltip: true,
+  tooltipText: 'Your phone number, including the area code. ex: (000)-000-0000',
+  autocomplete: 'tel',
+}
+// #endregion

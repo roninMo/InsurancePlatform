@@ -1,4 +1,4 @@
-export * from './Common/Tooltip/Tooltip';
+export { Icon } from './Common/Icons/Icon';
 export * from './Forms/Select/SelectItem/SelectItem';
 export * from './Forms/Select/Select';
 export * from './Forms/CCInformation/CCInformation';
