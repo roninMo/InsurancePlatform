@@ -8,7 +8,8 @@
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
-      "@nx/react/typings/image.d.ts"
+      "@nx/react/typings/image.d.ts",
+      "vite/client"
     ],
     "rootDir": "src",
     "module": "esnext",
@@ -26,15 +27,15 @@
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx",
     "jest.config.ts",
-    "jest.config.cts",
-    "eslint.config.js",
-    "eslint.config.cjs",
-    "eslint.config.mjs"
+    "jest.config.cts"
   ],
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../../Libraries/Components/tsconfig.lib.json"
+      "path": "../../libraries/ReactComponents/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libraries/Classes/tsconfig.lib.json"
     }
   ]
 }

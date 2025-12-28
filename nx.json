@@ -8,8 +8,8 @@
       "!{projectRoot}/eslint.config.mjs",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/test-setup.[jt]s"
     ],
     "sharedGlobals": []
@@ -30,6 +30,17 @@
       }
     },
     {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
       "plugin": "@nx/webpack/plugin",
       "options": {
         "buildTargetName": "build",
@@ -47,18 +58,6 @@
       }
     },
     {
-      "plugin": "@nx/playwright/plugin",
-      "options": {
-        "targetName": "e2e"
-      }
-    },
-    {
-      "plugin": "@nx/jest/plugin",
-      "options": {
-        "targetName": "test"
-      }
-    },
-    {
       "plugin": "@nx/vite/plugin",
       "options": {
         "buildTargetName": "build",
@@ -73,6 +72,18 @@
       }
     },
     {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    },
+    {
       "plugin": "@nx/vitest",
       "options": {
         "testTargetName": "test",
@@ -81,7 +92,7 @@
       }
     }
   ],
-  "nxCloudId": "6948421de0d6085c7f8c45dc",
+  "nxCloudId": "694992412b628f2e88e97cbb",
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"]
@@ -92,17 +103,22 @@
       "application": {
         "babel": true,
         "style": "scss",
-        "linter": "eslint",
-        "bundler": "webpack"
+        "linter": "none",
+        "bundler": "vite"
       },
       "component": {
         "style": "scss"
       },
       "library": {
         "style": "scss",
-        "linter": "eslint",
-        "unitTestRunner": "jest"
+        "linter": "none",
+        "unitTestRunner": "vitest"
       }
+    }
+  },
+  "release": {
+    "version": {
+      "preVersionCommand": "npx nx run-many -t build"
     }
   }
 }

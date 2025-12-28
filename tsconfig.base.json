@@ -8,18 +8,19 @@
     "lib": ["es2022"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "noEmitOnError": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    // "noEmitOnError": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noImplicitOverride": true,
+    // "noImplicitReturns": true,
+    // "noUnusedLocals": true,
     "skipLibCheck": true,
+    // "skipDefaultLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@org/source"],
-    "paths": {
-      "@org/Classes": ["Libraries/Classes/src/index.ts"],
-      "@org/Components": ["Libraries/Components/src/index.ts"],
-    }
+    "customConditions": ["@Project/source"],
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@Project/ReactComponents": ["libraries/Components/React/src/index.ts"]
+    // }
   }
 }

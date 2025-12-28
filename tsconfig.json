@@ -10,10 +10,10 @@
       "path": "./apps/Frontend"
     },
     {
-      "path": "./Libraries/Classes"
+      "path": "./libraries/Classes"
     },
     {
-      "path": "./Libraries/Components"
+      "path": "./libraries/ReactComponents"
     }
   ]
 }

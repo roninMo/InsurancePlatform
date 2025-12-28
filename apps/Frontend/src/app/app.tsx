@@ -1,16 +1,15 @@
+import { ChangeEvent, createContext, SyntheticEvent, useEffect, useId, useState } from 'react';
+import { Link, Routes, Route } from 'react-router-dom';
 
-
-
-import { useState, createContext, useEffect } from 'react';
-import { Route, Routes, Link } from 'react-router-dom';
+import { UserTokenInformation } from '@Project/Classes';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
-import { UserTokenInformation } from '@insurance-platform/Classes';
 
+import NxWelcome from './nx-welcome';
+import { Button, Input, ProjectReactComponents } from '@Project/ReactComponents';
 
-// import { Button, Input } from "@nx-react-library/Components";
 
 const AppSpacing = styled.div`
   margin: 0;
@@ -98,6 +97,26 @@ export function App() {
     else document.documentElement.classList.remove('dark')
   }
 
+  const InputId = useId();
+  const [input, setInput] = useState<string>("");
+
+  const InputChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e?.target?.value;
+    setInput(newValue);
+
+    console.log({Event: e, newValue});
+  }
+
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const buttonPress = (e: any) => {
+    setError(!error); 
+    setErrorMessage("Invalid text."); 
+    
+    console.log('set error to ', !error);
+  }
+
   return (
     <AppSpacing className={themeContainerStyles + ``}>
       <div className='bg-white dark:bg-gray-800'>
@@ -122,8 +141,8 @@ export function App() {
                   <div className={`p-2 pb-4 text-sm/6`}>
                     
                   <div>
-                    <h2 className={themeHeaderStyles + ` mb-2`}>Home Page</h2>
-                    <p className={themeTextStyles + ` mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <h2 className={`mb-2`}>Home Page</h2>
+                    <p className={`mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                   
                     <button onClick={setTheme}>{currentTheme === "dark" ? 'set to light' : 'set to dark'}</button>
                   </div>
@@ -143,6 +162,40 @@ export function App() {
                 }
               />
             </Routes>
+
+
+            {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
+            <div className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
+              <div className='col-span-6 md:col-span-6'>
+                <Input 
+                  type="currency"
+                  name="Input"
+                  label="Input"
+                  description=""
+                  value={input}
+                  placeholder=""
+                  id={InputId}
+
+                  onChange={InputChanged}
+                  // onBlur={onBlur}
+                  // onFocus={onFocus}
+                  // onClick={mouseClick}
+
+                  error={error}
+                  errorMessage={errorMessage}
+                  required={false}
+                  disabled={false}
+
+                  autocomplete='email'
+                />
+              </div>
+
+              <div className='col-span-12 mt-2'>
+                <Button displayText="Toggle Error" onClick={buttonPress} />
+              </div>
+              
+              <div className='pb-10'></div>
+            </div>
           </div>
           
 
@@ -170,8 +223,6 @@ export function App() {
 }
 
 
-const themeContainerStyles = `bg-white text-slate-800  dark:bg-gray-800 text-slate-600 dark:text-slate-400`;
-const themeHeaderStyles = `text-slate-800  dark:text-slate-200`;
-const themeTextStyles = `text-slate-600  dark:text-slate-400`;
+const themeContainerStyles = `bg-white dark:bg-gray-800`;
 
 export default App;
