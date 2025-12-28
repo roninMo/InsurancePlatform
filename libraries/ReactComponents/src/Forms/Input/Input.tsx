@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, MouseEvent, RefObject, useState } from 'react';
+import { ChangeEvent, FocusEvent, MouseEvent, RefObject, useRef, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
@@ -31,6 +31,7 @@ interface InputProps {
   required?: boolean;
   disabled?: boolean;
   tooltip?: boolean;
+  tooltipText?: string;
 
   autocomplete?: TextInputAutoCompleteTypes;
   aria?: string | null;
@@ -39,7 +40,7 @@ interface InputProps {
 
 export const Input = ({
   type = 'text', name, label, description, value, placeholder, id,
-  error = false, errorMessage, required = false, disabled = false, tooltip = false, 
+  error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, aria
 }: InputProps) => {
@@ -93,15 +94,22 @@ export const Input = ({
   // #endregion
 
   // TODO: just add the tooltip here
-  const toolTipHover = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>, state: 'onEnter' | 'onLeave'): void => {
-    console.log('tooltip hover: ', {Event: e, state});
+  const [tooltipActive, setTooltipActive] = useState<boolean>(false);
+  const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
+  const tooltipMouseEnter = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
+    console.log('mouse enter tooltip', {Event: e});
+    setTooltipActive(true);
+  }
+  
+  const tooltipMouseLeave = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
+    console.log('mouse leave tooltip', {Event: e});
+    setTooltipActive(false);
+  }
 
-    if (state == 'onLeave') {
-
-    } else if (state == 'onEnter') {
-
-    }
-
+  const toolTipHover = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>): void => {
+    const coordinates = { x: e.clientX, y: e.clientY };
+    tooltipCoordinates.current = coordinates;
+    // console.log(`mouseCoordinates: `, tooltipCoordinates.current); //  {x: coordinates.x, y: coordinates.y });
   }
 
   return (
@@ -132,7 +140,6 @@ export const Input = ({
 
           className={getInputClasses(error, type)}
         />
-
         {/* Elements preceding the input */}
         { type == 'email' && <Icon variant='Envelope' styles='pointer-events-none col-start-1 row-start-1 ml-3 size-4 justify-center self-center' /> }
         { type == 'policyNumber' && <Icon variant='Profile' styles='pointer-events-none col-start-1 row-start-1 ml-3 size-4 justify-center self-center' /> }
@@ -140,30 +147,35 @@ export const Input = ({
 
 
         {/* Elements at the end of the input */}
-        { error || tooltip && 
-          <div className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
-            { error ? <Icon variant='Error' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 text-red-500 dark:text-red-400' /> 
-              :       <Icon variant='InfoBox' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 justify-end' /> }
+        <SubsequentInputElements className={`${iconContainerStyles}`}>
+          <div className={`flex flex-row flex-grow justify-items-end items-center`}>
+            { error ?
+                <Icon variant='Error' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 text-red-500 dark:text-red-400' /> 
+              : 
+                <div onMouseEnter={e => tooltip && tooltipMouseEnter(e)} onMouseOver={e => tooltip && toolTipHover(e)} onMouseLeave={e => tooltip && tooltipMouseLeave(e)} className={`cursor-pointer`}>
+                  <Icon variant='InfoBox' styles='pointer-events-none col-start-1 row-start-1 mr-3 size-4 justify-end' /> 
+                </div>
+            }
+
+            { type == 'currency' ? 
+              <CurrencyDropdown>
+                <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
+                  <option>USD</option> <option>CAD</option> <option>EUR</option>
+                </CurrencySelect>
+                <Icon variant='DropdownArrow' />
+              </CurrencyDropdown>
+
+              : type == 'search' ? 
+                <SortSearchResults>
+                  <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
+                    <Icon variant='Sort' />
+                    Sort
+                  </button>
+                </SortSearchResults>
+              : <></>
+            }
           </div>
-        }
-
-        { type == 'currency' ? 
-          <CurrencyDropdown className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
-            <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
-              <option>USD</option> <option>CAD</option> <option>EUR</option>
-            </CurrencySelect>
-            <Icon variant='DropdownArrow' />
-          </CurrencyDropdown>
-
-          : type == 'search' ? 
-            <SortSearchResults className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
-              <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
-                <Icon variant='Sort' />
-                Sort
-              </button>
-            </SortSearchResults>
-          : <></>
-        }
+        </SubsequentInputElements>
       </div>
 
       {/* Error / Description messages */}
@@ -172,9 +184,34 @@ export const Input = ({
       : description && 
         <p id={`${id}-email-description`} className="mt-2 text-sm"> { description } </p>
       }
+
+
+      {/* Tooltip Text */}
+      {tooltip && 
+        <Tooltip 
+          style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
+          className={`${tooltipHoverStyles} ${tooltipTheme_Styles} ${tooltipCoordinates} pointer-events-none `} // {`${tooltipStyling} ` + tooltipActive ? tooltipVisible : tooltipHidden}> */}
+        >
+            {tooltipText}
+        </Tooltip>
+      }
+
     </TextInput>
   );
 }
+
+const tooltipHoverStyles = `
+  absolute top-0 left-0 z-10 
+  transition:opacity ease-in duration-200 *:transition-opacity *:duration-200 *:ease-in 
+`;
+const tooltipTheme_Styles = ` 
+  text-xs italic shadow-lg border rounded-md p-2 pr-4 
+  bg-white dark:bg-slate-800 
+  border-gray-300 dark:border-white/10 
+  focus:border-indigo-600 dark:focus:border-indigo-500 
+  
+  `;
+
 
 
 const getInputClasses = (error: boolean, type: string): string => {
@@ -248,8 +285,8 @@ const CurrencyInput = styled.div``;
 const PolicyNumberInput = styled.div``;
 const SearchInput = styled.div``;
 
+const SubsequentInputElements = styled.div``;
 const SortSearchResults = styled.div``;
-const TooltipContainer = styled.div``;
 const CurrencyDropdown = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
 
@@ -258,3 +295,58 @@ const SearchListIcon = styled.svg``;
 const TooltipIcon = styled.svg``;
 const EmailIcon = styled.svg``;
 const DropdownArrowIcon = styled.svg``;
+
+
+const iconContainerStyles = `grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
+
+const Tooltip = styled.div``;
+const tooltipStyling = `
+  absolute top-0 left-0 z-10 
+  transition:all ease-in duration-200 *:transition-all *:duration-200 *:ease-in 
+
+  text-xs italic shadow-lg border rounded-md 
+  bg-white dark:bg-slate-800 
+  border-gray-300 dark:border-white/10 
+  focus:border-indigo-600 dark:focus:border-indigo-500 
+`;
+// flex flex-grow flex-col justify-start gap-2
+
+const tooltipHidden = `opacity-0 *:opacity-0`;
+const tooltipVisible = `opacity-100 *:opacity-100`;
+
+
+
+
+
+
+// Tooltip Styling
+const toolTipContainerStyles = `
+  relative group 
+  overflow-hidden focus:overflow-visible 
+  w-max h-max p-2 flex flex-grow justify-start gap-2 
+`;
+
+// If you're building it traditionally, only this is necessary
+const transitionStyles = `
+  transition:all ease-in duration-200  *:transition-all *:duration-200 *:ease-in 
+  *:opacity-0 *:focus:opacity-100 
+`;
+
+const tooltipStyles = `
+    absolute left-0 -bottom-40 
+    w-full h-max p-2
+    flex flex-col gap-2
+    shadow-lg 
+`;
+
+const tooltipThemeStyles = `
+  text-xs italic
+  bg-white dark:bg-slate-800 
+  border rounded-md 
+  border-gray-300 dark:border-white/10 
+  focus:border-indigo-600 dark:focus:border-indigo-500 
+`;
+
+const tooltipChildrenStyles = `
+  *:flex *:flex-row *:gap-2 *:justify-start *:items-center
+`;

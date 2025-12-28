@@ -127,7 +127,7 @@ export function App() {
 
   const [displayTooltip, setDisplayTooltip] = useState<boolean>(false);
   const tooltipService = useRef<TooltipService>(new TooltipService(setDisplayTooltip));
-  console.log('tooltipService: ', { tooltipService });
+// console.log('tooltipService: ', { tooltipService });
 
   const [email, setEmail] = useState<string>("");
   const emailId = useId();
@@ -149,7 +149,7 @@ export function App() {
             </ul>
           </div>
 
-          <RoutesSpacing className='m-10'>
+          {/* <RoutesSpacing className='m-10'>
             <Routes>
               <Route 
                 path="/"
@@ -178,7 +178,7 @@ export function App() {
                 }
               />
             </Routes>
-          </RoutesSpacing>
+          </RoutesSpacing> */}
 
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
@@ -222,6 +222,7 @@ export function App() {
                         required={false}
                         disabled={false}
                         tooltip
+                        tooltipText='hello'
     
                         autocomplete='email'
                       />
