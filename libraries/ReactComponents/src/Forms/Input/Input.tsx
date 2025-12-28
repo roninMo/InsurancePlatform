@@ -42,7 +42,7 @@ export const Input = ({
   type = 'text', name, label, description, value, placeholder, id,
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  autocomplete, aria
+  autocomplete, aria, ...props
 }: InputProps) => {
   let maskRef: RefObject<HTMLInputElement> | null = null;
   // const rawValue = value.replace(/\D/g, ''); // To retrieve raw mask values
