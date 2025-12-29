@@ -133,6 +133,7 @@ export const Input = ({
           aria-invalid={error ? "true" : "false"}
 
           className={getInputClasses(error, type, disabled)}
+          { ...props }
         />
 
         {/* Elements preceding the input */}

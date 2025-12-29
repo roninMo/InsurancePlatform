@@ -19,7 +19,6 @@ export interface SelectProps {
   disabled?: boolean;
   required?: boolean;
 
-  autoComplete?: string;
   aria?: string | null;
 }
 
@@ -27,38 +26,23 @@ export interface SelectProps {
 export const Select = ({
   name, label, description, value, values, onSelect, placeholder, id,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  error = false, errorMessage, disabled = false, required = false,
-  autoComplete, aria
+  error = false, errorMessage, disabled = false, required = false, aria
 }: EventHandlers & SelectProps) => {
-  /*
-    Label
-
-    Select(ed) Item
-    Overflow dropdown of items
-
-    Details:
-    - icon(s) and various elements preceding dropdown item text
-    - dropdown item name
-    - subsequent icons at the end of the element
-    - ui scrollbar for navigation
-
-    - input interactivity - styles for the currently selected element
-    - select element settings for configuration
-    - error handling
-    - array of select item objects to pass via props
-
-    - handle building disabled, and disabling multiple values 
-    
-  */
-
-
   return (
     <Container className={`${containerStyles}`}>
       <Label className={`text-sm font-medium leading-6 block pb-2`}>
         { label }
       </Label>
 
-      <StyledSelect name={name} className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-white *:dark:bg-slate-800`}>
+      <StyledSelect 
+        name={name} 
+        onChange={e => onChange && onChange(e)}
+        onBlur={e => onBlur && onBlur(e)}
+        onFocus={e => onFocus && onFocus(e)}
+        onClick={e => onClick && onClick(e)}
+        aria-describedby={aria || undefined}
+        className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-white *:dark:bg-slate-800`}
+      >
         <CurrentlySelected className={`currently-selected ${currentlySelectedStyles} ${transitionStyles} ${borderStyles} ${getErrorThemes(error)}`}>
           <span> { value.value ? value.label : placeholder } </span>
 
@@ -68,7 +52,11 @@ export const Select = ({
           </div>
         </CurrentlySelected>
 
-        <DropdownItems className={`dropdown-items ${dropdownStyles} ${!disabled ? dropdownScrollStyles : disabledStyles} ${borderStyles} ${borderThemeStyles}`}>
+        <DropdownItems
+          onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
+          onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
+          className={`dropdown-items ${dropdownStyles} ${!disabled ? dropdownScrollStyles : disabledStyles} ${borderStyles} ${borderThemeStyles}`}
+        >
           {values.map((item: SelectItemProps, index: number) => 
             <SelectItem 
               onClick={() => onSelect && onSelect(item, index)} 

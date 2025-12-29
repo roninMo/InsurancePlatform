@@ -121,17 +121,17 @@ export function App() {
   const selectIconId = useId();
   const selectIcons: SelectItemProps[] = [
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
-    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox" }},
-    { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme" }},
-    { value: 'dropdownArrow', label: "Dropdown Arrow", iconProps: { icon: "DropdownArrow" }},
-    { value: 'envelope', label: "Envelope", iconProps:            { icon: "Envelope" }},
-    { value: 'error', label: "Error", iconProps:                  { icon: "Error" }},
-    { value: 'infoBox', label: "Info box", iconProps:             { icon: "InfoBox" }},
-    { value: 'lightTheme', label: "Light Theme", iconProps:       { icon: "LightTheme" }},
-    { value: 'profile', label: "Profile", iconProps:              { icon: "Profile" }},
-    { value: 'selectArrows', label: "Select Arrows", iconProps:   { icon: "SelectArrows" }},
-    { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort" }},
-    { value: 'system', label: "System", iconProps:                { icon: "System" }},
+    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
+    { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
+    { value: 'dropdownArrow', label: "Dropdown Arrow", iconProps: { icon: "DropdownArrow", placement: 'left' }},
+    { value: 'envelope', label: "Envelope", iconProps:            { icon: "Envelope", placement: 'left' }},
+    { value: 'error', label: "Error", iconProps:                  { icon: "Error", placement: 'left' }},
+    { value: 'infoBox', label: "Info box", iconProps:             { icon: "InfoBox", placement: 'left' }},
+    { value: 'lightTheme', label: "Light Theme", iconProps:       { icon: "LightTheme", placement: 'left' }},
+    { value: 'profile', label: "Profile", iconProps:              { icon: "Profile", placement: 'left' }},
+    { value: 'selectArrows', label: "Select Arrows", iconProps:   { icon: "SelectArrows", placement: 'left' }},
+    { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort", placement: 'left' }},
+    { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
   ];
   const [currentIcon, setCurrentIcon] = useState<SelectItemProps>({ value: '', label: ''});
   const [selectIconError, setSelectIconError] = useState<boolean>(false);
