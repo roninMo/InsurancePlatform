@@ -4,6 +4,7 @@ import { InputMask, useMask } from '@react-input/mask';
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
 import { Icon } from '../../Common/Icons/Icon';
+import { EventHandlers } from '../../Common/Utilities/Utils';
 
 
 export type TextInputTypes = 'text' | 'email' | 'password' | 'phone' | 'creditCard' | 'currency' | 'policyNumber' | 'search';
@@ -18,13 +19,6 @@ interface InputProps {
   value: string;
   placeholder?: string;
   id: string;
-  
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: FocusEvent<HTMLInputElement, Element>) => void;
-  onFocus?: (e: FocusEvent<HTMLInputElement, Element>) => void;
-  onClick?: (e: MouseEvent<HTMLInputElement, Element>) => void;
-  onMouseEnter?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
-  onMouseLeave?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
 
   error?: boolean;
   errorMessage?: string | null;
@@ -43,7 +37,7 @@ export const Input = ({
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, aria, ...props
-}: InputProps) => {
+}: InputProps & EventHandlers) => {
   let maskRef: RefObject<HTMLInputElement> | null = null;
   // const rawValue = value.replace(/\D/g, ''); // To retrieve raw mask values
 
@@ -155,9 +149,9 @@ export const Input = ({
             { error ?
               <Icon variant='Error' styles='mr-3 size-4 text-red-500 dark:text-red-400' /> 
             : 
-              <div onMouseEnter={e => tooltip && tooltipMouseEnter(e)} onMouseOver={e => tooltip && toolTipHover(e)} onMouseLeave={e => tooltip && tooltipMouseLeave(e)} className={`cursor-pointer`}>
+              <InteractiveIcon onMouseEnter={e => tooltip && tooltipMouseEnter(e)} onMouseOver={e => tooltip && toolTipHover(e)} onMouseLeave={e => tooltip && tooltipMouseLeave(e)} className={`cursor-pointer`}>
                 <Icon variant='InfoBox' styles='mr-3 size-4' /> 
-              </div>
+              </InteractiveIcon>
             }
 
             { type == 'currency' ? 
@@ -221,10 +215,12 @@ const SubsequentInputElements = styled.div``;
 const SortSearchResults = styled.div``;
 const CurrencyDropdown = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
-const iconContainerStyles = `grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
+const InteractiveIcon = styled.div`pointer-events: all;`;
+const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
 
 
 // Input themes and error styles
+// TODO: Default theme styles for input element text and border/outline colors
 const getInputClasses = (error: boolean, type: string): string => {
   let classes = `col-start-1 row-start-1 block w-full 
     rounded-md sm:text-sm/6 px-3 py-1.5 text-base 

@@ -16,9 +16,14 @@
     @apply text-slate-600  dark:text-slate-200;
   }
 
+  select {
+    @apply text-slate-800 dark:text-slate-300;
+  }
+
   svg {
     @apply  text-slate-500 dark:text-slate-400;
   }
+
 }
 
 /* Selectors

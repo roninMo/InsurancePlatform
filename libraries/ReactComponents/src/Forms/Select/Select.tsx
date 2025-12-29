@@ -1,9 +1,45 @@
 import { ElSelect, ElSelectedcontent, ElOptions, ElOption } from '@tailwindplus/elements/react';
 import styles from './Select.module.scss';
 import styled from '@emotion/styled';
-import { Icon } from '../../Common/Icons/Icon';
+import { Icon, IconTypes } from '../../Common/Icons/Icon';
+import { ChangeEvent, useState } from 'react';
+import { EventHandlers } from '../../Common/Utilities/Utils';
 
-export const Select = () => {
+export interface SelectItemProps {
+  value: string;
+  label: string;
+  icon?: IconTypes;
+}
+
+export interface SelectProps {
+  name: string;
+  label: string;
+  description?: string;
+  value: SelectItemProps;
+  values: SelectItemProps[];
+  id: string;
+
+  error?: boolean;
+  errorMessage?: string;
+  disabled?: boolean;
+  required?: boolean;
+
+  autoComplete?: string;
+  aria?: string | null;
+}
+
+const selectItems: SelectItemProps[] = [
+  { value: 'light', label: "Light", icon: "LightTheme" },
+  { value: 'dark', label: "Dark", icon: "DarkTheme" },
+  { value: 'system', label: "System", icon: "System" }
+];
+
+export const Select = ({
+  name, label, description, value, values, id,
+  onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
+  error = false, errorMessage, disabled = false, required = false,
+  autoComplete, aria
+}: SelectProps & EventHandlers) => {
 
 
 /*
@@ -24,81 +60,52 @@ export const Select = () => {
   - array of select item objects to pass via props
   
 */
-
-
-  const styles_select = `
-    flex flex-row justify-end items-end gap-2 rounded-md 
-    bg-white dark:bg-slate-800
-    *:bg-white *:dark:bg-slate-800
-    border border-zinc-300 dark:border-white/10 
-    w-max h-max p-2 
-    
-    relative 
-    group 
-    transition-all duration-200 ease-in
-    *:transition-all *:duration-200 *:ease-in
-    
-    overflow-hidden 
-    focus:overflow-visible 
-    
-    *:opacity-0
-    *:focus:opacity-100
-
-    [&_.dont-hide-me]:opacity-100
   
-  `;
-
-  const styles_itemsContainer = `
-    flex flex-col justify-end items-end gap-2 rounded-md 
-  
-  `;
 
   return (
-    <ContainerStyles>
-      <SelectStyles className="">
-        <CurrentlySelected>
-          <span className='dont-hide-me'>
+    <Container>
+      <SelectElement className={`${containerStyles} ${selectStyles} ${transitionStyles} ${visibilityStyles}`}>
+        <CurrentlySelected className={`${currentlySelectedStyles} ${transitionStyles} ${borderStyles}`}>
+          <span>
             Currently Selected Item
           </span>
-          <Icon variant='DropdownArrow' styles='rotate-90 group-focus:rotate-180 size-5 justify-center self-center' />
+          <Icon variant='DropdownArrow' styles='rotate-90 group-focus:rotate-0 size-5 justify-center self-center' />
         </CurrentlySelected>
 
-        <DropdownItems>
-          <div className="absolute shadow-lg -bottom-40 left-0 w-full h-max p-2 bg-white border border-zinc-200 dark:border-white/10  rounded-lg flex flex-col gap-2">
-            <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-              <Icon variant='LightTheme' />
-              <p>Light</p>
-            </span>
 
-            <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-              <Icon variant='DarkTheme' />
-              <p>Dark</p>
-            </span>
-
-            <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-              <Icon variant='System' />
-              <p>System</p>
-            </span>
-          </div>
+        <DropdownItems className={`${dropdownStyles} ${borderStyles}`}>
+          {selectItems.map((item: SelectItemProps) => 
+            <SelectOption 
+              value={item.value} 
+              onChange={e => onChange && onChange(e)}
+              onBlur={e => onBlur && onBlur(e)}
+              onFocus={e => onFocus && onFocus(e)}
+              onClick={e => onClick && onClick(e)}
+              onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
+              onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
+              className={`${selectItemStyles} ${transitionStyles}`}
+            >
+              { item?.icon && <Icon variant={item.icon} /> }
+              <p>{ item.label }</p>
+            </SelectOption>
+          )}
         </DropdownItems>
-
-      </SelectStyles>
-    </ContainerStyles>
+      </SelectElement>
+    </Container>
   );
 }
 
 
+
 // #region Styling
-const ContainerStyles = styled.div``;
-const SelectStyles = styled.select``;
+const Container = styled.div``;
+const SelectElement = styled.button``;
 const CurrentlySelected = styled.div``;
 const DropdownItems = styled.div``;
+const SelectOption = styled.option``;
 const PrecedingSelectItemElements = styled.div``;
 const SubsequentSelectItemElements = styled.div``;
 
-// Select styles
-const selectThemeStyles = ``;
-const selectDropdownStyles = ``;
 
 const getSelectStyles = (error: boolean) => {
   let classes = ``;
@@ -108,6 +115,34 @@ const getSelectStyles = (error: boolean) => {
 
   return classes;
 }
+
+// component styles
+  const containerStyles = `relative group overflow-visible focus:overflow-visible`;
+  const selectStyles = `text-sm bg-white dark:bg-slate-800 *:bg-white *:dark:bg-slate-800`;
+  const currentlySelectedStyles = `currentlySelected flex flex-row items-center gap-2 w-max h-max p-2`;
+  const dropdownStyles = `
+    absolute left-0 mt-1 w-full flex flex-grow flex-col 
+    bg-white dark:bg-slate-700
+  `;
+  const selectItemStyles = `
+    flex flex-row gap-2 items-center p-2 rounded-none 
+    [&_p]:hover:text-slate-200 dark:[&_p]:hover:text-slate-200
+    hover:bg-indigo-500 [&_svg]:hover:text-slate-200
+  `;
+  
+  const transitionStyles = `transition-all duration-200 ease-in *:transition-all *:duration-200 *:ease-in`;
+  const hideStyles = `*:opacity-0 *:focus:opacity-0 [&_.currentlySelected]:opacity-100`;
+  const showStyles = `*:opacity-100 *:focus:opacity-100`;
+  const visibilityStyles = `
+    *:opacity-0 *:focus:opacity-100 [&_.currentlySelected]:opacity-100
+    
+  `;
+
+  const borderStyles = `
+    border shadow-lg rounded-md
+    border-gray-300 dark:border-white/10 
+    focus:border-indigo-600 dark:focus:border-indigo-500 
+  `;
 
 // #endregion
 
