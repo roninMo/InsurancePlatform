@@ -1,15 +1,8 @@
-import { ElSelect, ElSelectedcontent, ElOptions, ElOption } from '@tailwindplus/elements/react';
 import styles from './Select.module.scss';
 import styled from '@emotion/styled';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
-import { ChangeEvent, useState } from 'react';
 import { EventHandlers } from '../../Common/Utilities/Utils';
 
-export interface SelectItemProps {
-  value: string;
-  label: string;
-  icon?: IconTypes;
-}
 
 export interface SelectProps {
   name: string;
@@ -17,6 +10,8 @@ export interface SelectProps {
   description?: string;
   value: SelectItemProps;
   values: SelectItemProps[];
+  onSelect?: (selected: SelectItemProps, index: number) => void;
+  placeholder?: string;
   id: string;
 
   error?: boolean;
@@ -28,69 +23,87 @@ export interface SelectProps {
   aria?: string | null;
 }
 
-const selectItems: SelectItemProps[] = [
-  { value: 'light', label: "Light", icon: "LightTheme" },
-  { value: 'dark', label: "Dark", icon: "DarkTheme" },
-  { value: 'system', label: "System", icon: "System" }
-];
 
 export const Select = ({
-  name, label, description, value, values, id,
+  name, label, description, value, values, onSelect, placeholder, id,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   error = false, errorMessage, disabled = false, required = false,
   autoComplete, aria
-}: SelectProps & EventHandlers) => {
+}: EventHandlers & SelectProps) => {
+  /*
+    Label
 
+    Select(ed) Item
+    Overflow dropdown of items
 
-/*
-  Label
+    Details:
+    - icon(s) and various elements preceding dropdown item text
+    - dropdown item name
+    - subsequent icons at the end of the element
+    - ui scrollbar for navigation
 
-  Select(ed) Item
-  Overflow dropdown of items
+    - input interactivity - styles for the currently selected element
+    - select element settings for configuration
+    - error handling
+    - array of select item objects to pass via props
 
-  Details:
-  - icon(s) and various elements preceding dropdown item text
-  - dropdown item name
-  - subsequent icons at the end of the element
-  - ui scrollbar for navigation
+    - handle building disabled, and disabling multiple values 
+    
+  */
 
-  - input interactivity
-  - select element settings for configuration
-  - error handling
-  - array of select item objects to pass via props
-  
-*/
-  
 
   return (
-    <Container>
-      <SelectElement className={`${containerStyles} ${selectStyles} ${transitionStyles} ${visibilityStyles}`}>
-        <CurrentlySelected className={`${currentlySelectedStyles} ${transitionStyles} ${borderStyles}`}>
-          <span>
-            Currently Selected Item
-          </span>
-          <Icon variant='DropdownArrow' styles='rotate-90 group-focus:rotate-0 size-5 justify-center self-center' />
+    <Container className={`${containerStyles}`}>
+      <Label className={`text-sm font-medium leading-6 block pb-2`}>
+        { label }
+      </Label>
+
+      <StyledSelect name={name} className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-white *:dark:bg-slate-800`}>
+        <CurrentlySelected className={`currently-selected ${currentlySelectedStyles} ${transitionStyles} ${borderStyles} ${getErrorThemes(error)}`}>
+          <span> { value.value ? value.label : placeholder } </span>
+
+          <div className='flex flex-row gap-1 items-center justify-end'>
+            { error && <Icon variant='Error' styles='size-4 text-red-500 dark:text-red-400' />}
+            <Icon variant='SelectArrows' styles={`size-5 rotate-0 group-focus:rotate-180 ${error && 'text-red-500 dark:text-red-400'}`} />
+          </div>
         </CurrentlySelected>
 
-
-        <DropdownItems className={`${dropdownStyles} ${borderStyles}`}>
-          {selectItems.map((item: SelectItemProps) => 
-            <SelectOption 
-              value={item.value} 
-              onChange={e => onChange && onChange(e)}
-              onBlur={e => onBlur && onBlur(e)}
-              onFocus={e => onFocus && onFocus(e)}
-              onClick={e => onClick && onClick(e)}
-              onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
-              onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
-              className={`${selectItemStyles} ${transitionStyles}`}
+        <DropdownItems className={`dropdown-items ${dropdownStyles} ${!disabled ? dropdownScrollStyles : disabledStyles} ${borderStyles} ${borderThemeStyles}`}>
+          {values.map((item: SelectItemProps, index: number) => 
+            <SelectItem 
+              onClick={() => onSelect && onSelect(item, index)} 
+              className={`${itemStyles} ${transitionStyles} 
+              ${item.value == value.value && activeItemStyles}`}
             >
-              { item?.icon && <Icon variant={item.icon} /> }
-              <p>{ item.label }</p>
-            </SelectOption>
+              <div className={`flex flex-row justify-start gap-2 items-center`}>
+                <div className={`icon-placeholder min-h-4 min-w-5`}> 
+                  {item.iconProps && item?.iconProps.placement == 'left' && 
+                    <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
+                  }
+                </div>
+
+                <option value={item.value} id={`${id}-option-${index}`}> 
+                  { item.label } 
+                </option>
+              </div>
+
+              {item.iconProps && item?.iconProps.placement != 'left' && // if the icon placement is on the right (handles default object args)
+                <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
+              }
+            </SelectItem>
+
+
           )}
         </DropdownItems>
-      </SelectElement>
+      </StyledSelect>
+
+      <Description className={`mt-2 text-xs ${error && 'text-red-900 dark:text-red-400'}`}>
+        { error && errorMessage ? 
+          <>{ errorMessage }</>
+        : description &&
+          <>{ description }</>
+        }
+      </Description>
     </Container>
   );
 }
@@ -98,59 +111,91 @@ export const Select = ({
 
 
 // #region Styling
-const Container = styled.div``;
-const SelectElement = styled.button``;
-const CurrentlySelected = styled.div``;
-const DropdownItems = styled.div``;
-const SelectOption = styled.option``;
-const PrecedingSelectItemElements = styled.div``;
-const SubsequentSelectItemElements = styled.div``;
+const containerStyles = `w-full text-sm text-sm`;
+const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
+const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2`;
+const itemStyles = `
+  flex flex-row gap-2 justify-between items-center p-2 pr-4
+  [&_option]:hover:text-slate-200 dark:[&_option]:hover:text-slate-200
+  hover:bg-indigo-500 
+  [&_svg]:hover:text-slate-200
+`;
+const activeItemStyles = `
+  bg-indigo-400 dark:bg-indigo-400 
+  [&_option]:text-slate-300
+  [&_svg]:text-slate-300
+`;
 
+const dropdownStyles = `absolute left-0 mt-1 w-full flex flex-grow flex-col`;
+const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
 
-const getSelectStyles = (error: boolean) => {
-  let classes = ``;
+const transitionStyles = `transition-all duration-200 ease-in *:transition-all *:duration-200 *:ease-in`;
+const visibilityStyles = `*:opacity-0 *:focus:opacity-100 [&_.currently-selected]:opacity-100`;
+const borderStyles = `
+  outline outline-1 -outline-offset-1 
+  shadow-lg rounded-md
+  focus:outline-2 focus:-outline-offset-2 
+`;
+const borderThemeStyles = `
+  outline-gray-300 dark:outline-white/10 
+  focus:outline-indigo-600 dark:focus:outline-indigo-500 
+`;
 
-  if (error) null;
-  else null;
+const errorStyles = `
+  text-red-900 dark:text-red-400 
+  placeholder:text-red-300 dark:placeholder:text-red-400/70
+  
+  outline-red-300 dark:outline-red-500/50 
+  focus:outline-red-600 dark:focus:outline-red-400 
+`;
 
-  return classes;
+const disabledStyles = `hidden overflow-hidden opacity-0`;
+
+const getErrorThemes = (error: boolean) => {
+  if (error) return errorStyles;
+  else return borderThemeStyles;
 }
 
-// component styles
-  const containerStyles = `relative group overflow-visible focus:overflow-visible`;
-  const selectStyles = `text-sm bg-white dark:bg-slate-800 *:bg-white *:dark:bg-slate-800`;
-  const currentlySelectedStyles = `currentlySelected flex flex-row items-center gap-2 w-max h-max p-2`;
-  const dropdownStyles = `
-    absolute left-0 mt-1 w-full flex flex-grow flex-col 
-    bg-white dark:bg-slate-700
-  `;
-  const selectItemStyles = `
-    flex flex-row gap-2 items-center p-2 rounded-none 
-    [&_p]:hover:text-slate-200 dark:[&_p]:hover:text-slate-200
-    hover:bg-indigo-500 [&_svg]:hover:text-slate-200
-  `;
+
+// Component styles
+const Container = styled.div``;
+const Label = styled.label``;
+const Description = styled.p``;
+const StyledSelect = styled.button``;
+const CurrentlySelected = styled.div``;
+const SelectItem = styled.span``;
+const DropdownItems = styled.div`
+  --tw-bg-opacity: 1;
   
-  const transitionStyles = `transition-all duration-200 ease-in *:transition-all *:duration-200 *:ease-in`;
-  const hideStyles = `*:opacity-0 *:focus:opacity-0 [&_.currentlySelected]:opacity-100`;
-  const showStyles = `*:opacity-100 *:focus:opacity-100`;
-  const visibilityStyles = `
-    *:opacity-0 *:focus:opacity-100 [&_.currentlySelected]:opacity-100
+  ::-webkit-scrollbar {
+    width: 0.74rem;
+    background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+  }
     
-  `;
-
-  const borderStyles = `
-    border shadow-lg rounded-md
-    border-gray-300 dark:border-white/10 
-    focus:border-indigo-600 dark:focus:border-indigo-500 
-  `;
-
+  ::-webkit-scrollbar-track {
+    border-bottom-right-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+    background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+  }
+    
+  ::-webkit-scrollbar-thumb {
+    border-radius: 0.375rem;
+    background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
+  }
+`;
 // #endregion
 
 
 
 
-// <svg className="rotate-90 group-focus:rotate-180" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-//   viewBox="0 0 24 24">
-//   <path fill="currentColor"
-//     d="m12 10.8l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.3-.3.7-.3t.7.3l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
-// </svg>
+export interface SelectItemProps {
+  value: string;
+  label: string;
+  iconProps?: SelectItemIconConfig;
+}
+
+export interface SelectItemIconConfig {
+  icon: IconTypes;
+  placement?: 'left' | 'right';
+  styles?: string;
+}

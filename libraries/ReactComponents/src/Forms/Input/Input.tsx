@@ -108,7 +108,7 @@ export const Input = ({
 
   return (
     <TextInput className='input'>
-      <label htmlFor={type} className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{label}</label>
+      <label htmlFor={type} className="text-sm font-medium leading-6 block"> { label } </label>
       <div className="mt-2 grid grid-cols-1">
         <input 
           type={type}
@@ -132,7 +132,7 @@ export const Input = ({
           aria-describedby={aria || autocomplete || ''}
           aria-invalid={error ? "true" : "false"}
 
-          className={getInputClasses(error, type)}
+          className={getInputClasses(error, type, disabled)}
         />
 
         {/* Elements preceding the input */}
@@ -221,7 +221,7 @@ const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 se
 
 // Input themes and error styles
 // TODO: Default theme styles for input element text and border/outline colors
-const getInputClasses = (error: boolean, type: string): string => {
+const getInputClasses = (error: boolean, type: string, disabled?: boolean): string => {
   let classes = `col-start-1 row-start-1 block w-full 
     rounded-md sm:text-sm/6 px-3 py-1.5 text-base 
     outline outline-1 -outline-offset-1 
@@ -233,7 +233,9 @@ const getInputClasses = (error: boolean, type: string): string => {
   if (type == 'email' || type == 'policyNumber') classes += ` pl-9`; 
 
   // Static themes for default/error display
-  if (error) {
+  if (disabled) {
+    classes += getDisabledThemes();
+  } else if (error) {
     classes += getErrorThemes();
   } else {
     classes += ` 
@@ -271,6 +273,15 @@ const getDropdownClasses = (error: boolean): string => {
   }
 
   return classes;
+}
+
+const getDisabledThemes = (): string => {
+  return `
+    dark:bg-gray-600 dark:*:bg-gray-600
+    placeholder:text-slate-500 dark:placeholder:text-slate-400 
+    text-gray-500 dark:text-gray-400 
+    outline-gray-400 dark:outline-white/10 
+  `;
 }
 
 const getErrorThemes = (): string => {

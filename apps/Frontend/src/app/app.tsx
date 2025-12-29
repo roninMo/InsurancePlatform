@@ -1,4 +1,4 @@
-import { ChangeEvent, createContext, useEffect, useId, useState } from 'react';
+import { ChangeEvent, createContext, Dispatch, SetStateAction, useEffect, useId, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 
 import { UserTokenInformation } from '@Project/Classes';
@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, Select } from '@Project/ReactComponents';
+import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, Select, SelectItemProps } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div`
@@ -101,60 +101,60 @@ export function App() {
   }
   // #endregion
 
-  // #region Text Input
+
+  // #region Input Elements
+  // Input
   const InputId = useId();
   const [input, setInput] = useState<string>("");
-  const InputChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e?.target?.value;
-    setInput(newValue);
+  const InputChanged = (e: ChangeEvent<HTMLInputElement>) => setInput(e?.target?.value);
+  const [inputError, SetInputError] = useState<boolean>(false);
+  const [inputErrorMessage, SetInputErrorMessage] = useState<string>();
 
-    console.log({Event: e, newValue});
-  }
-  // #endregion
-
-  // #region Error Toggling
-  const [error, setError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const toggleError = (e: any) => {
-    setError(!error); 
-    setErrorMessage("Invalid text."); 
-    
-    console.log('set error to ', !error);
-  }
-  // #endregion
-
-  // Input elements
-  const [email, setEmail] = useState<string>("");
+  // Email
   const emailId = useId();
+  const [email, setEmail] = useState<string>("");
   const emailChanged = (e: ChangeEvent<HTMLInputElement>) => setEmail(e?.target?.value);
-  
-  
-  const containerStyles = `relative group overflow-visible focus:overflow-visible`;
-  const selectStyles = `text-sm bg-white dark:bg-slate-800 *:bg-white *:dark:bg-slate-800`;
-  const currentlySelectedStyles = `currentlySelected flex flex-row items-center gap-2 w-max h-max p-2`;
-  const dropdownStyles = `
-    absolute left-0 mt-1 w-full flex flex-grow flex-col 
-    bg-white dark:bg-slate-700
-  `;
-  const selectItemStyles = `
-    flex flex-row gap-2 items-center p-2 rounded-none 
-    [&_p]:hover:text-slate-200 dark:[&_p]:hover:text-slate-200
-    hover:bg-indigo-500 [&_svg]:hover:text-slate-200
-  `;
-  
-  const transitionStyles = `transition-all duration-200 ease-in *:transition-all *:duration-200 *:ease-in`;
-  const hideStyles = `*:opacity-0 *:focus:opacity-0 [&_.currentlySelected]:opacity-100`;
-  const showStyles = `*:opacity-100 *:focus:opacity-100`;
-  const visibilityStyles = `
-    *:opacity-0 *:focus:opacity-100 [&_.currentlySelected]:opacity-100
-    
-  `;
+  const [emailError, setEmailError] = useState<boolean>(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>();
 
-  const borderStyles = `
-    border shadow-lg rounded-md
-    border-gray-300 dark:border-white/10 
-    focus:border-indigo-600 dark:focus:border-indigo-500 
-  `;
+  // SelectIcons
+  const selectIconId = useId();
+  const selectIcons: SelectItemProps[] = [
+    { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
+    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox" }},
+    { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme" }},
+    { value: 'dropdownArrow', label: "Dropdown Arrow", iconProps: { icon: "DropdownArrow" }},
+    { value: 'envelope', label: "Envelope", iconProps:            { icon: "Envelope" }},
+    { value: 'error', label: "Error", iconProps:                  { icon: "Error" }},
+    { value: 'infoBox', label: "Info box", iconProps:             { icon: "InfoBox" }},
+    { value: 'lightTheme', label: "Light Theme", iconProps:       { icon: "LightTheme" }},
+    { value: 'profile', label: "Profile", iconProps:              { icon: "Profile" }},
+    { value: 'selectArrows', label: "Select Arrows", iconProps:   { icon: "SelectArrows" }},
+    { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort" }},
+    { value: 'system', label: "System", iconProps:                { icon: "System" }},
+  ];
+  const [currentIcon, setCurrentIcon] = useState<SelectItemProps>({ value: '', label: ''});
+  const [selectIconError, setSelectIconError] = useState<boolean>(false);
+  const [selectIconErrorMessage, setSelectIconErrorMessage] = useState<string>();
+  const selectIconChanged = (selected: SelectItemProps, index: number) => {
+    setCurrentIcon(selected);
+    console.log('select: new value: ', {currentIcon, index, selectIcons});
+  }
+
+
+  // #endregion
+
+
+
+  const toggleError = (setState: Dispatch<SetStateAction<boolean>>, setMessageState: Dispatch<SetStateAction<string | undefined>>, errorState: boolean, errorMessage?: string) => {
+    if (!setState) return;
+
+    setState(errorState);
+    setMessageState(errorMessage);
+    console.log('toggle error: ', {errorState, errorMessage, setStates: {setState, setMessageState}});
+  }
+  // #endregion
+
 
   return (
     <AppSpacing className={`bg-white dark:bg-gray-800`}>
@@ -216,7 +216,7 @@ export function App() {
               </div>
 
               <div className='col-span-12 mt-2'>
-                <Button displayText="Toggle Error" onClick={toggleError} />
+                <Button displayText="Toggle Error" onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, inputError ? 'invalid text' : undefined)} />
               </div>
 
 
@@ -224,8 +224,14 @@ export function App() {
                 <h2 className='col-span-12 pt-2 pb-2'>Input Element</h2>
                 <div className='col-span-4 pb-2'>
                   <Input 
-                    { ...InputProps_Email } value={email}id={emailId}onChange={emailChanged}
-                    error={error} errorMessage={errorMessage} required={false} disabled={false}
+                    { ...InputProps_Email } 
+                    value={email}
+                    id={emailId}
+                    onChange={emailChanged}
+                    error={emailError} 
+                    errorMessage={emailErrorMessage} 
+                    required={false} 
+                    disabled={true}
                   />
                 </div>
                 <div className='col-span-8'></div>
@@ -237,92 +243,21 @@ export function App() {
                 <div className='col-span-4 pb-2'>
                   
                 <div className='col-span-3 flex flex-row items-center pt-2 pb-4'>
-                  <SelectElement className={`${containerStyles} ${selectStyles} ${transitionStyles} ${visibilityStyles}`}>
-                    <CurrentlySelected className={`${currentlySelectedStyles} ${transitionStyles} ${borderStyles}`}>
-                      <span>
-                        Currently Selected Item
-                      </span>
-                      <Icon variant='DropdownArrow' styles='rotate-90 group-focus:rotate-0 size-5 justify-center self-center' />
-                    </CurrentlySelected>
-            
-            
-                    <DropdownItems className={`${dropdownStyles} ${borderStyles} rounded-b-md
-                      bg-white dark:bg-slate-700
-                      
-                    `}>
-                      <span className={`${selectItemStyles} ${transitionStyles}`}>
-                        <Icon variant='LightTheme' />
-                        <p>Light</p>
-                      </span>
-            
-                      <span className={`${selectItemStyles} ${transitionStyles}`}>
-                        <Icon variant='DarkTheme' />
-                        <p>Dark</p>
-                      </span>
-            
-                      <span className={`${selectItemStyles} ${transitionStyles}`}>
-                        <Icon variant='System' />
-                        <p>System</p>
-                      </span>
-                    </DropdownItems>
-                  </SelectElement>
-                  
+                  <Select 
+                    name="selectIcons"
+                    label="Selected Svgs"
+                    description="A list of the svgs currently available for the project."
+                    value={currentIcon}
+                    values={selectIcons}
+                    onSelect={selectIconChanged}
+                    id={selectIconId}
+                    placeholder='Select a value'
 
-
-
-                {false && 
-                    <button className="
-                      flex flex-row justify-end items-end gap-2 rounded-md 
-                      bg-white dark:bg-slate-800
-                      *:bg-white *:dark:bg-slate-800
-                      border border-zinc-300 dark:border-white/10 
-                      w-max h-max p-2 
-                      
-                      relative 
-                      group 
-                      transition-all duration-200 ease-in
-                      *:transition-all *:duration-200 *:ease-in
-                      
-                      overflow-hidden 
-                      focus:overflow-visible 
-                      
-                      *:opacity-0
-                      *:focus:opacity-100
-
-                      [&_.dont-hide-me]:opacity-100
-                      "
-                    >
-                      
-
-                      <span className='dont-hide-me'>
-                        Dropdowngfdfsgds
-                      </span>
-                      <svg className="rotate-90 group-focus:rotate-180" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                        viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                          d="m12 10.8l-3.9 3.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.6-4.6q.3-.3.7-.3t.7.3l4.6 4.6q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275z" />
-                      </svg>
-
-                      {/* Dropdown items */}
-                      <div className="absolute shadow-lg -bottom-40 left-0 w-full h-max p-2 bg-white border border-zinc-200 dark:border-white/10  rounded-lg flex flex-col gap-2">
-                        <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                          <Icon variant='LightTheme' />
-                          <p>Light</p>
-                        </span>
-
-                        <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                          <Icon variant='DarkTheme' />
-                          <p>Dark</p>
-                        </span>
-
-                        <span className="flex flex-row gap-2 items-center hover:bg-zinc-100 p-2 rounded-lg">
-                          <Icon variant='System' />
-                          <p>System</p>
-                        </span>
-
-                      </div>
-                    </button>
-                }
+                    error={selectIconError}
+                    errorMessage={selectIconErrorMessage}
+                    disabled={false}
+                    required={false}
+                  />
               </div>
 
 
