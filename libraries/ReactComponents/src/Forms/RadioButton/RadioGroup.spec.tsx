@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import RadioButton from './RadioButton';
+import RadioButton from './RadioGroup';
 
 describe('RadioButton', () => {
   it('should render successfully', () => {

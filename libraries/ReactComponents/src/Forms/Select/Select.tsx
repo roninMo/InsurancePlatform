@@ -69,6 +69,7 @@ export const Select = ({
               styles={transitionStyles}
               currentSelectValue={value}
               id={id}
+              key={`${id}-${index}-${item.value}`}
             />
           )}
         </DropdownItems>
@@ -88,7 +89,7 @@ export const Select = ({
 
 
 // #region Styling
-const containerStyles = `w-full text-sm text-sm`;
+const containerStyles = `w-full text-sm`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
 const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2`;
 

@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, MouseEvent } from "react";
+import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction } from "react";
 
 
 export interface EventHandlers {
@@ -8,4 +8,5 @@ export interface EventHandlers {
   onClick?: (e: MouseEvent<HTMLInputElement, Element>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
+  adjustValue?: (setState: Dispatch<SetStateAction<any>>) => void;
 }

@@ -40,6 +40,7 @@ export const Input = ({
 }: InputProps & EventHandlers) => {
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
   
+  // #region Input Masking
   // const rawMaskValue = value.replace(/\D/g, ''); // To retrieve raw mask values
   let phoneMaskRef: RefObject<HTMLInputElement> = useMask({
     mask: '(___) ___-____', // '+0 (___) ___-____'
@@ -63,6 +64,7 @@ export const Input = ({
     if (type == 'policyNumber') return policyNumberMaskRef;
     return undefined
   }
+  // #endregion
 
 
   // placholder logic

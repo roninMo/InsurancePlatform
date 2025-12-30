@@ -32,6 +32,7 @@ export const SelectItem = ({ item, index, onSelect, styles, currentSelectValue, 
       onClick={() => onSelect && onSelect(item, index)} 
       className={`${itemStyles} ${styles} 
       ${item.value == currentSelectValue.value && activeItemStyles}`}
+      id={`${id}-${item.value}`}
     >
       <LeftHandSide className={`flex flex-row justify-start gap-2 items-center`}>
         <div className={`icon-placeholder min-h-4 min-w-5`}> 
@@ -65,6 +66,10 @@ const activeItemStyles = `
   [&_option]:text-slate-300
   [&_svg]:text-slate-300
 `;
+
+// todo: try faded with borders 
+// color bg-indigo-600/10
+// border: bg-indigo-500
 
 const Container = styled.span``;
 const LeftHandSide = styled.div``;

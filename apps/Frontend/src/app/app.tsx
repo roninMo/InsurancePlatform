@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioButton, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
+import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioButtonProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div`
@@ -158,12 +158,12 @@ export function App() {
     {
       value: 'peanutButterJelly',
       label: 'Peanut butter and jelly',
-      description: 'a classic American sandwich with peanut butter and fruit preserves (jelly or jam)'
+      description: 'A classic American sandwich with peanut butter and fruit preserves (jelly or jam)'
     },
     {
       value: 'ramen',
       label: 'Ramen Soup',
-      description: 'a popular Japanese noodle soup featuring springy wheat noodles in a rich, savory broth of soy sauce and miso, topped with chashu, eggs, nori, and green onions'
+      description: 'A popular Japanese noodle soup featuring springy wheat noodles in a rich, savory broth of soy sauce and miso, topped with chashu, eggs, nori, and green onions'
     },
     {
       value: 'broccoliPotatoesAndChicken',
@@ -171,7 +171,7 @@ export function App() {
       description: 'A deliciously crafted meal stir fried to perfection.'
     },
   ];
-  const favoriteFoods2: RadioItem[] = favoriteFoods.map(item => { return { value: item.value, label: item.label, disabled: item.disabled}});
+  const favoriteFoodsNoDescriptions: RadioItem[] = favoriteFoods.map(item => { return { value: item.value, label: item.label, disabled: item.disabled }});
   const [favoriteFood, setFavoriteFood] = useState<RadioItem>({ value: '', label: ''});
   const [radioItemError, setRadioItemError] = useState<boolean>(false);
   const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
@@ -195,6 +195,23 @@ export function App() {
   }
   // #endregion
 
+  const radioButtonProps: RadioButtonProps = {
+    variant: 'default',
+    id: radioButtonId,
+    name: 'radioButton',
+    label: 'Favorite Foods',
+    description: 'What is your favorite food?',
+
+    radioItems: favoriteFoods,
+    value: favoriteFood,
+    onSelect: selectedFavoriteFood,
+    defaultValue: undefined,
+
+    error: radioItemError,
+    errorMessage: radioItemErrorMessage,
+    disabled: false,
+    required: false,
+  };
 
   return (
     <AppSpacing className={`bg-white dark:bg-gray-800`}>
@@ -241,126 +258,156 @@ export function App() {
 
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
-            <MainContent className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4'>
+          <MainContent className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4'>
 
+            {/* First Section for Input component logic */}
+            <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
+              <div className='col-span-4 md:col-span-4'>
+                <Input 
+                  type={inputType.value as TextInputTypes}
+                  name="Input"
+                  label="Input"
+                  description=""
+                  value={input}
+                  placeholder="Input text..."
+                  id={inputId}
+                  onChange={InputChanged}
+                  error={inputError} 
+                  errorMessage={inputErrorMessage} 
+                  disabled={disabled}
+                />
+              </div>
+
+              <div className='col-span-3 pt-8 ml-2'>
+                <Button 
+                  displayText={inputError ? 'Disable Error' : 'Enable Error'} 
+                  onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, !inputError ? 'invalid text' : undefined)} 
+                />
+                <Button 
+                  displayText={disabled ? 'Enable' : 'Disable'} 
+                  onClick={(e: any) => toggleDisabled()} 
+                  additionalStyles='ml-4'
+                />
+              </div>
+
+              <div className='col-span-3 px-4'>
+                <Select 
+                  name="inputType"
+                  label="Input Type"
+                  value={inputType}
+                  values={inputTypes}
+                  onSelect={InputTypeChanged}
+                  id={inputTypeId}
+                />
+              </div>
               
-              <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
-                <div className='col-span-4 md:col-span-4'>
-                  <Input 
-                    type={inputType.value as TextInputTypes}
-                    name="Input"
-                    label="Input"
-                    description=""
-                    value={input}
-                    placeholder="Input text..."
-                    id={inputId}
-                    onChange={InputChanged}
-                    error={inputError} 
-                    errorMessage={inputErrorMessage} 
-                    disabled={disabled}
-                  />
-                </div>
+            </div>
 
-                <div className='col-span-3 pt-8 ml-2'>
-                  <Button 
-                    displayText={inputError ? 'Disable Error' : 'Enable Error'} 
-                    onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, !inputError ? 'invalid text' : undefined)} 
-                  />
-                  <Button 
-                    displayText={disabled ? 'Enable' : 'Disable'} 
-                    onClick={(e: any) => toggleDisabled()} 
-                    additionalStyles='ml-4'
-                  />
-                </div>
 
-                <div className='col-span-3 px-4'>
-                  <Select 
-                    name="inputType"
-                    label="Input Type"
-                    value={inputType}
-                    values={inputTypes}
-                    onSelect={InputTypeChanged}
-                    id={inputTypeId}
-                  />
-                </div>
-                
+            <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 bg-slate-900 rounded-md'>
+              <div className='col-span-12 pb-2'>
+                <h2>Custom React Input Components</h2>
               </div>
 
+              {/* Input and Select */}
+              <div className='col-span-4 pb-8'>
+                <Input 
+                  { ...InputProps_Email } 
+                  value={email}
+                  id={emailId}
+                  onChange={emailChanged}
+                  error={emailError} 
+                  errorMessage={emailErrorMessage} 
+                  required={false} 
+                  disabled={false}
+                />
+              </div>
 
-              <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 bg-slate-900 rounded-md'>
-                <div className='col-span-12 pb-2'>
-                  <h2>Custom React Input Components</h2>
-                </div>
+              <div className='col-span-4 pb-8'>
+                <Select 
+                  name="selectIcons"
+                  label="Selected Svgs"
+                  description="A list of the svgs currently available for the project."
+                  value={currentIcon}
+                  values={selectIcons}
+                  onSelect={selectIconChanged}
+                  id={selectIconId}
+                  placeholder='Select a value'
 
-                <div className='col-span-4 pb-8'>
-                  <Input 
-                    { ...InputProps_Email } 
-                    value={email}
-                    id={emailId}
-                    onChange={emailChanged}
-                    error={emailError} 
-                    errorMessage={emailErrorMessage} 
-                    required={false} 
-                    disabled={false}
-                  />
-                </div>
-                
-                <div className='col-span-12 p-2' />
-                <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-                <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-                <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-                <div className='col-span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
-                <div className='col-span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
+                  error={selectIconError}
+                  errorMessage={selectIconErrorMessage}
+                  disabled={false}
+                  required={false}
+                />
+              </div>
+              
+              {/* Content Layout */}
+              <div className='col-span-12 p-2' />
+              <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='col-span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='col-span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
 
+              <div className='col-span-12 p-2 bg-slate-800 rounded-md'>
+                <span className="flex items-center gap-3 text-sm">
+                  <input type="radio" name="pricing-plan" value="startup" checked className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 dark:border-white/10 dark:bg-white/5 dark:checked:border-indigo-500 dark:checked:bg-indigo-500 dark:focus-visible:outline-indigo-500 dark:disabled:border-white/5 dark:disabled:bg-white/10 dark:disabled:before:bg-white/20 forced-colors:appearance-auto forced-colors:before:hidden" />
+                  <span className="font-medium text-gray-900 group-has-checked:text-indigo-900 dark:text-white dark:group-has-checked:text-indigo-300">Startup</span>
+                </span>
 
-                
+              </div>
 
-
-              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'></div>
-                  
-                <div className='col-span-2 p-2'>
-                  <Select 
-                    name="selectIcons"
-                    label="Selected Svgs"
-                    description="A list of the svgs currently available for the project."
-                    value={currentIcon}
-                    values={selectIcons}
-                    onSelect={selectIconChanged}
-                    id={selectIconId}
-                    placeholder='Select a value'
-
-                    error={selectIconError}
-                    errorMessage={selectIconErrorMessage}
-                    disabled={false}
-                    required={false}
-                  />
-                </div>
-
+              {/* Radio Buttons */}
+              {/* Default */}
+              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
                 <div className='col-span-4 p-2 pb-4 bg-slate-800 rounded-md'>
-                  <RadioButton 
-                    variant='default'
-                    id={radioButtonId}
-                    name='radioButton'
-                    label='Favorite Foods'
-                    description='What is your favorite food?'
-
-                    values={favoriteFoods}
-                    value={favoriteFood}
-                    onSelect={selectedFavoriteFood}
-                    defaultValue={undefined}
-
-                    error={radioItemError}
-                    errorMessage={radioItemErrorMessage}
-                    disabled={false}
-                    required={false}
+                  <RadioGroup 
+                    {...radioButtonProps} 
+                    variant='column' 
+                    radioItems={favoriteFoodsNoDescriptions}
                   />
                 </div>
-
-
                 <div className='col-span-8'></div>
+
+                
+                <div className='col-span-6 p-2 pb-4 bg-slate-800 rounded-md'>
+                  <RadioGroup 
+                    {...radioButtonProps} 
+                    variant='column' 
+                    radioItems={favoriteFoods}
+                    label={undefined}
+                    description={undefined}
+                  />
+                </div>
+                
+                <div className='col-span-6 p-2 pb-4 bg-slate-800 rounded-md'>
+                  <RadioGroup 
+                    {...radioButtonProps} 
+                    variant='columnInline' 
+                    radioItems={favoriteFoods}
+                    label={undefined}
+                    description={undefined}
+                  />
+                </div>
+                
               </div>
 
-            </MainContent>
+
+              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
+                <div className='col-span-1' />
+                <div className='col-span-4 p-2 pb-4 bg-slate-800 rounded-md'>
+                  <RadioGroup {...radioButtonProps} variant='list' />
+                </div>
+                
+                <div className='col-span-2' />
+                <div className='col-span-4 p-2 pb-4 bg-slate-800 rounded-md'>
+                  <RadioGroup {...radioButtonProps} variant='table' />
+                </div>
+                <div className='col-span-1' />
+              </div>
+
+            </div>
+          </MainContent>
 
 
             {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
