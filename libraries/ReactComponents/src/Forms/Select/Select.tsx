@@ -2,15 +2,16 @@ import styles from './Select.module.scss';
 import styled from '@emotion/styled';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 import { EventHandlers } from '../../Common/Utilities/Utils';
+import { SelectItem, SelectItemValues } from './SelectItem/SelectItem';
 
 
 export interface SelectProps {
   name: string;
   label: string;
   description?: string;
-  value: SelectItemProps;
-  values: SelectItemProps[];
-  onSelect?: (selected: SelectItemProps, index: number) => void;
+  value: SelectItemValues;
+  values: SelectItemValues[];
+  onSelect?: (selected: SelectItemValues, index: number) => void;
   placeholder?: string;
   id: string;
 
@@ -26,11 +27,13 @@ export interface SelectProps {
 export const Select = ({
   name, label, description, value, values, onSelect, placeholder, id,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  error = false, errorMessage, disabled = false, required = false, aria
-}: EventHandlers & SelectProps) => {
+  error = false, errorMessage, disabled = false, required = false, aria, ...props
+}: SelectProps & EventHandlers) => {
+  // TODO: option to unfocus after the user has selected a value
+
   return (
     <Container className={`${containerStyles}`}>
-      <Label className={`text-sm font-medium leading-6 block pb-2`}>
+      <Label className={`text-sm font-medium leading-6 block pb-2 text-slate-800  dark:text-slate-300 cursor-text`}>
         { label }
       </Label>
 
@@ -41,6 +44,7 @@ export const Select = ({
         onFocus={e => onFocus && onFocus(e)}
         onClick={e => onClick && onClick(e)}
         aria-describedby={aria || undefined}
+        { ...props }
         className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-white *:dark:bg-slate-800`}
       >
         <CurrentlySelected className={`currently-selected ${currentlySelectedStyles} ${transitionStyles} ${borderStyles} ${getErrorThemes(error)}`}>
@@ -57,30 +61,15 @@ export const Select = ({
           onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
           className={`dropdown-items ${dropdownStyles} ${!disabled ? dropdownScrollStyles : disabledStyles} ${borderStyles} ${borderThemeStyles}`}
         >
-          {values.map((item: SelectItemProps, index: number) => 
+          {values.map((item: SelectItemValues, index: number) => 
             <SelectItem 
-              onClick={() => onSelect && onSelect(item, index)} 
-              className={`${itemStyles} ${transitionStyles} 
-              ${item.value == value.value && activeItemStyles}`}
-            >
-              <div className={`flex flex-row justify-start gap-2 items-center`}>
-                <div className={`icon-placeholder min-h-4 min-w-5`}> 
-                  {item.iconProps && item?.iconProps.placement == 'left' && 
-                    <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
-                  }
-                </div>
-
-                <option value={item.value} id={`${id}-option-${index}`}> 
-                  { item.label } 
-                </option>
-              </div>
-
-              {item.iconProps && item?.iconProps.placement != 'left' && // if the icon placement is on the right (handles default object args)
-                <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
-              }
-            </SelectItem>
-
-
+              item={item}
+              index={index}
+              onSelect={onSelect}
+              styles={transitionStyles}
+              currentSelectValue={value}
+              id={id}
+            />
           )}
         </DropdownItems>
       </StyledSelect>
@@ -102,17 +91,6 @@ export const Select = ({
 const containerStyles = `w-full text-sm text-sm`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
 const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2`;
-const itemStyles = `
-  flex flex-row gap-2 justify-between items-center p-2 pr-4
-  [&_option]:hover:text-slate-200 dark:[&_option]:hover:text-slate-200
-  hover:bg-indigo-500 
-  [&_svg]:hover:text-slate-200
-`;
-const activeItemStyles = `
-  bg-indigo-400 dark:bg-indigo-400 
-  [&_option]:text-slate-300
-  [&_svg]:text-slate-300
-`;
 
 const dropdownStyles = `absolute left-0 mt-1 w-full flex flex-grow flex-col`;
 const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
@@ -151,7 +129,7 @@ const Label = styled.label``;
 const Description = styled.p``;
 const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
-const SelectItem = styled.span``;
+const StyledSelectItem = styled.span``;
 const DropdownItems = styled.div`
   --tw-bg-opacity: 1;
   
@@ -172,18 +150,3 @@ const DropdownItems = styled.div`
   }
 `;
 // #endregion
-
-
-
-
-export interface SelectItemProps {
-  value: string;
-  label: string;
-  iconProps?: SelectItemIconConfig;
-}
-
-export interface SelectItemIconConfig {
-  icon: IconTypes;
-  placement?: 'left' | 'right';
-  styles?: string;
-}

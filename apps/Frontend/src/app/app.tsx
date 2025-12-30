@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, Select, SelectItemProps } from '@Project/ReactComponents';
+import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioButton, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div`
@@ -104,11 +104,18 @@ export function App() {
 
   // #region Input Elements
   // Input
-  const InputId = useId();
+  const inputId = useId();
   const [input, setInput] = useState<string>("");
   const InputChanged = (e: ChangeEvent<HTMLInputElement>) => setInput(e?.target?.value);
   const [inputError, SetInputError] = useState<boolean>(false);
   const [inputErrorMessage, SetInputErrorMessage] = useState<string>();
+
+  const inputTypeId = useId();
+  const [inputType, setInputType] = useState<SelectItemValues>({ value: 'policyNumber', label: 'Select an input type...'});
+  const types: TextInputTypes[] = ['text', 'email', 'password', 'phone', 'creditCard', 'currency', 'policyNumber', 'search'];
+  const inputTypes: SelectItemValues[] = types.map(type => ({ value: type, label: type }));
+  const InputTypeChanged = (selected: SelectItemValues, index: number) => setInputType(selected);
+
 
   // Email
   const emailId = useId();
@@ -119,7 +126,7 @@ export function App() {
 
   // SelectIcons
   const selectIconId = useId();
-  const selectIcons: SelectItemProps[] = [
+  const selectIcons: SelectItemValues[] = [
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
     { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
     { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
@@ -133,25 +140,58 @@ export function App() {
     { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort", placement: 'left' }},
     { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
   ];
-  const [currentIcon, setCurrentIcon] = useState<SelectItemProps>({ value: '', label: ''});
+  const [currentIcon, setCurrentIcon] = useState<SelectItemValues>({ value: '', label: ''});
   const [selectIconError, setSelectIconError] = useState<boolean>(false);
   const [selectIconErrorMessage, setSelectIconErrorMessage] = useState<string>();
-  const selectIconChanged = (selected: SelectItemProps, index: number) => {
+  const selectIconChanged = (selected: SelectItemValues, index: number) => {
     setCurrentIcon(selected);
-    console.log('select: new value: ', {currentIcon, index, selectIcons});
+    // console.log('select: new value: ', {currentIcon, index, selectIcons});
+  }
+
+  // Radio buttons
+  const radioButtonId = useId();
+  const favoriteFoods: RadioItem[] = [
+    {
+      value: 'none',
+      label: 'None',
+    },
+    {
+      value: 'peanutButterJelly',
+      label: 'Peanut butter and jelly',
+      description: 'a classic American sandwich with peanut butter and fruit preserves (jelly or jam)'
+    },
+    {
+      value: 'ramen',
+      label: 'Ramen Soup',
+      description: 'a popular Japanese noodle soup featuring springy wheat noodles in a rich, savory broth of soy sauce and miso, topped with chashu, eggs, nori, and green onions'
+    },
+    {
+      value: 'broccoliPotatoesAndChicken',
+      label: 'Broccoli, potatoes, and chicken',
+      description: 'A deliciously crafted meal stir fried to perfection.'
+    },
+  ];
+  const favoriteFoods2: RadioItem[] = favoriteFoods.map(item => { return { value: item.value, label: item.label, disabled: item.disabled}});
+  const [favoriteFood, setFavoriteFood] = useState<RadioItem>({ value: '', label: ''});
+  const [radioItemError, setRadioItemError] = useState<boolean>(false);
+  const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
+  const selectedFavoriteFood = (selected: RadioItem, index: number, currentValue: RadioItem) => {
+    setFavoriteFood(selected);
+    console.log(`radioButton`, {selected, index, currentValue});
   }
 
 
   // #endregion
 
 
-
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const toggleDisabled = () => setDisabled(!disabled);
   const toggleError = (setState: Dispatch<SetStateAction<boolean>>, setMessageState: Dispatch<SetStateAction<string | undefined>>, errorState: boolean, errorMessage?: string) => {
     if (!setState) return;
 
     setState(errorState);
     setMessageState(errorMessage);
-    console.log('toggle error: ', {errorState, errorMessage, setStates: {setState, setMessageState}});
+    // console.log('toggle error: ', {errorState, errorMessage, setStates: {setState, setMessageState}});
   }
   // #endregion
 
@@ -201,28 +241,58 @@ export function App() {
 
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
-            <MainContent className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
-              <div className='col-span-4 md:col-span-6'>
-                <Input 
-                  type="policyNumber"
-                  name="Input"
-                  label="Input"
-                  description=""
-                  value={input}
-                  placeholder="Input text..."
-                  id={InputId}
-                  onChange={InputChanged}
-                />
+            <MainContent className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4'>
+
+              
+              <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
+                <div className='col-span-4 md:col-span-4'>
+                  <Input 
+                    type={inputType.value as TextInputTypes}
+                    name="Input"
+                    label="Input"
+                    description=""
+                    value={input}
+                    placeholder="Input text..."
+                    id={inputId}
+                    onChange={InputChanged}
+                    error={inputError} 
+                    errorMessage={inputErrorMessage} 
+                    disabled={disabled}
+                  />
+                </div>
+
+                <div className='col-span-3 pt-8 ml-2'>
+                  <Button 
+                    displayText={inputError ? 'Disable Error' : 'Enable Error'} 
+                    onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, !inputError ? 'invalid text' : undefined)} 
+                  />
+                  <Button 
+                    displayText={disabled ? 'Enable' : 'Disable'} 
+                    onClick={(e: any) => toggleDisabled()} 
+                    additionalStyles='ml-4'
+                  />
+                </div>
+
+                <div className='col-span-3 px-4'>
+                  <Select 
+                    name="inputType"
+                    label="Input Type"
+                    value={inputType}
+                    values={inputTypes}
+                    onSelect={InputTypeChanged}
+                    id={inputTypeId}
+                  />
+                </div>
+                
               </div>
 
-              <div className='col-span-12 mt-2'>
-                <Button displayText="Toggle Error" onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, inputError ? 'invalid text' : undefined)} />
-              </div>
 
+              <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 bg-slate-900 rounded-md'>
+                <div className='col-span-12 pb-2'>
+                  <h2>Custom React Input Components</h2>
+                </div>
 
-              <div className='col-span-12 mt-2 pt-4 grid grid-cols-12 gap-x-8'>
-                <h2 className='col-span-12 pt-2 pb-2'>Input Element</h2>
-                <div className='col-span-4 pb-2'>
+                <div className='col-span-4 pb-8'>
                   <Input 
                     { ...InputProps_Email } 
                     value={email}
@@ -231,18 +301,24 @@ export function App() {
                     error={emailError} 
                     errorMessage={emailErrorMessage} 
                     required={false} 
-                    disabled={true}
+                    disabled={false}
                   />
                 </div>
-                <div className='col-span-8'></div>
-              </div>
+                
+                <div className='col-span-12 p-2' />
+                <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+                <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+                <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+                <div className='col-span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
+                <div className='col-span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
 
 
-              <div className='col-span-12 mt-2 pt-4 grid grid-cols-12 gap-x-8'>
-                <h2 className='col-span-12'>Select Element</h2>
-                <div className='col-span-4 pb-2'>
+                
+
+
+              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'></div>
                   
-                <div className='col-span-3 flex flex-row items-center pt-2 pb-4'>
+                <div className='col-span-2 p-2'>
                   <Select 
                     name="selectIcons"
                     label="Selected Svgs"
@@ -258,10 +334,29 @@ export function App() {
                     disabled={false}
                     required={false}
                   />
-              </div>
-
-
                 </div>
+
+                <div className='col-span-4 p-2 pb-4 bg-slate-800 rounded-md'>
+                  <RadioButton 
+                    variant='default'
+                    id={radioButtonId}
+                    name='radioButton'
+                    label='Favorite Foods'
+                    description='What is your favorite food?'
+
+                    values={favoriteFoods}
+                    value={favoriteFood}
+                    onSelect={selectedFavoriteFood}
+                    defaultValue={undefined}
+
+                    error={radioItemError}
+                    errorMessage={radioItemErrorMessage}
+                    disabled={false}
+                    required={false}
+                  />
+                </div>
+
+
                 <div className='col-span-8'></div>
               </div>
 

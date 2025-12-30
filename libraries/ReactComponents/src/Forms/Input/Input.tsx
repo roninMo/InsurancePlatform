@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, MouseEvent, RefObject, useRef, useState } from 'react';
+import { ChangeEvent, FocusEvent, MouseEvent, RefObject, useEffect, useRef, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
@@ -38,33 +38,35 @@ export const Input = ({
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, aria, ...props
 }: InputProps & EventHandlers) => {
-  let maskRef: RefObject<HTMLInputElement> | null = null;
-  // const rawValue = value.replace(/\D/g, ''); // To retrieve raw mask values
+  const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
+  
+  // const rawMaskValue = value.replace(/\D/g, ''); // To retrieve raw mask values
+  let phoneMaskRef: RefObject<HTMLInputElement> = useMask({
+    mask: '(___) ___-____', // '+0 (___) ___-____'
+    replacement: { _: /\d/ },
+  });
+  
+  let creditCardMaskRef: RefObject<HTMLInputElement> = useMask({
+    mask: '____ ____ ____ ____',
+    replacement: { _: /\d/ },
+  });
+  
+  let policyNumberMaskRef: RefObject<HTMLInputElement> = useMask({
+    mask: '_________',
+    replacement: { _: /\d/ },
+  });
 
-  // #region Masking for different input types
-  if (type == 'text') {
-
-  } else if (type == 'email') {
-    const regexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
+  const getMaskRef = (type: TextInputTypes): RefObject<HTMLInputElement> | undefined => {
+    // TODO: prevent errors when maskRef tries to validate other masks if the input type was changed during runtime
+    if (type == 'phone') return phoneMaskRef;
+    if (type == 'creditCard') return creditCardMaskRef;
+    if (type == 'policyNumber') return policyNumberMaskRef;
+    return undefined
   }
 
-  else if (type == 'phone') {
-    if (placeholder == '') placeholder = '(000)-00-0000';
-    maskRef = useMask({
-      mask: '(___) ___-____', // '+0 (___) ___-____'
-      replacement: { _: /\d/ },
-    });
-  }
 
-  else if (type ==  'creditCard') {
-    if (placeholder == '') placeholder = '0000 0000 0000 0000';
-    maskRef = useMask({
-      mask: '____ ____ ____ ____',
-      replacement: { _: /\d/ },
-    });
-  }
-
-  else if (type == 'currency') {
+  // placholder logic
+  if (type == 'currency') {
     const currencyType = '$';
     if (placeholder == '') placeholder = `${currencyType} 0.00`;
   }
@@ -74,20 +76,19 @@ export const Input = ({
       // if (isAutoPolicy) placeholder = '000000000';
       // if (isHomePolicy) placeholder = 'A000A000A000A';
       placeholder = '000000000';
-      
-      maskRef = useMask({
-        mask: '_________',
-        replacement: { _: /\d/ },
-      });
     }
   }
 
   else if (type == 'search') {
     // TODO: Add search results, and possibly another component to avoid overhead problems with the input component
   }
-  // #endregion
 
-  // TODO: just add the tooltip here
+
+  // Error handling
+  const shouldDisplayError = (): boolean => error && !disabled;
+
+
+  // Tooltip logic
   const [tooltipActive, setTooltipActive] = useState<boolean>(false);
   const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
   const tooltipMouseEnter = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
@@ -108,13 +109,13 @@ export const Input = ({
 
   return (
     <TextInput className='input'>
-      <label htmlFor={type} className="text-sm font-medium leading-6 block"> { label } </label>
+      <label htmlFor={type} className="text-sm font-medium leading-6 block text-slate-800 dark:text-slate-300 cursor-text"> { label } </label>
       <div className="mt-2 grid grid-cols-1">
         <input 
           type={type}
           name={name}
           value={value}
-          ref={type == 'creditCard' || 'policyNumber' || 'currency' || 'phone' ? maskRef : null}
+          ref={getMaskRef(type)}
           placeholder={placeholder}
           id={id}
 
@@ -147,7 +148,7 @@ export const Input = ({
         {/* Elements after the input */}
         <SubsequentInputElements className={`${iconContainerStyles}`}>
           <div className={`flex flex-row flex-grow justify-items-end items-center`}>
-            { error ?
+            { shouldDisplayError() ?
               <Icon variant='Error' styles='mr-3 size-4 text-red-500 dark:text-red-400' /> 
             : 
               <InteractiveIcon onMouseEnter={e => tooltip && tooltipMouseEnter(e)} onMouseOver={e => tooltip && toolTipHover(e)} onMouseLeave={e => tooltip && tooltipMouseLeave(e)} className={`cursor-pointer`}>
@@ -177,7 +178,7 @@ export const Input = ({
       </div>
 
       {/* Error / Description messages */}
-      { error && errorMessage ? 
+      { shouldDisplayError() && errorMessage ? 
         <p id={`${id}-error-message`} className="mt-2 text-xs text-red-600 dark:text-red-400"> { errorMessage } </p>
       : description && 
         <p id={`${id}-email-description`} className="mt-2 text-xs"> { description } </p>
@@ -190,7 +191,7 @@ export const Input = ({
           style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
           className={`${tooltipHoverStyles} ${tooltipTheme_Styles} ${tooltipCoordinates} pointer-events-none transition-all ${tooltipActive ? tooltipVisible : tooltipHidden}`}
         >
-            {tooltipText}
+          {tooltipText}
         </Tooltip>
       }
 
@@ -227,7 +228,7 @@ const getInputClasses = (error: boolean, type: string, disabled?: boolean): stri
     rounded-md sm:text-sm/6 px-3 py-1.5 text-base 
     outline outline-1 -outline-offset-1 
     focus:outline-2 focus:-outline-offset-2 
-    bg-white dark:bg-white/5 
+    transition-all
   `;
 
   // Icon spacing
@@ -242,6 +243,7 @@ const getInputClasses = (error: boolean, type: string, disabled?: boolean): stri
     classes += ` 
       text-slate-900 dark:text-white 
       placeholder:text-slate-400  dark:placeholder:text-slate-500 
+      bg-white dark:bg-slate-800 
 
       outline-gray-300 dark:outline-white/10 
       focus:outline-indigo-600 dark:focus:outline-indigo-500 
@@ -278,7 +280,7 @@ const getDropdownClasses = (error: boolean): string => {
 
 const getDisabledThemes = (): string => {
   return `
-    dark:bg-gray-600 dark:*:bg-gray-600
+    bg-white/2 dark:bg-slate-700
     placeholder:text-slate-500 dark:placeholder:text-slate-400 
     text-gray-500 dark:text-gray-400 
     outline-gray-400 dark:outline-white/10 
@@ -289,6 +291,7 @@ const getErrorThemes = (): string => {
   return ` 
     text-red-900 dark:text-red-400 
     placeholder:text-red-300 dark:placeholder:text-red-400/70
+    bg-white dark:bg-slate-800 
     
     outline-red-300 dark:outline-red-500/50 
     focus:outline-red-600 dark:focus:outline-red-400 

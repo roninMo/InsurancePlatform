@@ -12,12 +12,13 @@ interface ButtonProps {
   variant?: 'default' | 'md' | 'lg';
   icon?: IconTypes;
   iconStyles?: string;
+  additionalStyles?: string;
 }
 
-export function Button({ displayText,  onClick,  disabled,  variant, icon, iconStyles }: ButtonProps) {
-  const variantStyles_default = ` gap-x-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 `;
-  const variantStyles_md = ` gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 `;
-  const variantStyles_lg = ` gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 `;
+export function Button({ displayText,  onClick,  disabled,  variant = 'md', icon, iconStyles, additionalStyles }: ButtonProps) {
+  const variantStyles_default = ` gap-x-1.5 bg-indigo-600 px-2.5 py-1.5 `;
+  const variantStyles_md = ` gap-x-1.5 bg-indigo-600 px-3 py-2 `;
+  const variantStyles_lg = ` gap-x-2 bg-indigo-600 px-3.5 py-2.5 `;
 
   return (
     <button 
@@ -25,7 +26,7 @@ export function Button({ displayText,  onClick,  disabled,  variant, icon, iconS
       onClick={(e) => onClick ? onClick(e) : null}
       disabled={disabled}
       className={(variant == 'md' ? variantStyles_md : variant == 'lg' ? variantStyles_lg : variantStyles_default) + ` 
-        inline-flex items-center gap-x-1.5 rounded-md text-sm font-semibold 
+        inline-flex items-center rounded-md text-sm font-semibold 
         focus-visible:outline-2 focus-visible:outline-offset-2 
         shadow-xs dark:shadow-none 
         
@@ -33,6 +34,7 @@ export function Button({ displayText,  onClick,  disabled,  variant, icon, iconS
         bg-indigo-600 dark:bg-indigo-500 
         hover:bg-indigo-500 dark:hover:bg-indigo-400 
         focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500
+        ${additionalStyles}
       `}
     >
       
