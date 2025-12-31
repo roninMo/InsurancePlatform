@@ -114,7 +114,7 @@ const radioButtonStyles = `
   dark:bg-slate-800 dark:border-slate-700
   dark:checked:bg-white
   dark:disabled:bg-slate-400 dark:disabled:border-slate-500 
-  dark:disabled:checked:bg-slate-600 
+  dark:disabled:checked:bg-slate-300 
 `;
 
 const labelStyles = `min-w-max pr-2 text-sm font-medium leading-6 text-slate-800 dark:text-slate-300`;
