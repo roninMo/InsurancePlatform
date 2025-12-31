@@ -354,20 +354,20 @@ export function App() {
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
 
                 {/* Default, List, Table */}
-                <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
+                {/* <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
                   <RadioTable 
                     {...RadioGroupProps} 
                     name='radioTable-default'
                     radioItems={favoriteFoods}
                   />
-                </div>
+                </div> */}
               </div>
 
               {/* Radio Groups */}
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
 
                 {/* Default, List, Table */}
-                <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
+                <div className='col-span-12 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='default' 
@@ -375,7 +375,7 @@ export function App() {
                     radioItems={favoriteFoodsNoDescriptions}
                   />
                 </div>
-                <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
+                <div className='col-span-12 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='list' 
@@ -386,7 +386,7 @@ export function App() {
 
 
                 {/* Column, and Column-Inline */}
-                <div className='col-span-6 p-2 pb-4 bg-slate-800 rounded-md'>
+                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='column' 
@@ -397,7 +397,7 @@ export function App() {
                   />
                 </div>
                 
-                <div className='col-span-6 p-2 pb-4 bg-slate-800 rounded-md'>
+                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='columnInline' 

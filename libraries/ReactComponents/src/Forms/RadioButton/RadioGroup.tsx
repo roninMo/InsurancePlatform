@@ -32,19 +32,6 @@ export interface RadioItem {
   disabled?: boolean;
 }
 
-export interface RadioItemProps {
-  checked: boolean;
-  onSelect: (item: RadioItem, index: number) => void;
-  value: RadioItem;
-  
-  inputName: string;
-  id: string;
-  index: number;
-  
-  disabled?: boolean;
-  error?: boolean;
-}
-
 
 export const RadioGroup = ({
   variant = 'default', id, name, label, description,
