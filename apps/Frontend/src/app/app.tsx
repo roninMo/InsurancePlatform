@@ -8,7 +8,9 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioButtonProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
+import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
+import { RadioButtonProps, RadioGroup } from './temp/RadioButton/RadioGroup';
+import { RadioItem } from './temp/RadioButton/RadioItem/RadioItem';
 
 
 const AppSpacing = styled.div`
@@ -106,15 +108,15 @@ export function App() {
   // Input
   const inputId = useId();
   const [input, setInput] = useState<string>("");
-  const InputChanged = (e: ChangeEvent<HTMLInputElement>) => setInput(e?.target?.value);
+  const inputChanged = (e: ChangeEvent<HTMLInputElement>) => setInput(e?.target?.value);
   const [inputError, SetInputError] = useState<boolean>(false);
   const [inputErrorMessage, SetInputErrorMessage] = useState<string>();
 
   const inputTypeId = useId();
-  const [inputType, setInputType] = useState<SelectItemValues>({ value: 'policyNumber', label: 'Select an input type...'});
+  const [inputType, setInputType] = useState<SelectItemValues>({ value: 'search', label: 'Select an input type...'});
   const types: TextInputTypes[] = ['text', 'email', 'password', 'phone', 'creditCard', 'currency', 'policyNumber', 'search'];
   const inputTypes: SelectItemValues[] = types.map(type => ({ value: type, label: type }));
-  const InputTypeChanged = (selected: SelectItemValues, index: number) => setInputType(selected);
+  const inputTypeChanged = (selected: SelectItemValues, index: number) => setInputType(selected);
 
 
   // Email
@@ -158,12 +160,12 @@ export function App() {
     {
       value: 'peanutButterJelly',
       label: 'Peanut butter and jelly',
-      description: 'A classic American sandwich with peanut butter and fruit preserves (jelly or jam)'
+      description: 'A classic American sandwich with peanut butter and fruit preserves (jelly or jam).'
     },
     {
       value: 'ramen',
       label: 'Ramen Soup',
-      description: 'A popular Japanese noodle soup featuring springy wheat noodles in a rich, savory broth of soy sauce and miso, topped with chashu, eggs, nori, and green onions'
+      description: 'A popular Japanese noodle soup featuring springy wheat noodles in a rich, savory broth of soy sauce and miso, topped with chashu, eggs, nori, and green onions.'
     },
     {
       value: 'broccoliPotatoesAndChicken',
@@ -177,7 +179,7 @@ export function App() {
   const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
   const selectedFavoriteFood = (selected: RadioItem, index: number, currentValue: RadioItem) => {
     setFavoriteFood(selected);
-    console.log(`radioButton`, {selected, index, currentValue});
+    console.log(`radioButton: `, {selected, index, currentValue});
   }
 
 
@@ -205,7 +207,6 @@ export function App() {
     radioItems: favoriteFoods,
     value: favoriteFood,
     onSelect: selectedFavoriteFood,
-    defaultValue: undefined,
 
     error: radioItemError,
     errorMessage: radioItemErrorMessage,
@@ -271,7 +272,7 @@ export function App() {
                   value={input}
                   placeholder="Input text..."
                   id={inputId}
-                  onChange={InputChanged}
+                  onChange={inputChanged}
                   error={inputError} 
                   errorMessage={inputErrorMessage} 
                   disabled={disabled}
@@ -296,7 +297,7 @@ export function App() {
                   label="Input Type"
                   value={inputType}
                   values={inputTypes}
-                  onSelect={InputTypeChanged}
+                  onSelect={inputTypeChanged}
                   id={inputTypeId}
                 />
               </div>
@@ -349,31 +350,35 @@ export function App() {
               <div className='col-span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
               <div className='col-span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
 
-              <div className='col-span-12 p-2 bg-slate-800 rounded-md'>
-                <span className="flex items-center gap-3 text-sm">
-                  <input type="radio" name="pricing-plan" value="startup" checked className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 dark:border-white/10 dark:bg-white/5 dark:checked:border-indigo-500 dark:checked:bg-indigo-500 dark:focus-visible:outline-indigo-500 dark:disabled:border-white/5 dark:disabled:bg-white/10 dark:disabled:before:bg-white/20 forced-colors:appearance-auto forced-colors:before:hidden" />
-                  <span className="font-medium text-gray-900 group-has-checked:text-indigo-900 dark:text-white dark:group-has-checked:text-indigo-300">Startup</span>
-                </span>
-
-              </div>
 
               {/* Radio Buttons */}
-              {/* Default */}
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
-                <div className='col-span-4 p-2 pb-4 bg-slate-800 rounded-md'>
+
+                {/* Default, List, Table */}
+                <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...radioButtonProps} 
-                    variant='column' 
+                    variant='default' 
+                    name='radioButton-default'
                     radioItems={favoriteFoodsNoDescriptions}
                   />
                 </div>
-                <div className='col-span-8'></div>
+                <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
+                  <RadioGroup 
+                    {...radioButtonProps} 
+                    variant='list' 
+                    name='radioButton-list'
+                    radioItems={favoriteFoods}
+                  />
+                </div>
 
-                
+
+                {/* Column, and Column-Inline */}
                 <div className='col-span-6 p-2 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...radioButtonProps} 
                     variant='column' 
+                    name='radioButton-column'
                     radioItems={favoriteFoods}
                     label={undefined}
                     description={undefined}
@@ -384,27 +389,22 @@ export function App() {
                   <RadioGroup 
                     {...radioButtonProps} 
                     variant='columnInline' 
+                    name='radioButton-columnInline'
                     radioItems={favoriteFoods}
                     label={undefined}
                     description={undefined}
+                    disabled
                   />
                 </div>
-                
               </div>
 
 
-              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
-                <div className='col-span-1' />
-                <div className='col-span-4 p-2 pb-4 bg-slate-800 rounded-md'>
-                  <RadioGroup {...radioButtonProps} variant='list' />
-                </div>
-                
-                <div className='col-span-2' />
-                <div className='col-span-4 p-2 pb-4 bg-slate-800 rounded-md'>
-                  <RadioGroup {...radioButtonProps} variant='table' />
-                </div>
-                <div className='col-span-1' />
-              </div>
+              <div className='pb-96'></div>
+              <div className='pb-96'></div>
+              <div className='pb-96'></div>
+              <div className='pb-96'></div>
+              <div className='pb-96'></div>
+              <div className='pb-96'></div>
 
             </div>
           </MainContent>

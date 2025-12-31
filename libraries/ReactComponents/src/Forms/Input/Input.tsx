@@ -94,12 +94,12 @@ export const Input = ({
   const [tooltipActive, setTooltipActive] = useState<boolean>(false);
   const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
   const tooltipMouseEnter = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
-    console.log('mouse enter tooltip', {Event: e});
+    // console.log('mouse enter tooltip', {Event: e});
     setTooltipActive(true);
   }
   
   const tooltipMouseLeave = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
-    console.log('mouse leave tooltip', {Event: e});
+    // console.log('mouse leave tooltip', {Event: e});
     setTooltipActive(false);
   }
 

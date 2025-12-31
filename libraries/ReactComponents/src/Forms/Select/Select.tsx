@@ -93,7 +93,7 @@ const containerStyles = `w-full text-sm`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
 const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2`;
 
-const dropdownStyles = `absolute left-0 mt-1 w-full flex flex-grow flex-col`;
+const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg flex flex-grow flex-col`;
 const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
 
 const transitionStyles = `transition-all duration-200 ease-in *:transition-all *:duration-200 *:ease-in`;
