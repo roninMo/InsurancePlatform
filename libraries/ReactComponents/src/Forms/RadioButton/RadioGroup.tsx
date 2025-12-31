@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 
 import styles from './RadioGroup.module.scss';
-import { RadioItem } from './RadioItem/RadioItem';
+import { RadioGroupItem } from './RadioItem/RadioItem';
 import { EventHandlers } from '@Project/ReactComponents';
 
 
 export type RadioVariant = 'default' | 'column' | 'columnInline' | 'list' | 'table' | 'tableInline' | 'boxes';
-export interface RadioButtonProps {
+export interface RadioGroupProps {
   variant?: RadioVariant;
   id: string;
   name: string;
@@ -25,12 +25,33 @@ export interface RadioButtonProps {
   aria?: string;
 }
 
+export interface RadioItem {
+  value: string;
+  label: string;
+  description?: string;
+  disabled?: boolean;
+}
+
+export interface RadioItemProps {
+  checked: boolean;
+  onSelect: (item: RadioItem, index: number) => void;
+  value: RadioItem;
+  
+  inputName: string;
+  id: string;
+  index: number;
+  
+  disabled?: boolean;
+  error?: boolean;
+}
+
+
 export const RadioGroup = ({
   variant = 'default', id, name, label, description,
   radioItems, value, onSelect, 
   error = false, errorMessage, disabled = false, required = false, aria,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
-}: EventHandlers & RadioButtonProps) => {
+}: EventHandlers & RadioGroupProps) => {
   
   const radioItemSelected = (item: RadioItem, index: number) => {
     console.log(`\nA radio item was selected: `, {item, index});
@@ -39,19 +60,16 @@ export const RadioGroup = ({
 
   return (
     <Container className={`w-full flex flex-col justify-start items-start gap-2 ${getErrorThemes(error, disabled)}`} aria-describedby={aria}>
+
       {/* Radio Button Label w/description */}
-      {label || description && 
+      { (label || description) && 
         <TextContainer className={`flex flex-col gap-1 mb-4 text-sm`}>
           { label && 
-            <Label className={`font-medium leading-6 text-slate-800 dark:text-slate-200`}>
-              { label }
-            </Label>
+            <Label className={`${labelStyles}`}>{ label }</Label>
           }
           
           { description && 
-            <Description>
-              { description }
-            </Description>
+            <Description>{ description }</Description>
           }
         </TextContainer>
       }
@@ -59,15 +77,15 @@ export const RadioGroup = ({
       {/* Radio Items */}
       <div className={rowStyleVariants.includes(variant) ? rowLayout : columnLayout}>
         { radioItems.map((item: RadioItem, index: number) =>
-          <RadioItem
+          <RadioGroupItem
             checked={value.value == item.value}
             onSelect={(item: RadioItem, index: number) => radioItemSelected(item, index)}
             value={item}
             
             inputName={name}
-            id={`${id}-${item.value}`}
+            id={`radioGroupItem-${id}-${item.value}`}
             variant={variant}
-            key={`${id}-${item.value}`}
+            key={`radioGroupItem-${id}-${item.value}`}
             index={index}
             
             disabled={disabled ? true : item.disabled}
@@ -96,8 +114,8 @@ export const RadioGroup = ({
 // Styles
 const Container = styled.div``;
 const TextContainer = styled.div``;
-const Label = styled.label``;
 const Description = styled.p``;
+const Label = styled.label``;
 
 // TODO: use style css directives for handling error text themes globally
 const errorStyles = ` 
@@ -117,10 +135,30 @@ const getErrorThemes = (error: boolean, disabled: boolean): string => {
   return classes;
 }
 
+const labelStyles = `font-medium leading-6 text-slate-800 dark:text-slate-200`;
+const descriptionStyles = `text-sm leading-6`;
+
 // Radio items layout
 const rowStyleVariants = ['default'];
 const columnLayout = `flex flex-col items-start gap-2`;
 const rowLayout = `flex flex-row justify-start gap-2`;
+
+// Radio Button Styles
+export const radioButtonStyles = ` 
+  appearance-none mt-1 p-[6px] mr-1 rounded-lg cursor-pointer
+  border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
+  disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
+  
+  bg-white border-gray-300
+  checked:bg-white checked:outline-indigo-500 
+  disabled:bg-gray-300 disabled:border-gray-400 
+  disabled:checked:bg-slate-300 disabled:checked:outline-indigo-500
+  
+  dark:bg-slate-800 dark:border-slate-700
+  dark:checked:bg-white
+  dark:disabled:bg-slate-400 dark:disabled:border-slate-500 
+  dark:disabled:checked:bg-slate-300 
+`;
 
 // has-checked: <> <radio> </>
 // checked:

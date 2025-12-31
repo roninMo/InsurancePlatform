@@ -8,7 +8,8 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
-import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioButtonProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
+import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGroupProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
+// import { RadioTable } from './RadioTable/RadioTable';
 
 
 const AppSpacing = styled.div`
@@ -195,7 +196,7 @@ export function App() {
   }
   // #endregion
 
-  const radioButtonProps: RadioButtonProps = {
+  const RadioGroupProps: RadioGroupProps = {
     variant: 'default',
     id: radioButtonId,
     name: 'radioButton',
@@ -349,23 +350,36 @@ export function App() {
               <div className='col-span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
 
 
-              {/* Radio Buttons */}
+              {/* Radio Table */}
+              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
+
+                {/* Default, List, Table */}
+                <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
+                  <RadioTable 
+                    {...RadioGroupProps} 
+                    name='radioTable-default'
+                    radioItems={favoriteFoods}
+                  />
+                </div>
+              </div>
+
+              {/* Radio Groups */}
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
 
                 {/* Default, List, Table */}
                 <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
-                    {...radioButtonProps} 
+                    {...RadioGroupProps} 
                     variant='default' 
-                    name='radioButton-default'
+                    name='radioGroup-default'
                     radioItems={favoriteFoodsNoDescriptions}
                   />
                 </div>
                 <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
-                    {...radioButtonProps} 
+                    {...RadioGroupProps} 
                     variant='list' 
-                    name='radioButton-list'
+                    name='radioGroup-list'
                     radioItems={favoriteFoods}
                   />
                 </div>
@@ -374,9 +388,9 @@ export function App() {
                 {/* Column, and Column-Inline */}
                 <div className='col-span-6 p-2 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
-                    {...radioButtonProps} 
+                    {...RadioGroupProps} 
                     variant='column' 
-                    name='radioButton-column'
+                    name='radioGroup-column'
                     radioItems={favoriteFoods}
                     label={undefined}
                     description={undefined}
@@ -385,9 +399,9 @@ export function App() {
                 
                 <div className='col-span-6 p-2 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
-                    {...radioButtonProps} 
+                    {...RadioGroupProps} 
                     variant='columnInline' 
-                    name='radioButton-columnInline'
+                    name='radioGroup-columnInline'
                     radioItems={favoriteFoods}
                     label={undefined}
                     description={undefined}
