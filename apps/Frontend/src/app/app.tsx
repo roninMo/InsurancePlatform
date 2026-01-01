@@ -10,7 +10,6 @@ import styled from '@emotion/styled';
 import NxWelcome from './nx-welcome';
 import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGroupProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
 import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
-import { Checkbox, CheckBoxItem, CheckboxProps } from './Components/Forms/Checkbox/Checkbox';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -183,22 +182,6 @@ export function App() {
     console.log(`radioButton: `, {selected, index, currentValue});
   }
 
-  // Checkbox
-  let checkboxFoods: CheckBoxItem[] = favoriteFoods.map((value) => ({ ...value, checked: false, disabled: false }));
-  const checkboxId = useId();
-  const [checkboxValues, setCheckboxValues] = useState(checkboxFoods); // { 'object1': { values}, 'object2': { values}, etc. }
-  const [checkboxError, setCheckboxError] = useState<boolean>(false);
-  const [checkboxErrorMessage, setCheckboxErrorMessage] = useState<string>('');
-  const checkedFavoriteFood = (checkedValue: CheckBoxItem) => {
-    setCheckboxValues((currentValues) => {
-      const newValues: any = currentValues.map((value) => ( value.value == checkedValue.value ? { ...checkedValue, checked: !checkedValue.checked } : value ));
-      return newValues;
-    });
-    
-    // console.log(`${updatedValue.value} ${updatedValue.checked ? 'checked' : 'unchecked'}, updated state: `, {checkboxValues, updatedValue});
-  }
-
-
   // #endregion
 
 
@@ -232,21 +215,6 @@ export function App() {
     required: false,
   };
 
-  const checkboxProps: CheckboxProps = {
-    variant: 'default',
-    id: checkboxId,
-    name: 'checkbox',
-    label: 'Favorite Foods',
-    description: 'What are your different favorite foods?',
-
-    radioItems: checkboxValues,
-    onSelect: checkedFavoriteFood,
-
-    error: checkboxError,
-    errorMessage: checkboxErrorMessage,
-    disabled: false,
-    required: false,
-  };
 
   return (
     <AppSpacing className={`bg-white dark:bg-gray-800`}>
@@ -407,39 +375,6 @@ export function App() {
                 </div>
               </div>
 
-              {/* Checkbox */}
-              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
-
-                {/* Default, List, Table */}
-                <div className='col-span-4 p-4 pb-4 bg-default rounded-md'>
-                  <Checkbox 
-                    {...checkboxProps} 
-                    variant='list' 
-                    name='Checkbox-3'
-                    error={true}
-                    errorMessage='An error occurred'
-                    disabled={true}
-                  />
-                </div>
-                <div className='col-span-4 p-4 pb-4 bg-default rounded-md'>
-                  <Checkbox 
-                    {...checkboxProps} 
-                    variant='default' 
-                    name='Checkbox-2'
-                    error={true}
-                    errorMessage='An error occurred'
-                  />
-                </div>
-                <div className='col-span-6 p-4 pb-4 bg-default rounded-md'>
-                  <Checkbox 
-                    {...checkboxProps} 
-                    variant='inline' 
-                    name='Checkbox-1'
-                    error={true}
-                    errorMessage='An error occurred'
-                  />
-                </div>
-              </div>
 
               {/* Radio Groups */}
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
