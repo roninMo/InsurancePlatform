@@ -87,6 +87,14 @@
   //------------------------------------------//
   // Component Themes                         //
   //------------------------------------------//
+  // Default outline styles
+  .outline-css {
+    @apply
+      outline rounded-md
+      outline-1 -outline-offset-1 
+      focus:outline-2 focus:-outline-offset-2;
+  }
+
   // Radio button styles
   .radio-button {
     @apply 
@@ -105,14 +113,6 @@
       dark:disabled:checked:bg-slate-300;
   }
 
-  // Default outline styles
-  .outline-css {
-    @apply
-      outline rounded-md
-      outline-1 -outline-offset-1 
-      focus:outline-2 focus:-outline-offset-2;
-  }
-
 
   //------------------------------------------//
   // Flex Themes                              //
@@ -126,7 +126,7 @@
   //------------------------------------------//
   // Error text
   .error {
-    @apply text-red-400 dark:text-red-500;
+    @apply text-red-400 dark:text-red-400;
   }
 
   // outline errors

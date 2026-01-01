@@ -33,7 +33,6 @@ export const RadioTable = ({
   error = false, errorMessage, disabled = false, required = false, aria,
   onMouseEnter, onMouseLeave
 }: RadioTableProps) => {
-
   const optionSelected = (item: RadioItem): boolean => {
     return currentValue.value == item.value;
   }
@@ -43,9 +42,9 @@ export const RadioTable = ({
   }
 
   return (
-    <Container className='rounded-md p-2' aria-describedby={aria}>
-      <HeaderContainer className='flexCol px-1 pt-1'>
-        <Label>{ label }</Label>
+    <Container aria-describedby={aria}>
+      <HeaderContainer className='flexCol px-1'>
+        { label && <Label>{ label }</Label> }
         { description && <Description>{ description }</Description> }
       </HeaderContainer>
 
@@ -63,7 +62,7 @@ export const RadioTable = ({
               name={name} 
               checked={optionSelected(item)}
               type='radio' 
-              // onChange={() => {}} // Handled via button event
+              onChange={() => {}} // Handled via button event
               id={`${id}-radio-table-item-${index}-radio`}
               className={`radio-button mt-[2px]`}
               disabled={disabled || item.disabled}
@@ -102,9 +101,9 @@ export const RadioTable = ({
 
 // #region Component styles
 const Container = styled.div``;
+const HeaderContainer = styled.div``;
 const Table = styled.div``;
 const RadioTableItem = styled.button``;
-const HeaderContainer = styled.div``;
 
 const Label = styled.label``;
 const Description = styled.p``;
