@@ -14,7 +14,7 @@ export interface RadioGroupProps {
   description?: string;
 
   radioItems: RadioItem[];
-  value: RadioItem;
+  currentValue: RadioItem;
   onSelect: (item: RadioItem, index: number, currentValue: RadioItem) => void;
 
   error?: boolean;
@@ -35,22 +35,22 @@ export interface RadioItem {
 
 export const RadioGroup = ({
   variant = 'default', id, name, label, description,
-  radioItems, value, onSelect, 
+  radioItems, currentValue, onSelect, 
   error = false, errorMessage, disabled = false, required = false, aria,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
 }: EventHandlers & RadioGroupProps) => {
   
   const radioItemSelected = (item: RadioItem, index: number) => {
     console.log(`\nA radio item was selected: `, {item, index});
-    onSelect(item, index, value);
+    onSelect(item, index, currentValue);
   }
 
   return (
-    <Container className={`w-full flex flex-col justify-start items-start gap-2 ${getErrorThemes(error, disabled)}`} aria-describedby={aria}>
+    <Container className={`w-full flexCol justify-start gap-2 ${getErrorThemes(error, disabled)}`} aria-describedby={aria}>
 
       {/* Radio Button Label w/description */}
       { (label || description) && 
-        <TextContainer className={`flex flex-col gap-1 mb-4 text-sm`}>
+        <TextContainer className={`flexCol gap-1 mb-4 text-sm`}>
           { label && 
             <Label className={`${labelStyles}`}>{ label }</Label>
           }
@@ -65,7 +65,7 @@ export const RadioGroup = ({
       <div className={rowStyleVariants.includes(variant) ? rowLayout : columnLayout}>
         { radioItems.map((item: RadioItem, index: number) =>
           <RadioGroupItem
-            checked={value.value == item.value}
+            checked={currentValue.value == item.value}
             onSelect={(item: RadioItem, index: number) => radioItemSelected(item, index)}
             value={item}
             
@@ -127,25 +127,8 @@ const descriptionStyles = `text-sm leading-6`;
 
 // Radio items layout
 const rowStyleVariants = ['default'];
-const columnLayout = `flex flex-col items-start gap-2`;
-const rowLayout = `flex flex-row justify-start gap-2`;
-
-// Radio Button Styles
-export const radioButtonStyles = ` 
-  appearance-none mt-1 p-[6px] mr-1 rounded-lg cursor-pointer
-  border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
-  disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
-  
-  bg-white border-gray-300
-  checked:bg-white checked:outline-indigo-500 
-  disabled:bg-gray-300 disabled:border-gray-400 
-  disabled:checked:bg-slate-300 disabled:checked:outline-indigo-500
-  
-  dark:bg-slate-800 dark:border-slate-700
-  dark:checked:bg-white
-  dark:disabled:bg-slate-400 dark:disabled:border-slate-500 
-  dark:disabled:checked:bg-slate-300 
-`;
+const columnLayout = `flexCol gap-2`;
+const rowLayout = `flexRow gap-2`;
 
 // has-checked: <> <radio> </>
 // checked:

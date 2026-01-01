@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { radioButtonStyles, RadioItem, RadioVariant } from '../RadioGroup';
+import { RadioItem, RadioVariant } from '../RadioGroup';
 
 import styles from './RadioItem.module.scss';
 import { EventHandlers } from '@Project/ReactComponents';
@@ -45,7 +45,7 @@ export const RadioGroupItem = ({
       onMouseEnter={e => onMouseEnter && onMouseEnter(e as any)}
       onMouseLeave={e => onMouseLeave && onMouseLeave(e as any)}
     >
-      <div className={`radio-button flex justify-center items-center`}>
+      <div className={`radio-container`}>
         <Radio 
           value={value.value}
           onChange={(e) => onSelect(value, index)}
@@ -55,7 +55,7 @@ export const RadioGroupItem = ({
           disabled={disabled}
           name={inputName} 
           id={`radioGroupItemInput-${id}-${value.value}`}
-          className={`${radioButtonStyles}`} 
+          className={`radio-button`} 
 
           onBlur={e => onBlur && onBlur(e)}
           onFocus={e => onFocus && onFocus(e)}
@@ -82,18 +82,18 @@ const Label = styled.p``;
 const Description = styled.p``;
 
 // Component styles
-const flexRow = `flex flex-row justify-start items-start`;
-const flexCol = `flex flex-col items-start`;
+const flexRow = `flexRow items-start`;
+const flexCol = `flexCol items-start`;
 
 const defaultStyles = `flex flex-row justify-start items-start gap-2 mr-6`;
 const columnStyles = `flex flex-row justify-start items-start gap-2`;
 const listStyles = `
 min-w-full flex flex-row justify-between items-start gap-2 mr-6
-[&>.radio-button]:ml-4 [&>.radio-button]:order-1
+[&>.radio-container]:ml-4 [&>.radio-container]:order-1
 border-b border-slate-600 pb-6 pt-2 w-full
 `;
 
-const labelStyles = `min-w-max pr-2 text-sm font-medium leading-6 text-slate-800 dark:text-slate-300`;
-const descriptionStyles = `text-sm leading-6`;
+const labelStyles = `min-w-max pr-2 text-sm font-medium text-slate-800 dark:text-slate-300`;
+const descriptionStyles = `text-sm`;
 
 // #endregion

@@ -8,23 +8,148 @@
 
 /* Global Styles  */
 @layer base {
-  // Theme text colors
+  //------------------------------------------//
+  // Theme Colors                             //
+  //------------------------------------------//
+  // Headers
   h1, h2, h3, h4, h5, h6 {
-    @apply text-slate-800  dark:text-slate-100;
+    @apply text-gray-800  dark:text-gray-100;
   }
 
-  select, input, div, p, label {
-    @apply text-slate-800  dark:text-slate-400;
+  // text containers
+  select, div, p, span {
+    @apply text-gray-800  dark:text-gray-400; 
+  }
+
+  // Input headers
+  label {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+
+  // Inputs
+  input, select {
+    @apply 
+      text-gray-800  dark:text-gray-100
+      placeholder:text-gray-500 dark:placeholder:text-gray-400;
   }
 
   svg {
-    @apply  text-slate-500 dark:text-slate-400;
+    @apply  text-gray-500 dark:text-gray-400;
+  }
+
+
+  //------------------------------------------//
+  // Background Colors                        //
+  //------------------------------------------//
+  // default background colors
+  .bg-default {
+    @apply bg-white dark:bg-gray-800;
+  }
+  
+  // Input specific background theme
+  .bg-disabled {
+    @apply bg-gray-100 dark:bg-slate-700
+  }
+
+  // default outline colors
+  .outline-default {
+    @apply outline-gray-300 dark:outline-gray-600;
+  }
+
+  // default border colors
+  .border-default {
+    @apply border-gray-300 dark:border-gray-600;
+  }
+
+
+
+  //------------------------------------------//
+  // Text Sizes                               //
+  //------------------------------------------//
+  // Input headers
+  label {
+    @apply font-medium text-sm;
+  }
+  
+  // Description Elements
+  select, input, label, div, p {
+    @apply text-sm; 
+  }
+
+  // misc text
+  span {
+    @apply text-xs;
   }
 
 }
 
-/* Selectors
+@layer components {
+  //------------------------------------------//
+  // Component Themes                         //
+  //------------------------------------------//
+  // Radio button styles
+  .radio-button {
+    @apply 
+      p-[6px] appearance-none mr-1 rounded-lg cursor-pointer 
+      border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
+      disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
+      
+      bg-white border-slate-300
+      checked:bg-white checked:outline-indigo-500 
+      disabled:bg-slate-300 disabled:border-slate-400 
+      disabled:checked:bg-slate-300 disabled:checked:outline-indigo-500
+      
+      dark:bg-slate-800 dark:border-slate-700
+      dark:checked:bg-white
+      dark:disabled:bg-slate-400 dark:disabled:border-slate-500 
+      dark:disabled:checked:bg-slate-300;
+  }
 
+  // Default outline styles
+  .outline-css {
+    @apply
+      outline rounded-md
+      outline-1 -outline-offset-1 
+      focus:outline-2 focus:-outline-offset-2;
+  }
+
+
+  //------------------------------------------//
+  // Flex Themes                              //
+  //------------------------------------------//
+  .flexRow { @apply flex flex-row justify-start; }
+  .flexCol { @apply flex flex-col items-start; }
+
+
+  //------------------------------------------//
+  // Error Themes                             //
+  //------------------------------------------//
+  // Error text
+  .error {
+    @apply text-red-400 dark:text-red-500;
+  }
+
+  // outline errors
+  .error-outline {
+    @apply
+      outline-red-400 dark:outline-red-600
+      focus:outline-red-600 dark:focus:outline-red-400;
+  }
+
+  // border errors
+  .error-border { 
+    @apply
+      border-red-400 dark:border-red-600;
+  }
+
+
+  .custom-styles {
+    @apply bg-white border border-slate-300 rounded-md;
+  }
+}
+
+
+/* Selectors quick ref
   - children of a specific html tag '[&>p]:'
   - all descendants of a tag '[&_p]:'
   - specific classes '[&_.tooltip]:'

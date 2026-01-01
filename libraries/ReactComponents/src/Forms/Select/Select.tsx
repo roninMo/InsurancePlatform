@@ -75,7 +75,7 @@ export const Select = ({
         </DropdownItems>
       </StyledSelect>
 
-      <Description className={`mt-2 text-xs ${error && 'text-red-900 dark:text-red-400'}`}>
+      <Description className={`mt-2 text-sm ${error && 'text-red-900 dark:text-red-400'}`}>
         { error && errorMessage ? 
           <>{ errorMessage }</>
         : description &&
@@ -130,7 +130,6 @@ const Label = styled.label``;
 const Description = styled.p``;
 const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
-const StyledSelectItem = styled.span``;
 const DropdownItems = styled.div`
   --tw-bg-opacity: 1;
   

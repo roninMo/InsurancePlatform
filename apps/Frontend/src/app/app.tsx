@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
 import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGroupProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
+import { RadioTable } from './RadioTable/RadioTable';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -204,7 +205,7 @@ export function App() {
     description: 'What is your favorite food?',
 
     radioItems: favoriteFoods,
-    value: favoriteFood,
+    currentValue: favoriteFood,
     onSelect: selectedFavoriteFood,
 
     error: radioItemError,
@@ -354,13 +355,22 @@ export function App() {
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
 
                 {/* Default, List, Table */}
-                {/* <div className='col-span-12 p-2 pb-4 bg-slate-800 rounded-md'>
+                <div className='col-span-6 p-4 pb-4'>
                   <RadioTable 
                     {...RadioGroupProps} 
-                    name='radioTable-default'
+                    variant='inline' 
+                    name='radioTable-1'
                     radioItems={favoriteFoods}
                   />
-                </div> */}
+                </div>
+                <div className='col-span-6 p-4 pb-4'>
+                  <RadioTable 
+                    {...RadioGroupProps} 
+                    variant='block' 
+                    name='radioTable-2'
+                    radioItems={favoriteFoods}
+                  />
+                </div>
               </div>
 
               {/* Radio Groups */}

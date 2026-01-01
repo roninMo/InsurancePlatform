@@ -67,9 +67,7 @@ const activeItemStyles = `
   [&_svg]:text-slate-300
 `;
 
-// todo: try faded with borders 
-// color bg-indigo-600/10
-// border: bg-indigo-500
+// todo: try faded with borders bg-opacity
 
 const Container = styled.span``;
 const LeftHandSide = styled.div``;

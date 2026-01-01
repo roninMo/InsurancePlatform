@@ -42,26 +42,26 @@ export const Input = ({
   
   // #region Input Masking
   // const rawMaskValue = value.replace(/\D/g, ''); // To retrieve raw mask values
-  let phoneMaskRef: RefObject<HTMLInputElement> = useMask({
-    mask: '(___) ___-____', // '+0 (___) ___-____'
-    replacement: { _: /\d/ },
-  });
+  // let phoneMaskRef: RefObject<HTMLInputElement> = useMask({
+  //   mask: '(___) ___-____', // '+0 (___) ___-____'
+  //   replacement: { _: /\d/ },
+  // });
   
-  let creditCardMaskRef: RefObject<HTMLInputElement> = useMask({
-    mask: '____ ____ ____ ____',
-    replacement: { _: /\d/ },
-  });
+  // let creditCardMaskRef: RefObject<HTMLInputElement> = useMask({
+  //   mask: '____ ____ ____ ____',
+  //   replacement: { _: /\d/ },
+  // });
   
-  let policyNumberMaskRef: RefObject<HTMLInputElement> = useMask({
-    mask: '_________',
-    replacement: { _: /\d/ },
-  });
+  // let policyNumberMaskRef: RefObject<HTMLInputElement> = useMask({
+  //   mask: '_________',
+  //   replacement: { _: /\d/ },
+  // });
 
   const getMaskRef = (type: TextInputTypes): RefObject<HTMLInputElement> | undefined => {
     // TODO: prevent errors when maskRef tries to validate other masks if the input type was changed during runtime
-    if (type == 'phone') return phoneMaskRef;
-    if (type == 'creditCard') return creditCardMaskRef;
-    if (type == 'policyNumber') return policyNumberMaskRef;
+    // if (type == 'phone') return phoneMaskRef;
+    // if (type == 'creditCard') return creditCardMaskRef;
+    // if (type == 'policyNumber') return policyNumberMaskRef;
     return undefined
   }
   // #endregion
@@ -181,9 +181,9 @@ export const Input = ({
 
       {/* Error / Description messages */}
       { shouldDisplayError() && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 text-xs text-red-600 dark:text-red-400"> { errorMessage } </p>
+        <p id={`${id}-error-message`} className="mt-2 text-sm text-red-600 dark:text-red-400"> { errorMessage } </p>
       : description && 
-        <p id={`${id}-email-description`} className="mt-2 text-xs"> { description } </p>
+        <p id={`${id}-email-description`} className="mt-2 text-sm"> { description } </p>
       }
 
 
