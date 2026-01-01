@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 
 import NxWelcome from './nx-welcome';
 import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGroupProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
-import { RadioTable } from './RadioTable/RadioTable';
+import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
