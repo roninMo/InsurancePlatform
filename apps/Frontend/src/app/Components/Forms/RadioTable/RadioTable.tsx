@@ -70,11 +70,11 @@ export const RadioTable = ({
             />
             
             {/* Column Layout */}
-            <div className={`flexCol`}>
-              <ItemLabel className='pb-[2px]'>{ item.value }</ItemLabel>
+            <div className={`flexCol *:text-left`}>
+              <ItemLabel className='pb-[2px]'>{ item.label }</ItemLabel>
 
               {(item.description && variant == 'block') && 
-                <ItemDescription className='text-left'>{ item.description }</ItemDescription>
+                <ItemDescription>{ item.description }</ItemDescription>
               }
             </div>
             

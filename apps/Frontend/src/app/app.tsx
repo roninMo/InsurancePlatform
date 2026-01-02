@@ -1,4 +1,4 @@
-import { ChangeEvent, createContext, Dispatch, SetStateAction, useEffect, useId, useState } from 'react';
+import { ChangeEvent, createContext, Dispatch, MouseEvent, SetStateAction, useEffect, useId, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 
 import { UserTokenInformation } from '@Project/Classes';
@@ -10,6 +10,7 @@ import styled from '@emotion/styled';
 import NxWelcome from './nx-welcome';
 import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGroupProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
 import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
+import { Slider } from './Components/Forms/Slider/Slider';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -181,6 +182,13 @@ export function App() {
     setFavoriteFood(selected);
     console.log(`radioButton: `, {selected, index, currentValue});
   }
+
+  const sliderId = useId();
+  const [slider, setSlider] = useState<boolean>(false);
+  const [sliderError, setSliderError] = useState<boolean>(false);
+  const [sliderErrorMessage, setSliderErrorMessage] = useState<string>('');
+  const onChangeSlider = () => setSlider(!slider);
+
 
   // #endregion
 
@@ -371,6 +379,28 @@ export function App() {
                     variant='block' 
                     name='radioTable-2'
                     radioItems={favoriteFoods}
+                  />
+                </div>
+              </div>
+
+              {/* Radio Groups */}
+              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
+                <div className='col-span-3 p-4 pb-4 bg-slate-800 rounded-md'>
+                  <Slider 
+                    size='sm'
+                    name="slider"
+                    label="Slider"
+                    description="A slider component"
+                    value={slider}
+                    onChange={onChangeSlider}
+                    id={sliderId}
+
+                    error={sliderError}
+                    errorMessage={sliderErrorMessage}
+                    required={false}
+                    disabled={false}
+
+                    aria="input slider ref"
                   />
                 </div>
               </div>
