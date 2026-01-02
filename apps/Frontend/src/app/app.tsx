@@ -11,6 +11,7 @@ import NxWelcome from './nx-welcome';
 import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGroupProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
 import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
 import { Slider } from './Components/Forms/Slider/Slider';
+import { CheckboxProps } from './Components/Forms/Checkbox/Checkbox';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -183,6 +184,10 @@ export function App() {
     console.log(`radioButton: `, {selected, index, currentValue});
   }
 
+  // Checkbox component
+
+
+  // Slider component
   const sliderId = useId();
   const [slider, setSlider] = useState<boolean>(false);
   const [sliderError, setSliderError] = useState<boolean>(false);
@@ -222,6 +227,11 @@ export function App() {
     disabled: false,
     required: false,
   };
+
+  // const CheckboxProps: CheckboxProps = {
+  //   ...RadioGroupProps,
+  //   variant: 'default',
+  // }
 
 
   return (
