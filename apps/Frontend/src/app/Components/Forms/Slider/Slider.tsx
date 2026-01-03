@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import styles from './Slider.module.scss';
 
 export interface SliderProps {
-  size: 'sm' | 'md' | 'lg';
+  size: string;
   type?: 'default';
   
   name: string;
@@ -21,15 +21,15 @@ export interface SliderProps {
 }
 
 export const Slider = ({
-  size = 'md', type = 'default', name, label, description, value, onChange, id,
+  size = '5', type = 'default', name, label, description, value, onChange, id,
   error = false, errorMessage, required = false, disabled = false,
   aria, ...props
 }: SliderProps) => {
   const getSliderStyles = (): string => {
-    const pixels = size == 'sm' ? '6' : size == 'md' ? '7' : '8'; // there's an inline style error preventing this from seamlessly being rendered
-    return `size-${pixels} mr-${pixels} rounded-full shadow-sm ring-1 ring-gray-800`;
+    const pixels = size; // there's an inline style error preventing this from seamlessly being rendered
+    return `size-5 mr-5 rounded-full shadow-sm ring-1 ring-gray-800`;
   }
-  const getSliderTranslateStyles = (): string => `translate-x-${size == 'sm' ? '6' : size == 'md' ? '7' : '8'}`; 
+  const getSliderTranslateStyles = (): string => `translate-x-5`; 
 
   return (
     <Container className='w-full flex flex-row justify-between items-center gap-8'>
