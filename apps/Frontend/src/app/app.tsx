@@ -11,7 +11,7 @@ import NxWelcome from './nx-welcome';
 import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGroupProps, RadioGroup, RadioItem, Select, SelectItemValues, TextInputTypes } from '@Project/ReactComponents';
 import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
 import { Slider } from './Components/Forms/Slider/Slider';
-import { CheckboxProps } from './Components/Forms/Checkbox/Checkbox';
+import { Checkbox, CheckboxItem, CheckboxProps } from './Components/Forms/Checkbox/Checkbox';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -185,6 +185,19 @@ export function App() {
   }
 
   // Checkbox component
+  const checkboxId = useId();
+  const [checkedFoods, setCheckedFoods] = useState<{ [key: string]: CheckboxItem }>({
+    'none': { ...favoriteFoods[0], checked: false },
+    'peanutButterJelly': { ...favoriteFoods[1], checked: false },
+    'ramen': { ...favoriteFoods[2], checked: false },
+    'broccoliPotatoesAndChicken': { ...favoriteFoods[3], checked: false },
+  });
+  const [checkedError, setCheckedError] = useState<boolean>();
+  const [checkedErrorMessage, setCheckedErrorMessage] = useState<string>();
+  const checkedFavoriteFood = (item: CheckboxItem, event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
+    setCheckedFoods({ ...checkedFoods, [item.value]: {...item, checked: !item.checked} });
+  }
 
 
   // Slider component
@@ -228,10 +241,19 @@ export function App() {
     required: false,
   };
 
-  // const CheckboxProps: CheckboxProps = {
-  //   ...RadioGroupProps,
-  //   variant: 'default',
-  // }
+  
+  const CheckboxProps: CheckboxProps = {
+    name: 'checked favorite foods',
+    variant: 'default',
+    id: checkboxId,
+    items: checkedFoods,
+    onSelect: checkedFavoriteFood,
+
+    error: checkedError,
+    errorMessage: checkedErrorMessage,
+    disabled: false,
+    required: false,
+  }
 
 
   return (
@@ -393,11 +415,11 @@ export function App() {
                 </div>
               </div>
 
-              {/* Radio Groups */}
+              {/* Slider and Checkbox */}
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
                 <div className='col-span-3 p-4 pb-4 bg-slate-800 rounded-md'>
                   <Slider 
-                    size='sm'
+                    size='5'
                     name="slider"
                     label="Slider"
                     description="A slider component"
@@ -413,6 +435,37 @@ export function App() {
                     aria="input slider ref"
                   />
                 </div>
+                
+
+                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                    <Checkbox 
+                      {...CheckboxProps}
+                      variant='list'
+                      name="checkbox-1"
+                      label="What are your favorite foods?"
+                      description="Select from the list of our favorite foods."
+                    />
+                </div>
+                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                    <Checkbox 
+                      {...CheckboxProps}
+                      variant='default'
+                      name="checkbox-2"
+                      label="What are your favorite foods?"
+                      description="Select from the list of our favorite foods."
+                    />
+                </div>
+                
+                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                    <Checkbox 
+                      {...CheckboxProps}
+                      variant='inline'
+                      name="checkbox-3"
+                      label="What are your favorite foods?"
+                      description="Select from the list of our favorite foods."
+                    />
+                </div>
+                
               </div>
 
 

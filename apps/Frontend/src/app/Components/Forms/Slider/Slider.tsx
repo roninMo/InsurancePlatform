@@ -25,10 +25,8 @@ export const Slider = ({
   error = false, errorMessage, required = false, disabled = false,
   aria, ...props
 }: SliderProps) => {
-  const getSliderStyles = (): string => {
-    const pixels = size; // there's an inline style error preventing this from seamlessly being rendered
-    return `size-5 mr-5 rounded-full shadow-sm ring-1 ring-gray-800`;
-  }
+  const pixels = size; // there's an inline style error preventing this from seamlessly being rendered
+  const getSliderStyles = (): string => `size-5 mr-5 rounded-full shadow-sm ring-1 ring-gray-800`;
   const getSliderTranslateStyles = (): string => `translate-x-5`; 
 
   return (
@@ -48,7 +46,12 @@ export const Slider = ({
           ${value ? 'bg-blue-500 outline-blue-400' : 'outline-default'}
         `}
       >
-        <SliderPanel className={`${getSliderStyles()} ${value && getSliderTranslateStyles()} bg-white transition-transform duration-200 ease-in-out`} />
+        <SliderPanel className={`
+          bg-white transition-transform duration-200 ease-out 
+          ${getSliderStyles()} 
+          ${value && getSliderTranslateStyles()} 
+        `}/>
+        
       </Button>
 
       {/* Captured input */}

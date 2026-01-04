@@ -1,11 +1,15 @@
-import { MouseEvent } from 'react';
+import { Dispatch, MouseEvent, SetStateAction } from 'react';
 
 import styles from './Checkbox.module.scss';
 import { RadioItem } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
 
-export interface CheckBoxItem extends RadioItem {
+export interface CheckboxItem {
+  label: string;
+  description?: string;
+  disabled?: boolean;
+  value: string;
   checked: boolean;
 }
 
@@ -16,8 +20,8 @@ export interface CheckboxProps {
   label?: string;
   description?: string;
 
-  radioItems: CheckBoxItem[];
-  onSelect: (item: CheckBoxItem) => void;
+  items: { [key: string]: CheckboxItem };
+  onSelect: (checked: CheckboxItem, event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 
@@ -30,9 +34,10 @@ export interface CheckboxProps {
 }
 
 
+/** This component should be wrapped by another to prevent unnecessary component updates with it's parent, since there's multiple state values being passed in */
 export const Checkbox = ({
   variant = 'default', id, name, label, description,
-  radioItems, onSelect, 
+  items, onSelect, 
   error = false, errorMessage, disabled = false, required = false, aria,
   onMouseEnter, onMouseLeave
 }: CheckboxProps) => {
@@ -49,35 +54,46 @@ export const Checkbox = ({
       </HeaderContainer>
 
       <ItemContainer className={`flexCol mt-4`}>
-        {radioItems.map((item: CheckBoxItem, index: number) =>  
-          <RadioContainer 
-            onClick={() => onSelect(item)} 
+        {Object.values(items).map((item: CheckboxItem, index: number) =>  
+          <CheckboxContainer 
+            onClick={(e) => onSelect(item, e)} 
             onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
             onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
             className={getStyles()} 
             key={`${id}-radio-table-item-${index}`}
           >
             <div className={variant == 'list' ? 'flexRow justify-between w-full' : 'flexRow'}>
-              <Radio 
+              <StyledCheckbox 
                 value={item.value}
                 name={name} 
                 checked={item.checked}
                 type='checkbox' 
                 onChange={() => {}} // Handled via button event
                 id={`${id}-radio-table-item-${index}-radio`}
-                className={`checkbox mb-auto mt-1 ${variant == 'list' && 'order-1'}`}
                 disabled={disabled || item.disabled}
                 required={required}
+                className={`checkbox 
+                  mb-auto mt-1 ${variant == 'list' && 'order-1'}
+                  appearance-none size-5 outline-css rounded-[4px] transition-all
+                  checked:before:content-['✓'] text-center
+
+                  bg-default outline-default
+                  checked:bg-blue-500 checked:outline-blue-400
+                  checked:dark:bg-indigo-500 checked:outline-indigo-400
+                `}
               />
 
               {(variant == 'list') && <ItemLabel>{ item.label }</ItemLabel>}
             </div>
 
-            <div className={`${variant != 'inline' ? 'flexCol' : 'flexRow gap-2'} text-left`}>
+            <div className={`
+              ${variant != 'inline' ? 'flexCol' : 'flexRow gap-2'} text-left
+              ${variant == 'list' && 'mr-8'}
+            `}>
               {(variant != 'list') && <ItemLabel>{ item.label }</ItemLabel>}
               <ItemDescription>{ item.description }</ItemDescription>
             </div>
-          </RadioContainer>
+          </CheckboxContainer>
         )}
       </ItemContainer>
 
@@ -93,14 +109,25 @@ export const Checkbox = ({
 const Container = styled.div``;
 const HeaderContainer = styled.div``;
 const ItemContainer = styled.div``;
-const RadioContainer = styled.button``;
+const CheckboxContainer = styled.button``;
 
 const Label = styled.label``;
 const Description = styled.p``;
 
-const Radio = styled.input``
 const ItemLabel = styled.label``;
 const ItemDescription = styled.p``;
+
+const CustomCheckbox = styled.div``;
+const StyledCheckbox = styled.input`
+  input[type="checkbox"] {
+
+  }
+  
+  input[type="checkbox"]::before {
+
+  }
+
+`;
 
 const radioContainerStyles = `min-w-full pt-4 pb-6 px-1`;
 const defaultStyles = `flexRow gap-2`;
