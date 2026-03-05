@@ -40,6 +40,7 @@ export const Input = ({
 }: InputProps & EventHandlers) => {
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
   
+  // TODO: Removed for variation, implement react-hook-forms
   // #region Input Masking
   // const rawMaskValue = value.replace(/\D/g, ''); // To retrieve raw mask values
   // let phoneMaskRef: RefObject<HTMLInputElement> = useMask({
@@ -108,6 +109,7 @@ export const Input = ({
     tooltipCoordinates.current = coordinates;
     // console.log(`mouseCoordinates: `, tooltipCoordinates.current); //  {x: coordinates.x, y: coordinates.y });
   }
+
 
   return (
     <TextInput className='input'>
@@ -243,9 +245,7 @@ const getInputClasses = (error: boolean, type: string, disabled?: boolean): stri
     classes += getErrorThemes();
   } else {
     classes += ` 
-      text-slate-900 dark:text-white 
-      placeholder:text-slate-400  dark:placeholder:text-slate-500 
-      bg-white dark:bg-slate-800 
+      input-styles
 
       outline-gray-300 dark:outline-white/10 
       focus:outline-indigo-600 dark:focus:outline-indigo-500 

@@ -118,8 +118,12 @@ export function App() {
   const [inputType, setInputType] = useState<SelectItemValues>({ value: 'search', label: 'Select an input type...'});
   const types: TextInputTypes[] = ['text', 'email', 'password', 'phone', 'creditCard', 'currency', 'policyNumber', 'search'];
   const inputTypes: SelectItemValues[] = types.map(type => ({ value: type, label: type }));
-  const inputTypeChanged = (selected: SelectItemValues, index: number) => setInputType(selected);
-
+  const inputTypeChanged = (selected: SelectItemValues, index: number) => {
+    setInput("");
+    SetInputError(false);
+    SetInputErrorMessage("");
+    setInputType(selected);
+  }
 
   // Email
   const emailId = useId();
@@ -351,6 +355,90 @@ export function App() {
               
             </div>
 
+            {/* List of the different input types (For quick testing) */}
+            <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="text" name="TextInputShowcase"
+                  label="Text Input" description=""
+                  value="" placeholder="Input Text..."
+                  id="TextInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+              
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="email" name="EmailInputShowcase"
+                  label="Email Input" description=""
+                  value="" placeholder="Input Email..."
+                  id="EmailInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+              
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="password" name="PasswordInputShowcase"
+                  label="Password Input" description=""
+                  value="" placeholder="Input Password..."
+                  id="PasswordInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+              
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="phone" name="PhoneInputShowcase"
+                  label="Phone Input" description=""
+                  value="" placeholder="Input Phone..."
+                  id="PhoneInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+              
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="creditCard" name="CreditCardInputShowcase"
+                  label="CreditCard Input" description=""
+                  value="" placeholder="Input Credit Card..."
+                  id="CreditCardInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+              
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="currency" name="CurrencyInputShowcase"
+                  label="Currency Input" description=""
+                  value="" placeholder="Input Credit Card..."
+                  id="CurrencyInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+              
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="policyNumber" name="PolicyNumberInputShowcase"
+                  label="Policy Number Input" description=""
+                  value="" placeholder="Input Policy Number..."
+                  id="PolicyNumberInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+              
+              <div className='col-span-7 pb-2'>
+                <Input 
+                  type="search" name="SearchInputShowcase"
+                  label="Search Input" description=""
+                  value="" placeholder="Search for Something..."
+                  id="SearchInputShowcase" 
+                  tooltip tooltipText='tooltip text...'
+                />
+              </div>
+
+
+            </div>
 
             <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 bg-slate-900 rounded-md'>
               <div className='col-span-12 pb-2'>

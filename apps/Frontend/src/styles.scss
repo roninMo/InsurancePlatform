@@ -48,7 +48,7 @@
   
   // Input specific background theme
   .bg-disabled {
-    @apply bg-gray-100 dark:bg-slate-700
+    @apply bg-gray-100 dark:bg-gray-700
   }
 
   // default outline colors
@@ -75,11 +75,32 @@
   select, input, label, div, p {
     @apply text-sm; 
   }
-
+  
   // misc text
   span {
     @apply text-xs;
   }
+  
+  
+
+  //------------------------------------------//
+  // Hack to native autofill text color       //
+  //------------------------------------------//
+  input:-webkit-autofill, 
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.gray.800') !important;
+    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; /* The only way to beat FieldText !important is with this infinite hack */
+  }
+
+  .dark input:-webkit-autofill, 
+  .dark input:-webkit-autofill:hover, 
+  .dark input:-webkit-autofill:focus, 
+  .dark input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.gray.100') !important;
+  }
+
 
 }
 
@@ -102,15 +123,15 @@
       border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
       disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
       
-      bg-white border-slate-300
+      bg-white border-gray-300
       checked:bg-white checked:outline-indigo-500 
-      disabled:bg-slate-300 disabled:border-slate-400 
-      disabled:checked:bg-slate-300 disabled:checked:outline-indigo-500
+      disabled:bg-gray-300 disabled:border-gray-400 
+      disabled:checked:bg-gray-300 disabled:checked:outline-indigo-500
       
-      dark:bg-slate-800 dark:border-slate-700
+      dark:bg-gray-800 dark:border-gray-700
       dark:checked:bg-white
-      dark:disabled:bg-slate-400 dark:disabled:border-slate-500 
-      dark:disabled:checked:bg-slate-300;
+      dark:disabled:bg-gray-400 dark:disabled:border-gray-500 
+      dark:disabled:checked:bg-gray-300;
   }
 
   .checkmark {
@@ -118,7 +139,23 @@
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
 
+  .input-styles {
+    @apply
+      text-gray-800 dark:text-gray-100 
+      placeholder:text-gray-400  dark:placeholder:text-gray-500  
+      bg-white dark:bg-gray-800 
+      autofill-backgrounds
+    ;
+  }
 
+  // This removes native backgrounds and lets us customize
+  .autofill-backgrounds {
+    @apply 
+      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.gray.100)]
+      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.gray.800)]
+    ;
+  }
+  
   //------------------------------------------//
   // Flex Themes                              //
   //------------------------------------------//
@@ -149,7 +186,7 @@
 
 
   .custom-styles {
-    @apply bg-white border border-slate-300 rounded-md;
+    @apply bg-white border border-gray-300 rounded-md;
   }
 }
 
