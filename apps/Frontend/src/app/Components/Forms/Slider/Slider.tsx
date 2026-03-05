@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import styles from './Slider.module.scss';
 
 export interface SliderProps {
-  size: string;
   type?: 'default';
   
   name: string;
@@ -21,11 +20,10 @@ export interface SliderProps {
 }
 
 export const Slider = ({
-  size = '5', type = 'default', name, label, description, value, onChange, id,
+  type = 'default', name, label, description, value, onChange, id,
   error = false, errorMessage, required = false, disabled = false,
   aria, ...props
 }: SliderProps) => {
-  const pixels = size; // there's an inline style error preventing this from seamlessly being rendered
   const getSliderStyles = (): string => `size-5 mr-5 rounded-full shadow-sm ring-1 ring-gray-800`;
   const getSliderTranslateStyles = (): string => `translate-x-5`; 
 

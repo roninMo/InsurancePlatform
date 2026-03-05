@@ -307,6 +307,7 @@ export function App() {
             <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
               <div className='col-span-4 md:col-span-4'>
                 <Input 
+                  // type="currency"
                   type={inputType.value as TextInputTypes}
                   name="Input"
                   label="Input"
@@ -318,6 +319,8 @@ export function App() {
                   error={inputError} 
                   errorMessage={inputErrorMessage} 
                   disabled={disabled}
+                  tooltip
+                  tooltipText='tooltip text...'
                 />
               </div>
 
@@ -418,22 +421,24 @@ export function App() {
               {/* Slider and Checkbox */}
               <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
                 <div className='col-span-3 p-4 pb-4 bg-slate-800 rounded-md'>
-                  <Slider 
-                    size='5'
-                    name="slider"
-                    label="Slider"
-                    description="A slider component"
-                    value={slider}
-                    onChange={onChangeSlider}
-                    id={sliderId}
+                  {[0, 1, 2, 3, 4, 5].map((index) => 
+                    <Slider 
+                      name="slider"
+                      label="Slider"
+                      description="A slider component"
+                      value={slider}
+                      onChange={onChangeSlider}
+                      id={sliderId}
 
-                    error={sliderError}
-                    errorMessage={sliderErrorMessage}
-                    required={false}
-                    disabled={false}
+                      error={sliderError}
+                      errorMessage={sliderErrorMessage}
+                      required={false}
+                      disabled={false}
 
-                    aria="input slider ref"
-                  />
+                      aria="input slider ref"
+                      key={`inputSlider-${index}`}
+                    />
+                  )}
                 </div>
                 
 
@@ -446,6 +451,9 @@ export function App() {
                       description="Select from the list of our favorite foods."
                     />
                 </div>
+              </div>
+
+              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
                 <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                     <Checkbox 
                       {...CheckboxProps}
@@ -465,7 +473,6 @@ export function App() {
                       description="Select from the list of our favorite foods."
                     />
                 </div>
-                
               </div>
 
 

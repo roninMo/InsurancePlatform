@@ -111,12 +111,12 @@ export const Input = ({
 
   return (
     <TextInput className='input'>
-      <label htmlFor={type} className="text-sm font-medium leading-6 block text-slate-800 dark:text-slate-300 cursor-text"> { label } </label>
+      <label htmlFor={type} className="text-sm text-slate-800 dark:text-slate-300 cursor-text"> { label } </label>
       <div className="mt-2 grid grid-cols-1">
         <input 
           type={type}
           name={name}
-          value={value}
+          value={!disabled ? value : placeholder}
           ref={getMaskRef(type)}
           placeholder={placeholder}
           id={id}
@@ -159,11 +159,11 @@ export const Input = ({
             }
 
             { type == 'currency' ? 
-              <CurrencyDropdown>
+              <CurrencyDropdown className='flex flex-row relative'>
                 <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
                   <option>USD</option> <option>CAD</option> <option>EUR</option>
                 </CurrencySelect>
-                <Icon variant='DropdownArrow' />
+                <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
               </CurrencyDropdown>
 
             : type == 'search' ? 
