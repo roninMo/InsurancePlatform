@@ -139,10 +139,12 @@ export function App() {
     { value: 'error', label: "Error", iconProps:                  { icon: "Error", placement: 'left' }},
     { value: 'infoBox', label: "Info box", iconProps:             { icon: "InfoBox", placement: 'left' }},
     { value: 'lightTheme', label: "Light Theme", iconProps:       { icon: "LightTheme", placement: 'left' }},
+    { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
     { value: 'profile', label: "Profile", iconProps:              { icon: "Profile", placement: 'left' }},
     { value: 'selectArrows', label: "Select Arrows", iconProps:   { icon: "SelectArrows", placement: 'left' }},
     { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort", placement: 'left' }},
     { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
+    { value: 'trash', label: "Trash", iconProps:                  { icon: "Trash", placement: 'left' }},
   ];
   const [currentIcon, setCurrentIcon] = useState<SelectItemValues>({ value: '', label: ''});
   const [selectIconError, setSelectIconError] = useState<boolean>(false);
