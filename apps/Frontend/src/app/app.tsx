@@ -496,6 +496,8 @@ export function App() {
                     variant='inline' 
                     name='radioTable-1'
                     radioItems={favoriteFoods}
+                    error
+                    errorMessage='an error occurred'
                   />
                 </div>
                 <div className='col-span-6 p-4 pb-4'>
@@ -576,6 +578,8 @@ export function App() {
                     variant='default' 
                     name='radioGroup-default'
                     radioItems={favoriteFoodsNoDescriptions}
+                    error
+                    errorMessage='an error occurred'
                   />
                 </div>
                 <div className='col-span-12 p-4 pb-4 bg-slate-800 rounded-md'>

@@ -51,8 +51,8 @@ export const Select = ({
           <span> { value.value ? value.label : placeholder } </span>
 
           <div className='flex flex-row gap-1 items-center justify-end'>
-            { error && <Icon variant='Error' styles='size-4 text-red-500 dark:text-red-400' />}
-            <Icon variant='SelectArrows' styles={`size-5 rotate-0 group-focus:rotate-180 ${error && 'text-red-500 dark:text-red-400'}`} />
+            { error && <Icon variant='Error' styles='size-4 error' />}
+            <Icon variant='SelectArrows' styles={`size-5 rotate-0 group-focus:rotate-180 ${error && 'error'}`} />
           </div>
         </CurrentlySelected>
 
@@ -75,7 +75,7 @@ export const Select = ({
         </DropdownItems>
       </StyledSelect>
 
-      <Description className={`mt-2 text-sm ${error && 'text-red-900 dark:text-red-400'}`}>
+      <Description className={`mt-2 text-sm ${error && 'error'}`}>
         { error && errorMessage ? 
           <>{ errorMessage }</>
         : description &&
@@ -96,17 +96,10 @@ const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-
 const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg flex flex-grow flex-col`;
 const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
 
-const transitionStyles = `transition-all duration-200 ease-in *:transition-all *:duration-200 *:ease-in`;
+const transitionStyles = `transition-all *:transition-all duration-200 *:duration-200 ease-in *:ease-in`;
 const visibilityStyles = `*:opacity-0 *:focus:opacity-100 [&_.currently-selected]:opacity-100`;
-const borderStyles = `
-  outline outline-1 -outline-offset-1 
-  shadow-lg rounded-md
-  focus:outline-2 focus:-outline-offset-2 
-`;
-const borderThemeStyles = `
-  outline-gray-300 dark:outline-white/10 
-  focus:outline-indigo-600 dark:focus:outline-indigo-500 
-`;
+const borderStyles = `outline-css shadow-lg`;
+const borderThemeStyles = `outline-styles`;
 
 const errorStyles = `
   text-red-900 dark:text-red-400 

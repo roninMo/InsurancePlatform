@@ -82,7 +82,7 @@ const Button = styled.button``;
 
 
   inset-ring-gray-900/5 dark:inset-ring-white/10 
-  outline-indigo-600 dark:outline-indigo-400 
+  outline-focus
 
   ${value ? 'bg-blue-500 dark:bg-indigo-500' : 'bg-gray-200 dark:bg-white/5'}
 */

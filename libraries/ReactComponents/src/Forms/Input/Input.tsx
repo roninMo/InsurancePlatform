@@ -77,7 +77,7 @@ export const Input = ({
   else if (type == 'policyNumber') {
     if (placeholder == '') {
       // if (isAutoPolicy) placeholder = '000000000';
-      // if (isHomePolicy) placeholder = 'A000A000A000A';
+      // if (isHomePolicy) placeholder = 'B000A000A000A';
       placeholder = '000000000';
     }
   }
@@ -155,18 +155,24 @@ export const Input = ({
             { shouldDisplayError() ?
               <Icon variant='Error' styles='mr-3 size-4 text-red-500 dark:text-red-400' /> 
             : 
-              <InteractiveIcon onMouseEnter={e => tooltip && tooltipMouseEnter(e)} onMouseOver={e => tooltip && toolTipHover(e)} onMouseLeave={e => tooltip && tooltipMouseLeave(e)} className={`cursor-pointer`}>
+              <TooltipIcon 
+                onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
+                onMouseOver={e => tooltip && toolTipHover(e)} 
+                onMouseLeave={e => tooltip && tooltipMouseLeave(e)} 
+                className={`cursor-pointer`}
+              >
                 <Icon variant='InfoBox' styles='mr-3 size-4' /> 
-              </InteractiveIcon>
+              </TooltipIcon>
             }
 
+            {/* Currency and Search */}
             { type == 'currency' ? 
-              <CurrencyDropdown className='flex flex-row relative'>
+              <CurrencySelectContainer className='flex flex-row relative'>
                 <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
                   <option>USD</option> <option>CAD</option> <option>EUR</option>
                 </CurrencySelect>
                 <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
-              </CurrencyDropdown>
+              </CurrencySelectContainer>
 
             : type == 'search' ? 
               <SortSearchResults>
@@ -187,7 +193,6 @@ export const Input = ({
       : description && 
         <p id={`${id}-email-description`} className="mt-2 text-sm"> { description } </p>
       }
-
 
       {/* Tooltip Text */}
       {tooltip && 
@@ -219,9 +224,9 @@ const SearchInput = styled.div``;
 const PrecedingInputElements = styled.div``;
 const SubsequentInputElements = styled.div``;
 const SortSearchResults = styled.div``;
-const CurrencyDropdown = styled.div``;
+const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
-const InteractiveIcon = styled.div`pointer-events: all;`;
+const TooltipIcon = styled.div`pointer-events: all;`;
 const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
 const buttonBorderStyles = `border-l focus:border-l-2 border-gray-300 dark:border-gray-600`;
 
@@ -246,13 +251,7 @@ const getErrorThemes = (): string => ` error error-outline`;
 
 // for the currency selection button
 const getDropdownClasses = (error: boolean): string => {
-  let classes = ` 
-    col-start-1 row-start-1 w-full appearance-none rounded-md py-1.5 pr-7 pl-3 
-    text-base sm:text-sm/6 
-    outline outline-1 -outline-offset-1 
-    focus:outline-2 focus:-outline-offset-2 
-    dark:bg-gray-800 dark:*:bg-gray-800 
-  `;
+  let classes = `col-start-1 row-start-1 w-full appearance-none outline-css py-1.5 pr-7 pl-3`;
   
   // Static themes for default/error display
   if (error) {
@@ -263,7 +262,7 @@ const getDropdownClasses = (error: boolean): string => {
       placeholder:text-slate-400 dark:placeholder:text-slate-500 
 
       outline-gray-300 dark:outline-white/10 
-      focus:outline-indigo-600 dark:focus:outline-indigo-500 
+      outline-focus
     `;
   }
 

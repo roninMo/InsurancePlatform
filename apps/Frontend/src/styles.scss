@@ -52,9 +52,31 @@
     @apply bg-gray-100 dark:bg-gray-700
   }
 
+
+
+
+  //------------------------------------------//
+  // Outline and Border                       //
+  //------------------------------------------//
+  // Default outline styles
+  .outline-css {
+    @apply
+      outline rounded-md
+      outline-1 -outline-offset-1 
+      focus:outline-2 focus:-outline-offset-2;
+  }
+
+  .outline-styles {
+    @apply outline-default outline-focus;
+  }
+
   // default outline colors
   .outline-default {
     @apply outline-gray-300 dark:outline-gray-600;
+  }
+
+  .outline-focus {
+    @apply focus:outline-indigo-600 dark:focus:outline-indigo-500;
   }
 
   // default border colors
@@ -62,7 +84,9 @@
     @apply border-gray-300 dark:border-gray-600;
   }
 
-
+  .border-focus {
+    @apply focus:border-indigo-600 dark:focus:border-indigo-500;
+  }
 
   //------------------------------------------//
   // Text Sizes                               //
@@ -96,11 +120,10 @@
       rounded-md px-3 py-1.5
       outline outline-1 -outline-offset-1 
       focus:outline-2 focus:-outline-offset-2 
-      outline-gray-300 dark:outline-white/10 
-      focus:outline-indigo-600 dark:focus:outline-indigo-500 
+      outline-default
+      outline-focus
 
       /* misc */
-      w-full
       transition-all
     ;
   }
@@ -134,13 +157,6 @@
   //------------------------------------------//
   // Component Themes                         //
   //------------------------------------------//
-  // Default outline styles
-  .outline-css {
-    @apply
-      outline rounded-md
-      outline-1 -outline-offset-1 
-      focus:outline-2 focus:-outline-offset-2;
-  }
 
   // Radio button styles
   .radio-button {
@@ -173,7 +189,7 @@
       autofill-backgrounds
 
       outline-gray-300 dark:outline-white/10 
-      focus:outline-indigo-600 dark:focus:outline-indigo-500 
+      outline-focus
     ;
   }
 
