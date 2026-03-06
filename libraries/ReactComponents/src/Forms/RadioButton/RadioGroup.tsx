@@ -41,7 +41,7 @@ export const RadioGroup = ({
 }: EventHandlers & RadioGroupProps) => {
   
   const radioItemSelected = (item: RadioItem, index: number) => {
-    console.log(`\nA radio item was selected: `, {item, index});
+    // console.log(`\nA radio item was selected: `, {item, index});
     onSelect(item, index, currentValue);
   }
 

@@ -42,6 +42,10 @@ export const Checkbox = ({
   onMouseEnter, onMouseLeave
 }: CheckboxProps) => {
   const getStyles = () => {
+    const radioContainerStyles = `min-w-full pt-4 pb-6 px-1`;
+    const listStyles = `flexCol gap-1 border-b first:border-t border-default`;
+    const defaultStyles = `flexRow gap-2`;
+    
     if (variant == 'list') return `${listStyles} ${radioContainerStyles}`;
     else return `${defaultStyles} ${radioContainerStyles}`;
   }
@@ -75,7 +79,7 @@ export const Checkbox = ({
                 className={`checkbox 
                   mt-1 mb-auto ${variant == 'list' && 'order-1'}
                   appearance-none outline-css rounded-[4px] size-5 transition-all
-                  checked:before:content-['✓'] text-center
+                  checked:before:content-['✓'] text-center p-[1px]
 
                   bg-default outline-default
                   checked:bg-blue-500 checked:outline-blue-400
@@ -111,13 +115,6 @@ const HeaderContainer = styled.div``;
 const ItemContainer = styled.div``;
 const CheckboxContainer = styled.button``;
 
-const Label = styled.label``;
-const Description = styled.p``;
-
-const ItemLabel = styled.label``;
-const ItemDescription = styled.p``;
-
-const CustomCheckbox = styled.div``;
 const StyledCheckbox = styled.input`
   input[type="checkbox"] {
 
@@ -129,8 +126,10 @@ const StyledCheckbox = styled.input`
 
 `;
 
-const radioContainerStyles = `min-w-full pt-4 pb-6 px-1`;
-const defaultStyles = `flexRow gap-2`;
-const listStyles = `flexCol gap-1 border-b first:border-t border-default`;
+const Label = styled.label``;
+const Description = styled.p``;
+const ItemLabel = styled.label``;
+const ItemDescription = styled.p``;
+
 
 // #endregion

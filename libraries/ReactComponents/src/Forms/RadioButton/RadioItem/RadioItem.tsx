@@ -85,8 +85,8 @@ const Description = styled.p``;
 const flexRow = `flexRow items-start`;
 const flexCol = `flexCol items-start`;
 
-const defaultStyles = `flex flex-row justify-start items-start gap-2 mr-6`;
-const columnStyles = `flex flex-row justify-start items-start gap-2`;
+const defaultStyles = `flexRow items-start gap-2 mr-6`;
+const columnStyles = `flexRow items-start gap-2`;
 const listStyles = `
 min-w-full flex flex-row justify-between items-start gap-2 mr-6
 [&>.radio-container]:ml-4 [&>.radio-container]:order-1

@@ -12,23 +12,23 @@
   // Text Colors                              //
   //------------------------------------------//
   .input-colors {
-    @apply text-gray-800 dark:text-gray-100;
+    @apply text-slate-800 dark:text-slate-100;
   }
 
   .label-colors {
-    @apply text-gray-800 dark:text-gray-300;
+    @apply text-slate-800 dark:text-slate-300;
   }
 
   .header-colors {
-    @apply text-gray-800  dark:text-gray-100;
+    @apply text-slate-800  dark:text-slate-100;
   }
 
   .svg-colors {
-    @apply  text-gray-500 dark:text-gray-400;
+    @apply  text-slate-500 dark:text-slate-400;
   }
 
   .text-colors {
-    @apply text-gray-800  dark:text-gray-400;
+    @apply text-slate-800  dark:text-slate-400;
   }
 
 
@@ -39,7 +39,7 @@
   //------------------------------------------//
   // default background colors
   .bg-default {
-    @apply bg-white dark:bg-gray-800;
+    @apply bg-white dark:bg-slate-800;
   }
   
   // Input specific background theme
@@ -56,7 +56,7 @@
   // Default outline styles
   .outline-css {
     @apply
-      outline rounded-md
+      outline rounded-md 
       outline-1 -outline-offset-1 
       focus:outline-2 focus:-outline-offset-2;
   }
@@ -67,7 +67,7 @@
 
   // default outline colors
   .outline-default {
-    @apply outline-gray-300 dark:outline-gray-700;
+    @apply outline-slate-300 dark:outline-slate-700;
   }
 
   .outline-focus {
@@ -80,7 +80,7 @@
   }
 
   .border-default {
-    @apply border-gray-300 dark:border-gray-600;
+    @apply border-slate-300 dark:border-slate-600;
   }
 
   .border-focus {
@@ -178,7 +178,7 @@
   input, select, textarea {
     @apply 
       input-colors
-      placeholder:text-gray-400  dark:placeholder:text-gray-500;
+      placeholder:text-slate-400  dark:placeholder:text-slate-500;
   }
 
   // Svg colors
@@ -210,7 +210,7 @@
   input:-webkit-autofill:hover, 
   input:-webkit-autofill:focus, 
   input:-webkit-autofill:active { 
-    -webkit-text-fill-color: theme('colors.gray.800') !important;
+    -webkit-text-fill-color: theme('colors.slate.800') !important;
     transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; /* The only way to beat FieldText !important is with this infinite hack */
   }
 
@@ -218,7 +218,7 @@
   .dark input:-webkit-autofill:hover, 
   .dark input:-webkit-autofill:focus, 
   .dark input:-webkit-autofill:active { 
-    -webkit-text-fill-color: theme('colors.gray.100') !important;
+    -webkit-text-fill-color: theme('colors.slate.100') !important;
   }
 
 
@@ -232,19 +232,26 @@
   // Radio button styles
   .radio-button {
     @apply 
-      p-[6px] appearance-none mr-1 rounded-lg cursor-pointer 
+      p-[6px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
+
+      /* Adjusted border to create the selected radio circle icon */
       border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
       disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
       
-      bg-white border-gray-300
-      checked:bg-white checked:outline-indigo-500 
-      disabled:bg-gray-300 disabled:border-gray-400 
-      disabled:checked:bg-gray-300 disabled:checked:outline-indigo-500
+      /* Radio Button Background */
+      border-slate-300
+      disabled:border-slate-400 
+      dark:border-slate-700
       
-      dark:bg-gray-800 dark:border-gray-700
-      dark:checked:bg-white
-      dark:disabled:bg-gray-400 dark:disabled:border-gray-500 
-      dark:disabled:checked:bg-gray-300;
+      /* Radio Button Circle (Outer) */
+      checked:outline-indigo-500 
+      disabled:checked:outline-indigo-500
+      dark:disabled:border-slate-500 
+
+      /* Radio Button Circle (Inner) */
+      bg-white dark:bg-slate-800 
+      checked:bg-white dark:checked:bg-white
+    ;
   }
 
   .checkmark {
@@ -255,8 +262,8 @@
   // This removes native backgrounds and lets us customize
   .autofill-backgrounds {
     @apply 
-      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.gray.100)]
-      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.gray.800)]
+      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
+      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
     ;
   }
   

@@ -36,11 +36,11 @@ export const SelectItem = ({ item, index, onSelect, styles, currentSelectValue, 
       id={`${id}-${item.value}`}
     >
       <LeftHandSide className={`flex flex-row justify-start gap-2 items-center`}>
-        <div className={`icon-placeholder min-h-4 min-w-5`}> 
-          {item.iconProps && item?.iconProps.placement == 'left' && 
-            <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
-          }
-        </div>
+        {item.iconProps && item?.iconProps.placement == 'left' && 
+          <div className={`icon-placeholder min-h-4 min-w-5`}> 
+              <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
+          </div>
+        }
 
         <option value={item.value} id={`${id}-option-${index}`}> 
           { item.label } 

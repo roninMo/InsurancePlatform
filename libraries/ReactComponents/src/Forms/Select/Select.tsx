@@ -89,7 +89,7 @@ export const Select = ({
 
 
 // #region Styling
-const containerStyles = `w-full text-sm`;
+const containerStyles = `w-full`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
 const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2 *:text-sm`;
 
@@ -101,14 +101,7 @@ const visibilityStyles = `*:opacity-0 *:focus:opacity-100 [&_.currently-selected
 const borderStyles = `outline-css shadow-lg`;
 const borderThemeStyles = `outline-styles`;
 
-const errorStyles = `
-  text-red-900 dark:text-red-400 
-  placeholder:text-red-300 dark:placeholder:text-red-400/70
-  
-  outline-red-300 dark:outline-red-500/50 
-  focus:outline-red-600 dark:focus:outline-red-400 
-`;
-
+const errorStyles = `error error-outline`;
 const disabledStyles = `hidden overflow-hidden opacity-0`;
 
 const getErrorThemes = (error: boolean) => {

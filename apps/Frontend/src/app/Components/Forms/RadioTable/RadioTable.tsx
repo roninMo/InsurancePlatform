@@ -36,9 +36,15 @@ export const RadioTable = ({
   const optionSelected = (item: RadioItem): boolean => {
     return currentValue.value == item.value;
   }
-  
-  const getColorTheme = (selected: boolean): string => {
-    return selected ? selectedItemTheme : tableColorTheme;
+
+  const getSelectedStyles = (selected: boolean): string => {
+    let classes = outlineStyles;
+    if (selected) {
+      classes += ` ${tableColorTheme}`;
+      if (error) classes += ` ${itemErrorTheme}`;
+    }
+
+    return classes;
   }
 
   return (
@@ -54,7 +60,7 @@ export const RadioTable = ({
             onClick={() => onSelect(item, index, currentValue)} 
             onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
             onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
-            className={`${tableItemStyles} ${getColorTheme(optionSelected(item))}`} 
+            className={`${tableItemStyles} ${getSelectedStyles(optionSelected(item))}`} 
             key={`${id}-radio-table-item-${index}`}
           >
             <Radio 
@@ -116,18 +122,36 @@ const ItemDescription = styled.p``;
 const tableItemStyles = `
   flexRow items-start gap-2 
   min-w-full p-4 px-6 
-  border transition-all 
+  border bg-slate-800 border-default
+  transition-all duration-300
   first:rounded-t-md last:rounded-b-md 
   [&:not(:first-child)]:-mt-[1px] 
 `;
 
-const tableColorTheme = `border-default bg-default`;
-const selectedItemTheme = `z-10 
-  border-b border-indigo-500 
-  bg-opacity-10 bg-indigo-500
-
-  focus:border-b focus:border-indigo-500 
-  focus:bg-opacity-10 focus:bg-indigo-500
+const outlineStyles = `outline outline-1 -outline-offset-1 outline-slate-400/0`;
+const tableColorTheme = `z-10 
+  outline-indigo-600 dark:outline-indigo-500 
+  bg-indigo-600 dark:bg-indigo-500
+  bg-opacity-10 dark:bg-opacity-10 
+`;
+const itemErrorTheme = `z-10 
+  outline-red-400 dark:outline-red-500
+  bg-red-400 dark:bg-red-500
+  bg-opacity-10 dark:bg-opacity-10 
 `;
 
 // #endregion
+
+/*
+
+const selectedItemTheme = `z-10`;
+const tableColorTheme = ` 
+  focus:border-b focus:border-indigo-500 
+  focus:bg-opacity-10 focus:bg-indigo-500
+`;
+const errorTheme = `
+  focus:border-b focus:border-red-500
+  border-default 
+`;
+
+*/

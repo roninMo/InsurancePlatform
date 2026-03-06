@@ -187,7 +187,7 @@ export function App() {
   const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
   const selectedFavoriteFood = (selected: RadioItem, index: number, currentValue: RadioItem) => {
     setFavoriteFood(selected);
-    console.log(`radioButton: `, {selected, index, currentValue});
+    // console.log(`radioButton: `, {selected, index, currentValue});
   }
 
   // Checkbox component
