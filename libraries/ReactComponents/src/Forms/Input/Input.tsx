@@ -137,7 +137,7 @@ export const Input = ({
           aria-describedby={aria || autocomplete || ''}
           aria-invalid={error ? "true" : "false"}
 
-          className={getInputClasses(error, type, disabled)}
+          className={`${getInputClasses(error, type, disabled)} peer`}
           { ...props }
         />
 
@@ -150,10 +150,10 @@ export const Input = ({
 
 
         {/* Elements after the input */}
-        <SubsequentInputElements className={`${iconContainerStyles}`}>
+        <SubsequentInputElements className={`${iconContainerStyles} ${borderSelectStyles(error)} peer-focus:[&_button]:border-l-2`}>
           <div className={`flex flex-row flex-grow justify-items-end items-center`}>
             { shouldDisplayError() ?
-              <Icon variant='Error' styles='mr-3 size-4 text-red-500 dark:text-red-400' /> 
+              <Icon variant='Error' styles='mr-3 size-4 error' /> 
             : 
               <TooltipIcon 
                 onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
@@ -176,7 +176,7 @@ export const Input = ({
 
             : type == 'search' ? 
               <SortSearchResults>
-                <button type="button" className={`flex shrink-0 items-center gap-x-1.5  rounded-r-md px-3 py-2  text-sm font-semibold  bg-white dark:bg-white/10  text-gray-900 dark:text-white ${buttonBorderStyles}`}>
+                <button type="button" className={`flex items-center gap-x-1.5 shrink-0 ${sortButtonStyles} ${sortBorderStyles}`}>
                   <Icon variant='Sort' />
                   Sort
                 </button>
@@ -189,16 +189,16 @@ export const Input = ({
 
       {/* Error / Description messages */}
       { shouldDisplayError() && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 text-sm error"> { errorMessage } </p>
+        <p id={`${id}-error-message`} className="mt-2 ml-1 error"> { errorMessage } </p>
       : description && 
-        <p id={`${id}-email-description`} className="mt-2 text-sm"> { description } </p>
+        <p id={`${id}-email-description`} className="mt-2 ml-1"> { description } </p>
       }
 
       {/* Tooltip Text */}
       {tooltip && 
         <Tooltip 
           style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
-          className={`${tooltipHoverStyles} ${tooltipTheme_Styles} ${tooltipCoordinates} pointer-events-none transition-all ${tooltipActive ? tooltipVisible : tooltipHidden}`}
+          className={`${tooltipTheme_Styles} ${tooltipHoverStyles} ${tooltipCoordinates} ${tooltipActive ? tooltipVisible : tooltipHidden}`}
         >
           {tooltipText}
         </Tooltip>
@@ -228,14 +228,20 @@ const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
 const TooltipIcon = styled.div`pointer-events: all;`;
 const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
-const buttonBorderStyles = `border-l focus:border-l-2 border-gray-300 dark:border-gray-600`;
+
+const sortButtonStyles = `rounded-r-md px-3 py-2 font-semibold bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white`;
+const sortBorderStyles = `border-l border-default`;
+const borderSelectStyles = (error: boolean): string => error ?
+  `peer-focus:[&_button]:border-red-400 dark:peer-focus:[&_button]:border-red-500` :
+  `peer-focus:[&_button]:border-indigo-600 dark:peer-focus:[&_button]:border-indigo-500`
+;
 
 
 // Input themes and error styles
 // TODO: Default theme styles for input element text and border/outline colors
 const getInputClasses = (error: boolean, type: string, disabled?: boolean): string => {
   let classes = `col-start-1 row-start-1 block w-full`; // Keep layout styling specific to components
-  
+
   // Icon spacing
   if (type == 'email' || type == 'policyNumber') classes += ` pl-9`; 
 
@@ -251,21 +257,11 @@ const getErrorThemes = (): string => ` error error-outline`;
 
 // for the currency selection button
 const getDropdownClasses = (error: boolean): string => {
-  let classes = `col-start-1 row-start-1 w-full appearance-none outline-css py-1.5 pr-7 pl-3`;
+  let classes = `col-start-1 row-start-1 w-full appearance-none outline-css pl-3 py-2 pr-7`;
   
   // Static themes for default/error display
-  if (error) {
-    classes += getErrorThemes();
-  } else {
-    classes += ` 
-      text-gray-500 dark:text-gray-400 
-      placeholder:text-slate-400 dark:placeholder:text-slate-500 
-
-      outline-gray-300 dark:outline-white/10 
-      outline-focus
-    `;
-  }
-
+  if (error) classes += getErrorThemes();
+  else       classes += ` outline-styles`;
   return classes;
 }
 
@@ -273,10 +269,9 @@ const getDropdownClasses = (error: boolean): string => {
 // Tooltip Styling TODO: this needs to be fixed positioning to handle proper placement with scroll
 const Tooltip = styled.div``;
 const tooltipTheme_Styles = ` 
-  text-xs italic shadow-lg border rounded-md p-2 pr-4 max-w-64
-  bg-white dark:bg-slate-800 
-  border-gray-300 dark:border-white/10 
-  focus:border-indigo-600 dark:focus:border-indigo-500 
+  text-xs italic shadow-lg p-2 pr-4 max-w-64
+  bg-default border rounded-md border-styles
+  pointer-events-none transition-all
 `;
 
 const tooltipHoverStyles = `absolute top-0 left-0 z-10 duration-200 ease-in`;

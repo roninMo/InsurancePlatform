@@ -9,34 +9,29 @@
 /* Global Styles  */
 @layer base {
   //------------------------------------------//
-  // Theme Colors                             //
+  // Text Colors                              //
   //------------------------------------------//
-  // Headers
-  h1, h2, h3, h4, h5, h6 {
-    @apply text-gray-800  dark:text-gray-100;
+  .input-colors {
+    @apply text-gray-800 dark:text-gray-100;
   }
 
-  // text containers
-  select, div, p, span {
-    @apply text-gray-800  dark:text-gray-400; 
-  }
-
-  // Input headers
-  label {
+  .label-colors {
     @apply text-gray-800 dark:text-gray-300;
   }
 
-  // Inputs
-  input, select {
-    @apply 
-      text-gray-800 dark:text-gray-100 
-      placeholder:text-gray-400  dark:placeholder:text-gray-500 
-    ;
+  .header-colors {
+    @apply text-gray-800  dark:text-gray-100;
   }
 
-  svg {
+  .svg-colors {
     @apply  text-gray-500 dark:text-gray-400;
   }
+
+  .text-colors {
+    @apply text-gray-800  dark:text-gray-400;
+  }
+
+
 
 
   //------------------------------------------//
@@ -72,7 +67,7 @@
 
   // default outline colors
   .outline-default {
-    @apply outline-gray-300 dark:outline-gray-600;
+    @apply outline-gray-300 dark:outline-gray-700;
   }
 
   .outline-focus {
@@ -80,6 +75,10 @@
   }
 
   // default border colors
+  .border-styles {
+    @apply border-default border-focus;
+  }
+
   .border-default {
     @apply border-gray-300 dark:border-gray-600;
   }
@@ -87,6 +86,9 @@
   .border-focus {
     @apply focus:border-indigo-600 dark:focus:border-indigo-500;
   }
+
+
+
 
   //------------------------------------------//
   // Text Sizes                               //
@@ -97,7 +99,7 @@
   }
   
   // Description Elements
-  select, input, label, div, p {
+  label, div, p {
     @apply text-sm; /* TODO: media query fonts sm:text-sm/6 */
   }
   
@@ -105,27 +107,96 @@
   span {
     @apply text-xs;
   }
-  
-  
+
+  // input elements
+  select, input, textarea {
+    @apply text-sm;
+  }
+
+
+
 
   //------------------------------------------//
-  // Input Themes                             //
+  // Error Themes                             //
   //------------------------------------------//
-  input, select {
+  // Error text
+  .error {
     @apply 
-      bg-white dark:bg-gray-800 
-      autofill-backgrounds
-
-      /* outline / border styling */
-      rounded-md px-3 py-1.5
-      outline outline-1 -outline-offset-1 
-      focus:outline-2 focus:-outline-offset-2 
-      outline-default
-      outline-focus
-
-      /* misc */
-      transition-all
+      text-red-400 dark:text-red-500
     ;
+  }
+
+  // outline errors
+  .error-outline {
+    @apply
+      outline-red-400 dark:outline-red-500
+      focus:outline-red-500 dark:focus:outline-red-400
+      placeholder:text-red-400 dark:placeholder:text-red-500
+    ;
+  }
+
+  // border errors
+  .error-border { 
+    @apply
+      border-red-400 dark:border-red-600;
+  }
+
+
+  .disabled {
+    @apply 
+    bg-gray-300 dark:bg-gray-700
+    outline-gray-400 dark:outline-gray-600 
+    outline-2 -outline-offset-2
+    
+    placeholder:text-slate-500 dark:placeholder:text-slate-400 
+    text-gray-500 dark:text-gray-400 
+    ;
+  }
+
+
+
+
+  //------------------------------------------//
+  // Element Text Colors                      //
+  //------------------------------------------//
+  // Headers
+  h1, h2, h3, h4, h5, h6 {
+    @apply header-colors;
+  }
+
+  // text containers
+  div, p, span {
+    @apply text-colors; 
+  }
+
+  // Headers
+  label {
+    @apply label-colors;
+  }
+
+  // Inputs
+  input, select, textarea {
+    @apply 
+      input-colors
+      placeholder:text-gray-400  dark:placeholder:text-gray-500;
+  }
+
+  // Svg colors
+  svg {
+    @apply svg-colors;
+  }
+
+
+
+
+  //------------------------------------------//
+  // Input Specific Styling                   //
+  //------------------------------------------//
+  input, select, textarea {
+    @apply 
+      bg-default autofill-backgrounds
+      outline-css outline-styles px-3 py-2
+      transition-all;
   }
 
   label {
@@ -181,18 +252,6 @@
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
 
-  .input-styles {
-    @apply
-      text-gray-800 dark:text-gray-100 
-      placeholder:text-gray-400  dark:placeholder:text-gray-500  
-      bg-white dark:bg-gray-800 
-      autofill-backgrounds
-
-      outline-gray-300 dark:outline-white/10 
-      outline-focus
-    ;
-  }
-
   // This removes native backgrounds and lets us customize
   .autofill-backgrounds {
     @apply 
@@ -207,43 +266,6 @@
   .flexRow { @apply flex flex-row justify-start; }
   .flexCol { @apply flex flex-col items-start; }
 
-
-  //------------------------------------------//
-  // Error Themes                             //
-  //------------------------------------------//
-  // Error text
-  .error {
-    @apply 
-      text-red-500 dark:text-red-400
-    ;
-  }
-
-  // outline errors
-  .error-outline {
-    @apply
-      outline-red-400 dark:outline-red-500
-      focus:outline-red-500 dark:focus:outline-red-400
-      placeholder:text-red-400 dark:placeholder:text-red-500
-    ;
-  }
-
-  // border errors
-  .error-border { 
-    @apply
-      border-red-400 dark:border-red-600;
-  }
-
-
-  .disabled {
-    @apply 
-    bg-gray-300 dark:bg-gray-700
-    outline-gray-400 dark:outline-gray-600 
-    outline-2 -outline-offset-2
-    
-    placeholder:text-slate-500 dark:placeholder:text-slate-400 
-    text-gray-500 dark:text-gray-400 
-    ;
-  }
 }
 
 

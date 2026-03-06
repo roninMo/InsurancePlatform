@@ -27,6 +27,7 @@ export interface SelectItemProps {
 
 
 export const SelectItem = ({ item, index, onSelect, styles, currentSelectValue, id }: SelectItemProps) => {
+  // console.log('props', { item, index, onSelect, styles, currentSelectValue, id });
   return (
     <Container 
       onClick={() => onSelect && onSelect(item, index)} 
