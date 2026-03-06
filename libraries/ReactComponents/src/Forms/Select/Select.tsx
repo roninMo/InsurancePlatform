@@ -33,7 +33,7 @@ export const Select = ({
 
   return (
     <Container className={`${containerStyles}`}>
-      <Label className={`text-sm font-medium leading-6 block pb-2 text-slate-800  dark:text-slate-300 cursor-text`}>
+      <Label className={`block pb-2`}>
         { label }
       </Label>
 
@@ -91,7 +91,7 @@ export const Select = ({
 // #region Styling
 const containerStyles = `w-full text-sm`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
-const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2`;
+const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2 *:text-sm`;
 
 const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg flex flex-grow flex-col`;
 const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;

@@ -113,7 +113,7 @@ export const Input = ({
 
   return (
     <TextInput className='input'>
-      <label htmlFor={type} className="text-sm text-slate-800 dark:text-slate-300 cursor-text"> { label } </label>
+      <label htmlFor={type} className=""> { label } </label>
       <div className="mt-2 grid grid-cols-1">
         <input 
           type={type}
@@ -170,7 +170,7 @@ export const Input = ({
 
             : type == 'search' ? 
               <SortSearchResults>
-                <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
+                <button type="button" className={`flex shrink-0 items-center gap-x-1.5  rounded-r-md px-3 py-2  text-sm font-semibold  bg-white dark:bg-white/10  text-gray-900 dark:text-white ${buttonBorderStyles}`}>
                   <Icon variant='Sort' />
                   Sort
                 </button>
@@ -183,7 +183,7 @@ export const Input = ({
 
       {/* Error / Description messages */}
       { shouldDisplayError() && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 text-sm text-red-600 dark:text-red-400"> { errorMessage } </p>
+        <p id={`${id}-error-message`} className="mt-2 text-sm error"> { errorMessage } </p>
       : description && 
         <p id={`${id}-email-description`} className="mt-2 text-sm"> { description } </p>
       }
@@ -223,38 +223,28 @@ const CurrencyDropdown = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
 const InteractiveIcon = styled.div`pointer-events: all;`;
 const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
+const buttonBorderStyles = `border-l focus:border-l-2 border-gray-300 dark:border-gray-600`;
 
 
 // Input themes and error styles
 // TODO: Default theme styles for input element text and border/outline colors
 const getInputClasses = (error: boolean, type: string, disabled?: boolean): string => {
-  let classes = `col-start-1 row-start-1 block w-full 
-    rounded-md sm:text-sm/6 px-3 py-1.5 text-base 
-    outline outline-1 -outline-offset-1 
-    focus:outline-2 focus:-outline-offset-2 
-    transition-all
-  `;
-
+  let classes = `col-start-1 row-start-1 block w-full`; // Keep layout styling specific to components
+  
   // Icon spacing
   if (type == 'email' || type == 'policyNumber') classes += ` pl-9`; 
 
   // Static themes for default/error display
-  if (disabled) {
-    classes += getDisabledThemes();
-  } else if (error) {
-    classes += getErrorThemes();
-  } else {
-    classes += ` 
-      input-styles
-
-      outline-gray-300 dark:outline-white/10 
-      focus:outline-indigo-600 dark:focus:outline-indigo-500 
-    `;
-  }
-
+  if (disabled)  classes += getDisabledThemes();
+  else if (error)  classes += getErrorThemes();
   return classes;
 }
 
+const getDisabledThemes = (): string => ` disabled`;
+const getErrorThemes = (): string => ` error error-outline`;
+
+
+// for the currency selection button
 const getDropdownClasses = (error: boolean): string => {
   let classes = ` 
     col-start-1 row-start-1 w-full appearance-none rounded-md py-1.5 pr-7 pl-3 
@@ -280,33 +270,9 @@ const getDropdownClasses = (error: boolean): string => {
   return classes;
 }
 
-const getDisabledThemes = (): string => {
-  return `
-    bg-white/2 dark:bg-slate-700
-    placeholder:text-slate-500 dark:placeholder:text-slate-400 
-    text-gray-500 dark:text-gray-400 
-    outline-gray-400 dark:outline-white/10 
-  `;
-}
 
-const getErrorThemes = (): string => {
-  return ` 
-    text-red-900 dark:text-red-400 
-    placeholder:text-red-300 dark:placeholder:text-red-400/70
-    bg-white dark:bg-slate-800 
-    
-    outline-red-300 dark:outline-red-500/50 
-    focus:outline-red-600 dark:focus:outline-red-400 
-  `;
-}
-
-
-// Tooltip Styling
+// Tooltip Styling TODO: this needs to be fixed positioning to handle proper placement with scroll
 const Tooltip = styled.div``;
-
-const tooltipHoverStyles = `
-  absolute top-0 left-0 z-10 duration-200 ease-in
-`;
 const tooltipTheme_Styles = ` 
   text-xs italic shadow-lg border rounded-md p-2 pr-4 max-w-64
   bg-white dark:bg-slate-800 
@@ -314,6 +280,7 @@ const tooltipTheme_Styles = `
   focus:border-indigo-600 dark:focus:border-indigo-500 
 `;
 
+const tooltipHoverStyles = `absolute top-0 left-0 z-10 duration-200 ease-in`;
 const tooltipHidden = `opacity-0 *:opacity-0 transition-all`;
 const tooltipVisible = `opacity-100 *:opacity-100 transition-opacity`;
 // #endregion 

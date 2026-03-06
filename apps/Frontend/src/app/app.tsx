@@ -361,7 +361,7 @@ export function App() {
                 <Input 
                   type="text" name="TextInputShowcase"
                   label="Text Input" description=""
-                  value="" placeholder="Input Text..."
+                  value="Hello " placeholder="Input Text..."
                   id="TextInputShowcase" 
                   tooltip tooltipText='tooltip text...'
                 />
@@ -371,7 +371,7 @@ export function App() {
                 <Input 
                   type="email" name="EmailInputShowcase"
                   label="Email Input" description=""
-                  value="" placeholder="Input Email..."
+                  value="example@email.com" placeholder="Input Email..."
                   id="EmailInputShowcase" 
                   tooltip tooltipText='tooltip text...'
                 />
@@ -381,7 +381,7 @@ export function App() {
                 <Input 
                   type="password" name="PasswordInputShowcase"
                   label="Password Input" description=""
-                  value="" placeholder="Input Password..."
+                  value="password" placeholder="Input Password..."
                   id="PasswordInputShowcase" 
                   tooltip tooltipText='tooltip text...'
                 />
@@ -391,7 +391,7 @@ export function App() {
                 <Input 
                   type="phone" name="PhoneInputShowcase"
                   label="Phone Input" description=""
-                  value="" placeholder="Input Phone..."
+                  value="(123)-456-7890" placeholder="Input Phone..."
                   id="PhoneInputShowcase" 
                   tooltip tooltipText='tooltip text...'
                 />
@@ -401,7 +401,7 @@ export function App() {
                 <Input 
                   type="creditCard" name="CreditCardInputShowcase"
                   label="CreditCard Input" description=""
-                  value="" placeholder="Input Credit Card..."
+                  value="0000 0000 0000 0000" placeholder="Input Credit Card..."
                   id="CreditCardInputShowcase" 
                   tooltip tooltipText='tooltip text...'
                 />
@@ -411,7 +411,7 @@ export function App() {
                 <Input 
                   type="currency" name="CurrencyInputShowcase"
                   label="Currency Input" description=""
-                  value="" placeholder="Input Credit Card..."
+                  value="$100.00" placeholder="Input Credit Card..."
                   id="CurrencyInputShowcase" 
                   tooltip tooltipText='tooltip text...'
                 />
@@ -421,7 +421,7 @@ export function App() {
                 <Input 
                   type="policyNumber" name="PolicyNumberInputShowcase"
                   label="Policy Number Input" description=""
-                  value="" placeholder="Input Policy Number..."
+                  value="90012345-AB" placeholder="Input Policy Number..."
                   id="PolicyNumberInputShowcase" 
                   tooltip tooltipText='tooltip text...'
                 />
