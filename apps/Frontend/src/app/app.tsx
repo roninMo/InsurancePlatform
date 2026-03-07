@@ -639,14 +639,50 @@ export function App() {
 
             {/* Different platforms to navigate to: */}
             {/* 
-              This project
+              Homepage navbar 
+                - Home 
+                - Demos
+                - Mock Database
+                - etc.
+
+              Settings/User Login
+                - User
+                - Settings
+                - etc.
+            */}
+
+            {/* 
+              Mock Database
+                A way to create fake databases. Creating individual tables, their values, and relations
+                  - Created data gets sent to the backend for constructing mock databases dynamically. Attach
+                      databases to each account, and retrieve values from the backend when logging in.
+                      The data is transient, but the table structures can be cached in localStorage
+              
+                Popovers
+                - Sidebar (Tables of the current database)
+                  - Allows the user to select and rearrange the current list of tables for the selected database
+                - TopBar - Information / Data / Edit
+                  - Information:  The information about the current table (to edit / move the list of it's params)
+                  - Data:         The values that the database currently has on the table
+                - BottomBar (the list of databases, and where to create a new one)
+                  - Contains boxes of the current databases, and the way to create additional ones.
+                  - Separate menu for creating a database from scratch, use the edit tab of a specific database to delete it
+            */}
+
+            {/* 
+              Insurance Demo
                 - User dashboard
                 - Landing page -> with links to navigate to the other portals
+                - Submit a claim page - home and auto
+                  - Sidebar for steps, fade in/out animations for each step, with a way to add and navigate between steps
+                  - Business logic for dynamically handling what needs to be filled out during a quote
+                  - Current submit claim state should be saved on the backend, tied the guid for retrieval
+                  - Eventual logic should save the form data to the backend while they're entering the information on the backend
             */}
 
             {/* Submit a claim, for home and auto */}
-            {/* The Agent portal for accessing and handling user claims (no clue what to build here) */}
-            
+            {/* Login page should accept dummy data, or a universal user for quick access */}
+            {/* An additional settings page to determine whether to use mock data for the insurance page, or a backend */}
             {/* Backends for handling data, and try out clustering */}
 
         </LoginContext.Provider>
