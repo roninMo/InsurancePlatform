@@ -34,7 +34,7 @@ export const RadioGroupItem = ({
 
   const getItemContainerStyles = (): string => {
     let classes = '';
-    classes += ` ${variant == 'columnInline' ? flexRow : flexCol}`;
+    classes += ` ${variant == 'columnInline' ? 'rowStart' : 'colStart items-start'}`;
     if (variant != 'list') classes += ' gap-2';
     return classes;
   }
@@ -64,7 +64,7 @@ export const RadioGroupItem = ({
       </div>
 
       <RadioItemContainer className={`${getItemContainerStyles()}`}>
-        <Label className={`${labelStyles}`}> { value.label } </Label>
+        <Label className="min-w-max pr-2"> { value.label } </Label>
         { value.description && 
           <Description> { value.description } </Description>
         }
@@ -82,9 +82,6 @@ const Label = styled.p``;
 const Description = styled.p``;
 
 // Component styles
-const flexRow = `rowStart items-start`;
-const flexCol = `colStart items-start`;
-
 const defaultStyles = `rowStart items-start gap-2 mr-6`;
 const columnStyles = `rowStart items-start gap-2`;
 const listStyles = `
@@ -93,6 +90,5 @@ const listStyles = `
   border-b border-slate-600 pb-6 pt-2 w-full
 `;
 
-const labelStyles = `min-w-max pr-2`;
 
 // #endregion

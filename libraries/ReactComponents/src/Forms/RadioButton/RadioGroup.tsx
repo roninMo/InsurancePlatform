@@ -62,7 +62,7 @@ export const RadioGroup = ({
       }
 
       {/* Radio Items */}
-      <div className={rowStyleVariants.includes(variant) ? rowLayout : columnLayout}>
+      <div className={rowStyleVariants.includes(variant) ? 'rowStart' : 'colStart' + 'gap-2'}>
         { radioItems.map((item: RadioItem, index: number) =>
           <RadioGroupItem
             checked={currentValue.value == item.value}
@@ -119,8 +119,3 @@ const getErrorThemes = (error: boolean, disabled: boolean): string => {
 
 // Radio items layout
 const rowStyleVariants = ['default'];
-const columnLayout = `colStart gap-2`;
-const rowLayout = `rowStart gap-2`;
-
-// has-checked: <> <radio> </>
-// checked:

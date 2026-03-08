@@ -114,8 +114,8 @@
   /* For containers that need highlighting when selected  */
   .selected-box { 
     @apply 
+    bg-indigo-600 dark:bg-indigo-500
       bg-opacity-10 dark:bg-opacity-10
-      bg-indigo-600 dark:bg-indigo-500
       outline-focus 
   }
 

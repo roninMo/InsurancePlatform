@@ -40,7 +40,7 @@ export const Slider = ({
         {...props}
         className={`
           min-w-max rowStart gap-2 p-[1px] rounded-full 
-          outline outline-1 -outline-offset-1  
+          outline-init  
           ${value ? 'bg-blue-500 outline-blue-400' : 'outline-default'}
         `}
       >
@@ -70,19 +70,3 @@ const Label = styled.label``;
 const Description = styled.p``;
 const SliderPanel = styled.div``;
 const Button = styled.button``;
-
-
-/*
-  flex min-w-max p-0.5 w-11 rounded-full 
-  transition-colors duration-200 ease-in-out 
-
-  inset-ring 
-  outline-css 
-  has-focus-visible:outline has-focus-visible:outline-2 
-
-
-  inset-ring-gray-900/5 dark:inset-ring-white/10 
-  outline-focus
-
-  ${value ? 'bg-blue-500 dark:bg-indigo-500' : 'bg-gray-200 dark:bg-white/5'}
-*/

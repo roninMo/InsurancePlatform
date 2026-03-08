@@ -45,7 +45,7 @@ export const Select = ({
         onClick={e => onClick && onClick(e)}
         aria-describedby={aria || undefined}
         { ...props }
-        className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-white *:dark:bg-slate-800`}
+        className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-default`}
       >
         <CurrentlySelected className={`currently-selected ${currentlySelectedStyles} ${transitionStyles} ${borderStyles} ${getErrorThemes(error)}`}>
           <span> { value.value ? value.label : placeholder } </span>
