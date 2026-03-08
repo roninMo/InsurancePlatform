@@ -35,7 +35,7 @@ export const SelectItem = ({ item, index, onSelect, styles, currentSelectValue, 
       ${item.value == currentSelectValue.value && activeItemStyles}`}
       id={`${id}-${item.value}`}
     >
-      <LeftHandSide className={`flex flex-row justify-start gap-2 items-center`}>
+      <LeftHandSide className={`row justify-start gap-2 items-center`}>
         {item.iconProps && item?.iconProps.placement == 'left' && 
           <div className={`icon-placeholder min-h-4 min-w-5`}> 
               <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
@@ -57,7 +57,7 @@ export const SelectItem = ({ item, index, onSelect, styles, currentSelectValue, 
 
 // #region Styling
 const itemStyles = `
-  flex flex-row gap-2 justify-between items-center p-2 pr-4
+  row gap-2 justify-between items-center p-2 pr-4
   [&_option]:hover:text-slate-200 dark:[&_option]:hover:text-slate-200
   hover:bg-indigo-500 
   [&_svg]:hover:text-slate-200

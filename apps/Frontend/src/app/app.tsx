@@ -23,7 +23,7 @@ min-height: 100vh;
 `;
 const RoutesSpacing = styled.div``;
 const MainContent = styled.div``;
-// p-2 pb-4 text-sm/6 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8
+// pb-4 p-2 mx-auto max-w-7xl px-2 lg:px-8 sm:px-6
 
 
 // Authentication Context
@@ -145,7 +145,7 @@ export function App() {
     { value: 'lightTheme', label: "Light Theme", iconProps:       { icon: "LightTheme", placement: 'left' }},
     { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
     { value: 'profile', label: "Profile", iconProps:              { icon: "Profile", placement: 'left' }},
-    { value: 'selectArrows', label: "Select Arrows", iconProps:   { icon: "SelectArrows", placement: 'left' }},
+    { value: 'SelectArrow', label: "Select Arrows", iconProps:    { icon: "SelectArrow", placement: 'left' }},
     { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort", placement: 'left' }},
     { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
     { value: 'trash', label: "Trash", iconProps:                  { icon: "Trash", placement: 'left' }},
@@ -283,7 +283,7 @@ export function App() {
               <Route 
                 path="/"
                 element={
-                  <div className={`p-2 pb-4 text-sm/6`}>
+                  <div className={`p-2 pb-4`}>
                     <div>
                       <h2 className={`mb-2`}>Home Page</h2>
                       <p className={`mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
@@ -297,7 +297,7 @@ export function App() {
               <Route
                 path="/page-2"
                 element={
-                  <div className={`p-2 pb-4 text-sm/6`}>
+                  <div className={`p-2 pb-4`}>
                     <Link to="/">Click here to go back to root page.</Link>
                   </div>
                 }
@@ -307,11 +307,11 @@ export function App() {
 
 
             {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
-          <MainContent className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4'>
+          <MainContent className='spacing gap-y-4 px-6 py-4'>
 
             {/* First Section for Input component logic */}
-            <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
-              <div className='col-span-4 md:col-span-4'>
+            <div className='spacing mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
+              <div className='span-4 md:span-4'>
                 <Input 
                   // type="currency"
                   type={inputType.value as TextInputTypes}
@@ -356,7 +356,7 @@ export function App() {
             </div>
 
             {/* List of the different input types (For quick testing) */}
-            <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
+            <div className='spacing mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
               <div className='col-span-7 pb-2'>
                 <Input 
                   type="text" name="TextInputShowcase"
@@ -440,13 +440,13 @@ export function App() {
 
             </div>
 
-            <div className='col-span-12 grid grid-cols-12 gap-x-4 gap-2 mt-4 p-4 bg-slate-900 rounded-md'>
-              <div className='col-span-12 pb-2'>
+            <div className='spacing mt-4 p-4 bg-slate-900 rounded-md'>
+              <div className='span-12 pb-2'>
                 <h2>Custom React Input Components</h2>
               </div>
 
               {/* Input and Select */}
-              <div className='col-span-4 pb-8'>
+              <div className='span-4 pb-8'>
                 <Input 
                   { ...InputProps_Email } 
                   value={email}
@@ -459,7 +459,7 @@ export function App() {
                 />
               </div>
 
-              <div className='col-span-4 pb-8'>
+              <div className='span-4 pb-8'>
                 <Select 
                   name="selectIcons"
                   label="Selected Svgs"
@@ -478,19 +478,19 @@ export function App() {
               </div>
               
               {/* Content Layout */}
-              <div className='col-span-12 p-2' />
-              <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='col-span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='col-span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='col-span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
+              <div className='span-12 p-2' />
+              <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
+              <div className='span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
 
 
               {/* Radio Table */}
-              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
+              <div className='spacing gap-x-8 mt-4'>
 
                 {/* Default, List, Table */}
-                <div className='col-span-6 p-4 pb-4'>
+                <div className='span-6 p-4 pb-4'>
                   <RadioTable 
                     {...RadioGroupProps} 
                     variant='inline' 
@@ -500,7 +500,7 @@ export function App() {
                     errorMessage='an error occurred'
                   />
                 </div>
-                <div className='col-span-6 p-4 pb-4'>
+                <div className='span-6 p-4 pb-4'>
                   <RadioTable 
                     {...RadioGroupProps} 
                     variant='block' 
@@ -511,8 +511,8 @@ export function App() {
               </div>
 
               {/* Slider and Checkbox */}
-              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
-                <div className='col-span-3 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='spacing gap-x-8 mt-4'>
+                <div className='span-3 p-4 pb-4 bg-slate-800 rounded-md'>
                   {[0, 1, 2, 3, 4, 5].map((index) => 
                     <Slider 
                       name="slider"
@@ -534,7 +534,7 @@ export function App() {
                 </div>
                 
 
-                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                     <Checkbox 
                       {...CheckboxProps}
                       variant='list'
@@ -545,8 +545,8 @@ export function App() {
                 </div>
               </div>
 
-              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
-                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='spacing gap-x-8 mt-4'>
+                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                     <Checkbox 
                       {...CheckboxProps}
                       variant='default'
@@ -556,7 +556,7 @@ export function App() {
                     />
                 </div>
                 
-                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                     <Checkbox 
                       {...CheckboxProps}
                       variant='inline'
@@ -569,10 +569,10 @@ export function App() {
 
 
               {/* Radio Groups */}
-              <div className='col-span-12 grid grid-cols-12 gap-2 gap-x-8 mt-4'>
+              <div className='spacing gap-x-8 mt-4'>
 
                 {/* Default, List, Table */}
-                <div className='col-span-12 p-4 pb-4 bg-slate-800 rounded-md'>
+                <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='default' 
@@ -582,7 +582,7 @@ export function App() {
                     errorMessage='an error occurred'
                   />
                 </div>
-                <div className='col-span-12 p-4 pb-4 bg-slate-800 rounded-md'>
+                <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='list' 
@@ -593,7 +593,7 @@ export function App() {
 
 
                 {/* Column, and Column-Inline */}
-                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='column' 
@@ -604,7 +604,7 @@ export function App() {
                   />
                 </div>
                 
-                <div className='col-span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
                   <RadioGroup 
                     {...RadioGroupProps} 
                     variant='columnInline' 

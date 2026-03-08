@@ -66,7 +66,7 @@ export const RadioGroupItem = ({
       <RadioItemContainer className={`${getItemContainerStyles()}`}>
         <Label className={`${labelStyles}`}> { value.label } </Label>
         { value.description && 
-          <Description className={`${descriptionStyles}`}> { value.description } </Description>
+          <Description> { value.description } </Description>
         }
       </RadioItemContainer>
     </Container>
@@ -82,18 +82,17 @@ const Label = styled.p``;
 const Description = styled.p``;
 
 // Component styles
-const flexRow = `flexRow items-start`;
-const flexCol = `flexCol items-start`;
+const flexRow = `rowStart items-start`;
+const flexCol = `colStart items-start`;
 
-const defaultStyles = `flexRow items-start gap-2 mr-6`;
-const columnStyles = `flexRow items-start gap-2`;
+const defaultStyles = `rowStart items-start gap-2 mr-6`;
+const columnStyles = `rowStart items-start gap-2`;
 const listStyles = `
-min-w-full flex flex-row justify-between items-start gap-2 mr-6
-[&>.radio-container]:ml-4 [&>.radio-container]:order-1
-border-b border-slate-600 pb-6 pt-2 w-full
+  min-w-full row justify-between items-start gap-2 mr-6
+  [&>.radio-container]:ml-4 [&>.radio-container]:order-1
+  border-b border-slate-600 pb-6 pt-2 w-full
 `;
 
-const labelStyles = `min-w-max pr-2 text-sm font-medium text-slate-800 dark:text-slate-300`;
-const descriptionStyles = `text-sm`;
+const labelStyles = `min-w-max pr-2`;
 
 // #endregion

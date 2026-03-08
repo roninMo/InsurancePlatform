@@ -151,9 +151,9 @@ export const Input = ({
 
         {/* Elements after the input */}
         <SubsequentInputElements className={`${iconContainerStyles} ${borderSelectStyles(error)} peer-focus:[&_button]:border-l-2`}>
-          <div className={`flex flex-row flex-grow justify-items-end items-center`}>
+          <div className={`row flex-grow justify-items-end items-center`}>
             { shouldDisplayError() ?
-              <Icon variant='Error' styles='mr-3 size-4 error' /> 
+              <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
             : 
               <TooltipIcon 
                 onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
@@ -167,7 +167,7 @@ export const Input = ({
 
             {/* Currency and Search */}
             { type == 'currency' ? 
-              <CurrencySelectContainer className='flex flex-row relative'>
+              <CurrencySelectContainer className='row relative'>
                 <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
                   <option>USD</option> <option>CAD</option> <option>EUR</option>
                 </CurrencySelect>
@@ -189,7 +189,7 @@ export const Input = ({
 
       {/* Error / Description messages */}
       { shouldDisplayError() && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 ml-1 error"> { errorMessage } </p>
+        <p id={`${id}-error-message`} className="mt-2 ml-1 error-text"> { errorMessage } </p>
       : description && 
         <p id={`${id}-email-description`} className="mt-2 ml-1"> { description } </p>
       }
@@ -230,11 +230,10 @@ const TooltipIcon = styled.div`pointer-events: all;`;
 const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
 
 const sortButtonStyles = `rounded-r-md px-3 py-2 font-semibold bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white`;
-const sortBorderStyles = `border-l border-default`;
-const borderSelectStyles = (error: boolean): string => error ?
-  `peer-focus:[&_button]:border-red-400 dark:peer-focus:[&_button]:border-red-500` :
-  `peer-focus:[&_button]:border-indigo-600 dark:peer-focus:[&_button]:border-indigo-500`
-;
+const sortBorderStyles = `border-l border-default transition-all`;
+const borderSelectStyles = (error: boolean): string => 
+  `peer-focus:[&_button]:border-indigo-600 dark:peer-focus:[&_button]:border-indigo-500
+    ${error && '[&_button]:border-red-400 dark:[&_button]:border-red-500'}`;
 
 
 // Input themes and error styles
@@ -252,7 +251,7 @@ const getInputClasses = (error: boolean, type: string, disabled?: boolean): stri
 }
 
 const getDisabledThemes = (): string => ` disabled`;
-const getErrorThemes = (): string => ` error error-outline`;
+const getErrorThemes = (): string => ` error-text outline-error`;
 
 
 // for the currency selection button

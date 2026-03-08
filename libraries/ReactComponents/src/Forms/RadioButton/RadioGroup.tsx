@@ -46,13 +46,13 @@ export const RadioGroup = ({
   }
 
   return (
-    <Container className={`w-full flexCol justify-start gap-2 ${getErrorThemes(error, disabled)}`} aria-describedby={aria}>
+    <Container className={`w-full colStart justify-start gap-2 ${getErrorThemes(error, disabled)}`} aria-describedby={aria}>
 
       {/* Radio Button Label w/description */}
       { (label || description) && 
-        <TextContainer className={`flexCol gap-1 mb-4 text-sm`}>
+        <TextContainer className={`colStart gap-1 mb-4`}>
           { label && 
-            <Label className={`${labelStyles}`}>{ label }</Label>
+            <Label>{ label }</Label>
           }
           
           { description && 
@@ -89,7 +89,7 @@ export const RadioGroup = ({
 
       {/* Error message */}
       { error && 
-        <Description className={`text-sm pt-2`}>
+        <Description className={`pt-2`}>
           { errorMessage }
         </Description>
       }
@@ -105,14 +105,8 @@ const Description = styled.p``;
 const Label = styled.label``;
 
 // TODO: use style css directives for handling error text themes globally
-const errorStyles = ` 
-  [&>label]:text-red-900 [&>label]:dark:text-red-400 
-  [&>p]:text-red-900 [&>p]:dark:text-red-400 
-`;
-const disabledStyles = `
-  [&>label]:text-slate-700 [&>label]:dark:text-slate-300 
-  [&>p]:text-slate-700 [&>p]:dark:text-slate-300 
-`;
+const errorStyles = `[&>label]:error-text [&>p]:error-text`;
+const disabledStyles = `[&>label]:disabled-text [&>p]:disabled-text`;
 
 const getErrorThemes = (error: boolean, disabled: boolean): string => {
   let classes = ``;
@@ -122,13 +116,11 @@ const getErrorThemes = (error: boolean, disabled: boolean): string => {
   return classes;
 }
 
-const labelStyles = `font-medium leading-6 text-slate-800 dark:text-slate-200`;
-const descriptionStyles = `text-sm leading-6`;
 
 // Radio items layout
 const rowStyleVariants = ['default'];
-const columnLayout = `flexCol gap-2`;
-const rowLayout = `flexRow gap-2`;
+const columnLayout = `colStart gap-2`;
+const rowLayout = `rowStart gap-2`;
 
 // has-checked: <> <radio> </>
 // checked:

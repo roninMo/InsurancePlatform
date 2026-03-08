@@ -26,7 +26,7 @@ export function Button({ displayText,  onClick,  disabled,  variant = 'md', icon
       onClick={(e) => onClick ? onClick(e) : null}
       disabled={disabled}
       className={(variant == 'md' ? variantStyles_md : variant == 'lg' ? variantStyles_lg : variantStyles_default) + ` 
-        inline-flex items-center rounded-md text-sm font-semibold 
+        inline-flex items-center rounded-md font-semibold 
         focus-visible:outline-2 focus-visible:outline-offset-2 
         shadow-xs dark:shadow-none 
         

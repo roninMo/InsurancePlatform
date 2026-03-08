@@ -28,18 +28,18 @@ export const Slider = ({
   const getSliderTranslateStyles = (): string => `translate-x-5`; 
 
   return (
-    <Container className='w-full flex flex-row justify-between items-center gap-8'>
-      <div className='flexCol gap-1 pb-4 p-2'>
+    <Container className='w-full row justify-between items-center gap-8'>
+      <div className='colStart gap-1 pb-4 p-2'>
         { label && <Label htmlFor={name}>{ label }</Label> }
         { description && <Description>{ description }</Description> }
-        { error && <Description className='error'>{ errorMessage }</Description>}
+        { error && <Description className='error-text'>{ errorMessage }</Description>}
       </div>
       
       <Button 
         onClick={() => onChange()} 
         {...props}
         className={`
-          min-w-max flexRow gap-2 p-[1px] rounded-full 
+          min-w-max rowStart gap-2 p-[1px] rounded-full 
           outline outline-1 -outline-offset-1  
           ${value ? 'bg-blue-500 outline-blue-400' : 'outline-default'}
         `}

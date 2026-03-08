@@ -50,9 +50,9 @@ export const Select = ({
         <CurrentlySelected className={`currently-selected ${currentlySelectedStyles} ${transitionStyles} ${borderStyles} ${getErrorThemes(error)}`}>
           <span> { value.value ? value.label : placeholder } </span>
 
-          <div className='flex flex-row gap-1 items-center justify-end'>
-            { error && <Icon variant='Error' styles='size-4 error' />}
-            <Icon variant='SelectArrows' styles={`size-5 rotate-0 group-focus:rotate-180 ${error && 'error'}`} />
+          <div className='row gap-1 items-center justify-end'>
+            { error && <Icon variant='Error' styles='size-4 error-text' />}
+            <Icon variant='SelectArrow' styles={`size-5 rotate-0 group-focus:rotate-180 ${error && 'error-text'}`} />
           </div>
         </CurrentlySelected>
 
@@ -75,7 +75,7 @@ export const Select = ({
         </DropdownItems>
       </StyledSelect>
 
-      <Description className={`mt-2 text-sm ${error && 'error'}`}>
+      <Description className={`mt-2 ${error && 'error-text'}`}>
         { error && errorMessage ? 
           <>{ errorMessage }</>
         : description &&
@@ -91,9 +91,9 @@ export const Select = ({
 // #region Styling
 const containerStyles = `w-full`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
-const currentlySelectedStyles = `min-w-full flex flex-row justify-between items-center gap-2 p-2 *:text-sm`;
+const currentlySelectedStyles = `min-w-full row justify-between items-center gap-2 p-2`;
 
-const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg flex flex-grow flex-col`;
+const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg col flex-grow`;
 const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
 
 const transitionStyles = `transition-all *:transition-all duration-200 *:duration-200 ease-in *:ease-in`;

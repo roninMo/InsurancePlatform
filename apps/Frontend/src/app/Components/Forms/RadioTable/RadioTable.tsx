@@ -49,12 +49,12 @@ export const RadioTable = ({
 
   return (
     <Container aria-describedby={aria}>
-      <HeaderContainer className='flexCol px-1'>
+      <HeaderContainer className='colStart px-1'>
         { label && <Label>{ label }</Label> }
         { description && <Description>{ description }</Description> }
       </HeaderContainer>
 
-      <Table className={`flexCol mt-4 bg-default rounded-md`}>
+      <Table className={`colStart mt-4 bg-default rounded-md`}>
         {radioItems.map((item: RadioItem, index: number) => 
           <RadioTableItem 
             onClick={() => onSelect(item, index, currentValue)} 
@@ -76,7 +76,7 @@ export const RadioTable = ({
             />
             
             {/* Column Layout */}
-            <div className={`flexCol *:text-left`}>
+            <div className={`colStart *:text-left`}>
               <ItemLabel className='pb-[2px]'>{ item.label }</ItemLabel>
 
               {(item.description && variant == 'block') && 
@@ -96,7 +96,7 @@ export const RadioTable = ({
 
       {/* Error text */}
       { error && 
-        <Description className='error px-1 py-2'>
+        <Description className='error-text px-1 py-2'>
           { errorMessage }
         </Description>
       }
@@ -120,7 +120,7 @@ const ItemDescription = styled.p``;
 
 
 const tableItemStyles = `
-  flexRow items-start gap-2 
+  rowStart items-start gap-2 
   min-w-full p-4 px-6 
   border bg-slate-800 border-default
   transition-all duration-300
@@ -141,17 +141,3 @@ const itemErrorTheme = `z-10
 `;
 
 // #endregion
-
-/*
-
-const selectedItemTheme = `z-10`;
-const tableColorTheme = ` 
-  focus:border-b focus:border-indigo-500 
-  focus:bg-opacity-10 focus:bg-indigo-500
-`;
-const errorTheme = `
-  focus:border-b focus:border-red-500
-  border-default 
-`;
-
-*/

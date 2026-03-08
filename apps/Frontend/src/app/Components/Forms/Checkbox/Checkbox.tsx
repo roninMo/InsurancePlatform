@@ -43,8 +43,8 @@ export const Checkbox = ({
 }: CheckboxProps) => {
   const getStyles = () => {
     const radioContainerStyles = `min-w-full pt-4 pb-6 px-1`;
-    const listStyles = `flexCol gap-1 border-b first:border-t border-default`;
-    const defaultStyles = `flexRow gap-2`;
+    const listStyles = `colStart gap-1 border-b first:border-t border-default`;
+    const defaultStyles = `rowStart gap-2`;
     
     if (variant == 'list') return `${listStyles} ${radioContainerStyles}`;
     else return `${defaultStyles} ${radioContainerStyles}`;
@@ -52,12 +52,12 @@ export const Checkbox = ({
 
   return (
     <Container aria-describedby={aria}>
-      <HeaderContainer className='flexCol px-1'>
+      <HeaderContainer className='colStart px-1'>
         { label && <Label>{ label }</Label> }
         { description && <Description>{ description }</Description> }
       </HeaderContainer>
 
-      <ItemContainer className={`flexCol mt-4`}>
+      <ItemContainer className={`colStart mt-4`}>
         {Object.values(items).map((item: CheckboxItem, index: number) =>  
           <CheckboxContainer 
             onClick={(e) => onSelect(item, e)} 
@@ -66,7 +66,7 @@ export const Checkbox = ({
             className={getStyles()} 
             key={`${id}-radio-table-item-${index}`}
           >
-            <div className={variant == 'list' ? 'flexRow justify-between w-full' : 'flexRow'}>
+            <div className={variant == 'list' ? 'rowStart justify-between w-full' : 'rowStart'}>
               <StyledCheckbox 
                 value={item.value}
                 name={name} 
@@ -91,7 +91,7 @@ export const Checkbox = ({
             </div>
 
             <div className={`
-              ${variant != 'inline' ? 'flexCol' : 'flexRow gap-2'} text-left
+              ${variant != 'inline' ? 'colStart' : 'rowStart gap-2'} text-left
               ${variant == 'list' && 'mr-8'}
             `}>
               {(variant != 'list') && <ItemLabel>{ item.label }</ItemLabel>}
@@ -102,7 +102,7 @@ export const Checkbox = ({
       </ItemContainer>
 
       { error && 
-        <Description className={`error pl-1 ${variant == 'list' && 'pt-3'}`}>
+        <Description className={`error-text pl-1 ${variant == 'list' && 'pt-3'}`}>
           { errorMessage }
         </Description>}
     </Container>
