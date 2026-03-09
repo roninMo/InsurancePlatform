@@ -28,12 +28,12 @@ export function Button({ displayText,  onClick,  disabled,  variant = 'md', icon
       className={(variant == 'md' ? variantStyles_md : variant == 'lg' ? variantStyles_lg : variantStyles_default) + ` 
         inline-flex items-center rounded-md font-semibold 
         focus-visible:outline-2 focus-visible:outline-offset-2 
-        shadow-xs dark:shadow-none 
+        shadow-xs dark:shadow-none transition
         
         text-white 
         bg-indigo-600 dark:bg-indigo-500 
         hover:bg-indigo-500 dark:hover:bg-indigo-400 
-        focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500
+        focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500 
         ${additionalStyles}
       `}
     >

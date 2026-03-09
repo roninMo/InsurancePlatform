@@ -175,12 +175,14 @@ export const Input = ({
               </CurrencySelectContainer>
 
             : type == 'search' ? 
-              <SortSearchResults>
-                <button type="button" className={`flex items-center gap-x-1.5 shrink-0 ${sortButtonStyles} ${sortBorderStyles}`}>
-                  <Icon variant='Sort' />
-                  Sort
-                </button>
-              </SortSearchResults>
+              <SortSearchButton type="button" className={`
+                flex items-center gap-x-1.5 shrink-0 
+                cursor-pointer pointer-events-auto
+                ${sortButtonStyles} ${sortBorderStyles}
+              `}>
+                <Icon variant='Sort' styles='size-5 text-slate-100 dark:text-slate-400' />
+                Sort
+              </SortSearchButton>
             : <></>
             }
           </div>
@@ -223,13 +225,13 @@ const SearchInput = styled.div``;
 
 const PrecedingInputElements = styled.div``;
 const SubsequentInputElements = styled.div``;
-const SortSearchResults = styled.div``;
+const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
 const TooltipIcon = styled.div`pointer-events: all;`;
 const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
 
-const sortButtonStyles = `rounded-r-md px-3 py-2 font-semibold bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white`;
+const sortButtonStyles = `rounded-r-md px-3 py-2 font-semibold bg-blue-500 dark:bg-slate-700 text-white`;
 const sortBorderStyles = `border-l border-default transition-all`;
 const borderSelectStyles = (error: boolean): string => 
   `peer-focus:[&_button]:border-indigo-600 dark:peer-focus:[&_button]:border-indigo-500

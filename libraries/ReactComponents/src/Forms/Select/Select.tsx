@@ -1,8 +1,11 @@
-import styles from './Select.module.scss';
-import styled from '@emotion/styled';
+import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction } from "react";
+
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 import { EventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItem, SelectItemValues } from './SelectItem/SelectItem';
+
+import styles from './Select.module.scss';
+import styled from '@emotion/styled';
 
 
 export interface SelectProps {
@@ -31,6 +34,12 @@ export const Select = ({
 }: SelectProps & EventHandlers) => {
   // TODO: option to unfocus after the user has selected a value
 
+  const selectPressed = (e: MouseEvent<HTMLInputElement, Element>) => {
+    // todo: change the styling to open / close when clicked, including when already open instead of focus styling
+
+    if (onClick) onClick(e);
+  }
+
   return (
     <Container className={`${containerStyles}`}>
       <Label className={`block pb-2`}>
@@ -42,7 +51,7 @@ export const Select = ({
         onChange={e => onChange && onChange(e)}
         onBlur={e => onBlur && onBlur(e)}
         onFocus={e => onFocus && onFocus(e)}
-        onClick={e => onClick && onClick(e)}
+        onClick={e => selectPressed(e)}
         aria-describedby={aria || undefined}
         { ...props }
         className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-default`}
@@ -93,7 +102,7 @@ const containerStyles = `w-full`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
 const currentlySelectedStyles = `min-w-full row justify-between items-center gap-2 p-2`;
 
-const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg col flex-grow`;
+const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg col flex-grow cursor-pointer`;
 const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
 
 const transitionStyles = `transition-all *:transition-all duration-200 *:duration-200 ease-in *:ease-in`;

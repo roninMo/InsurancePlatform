@@ -15,14 +15,10 @@ import { Checkbox, CheckboxItem, CheckboxProps } from './Components/Forms/Checkb
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
-const AppSpacing = styled.div`
-margin: 0;
-padding: 0;
-min-width: 100vh;
-min-height: 100vh;
-`;
+const AppSpacing = styled.div``;
 const RoutesSpacing = styled.div``;
 const MainContent = styled.div``;
+const Navbar = styled.div``;
 // pb-4 p-2 mx-auto max-w-7xl px-2 lg:px-8 sm:px-6
 
 
@@ -261,432 +257,437 @@ export function App() {
     required: false,
   }
 
-
   return (
-    <AppSpacing className={`bg-white dark:bg-gray-800`}>
-      <div className='bg-white dark:bg-gray-800'>
+    <AppSpacing className="bg-default">
+      <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
 
-        <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
-          <div role="navigation" className='p-2'>
-            <ul>
-              <li className='pb-1'>
-                <Link to="/">Home</Link>
-              </li>
-              <li className='pb-1'>
-                <Link to="/page-2">Page 2</Link>
-              </li>
-            </ul>
+        {/* Navbar */}
+        <Navbar role="navigation" className='p-2'>
+          <ul>
+            <li className='pb-1'>
+              <Link to="/">Home</Link>
+            </li>
+            <li className='pb-1'>
+              <Link to="/page-2">Page 2</Link>
+            </li>
+          </ul>
+        </Navbar>
+
+
+        {/* Routes */}
+        <RoutesSpacing className='spacing m-10'>
+          <Routes>
+            <Route 
+              path="/"
+              element={
+                <div className="spacing p-2 pb-4">
+                  <h2 className="span-12 mb-2"> Home Page</h2>
+
+                  <p className="span-12 mb-4">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis 
+                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+                    pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui 
+                    officia deserunt mollit anim id est laborum.
+                  </p>
+
+                  <div className='span-4 md:span-12'>
+                    <Button
+                      displayText={ currentTheme === "dark" ? 'set to light' : 'set to dark'}
+                      icon={        currentTheme === "dark" ? 'DarkTheme' : 'LightTheme'}
+                      iconStyles='size-10 text-slate-100 dark:text-slate-100'
+                      additionalStyles='py-[2px]'
+                      onClick={setTheme}
+                    />
+                  </div>
+                </div>
+              } 
+            />
+            
+            <Route
+              path="/page-2"
+              element={
+                <div className={`p-2 pb-4`}>
+                  <Link to="/">Click here to go back to root page.</Link>
+                </div>
+              }
+            />
+          </Routes>
+        </RoutesSpacing>
+
+
+        {/* Playground */}
+        <MainContent className='spacing gap-y-4 px-6 py-4'>
+
+          {/* First Section for Input component logic */}
+          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+            <div className='span-12 md:span-8 lg:span-4'>
+              <Input 
+                // type="currency"
+                type={inputType.value as TextInputTypes}
+                name="Input"
+                label="Input"
+                description=""
+                value={input}
+                placeholder="Input text..."
+                id={inputId}
+                onChange={inputChanged}
+                error={inputError} 
+                errorMessage={inputErrorMessage} 
+                disabled={disabled}
+                tooltip
+                tooltipText='tooltip text...'
+              />
+            </div>
+
+            <div className='span-12 lg:span-3 py-2 *:m-2 rowStart items-start lg:mt-3'>
+              <Button 
+                displayText={inputError ? 'Disable Error' : 'Enable Error'} 
+                onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, !inputError ? 'invalid text' : undefined)} 
+              />
+              <Button 
+                displayText={disabled ? 'Enable' : 'Disable'} 
+                onClick={(e: any) => toggleDisabled()} 
+              />
+            </div>
+
+            <div className='span-12 md:span-8 lg:span-4'>
+              <Select 
+                name="inputType"
+                label="Input Type"
+                value={inputType}
+                values={inputTypes}
+                onSelect={inputTypeChanged}
+                id={inputTypeId}
+              />
+            </div>
+            
           </div>
 
-          <RoutesSpacing className='m-10'>
-            <Routes>
-              <Route 
-                path="/"
-                element={
-                  <div className={`p-2 pb-4`}>
-                    <div>
-                      <h2 className={`mb-2`}>Home Page</h2>
-                      <p className={`mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                    
-                      <button onClick={setTheme}>{currentTheme === "dark" ? 'set to light' : 'set to dark'}</button>
-                    </div>
-                  </div>
-                } 
+          {/* List of the different input types (For quick testing) */}
+          <div className='spacing bg-div outline-css outline-styles'>
+            <div className='colStart p-4 pb-8
+              span-12 md:span-6 lg:span-4 *:w-full *:py-2
+            '>
+              <Input 
+                type="text" name="TextInputShowcase"
+                label="Text Input" description=""
+                value="Hello " placeholder="Input Text..."
+                id="TextInputShowcase" 
+                tooltip tooltipText='tooltip text...'
               />
-              
-              <Route
-                path="/page-2"
-                element={
-                  <div className={`p-2 pb-4`}>
-                    <Link to="/">Click here to go back to root page.</Link>
-                  </div>
-                }
+
+              <Input 
+                type="email" name="EmailInputShowcase"
+                label="Email Input" description=""
+                value="example@email.com" placeholder="Input Email..."
+                id="EmailInputShowcase" 
+                tooltip tooltipText='tooltip text...'
               />
-            </Routes>
-          </RoutesSpacing>
 
+              <Input 
+                type="password" name="PasswordInputShowcase"
+                label="Password Input" description=""
+                value="password" placeholder="Input Password..."
+                id="PasswordInputShowcase" 
+                tooltip tooltipText='tooltip text...'
+              />
 
-            {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
-          <MainContent className='spacing gap-y-4 px-6 py-4'>
+              <Input 
+                type="phone" name="PhoneInputShowcase"
+                label="Phone Input" description=""
+                value="(123)-456-7890" placeholder="Input Phone..."
+                id="PhoneInputShowcase" 
+                tooltip tooltipText='tooltip text...'
+              />
 
-            {/* First Section for Input component logic */}
-            <div className='spacing mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
-              <div className='span-4 md:span-4'>
-                <Input 
-                  // type="currency"
-                  type={inputType.value as TextInputTypes}
-                  name="Input"
-                  label="Input"
-                  description=""
-                  value={input}
-                  placeholder="Input text..."
-                  id={inputId}
-                  onChange={inputChanged}
-                  error={inputError} 
-                  errorMessage={inputErrorMessage} 
-                  disabled={disabled}
-                  tooltip
-                  tooltipText='tooltip text...'
-                />
-              </div>
+              <Input 
+                type="creditCard" name="CreditCardInputShowcase"
+                label="CreditCard Input" description=""
+                value="0000 0000 0000 0000" placeholder="Input Credit Card..."
+                id="CreditCardInputShowcase" 
+                tooltip tooltipText='tooltip text...'
+              />
 
-              <div className='col-span-3 pt-8 ml-2'>
-                <Button 
-                  displayText={inputError ? 'Disable Error' : 'Enable Error'} 
-                  onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, !inputError ? 'invalid text' : undefined)} 
-                />
-                <Button 
-                  displayText={disabled ? 'Enable' : 'Disable'} 
-                  onClick={(e: any) => toggleDisabled()} 
-                  additionalStyles='ml-4'
-                />
-              </div>
+              <Input 
+                type="currency" name="CurrencyInputShowcase"
+                label="Currency Input" description=""
+                value="$100.00" placeholder="Input Credit Card..."
+                id="CurrencyInputShowcase" 
+                tooltip tooltipText='tooltip text...'
+              />
 
-              <div className='col-span-3 px-4'>
-                <Select 
-                  name="inputType"
-                  label="Input Type"
-                  value={inputType}
-                  values={inputTypes}
-                  onSelect={inputTypeChanged}
-                  id={inputTypeId}
-                />
-              </div>
-              
+              <Input 
+                type="policyNumber" name="PolicyNumberInputShowcase"
+                label="Policy Number Input" description=""
+                value="90012345-AB" placeholder="Input Policy Number..."
+                id="PolicyNumberInputShowcase" 
+                tooltip tooltipText='tooltip text...'
+              />
+
+              <Input 
+                type="search" name="SearchInputShowcase"
+                label="Search Input" description=""
+                value="" placeholder="Search for Something..."
+                id="SearchInputShowcase" 
+                tooltip tooltipText='tooltip text...'
+              />
+            </div>
+          </div>
+
+          <div className='spacing mt-4 p-4 bg-div rounded-md'>
+            <div className='span-12 pb-2'>
+              <h2>Custom React Input Components</h2>
             </div>
 
-            {/* List of the different input types (For quick testing) */}
-            <div className='spacing mt-4 p-4 pb-8 bg-slate-900 rounded-md'>
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="text" name="TextInputShowcase"
-                  label="Text Input" description=""
-                  value="Hello " placeholder="Input Text..."
-                  id="TextInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-              
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="email" name="EmailInputShowcase"
-                  label="Email Input" description=""
-                  value="example@email.com" placeholder="Input Email..."
-                  id="EmailInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-              
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="password" name="PasswordInputShowcase"
-                  label="Password Input" description=""
-                  value="password" placeholder="Input Password..."
-                  id="PasswordInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-              
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="phone" name="PhoneInputShowcase"
-                  label="Phone Input" description=""
-                  value="(123)-456-7890" placeholder="Input Phone..."
-                  id="PhoneInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-              
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="creditCard" name="CreditCardInputShowcase"
-                  label="CreditCard Input" description=""
-                  value="0000 0000 0000 0000" placeholder="Input Credit Card..."
-                  id="CreditCardInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-              
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="currency" name="CurrencyInputShowcase"
-                  label="Currency Input" description=""
-                  value="$100.00" placeholder="Input Credit Card..."
-                  id="CurrencyInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-              
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="policyNumber" name="PolicyNumberInputShowcase"
-                  label="Policy Number Input" description=""
-                  value="90012345-AB" placeholder="Input Policy Number..."
-                  id="PolicyNumberInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-              
-              <div className='col-span-7 pb-2'>
-                <Input 
-                  type="search" name="SearchInputShowcase"
-                  label="Search Input" description=""
-                  value="" placeholder="Search for Something..."
-                  id="SearchInputShowcase" 
-                  tooltip tooltipText='tooltip text...'
-                />
-              </div>
-
-
+            {/* Input and Select */}
+            <div className='span-4 pb-8'>
+              <Input 
+                { ...InputProps_Email } 
+                value={email}
+                id={emailId}
+                onChange={emailChanged}
+                error={emailError} 
+                errorMessage={emailErrorMessage} 
+                required={false} 
+                disabled={false}
+              />
             </div>
 
-            <div className='spacing mt-4 p-4 bg-slate-900 rounded-md'>
-              <div className='span-12 pb-2'>
-                <h2>Custom React Input Components</h2>
-              </div>
+            <div className='span-4 pb-8'>
+              <Select 
+                name="selectIcons"
+                label="Selected Svgs"
+                description="A list of the svgs currently available for the project."
+                value={currentIcon}
+                values={selectIcons}
+                onSelect={selectIconChanged}
+                id={selectIconId}
+                placeholder='Select a value'
 
-              {/* Input and Select */}
-              <div className='span-4 pb-8'>
-                <Input 
-                  { ...InputProps_Email } 
-                  value={email}
-                  id={emailId}
-                  onChange={emailChanged}
-                  error={emailError} 
-                  errorMessage={emailErrorMessage} 
-                  required={false} 
-                  disabled={false}
-                />
-              </div>
-
-              <div className='span-4 pb-8'>
-                <Select 
-                  name="selectIcons"
-                  label="Selected Svgs"
-                  description="A list of the svgs currently available for the project."
-                  value={currentIcon}
-                  values={selectIcons}
-                  onSelect={selectIconChanged}
-                  id={selectIconId}
-                  placeholder='Select a value'
-
-                  error={selectIconError}
-                  errorMessage={selectIconErrorMessage}
-                  disabled={false}
-                  required={false}
-                />
-              </div>
-              
-              {/* Content Layout */}
-              <div className='span-12 p-2' />
-              <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
-              <div className='span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
-
-
-              {/* Radio Table */}
-              <div className='spacing gap-x-8 mt-4'>
-
-                {/* Default, List, Table */}
-                <div className='span-6 p-4 pb-4'>
-                  <RadioTable 
-                    {...RadioGroupProps} 
-                    variant='inline' 
-                    name='radioTable-1'
-                    radioItems={favoriteFoods}
-                    error
-                    errorMessage='an error occurred'
-                  />
-                </div>
-                <div className='span-6 p-4 pb-4'>
-                  <RadioTable 
-                    {...RadioGroupProps} 
-                    variant='block' 
-                    name='radioTable-2'
-                    radioItems={favoriteFoods}
-                  />
-                </div>
-              </div>
-
-              {/* Slider and Checkbox */}
-              <div className='spacing gap-x-8 mt-4'>
-                <div className='span-3 p-4 pb-4 bg-slate-800 rounded-md'>
-                  {[0, 1, 2, 3, 4, 5].map((index) => 
-                    <Slider 
-                      name="slider"
-                      label="Slider"
-                      description="A slider component"
-                      value={slider}
-                      onChange={onChangeSlider}
-                      id={sliderId}
-
-                      error={sliderError}
-                      errorMessage={sliderErrorMessage}
-                      required={false}
-                      disabled={false}
-
-                      aria="input slider ref"
-                      key={`inputSlider-${index}`}
-                    />
-                  )}
-                </div>
-                
-
-                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
-                    <Checkbox 
-                      {...CheckboxProps}
-                      variant='list'
-                      name="checkbox-1"
-                      label="What are your favorite foods?"
-                      description="Select from the list of our favorite foods."
-                    />
-                </div>
-              </div>
-
-              <div className='spacing gap-x-8 mt-4'>
-                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
-                    <Checkbox 
-                      {...CheckboxProps}
-                      variant='default'
-                      name="checkbox-2"
-                      label="What are your favorite foods?"
-                      description="Select from the list of our favorite foods."
-                    />
-                </div>
-                
-                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
-                    <Checkbox 
-                      {...CheckboxProps}
-                      variant='inline'
-                      name="checkbox-3"
-                      label="What are your favorite foods?"
-                      description="Select from the list of our favorite foods."
-                    />
-                </div>
-              </div>
-
-
-              {/* Radio Groups */}
-              <div className='spacing gap-x-8 mt-4'>
-
-                {/* Default, List, Table */}
-                <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
-                  <RadioGroup 
-                    {...RadioGroupProps} 
-                    variant='default' 
-                    name='radioGroup-default'
-                    radioItems={favoriteFoodsNoDescriptions}
-                    error
-                    errorMessage='an error occurred'
-                  />
-                </div>
-                <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
-                  <RadioGroup 
-                    {...RadioGroupProps} 
-                    variant='list' 
-                    name='radioGroup-list'
-                    radioItems={favoriteFoods}
-                  />
-                </div>
-
-
-                {/* Column, and Column-Inline */}
-                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
-                  <RadioGroup 
-                    {...RadioGroupProps} 
-                    variant='column' 
-                    name='radioGroup-column'
-                    radioItems={favoriteFoods}
-                    label={undefined}
-                    description={undefined}
-                  />
-                </div>
-                
-                <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
-                  <RadioGroup 
-                    {...RadioGroupProps} 
-                    variant='columnInline' 
-                    name='radioGroup-columnInline'
-                    radioItems={favoriteFoods}
-                    label={undefined}
-                    description={undefined}
-                    disabled
-                  />
-                </div>
-              </div>
-
-
-              <div className='pb-96'></div>
-              <div className='pb-96'></div>
-              <div className='pb-96'></div>
-              <div className='pb-96'></div>
-              <div className='pb-96'></div>
-              <div className='pb-96'></div>
-
+                error={selectIconError}
+                errorMessage={selectIconErrorMessage}
+                disabled={false}
+                required={false}
+              />
             </div>
-          </MainContent>
+            
+            {/* Content Layout */}
+            <div className='span-12 p-2' />
+            <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+            <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+            <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
+            <div className='span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
+            <div className='span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
 
 
-            {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
-            {/* TODO: Add a sidebar for displaying and debugging save state, that captures both saved and retrieved information that's sent to the backend when autosaved during submissions and during retrieval */}
-            {/* TODO: Add debugging and your own util function that overrides console logging (and learn how to use other libraries for capturing and diagnostics, and how to have it as a universal import) */}
+            {/* Radio Table */}
+            <div className='spacing gap-x-8 mt-4'>
 
-            {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
-            {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}
-            {/* TODO: Create the login/sign in pages and the dashboard */}
+              {/* Default, List, Table */}
+              <div className='span-6 p-4 pb-4'>
+                <RadioTable 
+                  {...RadioGroupProps} 
+                  variant='inline' 
+                  name='radioTable-1'
+                  radioItems={favoriteFoods}
+                  error
+                  errorMessage='an error occurred'
+                />
+              </div>
+              <div className='span-6 p-4 pb-4'>
+                <RadioTable 
+                  {...RadioGroupProps} 
+                  variant='block' 
+                  name='radioTable-2'
+                  radioItems={favoriteFoods}
+                />
+              </div>
+            </div>
 
-            {/* Different platforms to navigate to: */}
-            {/* 
-              Homepage navbar 
-                - Home 
-                - Demos
-                - Mock Database
-                - etc.
+            {/* Slider and Checkbox */}
+            <div className='spacing gap-x-8 mt-4'>
+              <div className='span-3 p-4 pb-4 bg-slate-800 rounded-md'>
+                {[0, 1, 2, 3, 4, 5].map((index) => 
+                  <Slider 
+                    name="slider"
+                    label="Slider"
+                    description="A slider component"
+                    value={slider}
+                    onChange={onChangeSlider}
+                    id={sliderId}
 
-              Settings/User Login
-                - User
-                - Settings
-                - etc.
-            */}
+                    error={sliderError}
+                    errorMessage={sliderErrorMessage}
+                    required={false}
+                    disabled={false}
 
-            {/* 
-              Mock Database
-                A way to create fake databases. Creating individual tables, their values, and relations
-                  - Created data gets sent to the backend for constructing mock databases dynamically. Attach
-                      databases to each account, and retrieve values from the backend when logging in.
-                      The data is transient, but the table structures can be cached in localStorage
+                    aria="input slider ref"
+                    key={`inputSlider-${index}`}
+                  />
+                )}
+              </div>
               
-                Popovers
-                - Sidebar (Tables of the current database)
-                  - Allows the user to select and rearrange the current list of tables for the selected database
-                - TopBar - Information / Data / Edit
-                  - Information:  The information about the current table (to edit / move the list of it's params)
-                  - Data:         The values that the database currently has on the table
-                - BottomBar (the list of databases, and where to create a new one)
-                  - Contains boxes of the current databases, and the way to create additional ones.
-                  - Separate menu for creating a database from scratch, use the edit tab of a specific database to delete it
-            */}
 
-            {/* 
-              Insurance Demo
-                - User dashboard
-                - Landing page -> with links to navigate to the other portals
-                - Submit a claim page - home and auto
-                  - Sidebar for steps, fade in/out animations for each step, with a way to add and navigate between steps
-                  - Business logic for dynamically handling what needs to be filled out during a quote
-                  - Current submit claim state should be saved on the backend, tied the guid for retrieval
-                  - Eventual logic should save the form data to the backend while they're entering the information on the backend
-            */}
+              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                  <Checkbox 
+                    {...CheckboxProps}
+                    variant='list'
+                    name="checkbox-1"
+                    label="What are your favorite foods?"
+                    description="Select from the list of our favorite foods."
+                  />
+              </div>
+            </div>
 
-            {/* Submit a claim, for home and auto */}
-            {/* Login page should accept dummy data, or a universal user for quick access */}
-            {/* An additional settings page to determine whether to use mock data for the insurance page, or a backend */}
-            {/* Backends for handling data, and try out clustering */}
+            <div className='spacing gap-x-8 mt-4'>
+              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                  <Checkbox 
+                    {...CheckboxProps}
+                    variant='default'
+                    name="checkbox-2"
+                    label="What are your favorite foods?"
+                    description="Select from the list of our favorite foods."
+                  />
+              </div>
+              
+              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                  <Checkbox 
+                    {...CheckboxProps}
+                    variant='inline'
+                    name="checkbox-3"
+                    label="What are your favorite foods?"
+                    description="Select from the list of our favorite foods."
+                  />
+              </div>
+            </div>
 
-        </LoginContext.Provider>
-      </div>
+
+            {/* Radio Groups */}
+            <div className='spacing gap-x-8 mt-4'>
+
+              {/* Default, List, Table */}
+              <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
+                <RadioGroup 
+                  {...RadioGroupProps} 
+                  variant='default' 
+                  name='radioGroup-default'
+                  radioItems={favoriteFoodsNoDescriptions}
+                  error
+                  errorMessage='an error occurred'
+                />
+              </div>
+              <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
+                <RadioGroup 
+                  {...RadioGroupProps} 
+                  variant='list' 
+                  name='radioGroup-list'
+                  radioItems={favoriteFoods}
+                />
+              </div>
+
+
+              {/* Column, and Column-Inline */}
+              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                <RadioGroup 
+                  {...RadioGroupProps} 
+                  variant='column' 
+                  name='radioGroup-column'
+                  radioItems={favoriteFoods}
+                  label={undefined}
+                  description={undefined}
+                />
+              </div>
+              
+              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+                <RadioGroup 
+                  {...RadioGroupProps} 
+                  variant='columnInline' 
+                  name='radioGroup-columnInline'
+                  radioItems={favoriteFoods}
+                  label={undefined}
+                  description={undefined}
+                  disabled
+                />
+              </div>
+            </div>
+
+
+            <div className='pb-96'></div>
+            <div className='pb-96'></div>
+            <div className='pb-96'></div>
+            <div className='pb-96'></div>
+            <div className='pb-96'></div>
+            <div className='pb-96'></div>
+
+          </div>
+        </MainContent>
+
+          {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
+          {/* TODO: Add a sidebar for displaying and debugging save state, that captures both saved and retrieved information that's sent to the backend when autosaved during submissions and during retrieval */}
+          {/* TODO: Add debugging and your own util function that overrides console logging (and learn how to use other libraries for capturing and diagnostics, and how to have it as a universal import) */}
+
+          {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
+          {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}
+          {/* TODO: Create the login/sign in pages and the dashboard */}
+
+          {/* Different platforms to navigate to: */}
+          {/* 
+            Homepage navbar 
+              - Home 
+              - Demos
+              - Mock Database
+              - etc.
+
+            Settings/User Login
+              - User
+              - Settings
+              - etc.
+          */}
+
+          {/* 
+            Mock Database
+              A way to create fake databases. Creating individual tables, their values, and relations
+                - Created data gets sent to the backend for constructing mock databases dynamically. Attach
+                    databases to each account, and retrieve values from the backend when logging in.
+                    The data is transient, but the table structures can be cached in localStorage
+            
+              Popovers
+              - Sidebar (Tables of the current database)
+                - Allows the user to select and rearrange the current list of tables for the selected database
+              - TopBar - Information / Data / Edit
+                - Information:  The information about the current table (to edit / move the list of it's params)
+                - Data:         The values that the database currently has on the table
+              - BottomBar (the list of databases, and where to create a new one)
+                - Contains boxes of the current databases, and the way to create additional ones.
+                - Separate menu for creating a database from scratch, use the edit tab of a specific database to delete it
+
+              - skeleton loaders for values on each of the tabs, loading / error / okay state for color / glow loading anim
+              - drag and drop functionality for reordering the table's params, or the values of a table
+              - ability to select table and it's foreign keys to display in the data tables
+              - eventual bottom border display for inputs on whether the current value is being saved or 
+                  in sync with the backend. Like a horizontal loading bar that slides to the right while loading
+
+          */}
+
+          {/* 
+            Insurance Demo
+              - User dashboard
+              - Landing page -> with links to navigate to the other portals
+              - Submit a claim page - home and auto
+                - Sidebar for steps, fade in/out animations for each step, with a way to add and navigate between steps
+                - Business logic for dynamically handling what needs to be filled out during a quote
+                - Current submit claim state should be saved on the backend, tied the guid for retrieval
+                - Eventual logic should save the form data to the backend while they're entering the information on the backend
+          */}
+
+          {/* Submit a claim, for home and auto */}
+          {/* Login page should accept dummy data, or a universal user for quick access */}
+          {/* An additional settings page to determine whether to use mock data for the insurance page, or a backend */}
+          {/* Backends for handling data, and try out clustering */}
+
+      </LoginContext.Provider>
     </AppSpacing>
   );
 }
