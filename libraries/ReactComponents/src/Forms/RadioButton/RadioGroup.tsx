@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import styles from './RadioGroup.module.scss';
 import { RadioGroupItem } from './RadioItem/RadioItem';
-import { EventHandlers } from '@Project/ReactComponents';
+import { InputEventHandlers } from '@Project/ReactComponents';
 
 
 export type RadioVariant = 'default' | 'column' | 'columnInline' | 'list' | 'table' | 'tableInline' | 'boxes';
@@ -38,7 +38,7 @@ export const RadioGroup = ({
   radioItems, currentValue, onSelect, 
   error = false, errorMessage, disabled = false, required = false, aria,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
-}: EventHandlers & RadioGroupProps) => {
+}: InputEventHandlers & RadioGroupProps) => {
   
   const radioItemSelected = (item: RadioItem, index: number) => {
     // console.log(`\nA radio item was selected: `, {item, index});

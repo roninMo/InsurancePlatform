@@ -12,6 +12,7 @@ import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGro
 import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
 import { Slider } from './Components/Forms/Slider/Slider';
 import { Checkbox, CheckboxItem, CheckboxProps } from './Components/Forms/Checkbox/Checkbox';
+import { Textarea } from './Components/Forms/Textarea';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -154,6 +155,16 @@ export function App() {
     // console.log('select: new value: ', {currentIcon, index, selectIcons});
   }
 
+  // Email
+  const textareaId = useId();
+  const [textarea, setTextarea] = useState<string>("");
+  const textareaChanged = (e: ChangeEvent<HTMLTextAreaElement>) => setTextarea(e?.target?.value);
+  const [textareaError, setTextareaError] = useState<boolean>(false);
+  const [textareaErrorMessage, setTextareaErrorMessage] = useState<string>();
+  const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    console.log('submitted text area: ', { value: textarea, error: textareaError && textareaErrorMessage });
+  };
+  
   // Radio buttons
   const radioButtonId = useId();
   const favoriteFoods: RadioItem[] = [
@@ -367,9 +378,7 @@ export function App() {
 
           {/* List of the different input types (For quick testing) */}
           <div className='spacing bg-div outline-css outline-styles'>
-            <div className='colStart p-4 pb-8
-              span-12 md:span-6 lg:span-4 *:w-full *:py-2
-            '>
+            <div className='colStart p-4 pb-8  span-12 md:span-6 lg:span-4 *:w-full *:py-2'>
               <Input 
                 type="text" name="TextInputShowcase"
                 label="Text Input" description=""
@@ -433,6 +442,31 @@ export function App() {
                 id="SearchInputShowcase" 
                 tooltip tooltipText='tooltip text...'
               />
+            </div>
+
+            <div className='span-12 lg:span-1' />
+            <div className='p-4 span-12 md:span-6 lg:span-6 *:p-4'>
+              <h4 className='label-colors'>Textareas</h4>
+
+              <div className='spacing *:span-12'>
+                <Textarea  
+                  type="default"
+                  label="Textarea"
+                  description="Textarea description"
+                  placeholder="Add your comment..."
+                  submitButtontext='Post'
+                  onSubmit={onSubmitTextarea}
+
+                  name="textArea"
+                  value={textarea}
+                  id={textareaId}
+                  onChange={textareaChanged}
+                  error={textareaError} 
+                  errorMessage={textareaErrorMessage} 
+                  required={false} 
+                  disabled={false}
+                />
+              </div>
             </div>
           </div>
 

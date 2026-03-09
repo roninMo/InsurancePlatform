@@ -1,7 +1,7 @@
 import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction } from "react";
 
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
-import { EventHandlers } from '../../Common/Utilities/Utils';
+import { InputEventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItem, SelectItemValues } from './SelectItem/SelectItem';
 
 import styles from './Select.module.scss';
@@ -31,7 +31,7 @@ export const Select = ({
   name, label, description, value, values, onSelect, placeholder, id,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   error = false, errorMessage, disabled = false, required = false, aria, ...props
-}: SelectProps & EventHandlers) => {
+}: SelectProps & InputEventHandlers) => {
   // TODO: option to unfocus after the user has selected a value
 
   const selectPressed = (e: MouseEvent<HTMLInputElement, Element>) => {
@@ -103,7 +103,7 @@ const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-v
 const currentlySelectedStyles = `min-w-full row justify-between items-center gap-2 p-2`;
 
 const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg col flex-grow cursor-pointer`;
-const dropdownScrollStyles = `overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
+const dropdownScrollStyles = `scrollbar-theme overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
 
 const transitionStyles = `transition-all *:transition-all duration-200 *:duration-200 ease-in *:ease-in`;
 const visibilityStyles = `*:opacity-0 *:focus:opacity-100 [&_.currently-selected]:opacity-100`;
@@ -126,22 +126,5 @@ const Description = styled.p``;
 const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
 const DropdownItems = styled.div`
-  --tw-bg-opacity: 1;
-  
-  ::-webkit-scrollbar {
-    width: 0.74rem;
-    background-color: rgb(30 41 59 / var(--tw-bg-opacity));
-  }
-    
-  ::-webkit-scrollbar-track {
-    border-bottom-right-radius: 0.375rem;
-    border-top-right-radius: 0.375rem;
-    background-color: rgb(51 65 85 / var(--tw-bg-opacity));
-  }
-    
-  ::-webkit-scrollbar-thumb {
-    border-radius: 0.375rem;
-    background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
-  }
 `;
 // #endregion

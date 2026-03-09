@@ -4,7 +4,7 @@ import { InputMask, useMask } from '@react-input/mask';
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
 import { Icon } from '../../Common/Icons/Icon';
-import { EventHandlers } from '../../Common/Utilities/Utils';
+import { InputEventHandlers } from '../../Common/Utilities/Utils';
 
 
 export type TextInputTypes = 'text' | 'email' | 'password' | 'phone' | 'creditCard' | 'currency' | 'policyNumber' | 'search';
@@ -22,8 +22,8 @@ interface InputProps {
 
   error?: boolean;
   errorMessage?: string | null;
-  required?: boolean;
   disabled?: boolean;
+  required?: boolean;
   tooltip?: boolean;
   tooltipText?: string;
 
@@ -37,7 +37,7 @@ export const Input = ({
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, aria, ...props
-}: InputProps & EventHandlers) => {
+}: InputProps & InputEventHandlers) => {
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
   
   // TODO: Removed for variation, implement react-hook-forms
