@@ -9,32 +9,38 @@ interface ButtonProps {
   onClick?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   disabled?: boolean;
 
-  variant?: 'default' | 'md' | 'lg';
   icon?: IconTypes;
   iconStyles?: string;
+  size?: 'default' | 'md' | 'lg';
+  color?: 'primary' | 'gray' | 'gray-focus';
   additionalStyles?: string;
 }
 
-export function Button({ displayText,  onClick,  disabled,  variant = 'md', icon, iconStyles, additionalStyles }: ButtonProps) {
-  const variantStyles_default = ` gap-x-1.5 bg-indigo-600 px-2.5 py-1.5 `;
-  const variantStyles_md = ` gap-x-1.5 bg-indigo-600 px-3 py-2 `;
-  const variantStyles_lg = ` gap-x-2 bg-indigo-600 px-3.5 py-2.5 `;
+export function Button({ 
+  displayText,  onClick,  disabled,  
+  icon, iconStyles, 
+  size = 'default', color = 'primary', additionalStyles 
+}: ButtonProps) {
 
   return (
     <button 
       type="button" 
       onClick={(e) => onClick ? onClick(e) : null}
       disabled={disabled}
-      className={(variant == 'md' ? variantStyles_md : variant == 'lg' ? variantStyles_lg : variantStyles_default) + ` 
-        inline-flex items-center rounded-md font-semibold 
-        focus-visible:outline-2 focus-visible:outline-offset-2 
-        shadow-xs dark:shadow-none transition
+      className={` 
+        inline-flex items-center 
+        shadow-xs dark:shadow-none transition rounded-md 
+        outline-css text-white font-semibold 
         
-        text-white 
-        bg-indigo-600 dark:bg-indigo-500 
-        hover:bg-indigo-500 dark:hover:bg-indigo-400 
-        focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500 
-        ${additionalStyles}
+        ${size == 'default' && 'px-2.5  py-1.5'} 
+        ${size == 'md'      && 'px-3    py-2 '} 
+        ${size == 'lg'      && 'px-3.5  py-2.5'} 
+
+        ${color == 'primary'    && 'btn-primary'} 
+        ${color == 'gray'       && 'btn-gray'} 
+        ${color == 'gray-focus' && 'btn-gray-focus'} 
+        
+        ${additionalStyles} 
       `}
     >
       

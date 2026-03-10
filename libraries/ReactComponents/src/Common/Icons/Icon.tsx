@@ -1,5 +1,6 @@
 import { Icon_AtSymbol } from "./AtSymbol/AtSymbol";
 import { Icon_AttachFile } from "./AttachFile/Icon_AttachFile";
+import { Icon_Calendar } from "./Calendar/Icon_Calendar";
 import { Icon_Checkbox } from "./Checkbox/Icon_Checkbox";
 import { Icon_CodeBracket } from "./CodeBracket/CodeBracket";
 import { Icon_DarkTheme } from "./DarkTheme/Icon_DarkTheme";
@@ -15,12 +16,14 @@ import { Icon_SelectArrow } from "./SelectArrow/SelectArrow";
 import { Icon_Smile } from "./Smile/Smile";
 import { Icon_Sort } from "./Sort/Icon_Sort";
 import { Icon_System } from "./System/System";
+import { Icon_Tag } from "./Tag/Icon_Tag";
 import { Icon_Trash } from "./Trash/Icon_Trash";
 import { Icon_VennDiagram } from "./VennDiagram/VennDiagram";
 
 export type IconTypes = 
   'AtSymbol' |
   'AttachFile' |
+  'Calendar' |
   'Checkbox' |
   'CodeBracket' |
   'DarkTheme' |
@@ -36,6 +39,7 @@ export type IconTypes =
   'Smile' |
   'Sort' |
   'System' |
+  'Tag' |
   'Trash' |
   'VennDiagram'
 ;
@@ -57,6 +61,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
 
   if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
   if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
+  if (variant == 'Calendar')        return (<Icon_Calendar styles={styles ? styles : defaultOkayStyles} />);
   if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
   if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
   if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
@@ -72,6 +77,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'Smile')           return (<Icon_Smile styles={iconStyles} />);
   if (variant == 'Sort')            return (<Icon_Sort styles={iconStyles} />);
   if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
+  if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
   if (variant == 'Trash')           return (<Icon_Trash styles={styles ? styles : defaultErrorStyles} />);
   if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
   return (<div />);

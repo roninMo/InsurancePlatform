@@ -164,7 +164,19 @@ export function App() {
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     console.log('submitted text area: ', { value: textarea, error: textareaError && textareaErrorMessage });
   };
-  
+
+  const textareaProps = {
+    onSubmit: onSubmitTextarea,
+    name: 'textArea',
+    value: textarea,
+    id: textareaId,
+    onChange: textareaChanged,
+    error: textareaError, 
+    errorMessage: textareaErrorMessage, 
+    required: false, 
+    disabled: false,
+  };
+
   // Radio buttons
   const radioButtonId = useId();
   const favoriteFoods: RadioItem[] = [
@@ -308,6 +320,7 @@ export function App() {
                       displayText={ currentTheme === "dark" ? 'set to light' : 'set to dark'}
                       icon={        currentTheme === "dark" ? 'DarkTheme' : 'LightTheme'}
                       iconStyles='size-10 text-slate-100 dark:text-slate-100'
+                      size='md'
                       additionalStyles='py-[2px]'
                       onClick={setTheme}
                     />
@@ -355,10 +368,12 @@ export function App() {
             <div className='span-12 lg:span-3 py-2 *:m-2 rowStart items-start lg:mt-3'>
               <Button 
                 displayText={inputError ? 'Disable Error' : 'Enable Error'} 
+                size='md'
                 onClick={(e: any) => toggleError(SetInputError, SetInputErrorMessage, !inputError, !inputError ? 'invalid text' : undefined)} 
               />
               <Button 
                 displayText={disabled ? 'Enable' : 'Disable'} 
+                size='md'
                 onClick={(e: any) => toggleDisabled()} 
               />
             </div>
@@ -379,6 +394,7 @@ export function App() {
           {/* List of the different input types (For quick testing) */}
           <div className='spacing bg-div outline-css outline-styles'>
             <div className='colStart p-4 pb-8  span-12 md:span-6 lg:span-4 *:w-full *:py-2'>
+              <h4 className='label-colors'>Inputs</h4>
               <Input 
                 type="text" name="TextInputShowcase"
                 label="Text Input" description=""
@@ -445,26 +461,39 @@ export function App() {
             </div>
 
             <div className='span-12 lg:span-1' />
-            <div className='p-4 span-12 md:span-6 lg:span-6 *:p-4'>
+            <div className='p-4 span-12 md:span-6 lg:span-6 *:p-6'>
               <h4 className='label-colors'>Textareas</h4>
 
               <div className='spacing *:span-12'>
                 <Textarea  
                   type="default"
-                  label="Textarea"
+                  label="Default style"
                   description="Textarea description"
-                  placeholder="Add your comment..."
-                  submitButtontext='Post'
-                  onSubmit={onSubmitTextarea}
-
-                  name="textArea"
-                  value={textarea}
-                  id={textareaId}
-                  onChange={textareaChanged}
-                  error={textareaError} 
-                  errorMessage={textareaErrorMessage} 
-                  required={false} 
-                  disabled={false}
+                  placeholder="input text..."
+                  submitButtonText='Post'
+                  { ...textareaProps }
+                />
+              </div>
+              
+              <div className='spacing *:span-12'>
+                <Textarea  
+                  type="box"
+                  label="Box style"
+                  description="Textarea description"
+                  placeholder="input text..."
+                  submitButtonText='Create'
+                  { ...textareaProps }
+                />
+              </div>
+              
+              <div className='spacing *:span-12'>
+                <Textarea  
+                  type="post"
+                  label="Post style"
+                  description="Textarea description"
+                  placeholder="input text..."
+                  submitButtonText='Post'
+                  { ...textareaProps }
                 />
               </div>
             </div>

@@ -16,7 +16,7 @@
   //------------------------------------------//
   // Text Colors                              //
   //------------------------------------------//
-  .input-colors   { @apply text-slate-800   dark:text-slate-100; }
+  .input-colors   { @apply text-slate-800   dark:text-slate-200; }
   .label-colors   { @apply text-slate-800   dark:text-slate-300; }
   .header-colors  { @apply text-slate-800   dark:text-slate-100; }
   .svg-colors     { @apply  text-slate-500  dark:text-slate-400; }
@@ -53,6 +53,22 @@
   // Input specific background theme
   .bg-disabled { @apply  bg-gray-300  dark:bg-gray-700; }
 
+  // Button colors
+  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue; }
+  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue; }
+  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue; }
+
+  .btn-outline-white  { @apply outline-slate-200 dark:outline-slate-200; }
+  .btn-outline-blue   { @apply   outline-focus; }
+
+  .btn-primary-colors { @apply bg-indigo-600 dark:bg-indigo-500 outline-indigo-600 dark:outline-indigo-600; }
+  .btn-primary-hover { @apply bg-indigo-500 dark:bg-indigo-400; }
+  
+  .btn-gray-colors { @apply bg-div-light outline-slate-400 dark:outline-slate-700; }
+  .btn-gray-hover { @apply bg-slate-300 dark:bg-slate-600; }
+  
+  .btn-gray-focus-colors { @apply bg-div outline-white dark:outline-slate-800; }
+  .btn-gray-focus-hover { @apply bg-slate-200 dark:bg-slate-700; }
 
 
 
@@ -74,7 +90,7 @@
   .outline-error    { @apply outline-red-400    dark:outline-red-500; }
 
   // Border styles
-  .border-styles    { @apply border border-default focus:border-focus; }
+  .border-styles    { @apply border-default focus:border-focus; }
   .border-default   { @apply border-blue-300    dark:border-slate-700; }
   .border-focus     { @apply border-blue-500    dark:border-indigo-500; }
   .border-warning   { @apply border-amber-500   dark:border-amber-400; }
@@ -116,7 +132,7 @@
 
   textarea {
     @apply scrollbar-theme transition;
-    // resize: none;
+    resize: none;
 
   }
 
@@ -202,6 +218,20 @@
   //------------------------------------------//
   .transition { @apply transition-all duration-200; }
 
+  // Faded borders for creating overlays and subtle shading for background
+  .opacity-bg-0    { @apply bg-opacity-0    dark:bg-opacity-0; }
+  .opacity-bg-10   { @apply bg-opacity-10   dark:bg-opacity-10; }
+  .opacity-bg-20   { @apply bg-opacity-20   dark:bg-opacity-20; }
+  .opacity-bg-30   { @apply bg-opacity-30   dark:bg-opacity-30; }
+  .opacity-bg-40   { @apply bg-opacity-40   dark:bg-opacity-40; }
+  .opacity-bg-50   { @apply bg-opacity-50   dark:bg-opacity-50; }
+  .opacity-bg-60   { @apply bg-opacity-60   dark:bg-opacity-60; }
+  .opacity-bg-70   { @apply bg-opacity-70   dark:bg-opacity-70; }
+  .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
+  .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
+  .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
+
+  // the scrollbar for dark themes
   .scrollbar-theme {
     &::-webkit-scrollbar {
       width: 0.74rem;
