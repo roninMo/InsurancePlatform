@@ -84,7 +84,7 @@ export const RadioTable = ({
             
             {/* Row Layout */}
             {description && variant == 'inline' && 
-              <ItemDescription className={`ml-auto text-left`}>
+              <ItemDescription className={`ml-auto text-left pl-2`}>
                 { item.description }
               </ItemDescription>
             }

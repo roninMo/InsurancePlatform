@@ -4,7 +4,7 @@ import { Icon, IconTypes } from '../../Common/Icons/Icon';
 import styles from './Button.module.scss';
 
 
-interface ButtonProps {
+export interface ButtonProps {
   displayText: string;
   onClick?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   disabled?: boolean;

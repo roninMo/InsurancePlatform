@@ -13,6 +13,7 @@ import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
 import { Slider } from './Components/Forms/Slider/Slider';
 import { Checkbox, CheckboxItem, CheckboxProps } from './Components/Forms/Checkbox/Checkbox';
 import { MetadataTagProps, Textarea } from './Components/Forms/Textarea';
+import { Card } from './Components/Layouts/Card/Card';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -586,35 +587,41 @@ export function App() {
           </div>
 
 
-          {/* Radio groups (variations of both Tables and Groups) */}
-          <div className='spacing mt-4 p-4 bg-div rounded-md'>
-            {/* Radio Table */}
-            <div className='spacing gap-x-8 mt-4'>
+          {/* Radio Tables */}
+          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Radio Tables</h4>
+            </div>
+            
+            <div className='span-12 lg:span-6 md:span-10 p-4 pb-4'>
+              <RadioTable 
+                {...RadioGroupProps} 
+                variant='inline' 
+                name='radioTable-1'
+                radioItems={favoriteFoods}
+                error
+                errorMessage='an error occurred'
+              />
+            </div>
+            <div className='span-12 lg:span-6 md:span-10 p-4 pb-4'>
+              <RadioTable 
+                {...RadioGroupProps} 
+                variant='block' 
+                name='radioTable-2'
+                radioItems={favoriteFoods}
+              />
+            </div>
+          </div>
 
-              {/* Default, List, Table */}
-              <div className='span-6 p-4 pb-4'>
-                <RadioTable 
-                  {...RadioGroupProps} 
-                  variant='inline' 
-                  name='radioTable-1'
-                  radioItems={favoriteFoods}
-                  error
-                  errorMessage='an error occurred'
-                />
-              </div>
-              <div className='span-6 p-4 pb-4'>
-                <RadioTable 
-                  {...RadioGroupProps} 
-                  variant='block' 
-                  name='radioTable-2'
-                  radioItems={favoriteFoods}
-                />
-              </div>
+
+          {/* Slider and list Checkboxes */}
+          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Slider and list style Checkbox</h4>
             </div>
 
-            {/* Slider and Checkbox */}
-            <div className='spacing gap-x-8 mt-4'>
-              <div className='span-3 p-4 pb-4 bg-default text-colors rounded-md'>
+            <div className='spacing span-12 justify-between'>
+              <div className='span-12 lg:span-3 p-4 pb-4 bg-default text-colors rounded-md'>
                 {[0, 1, 2, 3, 4, 5].map((index) => 
                   <Slider 
                     name="slider"
@@ -634,9 +641,9 @@ export function App() {
                   />
                 )}
               </div>
-              
 
-              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+              <div className='span-3' />
+              <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
                   <Checkbox 
                     {...CheckboxProps}
                     variant='list'
@@ -646,88 +653,215 @@ export function App() {
                   />
               </div>
             </div>
-
-            <div className='spacing gap-x-8 mt-4'>
-              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
-                  <Checkbox 
-                    {...CheckboxProps}
-                    variant='default'
-                    name="checkbox-2"
-                    label="What are your favorite foods?"
-                    description="Select from the list of our favorite foods."
-                  />
-              </div>
-              
-              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
-                  <Checkbox 
-                    {...CheckboxProps}
-                    variant='inline'
-                    name="checkbox-3"
-                    label="What are your favorite foods?"
-                    description="Select from the list of our favorite foods."
-                  />
-              </div>
-            </div>
-
-
-            {/* Radio Groups */}
-            <div className='spacing gap-x-8 mt-4'>
-
-              {/* Default, List, Table */}
-              <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
-                <RadioGroup 
-                  {...RadioGroupProps} 
-                  variant='default' 
-                  name='radioGroup-default'
-                  radioItems={favoriteFoodsNoDescriptions}
-                  error
-                  errorMessage='an error occurred'
-                />
-              </div>
-              <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
-                <RadioGroup 
-                  {...RadioGroupProps} 
-                  variant='list' 
-                  name='radioGroup-list'
-                  radioItems={favoriteFoods}
-                />
-              </div>
-
-
-              {/* Column, and Column-Inline */}
-              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
-                <RadioGroup 
-                  {...RadioGroupProps} 
-                  variant='column' 
-                  name='radioGroup-column'
-                  radioItems={favoriteFoods}
-                  label={undefined}
-                  description={undefined}
-                />
-              </div>
-              
-              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
-                <RadioGroup 
-                  {...RadioGroupProps} 
-                  variant='columnInline' 
-                  name='radioGroup-columnInline'
-                  radioItems={favoriteFoods}
-                  label={undefined}
-                  description={undefined}
-                  disabled
-                />
-              </div>
-            </div>
-
-
-            <div className='pb-96'></div>
-            <div className='pb-96'></div>
-            <div className='pb-96'></div>
-            <div className='pb-96'></div>
-            <div className='pb-96'></div>
-            <div className='pb-96'></div>
-
           </div>
+
+
+          {/* Default and Inline style Checkboxes */}
+          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Default and Inline style Checkboxes</h4>
+            </div>
+            
+            <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+                <Checkbox 
+                  {...CheckboxProps}
+                  variant='default'
+                  name="checkbox-2"
+                  label="What are your favorite foods?"
+                  description="Select from the list of our favorite foods."
+                />
+            </div>
+            
+            <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+                <Checkbox 
+                  {...CheckboxProps}
+                  variant='inline'
+                  name="checkbox-3"
+                  label="What are your favorite foods?"
+                  description="Select from the list of our favorite foods."
+                />
+            </div>
+          </div>
+
+
+          {/* Radio Groups */}
+          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Radio Groups</h4>
+            </div>
+            
+            <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
+              <RadioGroup 
+                {...RadioGroupProps} 
+                variant='default' 
+                name='radioGroup-default'
+                radioItems={favoriteFoodsNoDescriptions}
+                label="Default"
+                error
+                errorMessage='an error occurred'
+              />
+            </div>
+            
+            <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
+              <RadioGroup 
+                {...RadioGroupProps} 
+                variant='list' 
+                name='radioGroup-list'
+                radioItems={favoriteFoods}
+                label="List"
+              />
+            </div>
+
+            <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+              <RadioGroup 
+                {...RadioGroupProps} 
+                variant='column' 
+                name='radioGroup-column'
+                radioItems={favoriteFoods}
+                label="Column"
+                description={undefined}
+              />
+            </div>
+            <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+              <RadioGroup 
+                {...RadioGroupProps} 
+                variant='columnInline' 
+                name='radioGroup-columnInline'
+                radioItems={favoriteFoods}
+                label="Column-Inline"
+                description={undefined}
+                disabled
+              />
+            </div>
+          </div>
+
+          {/* Card Layouts */}
+          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+            <div className='span-12 pb-2'>
+              <h3 className='pb-2 pt-1 label-colors'>Card variations</h3>
+            </div>
+
+            {/* Default */}
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Containers</h4>
+            </div>
+            <div className='default-layouts spacing pb-8'>
+              <Card cardStyles='span-12 lg:span-4 p-4' outline='default' background='default'>
+                Default layout
+              </Card>
+
+              <Card cardStyles='span-12 lg:span-4 p-4' outline='none' background='none'>
+                Default layout
+              </Card>
+
+              <Card cardStyles='span-12 lg:span-4 p-4' outline='default' background='none'>
+                Default layout
+              </Card>
+            </div>
+
+
+            {/* Card */}
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Cards</h4>
+            </div>
+            <div className='card-layouts spacing pb-8'>
+              <Card
+                type='card' 
+                title='Card Layout'
+                description='The description of a card style element'
+                cardStyles='span-12 lg:span-4 p-4' outline='default' background='default'
+              >
+                <div>Card content</div>
+                <div>Card content</div>
+              </Card>
+
+              <Card
+                type='card' 
+                title='Card Layout'
+                description='The description of a card style element'
+                cardStyles='span-12 lg:span-4 p-4' outline='default' background='none'
+              >
+                <div>Card content</div>
+                <div>Card content</div>
+              </Card>
+
+              <Card
+                type='card' 
+                title='Card Layout'
+                description='The description of a card style element'
+                cardStyles='span-12 lg:span-4 p-4' outline='none' background='none'
+              >
+                <div>Card content</div>
+                <div>Card content</div>
+              </Card>
+            </div>
+
+
+
+            {/* Card Buttons */}
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Card Buttons</h4>
+            </div>
+            <div className='card-layouts spacing pb-8'>
+              <Card
+                type='card-button' 
+                title='Card Button Layout'
+                description='The description of a card button element'
+                cardStyles='span-12 lg:span-6 p-4' outline='default' background='default'
+                buttonProps={{displayText: 'Create', onClick: () => {}}}
+                >
+                <div>Card button content</div>
+                <div>Card button content</div>
+              </Card>
+              
+              <Card
+                type='card-button' 
+                title='Card Button Layout'
+                description='The description of a card button element'
+                cardStyles='span-12 lg:span-6 p-4' outline='default' background='none'
+                buttonProps={{displayText: 'Create', onClick: () => {}}}
+                >
+                <div>Card button content</div>
+                <div>Card button content</div>
+              </Card>
+            </div>
+
+            {/* Card Links */}
+            <div className='span-12 pb-2'>
+              <h4 className='pb-2 pt-1 label-colors'>Card Links</h4>
+            </div>
+            <div className='card-layouts spacing pb-8'>
+              <Card
+                type='card-link' 
+                title='Card Link Layout'
+                description='The description of a card link element'
+                cardStyles='span-12 lg:span-6 p-4' outline='default' background='none'
+                linkText='Card link' onClickLink={() => {}}
+              >
+                <div>Card link content</div>
+                <div>Card link content</div>
+              </Card>
+              
+              <Card
+                type='card-link' 
+                title='Card Link Layout'
+                description='The description of a card link element'
+                cardStyles='span-12 lg:span-6 p-4' outline='default' background='default'
+                linkText='Card link' onClickLink={() => {}}
+              >
+                <div>Card link content</div>
+                <div>Card link content</div>
+              </Card>
+            </div>
+          </div>
+
+
+          <div className='pb-96'></div>
+          <div className='pb-96'></div>
+          <div className='pb-96'></div>
+          <div className='pb-96'></div>
+          <div className='pb-96'></div>
+          <div className='pb-96'></div>
         </MainContent>
 
           {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}

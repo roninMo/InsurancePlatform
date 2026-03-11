@@ -77,13 +77,16 @@ export const Checkbox = ({
                 disabled={disabled || item.disabled}
                 required={required}
                 className={`checkbox 
-                  mt-1 mb-auto ${variant == 'list' && 'order-1'}
-                  appearance-none outline-css rounded-[4px] size-5 transition-all
-                  checked:before:content-['✓'] text-center p-[1px]
+                  mt-1 mb-auto ${variant == 'list' && 'order-1'} 
+                  appearance-none outline-css rounded-[4px] size-5 transition-all 
+                  checked:before:content-['✓'] text-center p-[1px] text-slate-100 
+                  
 
-                  bg-default outline-default
-                  checked:bg-blue-500 checked:outline-blue-400
-                  checked:dark:bg-indigo-500 checked:dark:outline-indigo-400
+                  bg-default 
+                  outline-slate-400 dark:outline-slate-600 
+                  
+                  checked:bg-blue-500 checked:outline-blue-400 
+                  checked:dark:bg-indigo-500 checked:dark:outline-indigo-400 
                 `}
               />
 
