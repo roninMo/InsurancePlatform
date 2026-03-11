@@ -12,7 +12,7 @@ interface ButtonProps {
   icon?: IconTypes;
   iconStyles?: string;
   size?: 'default' | 'md' | 'lg';
-  color?: 'primary' | 'gray' | 'gray-focus';
+  color?: 'primary' | 'gray' | 'gray-focus' | 'none';
   additionalStyles?: string;
 }
 

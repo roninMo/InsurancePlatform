@@ -61,7 +61,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
 
   if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
   if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
-  if (variant == 'Calendar')        return (<Icon_Calendar styles={styles ? styles : defaultOkayStyles} />);
+  if (variant == 'Calendar')        return (<Icon_Calendar styles={styles} />);
   if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
   if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
   if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);

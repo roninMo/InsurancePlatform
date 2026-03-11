@@ -12,7 +12,7 @@ import { Button, Icon, Input, InputProps_Email, ProjectReactComponents, RadioGro
 import { RadioTable } from './Components/Forms/RadioTable/RadioTable';
 import { Slider } from './Components/Forms/Slider/Slider';
 import { Checkbox, CheckboxItem, CheckboxProps } from './Components/Forms/Checkbox/Checkbox';
-import { Textarea } from './Components/Forms/Textarea';
+import { MetadataTagProps, Textarea } from './Components/Forms/Textarea';
 // import { RadioTable } from './RadioTable/RadioTable';
 
 
@@ -176,6 +176,34 @@ export function App() {
     required: false, 
     disabled: false,
   };
+  const boxMetadataTags: MetadataTagProps[] = [
+    {
+      tagLabel: 'assign', onClickTag: () => {},
+      tagIcon: 'Profile', iconStyles: '',
+    },
+    {
+      tagLabel: 'label', onClickTag: () => {},
+      tagIcon: 'Tag', iconStyles: '',
+    },
+    {
+      tagLabel: 'due date', onClickTag: () => {},
+      tagIcon: 'Calendar', iconStyles: '',
+    },
+  ];
+  const postMetadataTags:MetadataTagProps[] = [
+    {
+      tagIcon: 'Link', iconStyles: '',
+      onClickTag: () => {},
+    },
+    {
+      tagIcon: 'CodeBracket', iconStyles: '',
+      onClickTag: () => {},
+    },
+    {
+      tagIcon: 'AtSymbol', iconStyles: '',
+      onClickTag: () => {},
+    },
+  ];
 
   // Radio buttons
   const radioButtonId = useId();
@@ -391,8 +419,9 @@ export function App() {
             
           </div>
 
-          {/* List of the different input types (For quick testing) */}
+          {/* Input and Textarea */}
           <div className='spacing bg-div outline-css outline-styles'>
+            {/* List of the different input types (For quick testing) */}
             <div className='colStart p-4 pb-8  span-12 md:span-6 lg:span-4 *:w-full *:py-2'>
               <h4 className='label-colors'>Inputs</h4>
               <Input 
@@ -472,6 +501,8 @@ export function App() {
                   placeholder="input text..."
                   submitButtonText='Post'
                   { ...textareaProps }
+                  error={false}
+                  errorMessage="invalid input"
                 />
               </div>
               
@@ -483,6 +514,9 @@ export function App() {
                   placeholder="input text..."
                   submitButtonText='Create'
                   { ...textareaProps }
+                  metadataTags={boxMetadataTags}
+                  error={false}
+                  errorMessage="invalid input"
                 />
               </div>
               
@@ -494,6 +528,9 @@ export function App() {
                   placeholder="input text..."
                   submitButtonText='Post'
                   { ...textareaProps }
+                  metadataTags={postMetadataTags}
+                  error={false}
+                  errorMessage="invalid input"
                 />
               </div>
             </div>

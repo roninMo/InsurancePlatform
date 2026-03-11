@@ -68,7 +68,7 @@ export const Input = ({
   // #endregion
 
 
-  // placholder logic
+  // placeholder logic
   if (type == 'currency') {
     const currencyType = '$';
     if (placeholder == '') placeholder = `${currencyType} 0.00`;
