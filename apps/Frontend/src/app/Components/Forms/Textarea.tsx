@@ -1,9 +1,8 @@
 import { MouseEvent, useState } from "react";
-import { TextareaEventHandlers, Icon, Button } from '@Project/ReactComponents';
+import { TextareaEventHandlers, Icon, Button, IconTypes } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
 import styles from './Textarea.module.scss';
-import { IconTypes } from "../../../../../../libraries/ReactComponents/src/Common/Icons/Icon";
 
 
 export type TextareaTypes = 'default' | 'box' | 'post';
@@ -98,7 +97,9 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   `;
 
 
-  // default variant
+  //--------------------------------//
+  // default style                  //
+  //--------------------------------//
   if (type === 'default') {
     return (
       <div className="w-full flex flex-col gap-2">
@@ -147,7 +148,9 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
     );
   }
 
-  // box variant
+  //--------------------------------//
+  // box style                      //
+  //--------------------------------//
   else if (type == 'box') {
     return (<>
       <Container className="col bg-default outline-css outline-styles rounded-lg w-full">
@@ -187,7 +190,9 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
     </>);
   }
 
-  // post variant
+  //--------------------------------//
+  // post style                     //
+  //--------------------------------//
   else {
     const [showPreview, setShowPreview] = useState<boolean>(false);
 
@@ -268,40 +273,16 @@ const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => 
 }
 
 // additional action events to capture metadata during input captures. ex. Due dates, tags, etc.
-interface MetadataTagElementProps { 
-  type: TextareaTypes;
-  metadataTags?: MetadataTagProps[] | boolean;
-  id: string;
-};
-
 const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps) => {
   const styles = "row justify-end gap-2 p-2  *:row *:gap-2 *:p-3 *:py-2 ";
   const buttonStyles = "*:text-colors *:bg-div-light *:opacity-bg-50 *:rounded-full *:cursor-pointer *:transition ";
   const postIconStyles = "size-5 cursor-pointer transition placeholder-text hover:input-colors ";
   const boxIconStyles = "size-5 cursor-pointer transition svg-colors ";
 
-  // solely for documentation and display purposes
-  if (typeof metadataTags === 'boolean' && metadataTags == true) {
-    if (type == 'box') return (
-      <PillActions className={styles + buttonStyles}>
-        <div className="hover:bg-div-light"> <Icon variant="Profile"   styles={boxIconStyles} /> Assign </div>
-        <div className="hover:bg-div-light"> <Icon variant="Tag"       styles={boxIconStyles} /> Label </div>
-        <div className="hover:bg-div-light"> <Icon variant="Calendar"  styles={boxIconStyles} /> Due Date </div>
-      </PillActions>
-    );
-
-    else if (type == 'post') return (
-      <div className="row gap-4">
-        <Icon variant="Link"        styles={postIconStyles} />
-        <Icon variant="CodeBracket" styles={postIconStyles} />
-        <Icon variant="AtSymbol"    styles={postIconStyles} />
-      </div>
-    );
-  }
-
-
-  // dynamically rendered action buttons
-  else if (Array.isArray(metadataTags)) {
+  //--------------------------------//
+  // metadata tags                  //
+  //--------------------------------//
+  if (Array.isArray(metadataTags)) {
 
     // Box variant
     if (type == 'box') return (
@@ -329,13 +310,28 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
     );
   }
 
+  // solely for documentation and display purposes
+  else if (typeof metadataTags === 'boolean' && metadataTags == true) {
+    if (type == 'box') return (
+      <PillActions className={styles + buttonStyles}>
+        <div className="hover:bg-div-light"> <Icon variant="Profile"   styles={boxIconStyles} /> Assign </div>
+        <div className="hover:bg-div-light"> <Icon variant="Tag"       styles={boxIconStyles} /> Label </div>
+        <div className="hover:bg-div-light"> <Icon variant="Calendar"  styles={boxIconStyles} /> Due Date </div>
+      </PillActions>
+    );
+
+    else if (type == 'post') return (
+      <div className="row gap-4">
+        <Icon variant="Link"        styles={postIconStyles} />
+        <Icon variant="CodeBracket" styles={postIconStyles} />
+        <Icon variant="AtSymbol"    styles={postIconStyles} />
+      </div>
+    );
+  }
+
   return (<></>);
 }
 
-export interface AttachFileProps {
-  onClickAttachFile?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
-  iconStyles: string;
-}
 const AttachFileElement = ({onClickAttachFile, iconStyles}: AttachFileProps) => {
   // if (onClickAttachFile) return ( // TODO: only render when provided functionality
   if (true) return (
@@ -347,6 +343,16 @@ const AttachFileElement = ({onClickAttachFile, iconStyles}: AttachFileProps) => 
   return (<></>);
 }
 
+
+interface MetadataTagElementProps { 
+  type: TextareaTypes;
+  metadataTags?: MetadataTagProps[] | boolean;
+  id: string;
+};
+export interface AttachFileProps {
+  onClickAttachFile?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
+  iconStyles: string;
+}
 
 const InputContainer = styled.div``;
 const Container = styled.div``;

@@ -62,7 +62,7 @@ export const RadioGroup = ({
       }
 
       {/* Radio Items */}
-      <div className={rowStyleVariants.includes(variant) ? 'rowStart' : 'colStart' + 'gap-2'}>
+      <div className={rowStyleVariants.includes(variant) ? 'rowStart gap-1' : 'colStart *:pb-4'}>
         { radioItems.map((item: RadioItem, index: number) =>
           <RadioGroupItem
             checked={currentValue.value == item.value}

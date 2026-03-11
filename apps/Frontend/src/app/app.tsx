@@ -419,6 +419,7 @@ export function App() {
             
           </div>
 
+
           {/* Input and Textarea */}
           <div className='spacing bg-div outline-css outline-styles'>
             {/* List of the different input types (For quick testing) */}
@@ -489,6 +490,7 @@ export function App() {
               />
             </div>
 
+            {/* List of the different textarea types */}
             <div className='span-12 lg:span-1' />
             <div className='p-4 span-12 md:span-6 lg:span-6 *:p-6'>
               <h4 className='label-colors'>Textareas</h4>
@@ -536,9 +538,11 @@ export function App() {
             </div>
           </div>
 
-          <div className='spacing mt-4 p-4 bg-div rounded-md'>
+
+          {/* Random custom logic and display to show layout and svgs */}
+          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
             <div className='span-12 pb-2'>
-              <h2>Custom React Input Components</h2>
+              <h4 className='pb-2 pt-1 label-colors'>Custom React Input Components</h4>
             </div>
 
             {/* Input and Select */}
@@ -575,13 +579,15 @@ export function App() {
             
             {/* Content Layout */}
             <div className='span-12 p-2' />
-            <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-            <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-            <div className='span-4 p-2 bg-slate-800 rounded-md'>Grid content</div>
-            <div className='span-12 p-2 bg-slate-800 rounded-md'>Grid content</div>
-            <div className='span-12 mr-20 p-2 mt-2 mb-6 border-b border-slate-500' />
+            <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
+            <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
+            <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
+            <div className='span-12 p-2 bg-default text-colors rounded-md'>Grid content</div>
+          </div>
 
 
+          {/* Radio groups (variations of both Tables and Groups) */}
+          <div className='spacing mt-4 p-4 bg-div rounded-md'>
             {/* Radio Table */}
             <div className='spacing gap-x-8 mt-4'>
 
@@ -608,7 +614,7 @@ export function App() {
 
             {/* Slider and Checkbox */}
             <div className='spacing gap-x-8 mt-4'>
-              <div className='span-3 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-3 p-4 pb-4 bg-default text-colors rounded-md'>
                 {[0, 1, 2, 3, 4, 5].map((index) => 
                   <Slider 
                     name="slider"
@@ -630,7 +636,7 @@ export function App() {
               </div>
               
 
-              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
                   <Checkbox 
                     {...CheckboxProps}
                     variant='list'
@@ -642,7 +648,7 @@ export function App() {
             </div>
 
             <div className='spacing gap-x-8 mt-4'>
-              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
                   <Checkbox 
                     {...CheckboxProps}
                     variant='default'
@@ -652,7 +658,7 @@ export function App() {
                   />
               </div>
               
-              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
                   <Checkbox 
                     {...CheckboxProps}
                     variant='inline'
@@ -668,7 +674,7 @@ export function App() {
             <div className='spacing gap-x-8 mt-4'>
 
               {/* Default, List, Table */}
-              <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
                 <RadioGroup 
                   {...RadioGroupProps} 
                   variant='default' 
@@ -678,7 +684,7 @@ export function App() {
                   errorMessage='an error occurred'
                 />
               </div>
-              <div className='span-12 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
                 <RadioGroup 
                   {...RadioGroupProps} 
                   variant='list' 
@@ -689,7 +695,7 @@ export function App() {
 
 
               {/* Column, and Column-Inline */}
-              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
                 <RadioGroup 
                   {...RadioGroupProps} 
                   variant='column' 
@@ -700,7 +706,7 @@ export function App() {
                 />
               </div>
               
-              <div className='span-6 p-4 pb-4 bg-slate-800 rounded-md'>
+              <div className='span-6 p-4 pb-4 bg-default text-colors rounded-md'>
                 <RadioGroup 
                   {...RadioGroupProps} 
                   variant='columnInline' 

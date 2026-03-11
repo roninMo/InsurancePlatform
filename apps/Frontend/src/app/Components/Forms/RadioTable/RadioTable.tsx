@@ -39,7 +39,8 @@ export const RadioTable = ({
 
   const getSelectedStyles = (selected: boolean): string => {
     let classes = outlineStyles;
-    if (selected) classes += ` selected-box ${error && 'error-box'} z-10`;
+    if (selected) classes += ` ${error ? 'error-box' : 'selected-box'} z-10 `;
+    else classes += ` outline-slate-400/0`;
 
     return classes;
   }
@@ -116,12 +117,12 @@ const ItemLabel = styled.label``;
 const ItemDescription = styled.p``;
 
 
-const outlineStyles = `outline-init outline-slate-400/0`;
+const outlineStyles = `outline outline-1 -outline-offset-1`;
 const tableItemStyles = `
   rowStart items-start gap-2 
   min-w-full p-4 px-6 
-  border bg-slate-800 border-default
-  transition-all duration-300
+  bg-default border border-default 
+  transition [&_div]:transition duration-500 [&_div]:duration-500 
   first:rounded-t-md last:rounded-b-md 
   [&:not(:first-child)]:-mt-[1px] 
 `;

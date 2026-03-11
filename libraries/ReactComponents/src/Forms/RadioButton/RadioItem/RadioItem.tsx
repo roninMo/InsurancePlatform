@@ -87,7 +87,7 @@ const columnStyles = `rowStart items-start gap-2`;
 const listStyles = `
   min-w-full row justify-between items-start gap-2 mr-6
   [&>.radio-container]:ml-4 [&>.radio-container]:order-1
-  border-b border-slate-600 pb-6 pt-2 w-full
+  border-b border-styles pb-6 pt-2 w-full
 `;
 
 

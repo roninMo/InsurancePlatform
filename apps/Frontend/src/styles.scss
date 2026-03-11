@@ -20,12 +20,12 @@
   .label-colors   { @apply text-slate-800   dark:text-slate-300; }
   .header-colors  { @apply text-slate-800   dark:text-slate-100; }
   .svg-colors     { @apply  text-slate-500  dark:text-slate-400; }
-  .text-colors    { @apply text-slate-800   dark:text-slate-400; }
+  .text-colors    { @apply text-slate-900   dark:text-slate-400; }
   
   .placeholder-text { @apply text-slate-400 dark:text-slate-500; }
   .disabled-text    { @apply text-gray-500  dark:text-gray-400; }
   .warning-text     { @apply text-amber-500 dark:text-amber-400; }
-  .error-text       { @apply text-red-400   dark:text-red-500; }
+  .error-text       { @apply text-red-600   dark:text-red-500; }
 
 
 
@@ -67,7 +67,7 @@
   .btn-gray-colors { @apply bg-div-light outline-slate-400 dark:outline-slate-700; }
   .btn-gray-hover { @apply bg-slate-300 dark:bg-slate-600; }
   
-  .btn-gray-focus-colors { @apply bg-div outline-white dark:outline-slate-800; }
+  .btn-gray-focus-colors { @apply bg-default outline-white dark:outline-slate-800; }
   .btn-gray-focus-hover { @apply bg-slate-200 dark:bg-slate-700; }
 
 
@@ -145,30 +145,30 @@
   /* For containers that need highlighting when selected  */
   .selected-box { 
     @apply 
+      bg-opacity-20 dark:bg-opacity-10
     bg-indigo-600 dark:bg-indigo-500
-      bg-opacity-10 dark:bg-opacity-10
       outline-focus 
   }
 
   .warning-box {
     @apply 
       bg-opacity-10 dark:bg-opacity-10
-      bg-amber-500 dark:bg-amber-400
-      outline-amber-500 dark:outline-amber-400;
+    bg-amber-500 dark:bg-amber-400
+    outline-amber-500 dark:outline-amber-400;
   }
 
   .ok-box {
     @apply
       bg-opacity-10 dark:bg-opacity-10
-      bg-emerald-500 dark:bg-emerald-400
-      outline-emerald-500 dark:outline-emerald-400;
+    bg-emerald-500 dark:bg-emerald-400
+    outline-emerald-500 dark:outline-emerald-400;
   }
   
   .error-box {
     @apply
-      bg-opacity-10 dark:bg-opacity-10
-      bg-red-400 dark:bg-red-500
-      outline-red-400 dark:outline-red-500;
+      bg-opacity-30 dark:bg-opacity-10
+    bg-red-500 dark:bg-red-500
+    outline-red-500 dark:outline-red-600;
   }
   
   .input-error {
@@ -181,7 +181,7 @@
     @apply 
       disabled-text placeholder:disabled-text
       bg-disabled
-      outline-gray-400  dark:outline-gray-600;
+    outline-gray-400  dark:outline-gray-600;
   }
 
 
@@ -287,25 +287,52 @@
   // Radio button styles
   .radio-button {
     @apply 
-      p-[6px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
+      p-[6px] mt-[2px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
 
       /* Adjusted border to create the selected radio circle icon */
       border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
       disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
       
-      /* Radio Button Background */
-      border-slate-300
-      disabled:border-slate-400 
-      dark:border-slate-700
-      
-      /* Radio Button Circle (Outer) */
-      checked:outline-indigo-500 
-      disabled:checked:outline-indigo-500
-      dark:disabled:border-slate-500 
 
-      /* Radio Button Circle (Inner) */
-      bg-white dark:bg-slate-800 
-      checked:bg-white dark:checked:bg-white
+      /******************** 
+      * Light Theme       *
+      ********************/
+      /* outer circle */
+      border-slate-300
+      disabled:border-slate-300 
+
+      /* inner circle */
+      bg-white 
+      disabled:bg-slate-300
+      
+      /* Radio Selected Circle (Outer) */
+      checked:outline-indigo-500 
+      disabled:checked:outline-slate-400
+
+      /* Radio Selected Circle (Inner) */
+      checked:bg-white 
+      disabled:checked:bg-slate-200
+
+
+      
+      /******************** 
+      * Dark Theme        *
+      ********************/
+      /* outer circle */
+      dark:border-slate-500
+      dark:disabled:border-slate-600 
+
+      /* inner circle */
+      dark:bg-slate-800 
+      dark:disabled:bg-slate-700
+      
+      /* Radio Selected Circle (Outer) */
+      dark:checked:outline-indigo-500 
+      dark:disabled:checked:outline-slate-500
+
+      /* Radio Selected Circle (Inner) */
+      dark:checked:bg-slate-100
+      dark:disabled:checked:bg-slate-400
     ;
   }
 

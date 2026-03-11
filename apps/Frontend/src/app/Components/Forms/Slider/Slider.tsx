@@ -24,7 +24,7 @@ export const Slider = ({
   error = false, errorMessage, required = false, disabled = false,
   aria, ...props
 }: SliderProps) => {
-  const getSliderStyles = (): string => `size-5 mr-5 rounded-full shadow-sm ring-1 ring-gray-800`;
+  const getSliderStyles = (): string => `size-5 mr-5 rounded-full shadow-sm ring-1 ring-slate-400 dark:ring-slate-700`;
   const getSliderTranslateStyles = (): string => `translate-x-5`; 
 
   return (
@@ -40,12 +40,13 @@ export const Slider = ({
         {...props}
         className={`
           min-w-max rowStart gap-2 p-[1px] rounded-full 
-          outline-init  
-          ${value ? 'bg-blue-500 outline-blue-400' : 'outline-default'}
+          outline-init
+          ${value ? 'bg-blue-600 dark:bg-blue-600  outline-blue-500 dark:outline-blue-500' 
+                  : 'bg-slate-300 dark:bg-slate-800 outline-slate-300 dark:outline-slate-600'}
         `}
       >
-        <SliderPanel className={`
-          bg-white transition-transform duration-200 ease-out 
+        <SliderButton className={`
+          bg-white dark:bg-slate-200 transition-transform duration-200 ease-out 
           ${getSliderStyles()} 
           ${value && getSliderTranslateStyles()} 
         `}/>
@@ -68,5 +69,5 @@ export const Slider = ({
 const Container = styled.div``;
 const Label = styled.label``;
 const Description = styled.p``;
-const SliderPanel = styled.div``;
+const SliderButton = styled.div``;
 const Button = styled.button``;
