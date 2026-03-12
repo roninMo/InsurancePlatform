@@ -374,8 +374,8 @@ export function App() {
         <MainContent className='spacing gap-y-4 px-6 py-4'>
 
           {/* First Section for Input component logic */}
-          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
-            <div className='span-12 md:span-8 lg:span-4'>
+          <div className='spacing mt-4 p-4 pb-8 bg-div outline-css outline-styles'>
+            <div className='span-12 md:span-8 lg:span-4 p-2'>
               <Input 
                 // type="currency"
                 type={inputType.value as TextInputTypes}
@@ -394,7 +394,7 @@ export function App() {
               />
             </div>
 
-            <div className='span-12 lg:span-3 py-2 *:m-2 rowStart items-start lg:mt-3'>
+            <div className='span-12 lg:span-3 py-4 *:m-2 rowStart items-start lg:mt-3'>
               <Button 
                 displayText={inputError ? 'Disable Error' : 'Enable Error'} 
                 size='md'
@@ -407,7 +407,7 @@ export function App() {
               />
             </div>
 
-            <div className='span-12 md:span-8 lg:span-4'>
+            <div className='span-12 md:span-8 lg:span-4 p-2'>
               <Select 
                 name="inputType"
                 label="Input Type"
@@ -422,7 +422,7 @@ export function App() {
 
 
           {/* Input and Textarea */}
-          <div className='spacing bg-div outline-css outline-styles'>
+          <div className='spacing p-2 bg-div outline-css outline-styles'>
             {/* List of the different input types (For quick testing) */}
             <div className='colStart p-4 pb-8  span-12 md:span-6 lg:span-4 *:w-full *:py-2'>
               <h4 className='label-colors'>Inputs</h4>
@@ -541,13 +541,13 @@ export function App() {
 
 
           {/* Random custom logic and display to show layout and svgs */}
-          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+          <div className='spacing p-4 pb-8 bg-div outline-css outline-styles'>
             <div className='span-12 pb-2'>
               <h4 className='pb-2 pt-1 label-colors'>Custom React Input Components</h4>
             </div>
 
             {/* Input and Select */}
-            <div className='span-4 pb-8'>
+            <div className='span-4 pb-8 px-4 p-2'>
               <Input 
                 { ...InputProps_Email } 
                 value={email}
@@ -560,7 +560,7 @@ export function App() {
               />
             </div>
 
-            <div className='span-4 pb-8'>
+            <div className='span-4 pb-8 px-4 p-2'>
               <Select 
                 name="selectIcons"
                 label="Selected Svgs"
@@ -579,16 +579,17 @@ export function App() {
             </div>
             
             {/* Content Layout */}
-            <div className='span-12 p-2' />
-            <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
-            <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
-            <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
-            <div className='span-12 p-2 bg-default text-colors rounded-md'>Grid content</div>
+            <div className='spacing gap-2 p-4 pt-2'>
+              <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
+              <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
+              <div className='span-4 p-2 bg-default text-colors rounded-md'>Grid content</div>
+              <div className='span-12 p-2 bg-default text-colors rounded-md'>Grid content</div>
+            </div>
           </div>
 
 
           {/* Radio Tables */}
-          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+          <div className='spacing mt-4 p-4 pb-8 bg-div outline-css outline-styles'>
             <div className='span-12 pb-2'>
               <h4 className='pb-2 pt-1 label-colors'>Radio Tables</h4>
             </div>
@@ -615,12 +616,12 @@ export function App() {
 
 
           {/* Slider and list Checkboxes */}
-          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+          <div className='spacing mt-4 p-4 pb-8 bg-div outline-css outline-styles'>
             <div className='span-12 pb-2'>
               <h4 className='pb-2 pt-1 label-colors'>Slider and list style Checkbox</h4>
             </div>
 
-            <div className='spacing span-12 justify-between'>
+            <div className='spacing span-12 p-4 justify-between'>
               <div className='span-12 lg:span-3 p-4 pb-4 bg-default text-colors rounded-md'>
                 {[0, 1, 2, 3, 4, 5].map((index) => 
                   <Slider 
@@ -657,12 +658,12 @@ export function App() {
 
 
           {/* Default and Inline style Checkboxes */}
-          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+          <div className='spacing mt-4 p-4 pb-8 bg-div outline-css outline-styles'>
             <div className='span-12 pb-2'>
               <h4 className='pb-2 pt-1 label-colors'>Default and Inline style Checkboxes</h4>
             </div>
             
-            <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+            <div className='span-12 lg:span-6 p-4 mx-4 bg-default text-colors rounded-md'>
                 <Checkbox 
                   {...CheckboxProps}
                   variant='default'
@@ -685,12 +686,12 @@ export function App() {
 
 
           {/* Radio Groups */}
-          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+          <div className='spacing mt-4 p-4 pb-8 bg-div outline-css outline-styles'>
             <div className='span-12 pb-2'>
               <h4 className='pb-2 pt-1 label-colors'>Radio Groups</h4>
             </div>
             
-            <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
+            <div className='span-12 p-4 mx-4 bg-default text-colors rounded-md'>
               <RadioGroup 
                 {...RadioGroupProps} 
                 variant='default' 
@@ -702,7 +703,7 @@ export function App() {
               />
             </div>
             
-            <div className='span-12 p-4 pb-4 bg-default text-colors rounded-md'>
+            <div className='span-12 p-4 mx-4 bg-default text-colors rounded-md'>
               <RadioGroup 
                 {...RadioGroupProps} 
                 variant='list' 
@@ -712,7 +713,7 @@ export function App() {
               />
             </div>
 
-            <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+            <div className='span-12 lg:span-6 p-4 m-4 bg-default text-colors rounded-md'>
               <RadioGroup 
                 {...RadioGroupProps} 
                 variant='column' 
@@ -722,7 +723,7 @@ export function App() {
                 description={undefined}
               />
             </div>
-            <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
+            <div className='span-12 lg:span-6 p-4 m-4 bg-default text-colors rounded-md'>
               <RadioGroup 
                 {...RadioGroupProps} 
                 variant='columnInline' 
@@ -736,7 +737,7 @@ export function App() {
           </div>
 
           {/* Card Layouts */}
-          <div className='spacing mt-4 p-4 pb-8 bg-div rounded-md'>
+          <div className='spacing mt-4 p-4 pb-8 bg-div outline-css outline-styles'>
             <div className='span-12 pb-2'>
               <h3 className='pb-2 pt-1 label-colors'>Card variations</h3>
             </div>
