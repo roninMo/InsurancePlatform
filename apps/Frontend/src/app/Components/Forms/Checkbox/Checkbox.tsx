@@ -44,7 +44,7 @@ export const Checkbox = ({
   const getStyles = () => {
     const radioContainerStyles = `min-w-full pt-4 pb-6 px-1`;
     const listStyles = `colStart gap-1 border-b first:border-t border-default`;
-    const defaultStyles = `rowStart gap-2`;
+    const defaultStyles = `rowStart items-start gap-2`;
     
     if (variant == 'list') return `${listStyles} ${radioContainerStyles}`;
     else return `${defaultStyles} ${radioContainerStyles}`;
@@ -77,7 +77,7 @@ export const Checkbox = ({
                 disabled={disabled || item.disabled}
                 required={required}
                 className={`checkbox 
-                  mt-1 mb-auto ${variant == 'list' && 'order-1'} 
+                  mb-auto ${variant == 'list' && 'order-1'} ${variant != 'list' && 'mr-1'}
                   appearance-none outline-css rounded-[4px] size-5 transition-all 
                   checked:before:content-['✓'] text-center p-[1px] text-slate-100 
                   

@@ -309,21 +309,53 @@ export function App() {
     required: false,
   }
 
+
+
   return (
     <AppSpacing className="bg-default">
       <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
 
         {/* Navbar */}
-        <Navbar role="navigation" className='p-2'>
-          <ul>
-            <li className='pb-1'>
+        <Navbar role="navigation" id='Nav' className='bg-div border-styles border-b'>
+            <div className='w-full row justify-between items-center relative z-10 bg-div px-3'>
+              <div id='NavLinks' className='NavLinks rowStart items-center gap-8'>
+                <div id='HomeLink' className='p-2 outline-css rounded-lg transition duration-300 cursor-pointer
+                    bg-default outline-focus theme-focus' >
+                  <Icon variant='CodeBracket' styles='size-6 text-blue-600 dark:text-indigo-400' />
+                </div>
+
+                <div id='Links' className='rowStart gap-0 *:p-6 *:transition *:cursor-pointer'>
+                  <p className='bg-div hover:bg-div-hover'>Home</p>
+                  <p className='bg-div hover:bg-div-hover'>Demos</p>
+                  <p className='bg-div hover:bg-div-hover'>Mock Database</p>
+                  <p className='bg-div hover:bg-div-hover'>Contact</p>
+                </div>
+              </div>
+
+              <div className='rowStart items-center gap-2'>
+                <div id='HomeLink' className='p-2 outline-css rounded-full transition duration-300 cursor-pointer
+                    bg-default outline-default theme-focus' >
+                  <Icon variant='Profile' styles='size-6 text-slate-600 dark:text-slate-500' />
+                </div>
+              </div>
+            </div>
+
+            <div id='navbar-dropdown' className='
+              absolute w-full h-10 bg-div outline-css rounded-none transition duration-300 ease-in-out
+              row items-center active:-translate-y-12 active:opacity-100
+            '>
+              Navbar dropdown
+            </div>
+        </Navbar>
+        
+          <ul className='bg-default m-4 mt-14 p-4 outline-css outline-styles'>
+            <li className='pb-1 text-colors hover:input-colors transition'>
               <Link to="/">Home</Link>
             </li>
-            <li className='pb-1'>
+            <li className='pb-1 text-colors hover:input-colors transition'>
               <Link to="/page-2">Page 2</Link>
             </li>
           </ul>
-        </Navbar>
 
 
         {/* Routes */}
@@ -879,6 +911,8 @@ export function App() {
               - Home 
               - Demos
               - Mock Database
+              - Contact
+              - Backend form state save capture Demo
               - etc.
 
             Settings/User Login
@@ -922,6 +956,11 @@ export function App() {
                 - Current submit claim state should be saved on the backend, tied the guid for retrieval
                 - Eventual logic should save the form data to the backend while they're entering the information on the backend
           */}
+
+          {/* Backend form state save capture Demo
+              - Create a quick form to show save state being captured on the backend. It's current state, when we capture save data,
+                  and the progress and response of the data being saved on the backend. With information displaying the state/progress
+           */}
 
           {/* Submit a claim, for home and auto */}
           {/* Login page should accept dummy data, or a universal user for quick access */}
