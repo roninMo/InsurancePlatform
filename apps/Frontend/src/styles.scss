@@ -45,6 +45,11 @@
   //------------------------------------------//
   // Background Colors                        //
   //------------------------------------------//
+  html, body {
+    min-height: 100vh;
+    @apply bg-default;
+  }
+
   // Quick utility styles for adjusting theme colors without creating new classes
   .theme-focus {
     @apply 
@@ -89,8 +94,10 @@
   .btn-gray-focus-colors { @apply bg-default outline-white dark:outline-slate-800; }
   .btn-gray-focus-hover { @apply bg-slate-200 dark:bg-slate-700; }
 
-  
+  // hover states
   .bg-div-hover { @apply bg-slate-200 dark:bg-slate-800; }
+
+
 
 
   //------------------------------------------//
@@ -271,6 +278,17 @@
       border-radius: 0.375rem;
       background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
     }
+  }
+
+  .disable-transitions,
+  .disable-transitions *,
+  .disable-transitions *::before,
+  .disable-transitions *::after {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    -ms-transition: none !important;
+    transition: none !important;
   }
 
 

@@ -1,17 +1,38 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Home } from "./Pages/Home/Home";
+import { ErrorPage } from "./Pages/ErrorPage/ErrorPage";
+import { Documentation } from "./Pages/Documentation/Documentation";
+import { Demos } from "./Pages/Demos/Demos";
+import MockDatabase from "./Pages/MockDatabase/MockDatabase";
+import { Contact } from "./Pages/Contact/Contact";
 
-import App from "./app";
 
-
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Home />,
+    errorElement: <ErrorPage />,
   },
-  // {
-  //   path: "/about",
-  //   element: <About />,
-  // },
+  {
+    path: "/Demos",
+    element: <Demos />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/MockDatabase",
+    element: <MockDatabase />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/Contact",
+    element: <Contact />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/Documentation",
+    element: <Documentation />,
+    errorElement: <ErrorPage />,
+  },
 
 
   // Home page

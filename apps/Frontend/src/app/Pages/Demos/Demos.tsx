@@ -1,11 +1,19 @@
+import { Outlet } from "react-router-dom";
+import { Navbar } from "../../Components/Navbar/Navbar";
 import styles from './Demos.module.scss';
 
-export function Demos() {
+export const Demos =() => {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Demos!</h1>
-    </div>
+    <>
+      {/* Navbar */}
+      <Navbar />
+      <div className='dropdown-spacing py-10' />
+
+      <div className='p-4'>
+        <h4> Demo page </h4>
+
+        <Outlet />
+      </div>
+    </>
   );
 }
-
-export default Demos;

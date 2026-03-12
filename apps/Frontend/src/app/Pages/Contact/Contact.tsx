@@ -1,11 +1,17 @@
+import { Navbar } from '../../Components/Navbar/Navbar';
 import styles from './Contact.module.scss';
 
-export function Contact() {
+export const Contact = () => {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Contact!</h1>
-    </div>
+    <>
+      {/* Navbar */}
+      <Navbar />
+      <div className='dropdown-spacing py-10' />
+
+      <div className='p-4'>
+        <h4> Contact Page </h4>
+
+      </div>
+    </>
   );
 }
-
-export default Contact;
