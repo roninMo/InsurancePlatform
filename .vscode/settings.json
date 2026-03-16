@@ -6,5 +6,12 @@
     "Selectedcontent",
     "Svgs",
     "Textareas"
+  ],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    ".*additionalStyles.*", // Add your custom prop pattern here
+    ".*Styles.*" // Or another pattern
   ]
 }

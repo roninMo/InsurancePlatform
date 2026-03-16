@@ -1,4 +1,4 @@
-import { MouseEvent, SVGProps } from 'react';
+import { HTMLAttributes, MouseEvent } from 'react';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
 import styles from './Button.module.scss';
@@ -11,9 +11,9 @@ export interface ButtonProps {
 
   icon?: IconTypes;
   iconStyles?: string;
-  size?: 'default' | 'md' | 'lg';
+  size?: 'default' | 'md' | 'lg' | 'xl' | 'none';
   color?: 'primary' | 'gray' | 'gray-focus' | 'none';
-  additionalStyles?: string;
+  additionalStyles?: string | undefined;
 }
 
 export function Button({ 
@@ -29,18 +29,23 @@ export function Button({
       disabled={disabled}
       className={` 
         inline-flex items-center 
-        shadow-xs dark:shadow-none transition rounded-md 
-        outline-css text-white font-semibold 
+        shadow-md dark:shadow-none transition 
+        outline-css text-white font-semibold text-nowrap m-auto
         
-        ${size == 'default' && 'px-2.5  py-1.5'} 
-        ${size == 'md'      && 'px-3    py-2 '} 
-        ${size == 'lg'      && 'px-3.5  py-2.5'} 
+        ${  size == 'default' ? 'px-2.5  py-1.5' 
+          : size == 'md'      ? 'px-3    py-2 ' 
+          : size == 'lg'      ? 'px-3.5  py-2.5'
+          : size == 'xl'      ? 'px-5    py-3'
+          : ''
+        } 
 
-        ${color == 'primary'    && 'btn-primary'} 
-        ${color == 'gray'       && 'btn-gray'} 
-        ${color == 'gray-focus' && 'btn-gray-focus'} 
-        
-        ${additionalStyles} 
+        ${  color == 'primary'    ? 'btn-primary'
+          : color == 'gray'       ? 'btn-gray' 
+          : color == 'gray-focus' ? 'btn-gray-focus' 
+          : '' 
+        } 
+
+        ${additionalStyles}
       `}
     >
       

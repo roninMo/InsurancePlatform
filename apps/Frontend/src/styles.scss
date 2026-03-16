@@ -51,23 +51,10 @@
   }
 
   // Quick utility styles for adjusting theme colors without creating new classes
-  .theme-focus {
-    @apply 
-      hover:brightness-150 active:brightness-90
-    ;
-  }
+  .theme-focus    { @apply hover:brightness-150  active:brightness-90; }
+  .theme-focus-1  { @apply hover:brightness-110  active:brightness-90; }
+  .theme-focus-2  { @apply hover:brightness-125  active:brightness-90; }
 
-  .theme-focus-1 {
-    @apply 
-      hover:brightness-110 active:brightness-90
-    ;
-  }
-
-  .theme-focus-2 {
-    @apply 
-      hover:brightness-125 active:brightness-90
-    ;
-  }
 
   // default background colors
   .bg-default   { @apply bg-white     dark:bg-slate-800; }
@@ -173,7 +160,7 @@
   /* For containers that need highlighting when selected  */
   .selected-box { 
     @apply 
-      bg-opacity-20 dark:bg-opacity-10
+      bg-opacity-20 dark:bg-opacity-20
     bg-indigo-600 dark:bg-indigo-500
       outline-focus 
   }
@@ -247,8 +234,12 @@
   .span-2     { @apply col-span-2; }
   .span-1     { @apply col-span-1; }
 
-
-
+  .text-shadow-2xs  { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.15); }
+  .text-shadow-xs   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.2); }
+  .text-shadow-sm   { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075) }
+  .text-shadow-md   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1); }
+  .text-shadow-lg   { text-shadow: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1); }
+  .text-shadow-none { text-shadow: none; }
 
 
   //------------------------------------------//
@@ -268,6 +259,11 @@
   .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
   .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
   .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
+
+  .overlay-gradient {
+    @apply ;
+  }
+
 
   // the scrollbar for dark themes
   .scrollbar-theme {

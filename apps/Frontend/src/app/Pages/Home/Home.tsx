@@ -1,38 +1,26 @@
-import { ChangeEvent, Dispatch, MouseEvent, SetStateAction, useId, useState } from 'react';
+import { useState, useId } from 'react';
 import styled from '@emotion/styled';
-
-import { Card } from '../../Components/Layouts/Card/Card';
-import { CheckboxItem, Checkbox, CheckboxProps } from '../../Components/Forms/Checkbox/Checkbox';
-import { MetadataTagProps, Textarea } from '../../Components/Forms/Textarea';
-import { RadioTable } from '../../Components/Forms/RadioTable/RadioTable';
-import { Slider } from '../../Components/Forms/Slider/Slider';
-import { 
-  Button, 
-  Input, 
-  InputProps_Email, 
-  RadioGroup, 
-  RadioGroupProps,
-  RadioItem, 
-  Select, 
-  SelectItemValues, 
-  TextInputTypes, 
-} from '@Project/ReactComponents';
+import CustomContent from './CustomContent/CustomContent';
+import { Navbar } from '../../Components/Navbar/Navbar';
 
 import styles from './Home.module.scss';
-import { Navbar } from '../../Components/Navbar/Navbar';
-import CustomContent from './CustomContent/CustomContent';
+import { WelcomeSection } from './WelcomeSection/WelcomeSection';
+
+
 
 
 export const Home = () => {
+  // Image generation text - Beautiful Downtown City Night, Colorful Vibrant Lights with Surreal Weather
 
   return (
     <>
       {/* Navbar */}
       <Navbar />
-      <div className='dropdown-navbar-spacing py-12' />
       
-      <MainContent className='spacing gap-y-4 px-6 py-4'>
+      <MainContent className='spacing gap-y-4'>
         {/* Welcome page w/GetStarted and Docs */}
+        <WelcomeSection />
+
         {/* Previous Works */}
         {/* Experience, Languages, Frameworks, Adaptability */}
         {/* Contact */}

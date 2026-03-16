@@ -1,14 +1,12 @@
 import { createContext, useEffect, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
 
-import { UserTokenInformation } from '@Project/Classes';
-import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
-
-import { Navbar } from './Components/Navbar/Navbar';
-import { router } from './routes';
+import { UserTokenInformation } from '@Project/Classes';
+import { jwtDecode } from 'jwt-decode';
 
 
 const AppSpacing = styled.div``;
