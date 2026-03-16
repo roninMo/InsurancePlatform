@@ -9,14 +9,15 @@ export interface PreviousWorksProps {
   team: string;
   duration: string;
   languagesAndTech: string;
-  readMoreContent: ReactNode;
+  content: string;
+  learnMoreContent?: ReactNode;
 
   additionalStyles?: string;
 }
 
 export const PreviousWorks = ({
   company, title, team, duration,
-  languagesAndTech, readMoreContent, additionalStyles
+  languagesAndTech, content, learnMoreContent, additionalStyles
 }: PreviousWorksProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>();
 
@@ -26,14 +27,13 @@ export const PreviousWorks = ({
       additionalStyles={`col gap-2 ${additionalStyles}`} 
     >
       {/* Company and Duration */}
-      <div className='row justify-between items-center pb-4'>
+      <div className='row justify-between items-center'>
         <h2 className='py-2'>{ company }</h2>
         <label className='placeholder-text font-normal'>
           { duration }
         </label>
       </div>
 
-      <div className='mb-4 border-b border-blue-300 dark:border-slate-600' />
 
       {/* Team and Title */}
       <div className='row justify-between pb-4'>
@@ -48,20 +48,23 @@ export const PreviousWorks = ({
         
       </div>
 
-      {/* Languages and Tech */}
+      {/* Content, Languages, and Tech */}
+      <div className='placeholder-text'>
+        { languagesAndTech }
+      </div>
       <div className='text-colors'>
-        <p>{ languagesAndTech }</p>
+        { content }
       </div>
 
       {/* read more content */}
       <div>
-        <span className='link-text text-sm'>read more</span>
+        <span className='link-text text-sm'>Learn more</span>
 
 
         { modalOpen && 
           <div className='p-12 bg-div-light outline-css outline-styles'> 
             Modal Content
-            { readMoreContent }
+            { learnMoreContent }
           </div>
         }
       </div>
