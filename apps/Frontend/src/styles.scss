@@ -27,6 +27,16 @@
   .warning-text     { @apply text-amber-500 dark:text-amber-400; }
   .error-text       { @apply text-red-600   dark:text-red-500; }
 
+  .link-text {
+    @apply
+      cursor-pointer transition
+      text-blue-500 dark:text-blue-500
+      hover:theme-focus-2 dark:hover:theme-focus
+
+      focus:underline dark:focus:underline
+      hover:underline dark:hover:underline;
+  }
+
 
 
 
@@ -160,8 +170,8 @@
   /* For containers that need highlighting when selected  */
   .selected-box { 
     @apply 
-      bg-opacity-20 dark:bg-opacity-20
-    bg-indigo-600 dark:bg-indigo-500
+      bg-opacity-30 dark:bg-opacity-10
+    bg-blue-600 dark:bg-blue-500
       outline-focus 
   }
 
@@ -197,16 +207,6 @@
       disabled-text placeholder:disabled-text
       bg-disabled
     outline-gray-400  dark:outline-gray-600;
-  }
-
-  .link-default {
-    @apply
-      cursor-pointer transition
-      text-blue-500 dark:text-indigo-500
-      hover:theme-focus-2 dark:hover:theme-focus
-
-      focus:underline dark:focus:underline
-      hover:underline dark:hover:underline;
   }
 
 

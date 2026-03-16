@@ -603,15 +603,15 @@ export const CustomContent = () => {
           <h4 className='pb-2 pt-1 label-colors'>Containers</h4>
         </div>
         <div className='default-layouts spacing pb-8'>
-          <Card cardStyles='span-12 lg:span-4 p-4' outline='default' background='default'>
+          <Card additionalStyles='span-12 lg:span-4 p-4' outline='default' background='default'>
             Default layout
           </Card>
 
-          <Card cardStyles='span-12 lg:span-4 p-4' outline='none' background='none'>
+          <Card additionalStyles='span-12 lg:span-4 p-4' outline='none' background='none'>
             Default layout
           </Card>
 
-          <Card cardStyles='span-12 lg:span-4 p-4' outline='default' background='none'>
+          <Card additionalStyles='span-12 lg:span-4 p-4' outline='default' background='none'>
             Default layout
           </Card>
         </div>
@@ -626,7 +626,7 @@ export const CustomContent = () => {
             type='card' 
             title='Card Layout'
             description='The description of a card style element'
-            cardStyles='span-12 lg:span-4 p-4' outline='default' background='default'
+            additionalStyles='span-12 lg:span-4 p-4' outline='default' background='default'
           >
             <div>Card content</div>
             <div>Card content</div>
@@ -636,7 +636,7 @@ export const CustomContent = () => {
             type='card' 
             title='Card Layout'
             description='The description of a card style element'
-            cardStyles='span-12 lg:span-4 p-4' outline='default' background='none'
+            additionalStyles='span-12 lg:span-4 p-4' outline='default' background='none'
           >
             <div>Card content</div>
             <div>Card content</div>
@@ -646,7 +646,7 @@ export const CustomContent = () => {
             type='card' 
             title='Card Layout'
             description='The description of a card style element'
-            cardStyles='span-12 lg:span-4 p-4' outline='none' background='none'
+            additionalStyles='span-12 lg:span-4 p-4' outline='none' background='none'
           >
             <div>Card content</div>
             <div>Card content</div>
@@ -664,7 +664,7 @@ export const CustomContent = () => {
             type='card-button' 
             title='Card Button Layout'
             description='The description of a card button element'
-            cardStyles='span-12 lg:span-6 p-4' outline='default' background='default'
+            additionalStyles='span-12 lg:span-6 p-4' outline='default' background='default'
             buttonProps={{displayText: 'Create', onClick: () => {}}}
             >
             <div>Card button content</div>
@@ -675,7 +675,7 @@ export const CustomContent = () => {
             type='card-button' 
             title='Card Button Layout'
             description='The description of a card button element'
-            cardStyles='span-12 lg:span-6 p-4' outline='default' background='none'
+            additionalStyles='span-12 lg:span-6 p-4' outline='default' background='none'
             buttonProps={{displayText: 'Create', onClick: () => {}}}
             >
             <div>Card button content</div>
@@ -692,7 +692,7 @@ export const CustomContent = () => {
             type='card-link' 
             title='Card Link Layout'
             description='The description of a card link element'
-            cardStyles='span-12 lg:span-6 p-4' outline='default' background='none'
+            additionalStyles='span-12 lg:span-6 p-4' outline='default' background='none'
             linkText='Card link' onClickLink={() => {}}
           >
             <div>Card link content</div>
@@ -703,7 +703,7 @@ export const CustomContent = () => {
             type='card-link' 
             title='Card Link Layout'
             description='The description of a card link element'
-            cardStyles='span-12 lg:span-6 p-4' outline='default' background='default'
+            additionalStyles='span-12 lg:span-6 p-4' outline='default' background='default'
             linkText='Card link' onClickLink={() => {}}
           >
             <div>Card link content</div>

@@ -45,7 +45,7 @@ export const WelcomeSection = () => {
           p-8 pt-44 min-h-[45rem] xl:min-h-[54rem]  2xl:min-h-[60rem] 
           bg-gradient-to-br from-slate-950/80 from-25% via-slate-700/20 via-65% to-transparent
         '>
-          <div className='span-12 lg:span-6 col items-start gap-4 p-2 pb-14'>
+          <div className='span-12 md:span-9 lg:span-7 xl:span-6 2xl:span-5 col items-start gap-4 p-2 pb-14'>
             
             {/* Dev / Production Config */}
             <div className='rowStart gap-4 pt-2'> 
@@ -67,7 +67,7 @@ export const WelcomeSection = () => {
             </div>
 
             {/* Introduction and Description */}
-            <h1 className='py-2 text-6xl text-slate-200 dark:text-slate-100 font-semibold text-shadow-lg'>
+            <h1 className='py-2 text-4xl md:text-5xl lg:text-6xl text-slate-200 dark:text-slate-100 font-semibold text-shadow-lg'>
               Deploy to the cloud with confidence
             </h1>
             <p className='pb-4 text-lg text-slate-300 dark:text-slate-300 text-shadow-md'>
@@ -98,7 +98,7 @@ export const WelcomeSection = () => {
       </Background>
       <div className='-mt-10 py-14 
         bg-gradient-to-t from-75% to-90% 
-        from-white dark:from-slate-800 
+        from-white dark:from-slate-900 
         to-transparent 
       ' />
     </div>

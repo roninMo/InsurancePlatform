@@ -5,6 +5,7 @@ import { Navbar } from '../../Components/Navbar/Navbar';
 
 import styles from './Home.module.scss';
 import { WelcomeSection } from './WelcomeSection/WelcomeSection';
+import { PreviousWorksSection } from './PreviousWorksSection/PreviousWorksSection';
 
 
 
@@ -22,6 +23,8 @@ export const Home = () => {
         <WelcomeSection />
 
         {/* Previous Works */}
+        <PreviousWorksSection />
+
         {/* Experience, Languages, Frameworks, Adaptability */}
         {/* Contact */}
         {/* Footer */}

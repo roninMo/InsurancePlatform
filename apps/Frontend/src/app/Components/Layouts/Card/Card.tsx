@@ -20,7 +20,7 @@ export interface CardProps {
   outline?: 'default' | 'none';
   background?: 'default' | 'none';
   divider?: boolean;
-  cardStyles?: string;
+  additionalStyles?: string;
 
   title?: string;
   description?: string;
@@ -33,17 +33,17 @@ export interface CardProps {
 
 export const Card = ({ 
   type = 'default', children, 
-  outline = 'none', background = 'default', divider = true, cardStyles, 
+  outline = 'none', background = 'default', divider = true, additionalStyles, 
   title, description, buttonProps, linkText, onClickLink 
 }: CardProps) => {
   const titleStyles = `text-base`;
   const dividerStyles = `mb-2 border-b border-styles`;
 
   const getContainerStyles = (): string => {
-    let classes = `${cardStyles} rounded-md transition p-2 `;
+    let classes = `rounded-md transition p-2 `;
     classes += outline    == 'default' ? ' outline-css outline-styles ' : '';
     classes += background == 'default' ? ' bg-default ' : '';
-    return classes;
+    return classes + ` ${additionalStyles}`;
   }
 
   //--------------------------------//
@@ -101,7 +101,7 @@ export const Card = ({
       { divider && <div className={dividerStyles} />}
       
       { (linkText && onClickLink) &&
-        <p onClick={(e) => onClickLink(e)} className='pb-2 font-semibold link-default' >
+        <p onClick={(e) => onClickLink(e)} className='pb-2 font-semibold link-text' >
           { linkText }
         </p>
       }
