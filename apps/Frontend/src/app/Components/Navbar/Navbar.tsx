@@ -47,21 +47,35 @@ export const Navbar = ({}: NavbarProps) => {
     navigate(url, opts);
   }
 
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const onHoverDropdown = (hovering: boolean) => {
+    if (hovering && !showDropdown) setShowDropdown(true);
+    else if (!hovering && showDropdown) setShowDropdown(false);1
+  }
+
 
   return (
-    <div role="navigation" id='Nav' className='bg-div border-styles border-b'>
+    <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-40 w-full shadow-2xl'>
         <div className='w-full row justify-between items-center relative z-10 bg-div px-3'>
 
           <div id='NavLinks' className='NavLinks rowStart items-center gap-8'>
             <WebpageAndLinks className='rowStart items-center gap-3'>
-              <div id='HomeLink' className='rowStart gap-2 p-2 outline-css rounded-lg transition duration-300 cursor-pointer
-                  bg-default outline-focus theme-focus' >
+              <div id='HomeLink' 
+                onClick={() => onNavigate('/')} 
+                className='rowStart gap-2 p-2 transition duration-300 theme-focus
+                            cursor-pointer bg-default outline-css rounded-lg outline-focus'
+              >
                 <Icon variant='CodeBracket' styles='size-6 text-blue-600 dark:text-indigo-400' />
               </div>
               <h4 className='label-colors'>Portfolio</h4>
             </WebpageAndLinks>
 
-            <Links id='Links' className='rowStart gap-0 *:p-6 *:px-4 *:transition *:text-base *:cursor-pointer'>
+            <Links 
+              id='Links' 
+              onMouseEnter={() => onHoverDropdown(true)}
+              onMouseLeave={() => onHoverDropdown(false)}
+              className='rowStart gap-0 *:p-6 *:px-4 *:transition *:text-base *:cursor-pointer'
+            >
               <p onClick={() => onNavigate('/')} className='bg-div hover:bg-div-hover'>Home</p>
               <p onClick={() => onNavigate('/Demos')} className='bg-div hover:bg-div-hover'>Demos</p>
               <p onClick={() => onNavigate('/MockDatabase')} className='bg-div hover:bg-div-hover'>Mock Database</p>
@@ -87,15 +101,17 @@ export const Navbar = ({}: NavbarProps) => {
           </Profile>
         </div>
 
-        <Dropdown id='navbar-dropdown' className='absolute w-full h-10 
+        <Dropdown id='navbar-dropdown' className={`absolute w-full h-10 
           bg-div border-styles border-b transition duration-300 ease-in-out
-          row items-center active:-translate-y-12 active:opacity-100
-        '>
+          row items-center -translate-y-12 opacity-0
+          ${showDropdown && 'translate-y-0 opacity-100'} shadow-2xl
+        `}>
           Navbar dropdown
         </Dropdown>
     </div>
   );
 }
+
 
 const WebpageAndLinks = styled.div``;
 const Links = styled.div``;

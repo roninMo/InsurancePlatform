@@ -212,6 +212,15 @@
     outline-gray-400  dark:outline-gray-600;
   }
 
+  .link-default {
+    @apply
+      cursor-pointer transition
+      text-blue-500 dark:text-indigo-500
+      hover:theme-focus-2 dark:hover:theme-focus
+
+      focus:underline dark:focus:underline
+      hover:underline dark:hover:underline;
+  }
 
 
 

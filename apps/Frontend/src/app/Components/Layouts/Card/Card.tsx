@@ -19,6 +19,7 @@ export interface CardProps {
   // styles 
   outline?: 'default' | 'none';
   background?: 'default' | 'none';
+  divider?: boolean;
   cardStyles?: string;
 
   title?: string;
@@ -32,9 +33,12 @@ export interface CardProps {
 
 export const Card = ({ 
   type = 'default', children, 
-  outline = 'none', background = 'default', cardStyles, 
+  outline = 'none', background = 'default', divider = true, cardStyles, 
   title, description, buttonProps, linkText, onClickLink 
 }: CardProps) => {
+  const titleStyles = `text-base`;
+  const dividerStyles = `mb-2 border-b border-styles`;
+
   const getContainerStyles = (): string => {
     let classes = `${cardStyles} rounded-md transition p-2 `;
     classes += outline    == 'default' ? ' outline-css outline-styles ' : '';
@@ -47,8 +51,10 @@ export const Card = ({
   //--------------------------------//
   if (type == 'card') return (
     <Container className={ getContainerStyles() + ' col gap-2' }>
-      <label>{ title }</label>
-      <p className='pb-4'>{ description }</p>
+      <label className={titleStyles}>{ title }</label>
+      <p className='pb-1'>{ description }</p>
+      { divider && <div className={dividerStyles} />}
+      
       { children }
     </Container>
   );
@@ -59,25 +65,27 @@ export const Card = ({
   if (type == 'card-button') return (
     <Container className={ getContainerStyles()}>
       <div className='row justify-between items-start'>
-        <div className='col pb-4'>
-          <label>{ title }</label>
+        <div className='col pb-4 gap-2'>
+          <label className={titleStyles}>{ title }</label>
           <p>{ description }</p>
         </div>
 
         {(buttonProps?.displayText && buttonProps.onClick) && 
           <Button 
-            displayText={buttonProps.displayText}
-            onClick={buttonProps.onClick}
-            disabled={buttonProps.disabled}
+          displayText={buttonProps.displayText}
+          onClick={buttonProps.onClick}
+          disabled={buttonProps.disabled}
           
-            icon={buttonProps.icon}
-            iconStyles={buttonProps.iconStyles}
-            size={buttonProps?.size || 'md'}
-            color={buttonProps.color}
-            additionalStyles={buttonProps.additionalStyles}
+          icon={buttonProps.icon}
+          iconStyles={buttonProps.iconStyles}
+          size={buttonProps?.size || 'md'}
+          color={buttonProps.color}
+          additionalStyles={buttonProps.additionalStyles}
           />
         }
       </div>
+
+      { divider && <div className={dividerStyles} />}
       { children }
     </Container>
   );
@@ -88,11 +96,12 @@ export const Card = ({
   //--------------------------------//
   if (type == 'card-link') return (
     <Container className={ getContainerStyles() + ' col gap-2'}>
-      <label>{ title }</label>
-      <p>{ description }</p>
+      <label className={titleStyles}>{ title }</label>
+      <p className='pb-1'>{ description }</p>
+      { divider && <div className={dividerStyles} />}
       
       { (linkText && onClickLink) &&
-        <p className='pb-2 font-semibold text-blue-500 dark:text-indigo-500' onClick={(e) => onClickLink(e)}>
+        <p onClick={(e) => onClickLink(e)} className='pb-2 font-semibold link-default' >
           { linkText }
         </p>
       }
