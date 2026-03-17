@@ -100,13 +100,13 @@ export const Card = ({
       <p className='pb-1'>{ description }</p>
       { divider && <div className={dividerStyles} />}
       
+      { children }
+
       { (linkText && onClickLink) &&
-        <p onClick={(e) => onClickLink(e)} className='pb-2 font-semibold link-text' >
+        <p onClick={(e) => onClickLink(e)} className='pt-2 font-semibold link-text' >
           { linkText }
         </p>
       }
-
-      { children }
     </Container>
   );
 

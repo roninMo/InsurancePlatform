@@ -722,5 +722,3 @@ export const CustomContent = () => {
     </>
   );
 }
-
-export default CustomContent;

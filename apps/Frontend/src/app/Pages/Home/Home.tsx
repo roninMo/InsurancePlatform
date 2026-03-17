@@ -1,6 +1,5 @@
 import { useState, useId } from 'react';
 import styled from '@emotion/styled';
-import CustomContent from './CustomContent/CustomContent';
 import { Navbar } from '../../Components/Navbar/Navbar';
 
 import styles from './Home.module.scss';
@@ -18,18 +17,20 @@ export const Home = () => {
       {/* Navbar */}
       <Navbar />
       
-      <MainContent className='spacing gap-y-4'>
+      <MainContent className='spacing'>
         {/* Welcome page w/GetStarted and Docs */}
         <WelcomeSection />
 
         {/* Previous Works */}
-        <PreviousWorksSection />
+        <div className='spacing bg-div -mt-2'>
+          <div className='span-1 hidden lg:block' />
+          <PreviousWorksSection additionalStyles='span-12 lg:span-10' />
+          <div className='span-1 hidden lg:block' />
+        </div>
 
         {/* Experience, Languages, Frameworks, Adaptability */}
         {/* Contact */}
         {/* Footer */}
-
-        <CustomContent />
 
       </MainContent>
     </>

@@ -110,6 +110,8 @@ const Overlay = styled.div``;
 const Background = styled.div`
   background-image: url(${downtown_city_night});
   background-size: cover;
-  background-position: center;
   background-position-x: -2px;
+  background-position-y: 70px;
+  background-position: center;
+  background-repeat: no-repeat;
 `;

@@ -1,4 +1,5 @@
 import { Navbar } from '../../Components/Navbar/Navbar';
+import { CustomContent } from '../Home/CustomContent/CustomContent';
 import styles from './Documentation.module.scss';
 
 export const Documentation =() => {
@@ -6,11 +7,10 @@ export const Documentation =() => {
     <>
       {/* Navbar */}
       <Navbar />
-      <div className='dropdown-spacing py-10' />
+      <div className='dropdown-spacing py-14' />
 
-      <div className='p-4'>
-        <h4> Documentation Page </h4>
-
+      <div className='spacing gap-4 p-4'>
+        <CustomContent />
       </div>
     </>
   );
