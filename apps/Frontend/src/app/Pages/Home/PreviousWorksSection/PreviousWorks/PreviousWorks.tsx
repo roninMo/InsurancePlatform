@@ -41,7 +41,7 @@ export const PreviousWorks = ({
         {/* Content */}
         <Content className='pl-6 pr-2 py-8 col gap-2'>
           <CardHeader className='row lg:col xl:row justify-between items-center'>
-            <h3 className='py-2 text-nowrap'>
+            <h3 className='py-2 text-nowrap text-shadow-sm'>
               { company }
             </h3>
             
@@ -50,7 +50,6 @@ export const PreviousWorks = ({
               <label className='primary-text text-nowrap'>{ startDate }</label>
               <div className='ml-2 border-styles border-b w-4 xl:w-10' />
               <label className='primary-text text-nowrap'>{ endDate }</label>
-              {/* <div className='p-[3px] rounded-full btn-primary-colors' /> */}
             </Duration>
           </CardHeader>
 
@@ -88,7 +87,7 @@ export const PreviousWorks = ({
 
         {/* Background Image */}
         <Background imgUrl={backgroundImageUrl} className={`w-full min-h-64 sm:min-h-[45vw] md:min-h-64 spacing rounded-r-lg`}>
-          <Overlay className='span-12 bg-gradient-to-br from-slate-950/30 from-15% via-slate-700/10 via-55% to-transparent' />
+          <Overlay className='span-12 bg-gradient-to-br from-slate-950/30 from-15% via-slate-700/10 via-55% to-transparent rounded-r-lg' />
         </Background>
       </div>
     </div>

@@ -17,7 +17,7 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
     <Container className={`span-12 place-items-center place-content-center gap-8 gap-x-4 p-4 py-8 bg-div -mt-6 mb-4 ${additionalStyles}`}>
       <div className=''>
         <div className='col gap-4 p-2'>
-          <h1 className='py-3 text-5xl'>Previous Works</h1>
+          <h1 className='py-3 text-5xl text-shadow-sm'>Previous Works</h1>
           <p className='text-lg'>Here's a list of the past places I've gotten to be a part of</p>
           <div className='mb-8 border-b border-blue-300 dark:border-slate-600' />
         </div>

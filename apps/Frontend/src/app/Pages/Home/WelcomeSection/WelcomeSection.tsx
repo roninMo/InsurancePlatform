@@ -98,9 +98,10 @@ export const WelcomeSection = () => {
       </Background>
       <div className='-mt-10 py-14 
         bg-gradient-to-t from-75% to-90% 
-        from-white dark:from-slate-900 
+        from-slate-300 dark:from-slate-900 
         to-transparent 
       ' />
+      {/* TODO: make the background behind the image darker to prevent every component having negative margin */}
     </div>
   );
 }

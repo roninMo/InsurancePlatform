@@ -5,6 +5,8 @@ import { Navbar } from '../../Components/Navbar/Navbar';
 import styles from './Home.module.scss';
 import { WelcomeSection } from './WelcomeSection/WelcomeSection';
 import { PreviousWorksSection } from './PreviousWorksSection/PreviousWorksSection';
+import { Footer } from './Footer/Footer';
+import { Card } from '../../Components/Layouts/Card/Card';
 
 
 
@@ -28,10 +30,22 @@ export const Home = () => {
           <div className='span-1 hidden lg:block' />
         </div>
 
+
+        <div className='spacing p-4 py-12 -mt-2 bg-div'>
+          <Card border='default' additionalStyles='span-12 p-4 py-40 my-12'>
+            Experience, Languages, Frameworks, Adaptability
+          </Card>
+          
+          <Card border='default' additionalStyles='span-12 p-4 py-40 my-12'>
+            Contact Section
+          </Card>
+
+        </div>
+
         {/* Experience, Languages, Frameworks, Adaptability */}
         {/* Contact */}
-        {/* Footer */}
 
+        <Footer />
       </MainContent>
     </>
   );

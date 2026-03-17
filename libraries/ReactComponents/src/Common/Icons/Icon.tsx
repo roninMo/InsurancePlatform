@@ -7,7 +7,10 @@ import { Icon_DarkTheme } from "./DarkTheme/Icon_DarkTheme";
 import { Icon_DropdownArrow } from "./DropdownArrow/Icon_DropdownArrow";
 import { Icon_Envelope } from "./Envelope/Icon_Envelope";
 import { Icon_Error } from "./Error/Icon_Error";
+import { Icon_Facebook } from "./Facebook/Icon_Facebook";
+import { Icon_Github } from "./Github/Icon_Github";
 import { Icon_InfoBox } from "./InfoBox/Icon_InfoBox";
+import { Icon_Instagram } from "./Instagram/Icon_Instagram";
 import { Icon_LightTheme } from "./LightTheme/Icon_LightTheme";
 import { Icon_Link } from "./Link/Link";
 import { Icon_Plus } from "./Plus/Icon_Plus";
@@ -18,7 +21,9 @@ import { Icon_Sort } from "./Sort/Icon_Sort";
 import { Icon_System } from "./System/System";
 import { Icon_Tag } from "./Tag/Icon_Tag";
 import { Icon_Trash } from "./Trash/Icon_Trash";
+import { Icon_Twitter } from "./Twitter/Icon_Twitter";
 import { Icon_VennDiagram } from "./VennDiagram/VennDiagram";
+import { Icon_Youtube } from "./Youtube/Icon_Youtube";
 
 export type IconTypes = 
   'AtSymbol' |
@@ -30,7 +35,10 @@ export type IconTypes =
   'DropdownArrow' |
   'Envelope' |
   'Error' |
+  'Facebook' |
+  'Github' |
   'InfoBox' |
+  'Instagram' |
   'LightTheme' |
   'Link' |
   'Plus' |
@@ -41,7 +49,9 @@ export type IconTypes =
   'System' |
   'Tag' |
   'Trash' |
-  'VennDiagram'
+  'Twitter' |
+  'VennDiagram' |
+  'Youtube'
 ;
 
 export interface IconAttributes {
@@ -68,7 +78,10 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
   if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
   if (variant == 'Error')           return (<Icon_Error styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'Facebook')        return (<Icon_Facebook styles={iconStyles} />);
+  if (variant == 'Github')          return (<Icon_Github styles={iconStyles} />);
   if (variant == 'InfoBox')         return (<Icon_InfoBox styles={iconStyles} />);
+  if (variant == 'Instagram')       return (<Icon_Instagram styles={iconStyles} />);
   if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);
   if (variant == 'Link')            return (<Icon_Link styles={iconStyles} />);
   if (variant == 'Plus')            return (<Icon_Plus styles={iconStyles} />);
@@ -79,6 +92,8 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
   if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
   if (variant == 'Trash')           return (<Icon_Trash styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'Twitter')         return (<Icon_Twitter styles={iconStyles} />);
   if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
+  if (variant == 'Youtube')         return (<Icon_Youtube styles={iconStyles} />);
   return (<div />);
 }

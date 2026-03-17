@@ -264,6 +264,15 @@
     @apply ;
   }
 
+  .svg-theme {
+    @apply svg-init text-colors hover:primary-text;
+  }
+
+  .svg-init {
+    @apply transition cursor-pointer;
+  }
+
+
 
   // the scrollbar for dark themes
   .scrollbar-theme {

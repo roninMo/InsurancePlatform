@@ -17,7 +17,7 @@ export interface CardProps {
   children?: ReactNode; // Make children optional
 
   // styles 
-  outline?: 'default' | 'none';
+  border?: 'default' | 'none';
   background?: 'default' | 'none';
   divider?: boolean;
   additionalStyles?: string;
@@ -33,7 +33,7 @@ export interface CardProps {
 
 export const Card = ({ 
   type = 'default', children, 
-  outline = 'none', background = 'default', divider = true, additionalStyles, 
+  border = 'none', background = 'default', divider = true, additionalStyles, 
   title, description, buttonProps, linkText, onClickLink 
 }: CardProps) => {
   const titleStyles = `text-base`;
@@ -41,7 +41,7 @@ export const Card = ({
 
   const getContainerStyles = (): string => {
     let classes = `rounded-md transition p-2 `;
-    classes += outline    == 'default' ? ' outline-css outline-styles ' : '';
+    classes += border    == 'default' ? ' outline-css outline-styles ' : '';
     classes += background == 'default' ? ' bg-default ' : '';
     return classes + ` ${additionalStyles}`;
   }

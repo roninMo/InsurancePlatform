@@ -15,3 +15,16 @@ export const Documentation =() => {
     </>
   );
 }
+
+/*
+  import { HashLink as Link } from 'react-router-hash-link';
+
+  /// ... inside your component
+  <nav>
+    <Link to="/#section1">Section 1</Link>
+    <Link to="/about#section2">About Section 2</Link>
+  </nav>
+
+  /// ... in your content
+  <section id="section1">...</section>
+*/
