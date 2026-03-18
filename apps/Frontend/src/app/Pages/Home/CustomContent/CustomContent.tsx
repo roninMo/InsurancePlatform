@@ -2,7 +2,7 @@ import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId } fr
 
 import { Card } from '../../../Components/Layouts/Card/Card';
 import { CheckboxItem, Checkbox, CheckboxProps } from '../../../Components/Forms/Checkbox/Checkbox';
-import { MetadataTagProps, Textarea } from '../../../Components/Forms/Textarea';
+import { defaultBoxMetadataTags, defaultPostMetadataTags, MetadataTagProps, Textarea } from '../../../Components/Forms/Textarea';
 import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
 import { Slider } from '../../../Components/Forms/Slider/Slider';
 import { 
@@ -108,34 +108,6 @@ export const CustomContent = () => {
     required: false, 
     disabled: false,
   };
-  const boxMetadataTags: MetadataTagProps[] = [
-    {
-      tagLabel: 'assign', onClickTag: () => {},
-      tagIcon: 'Profile', iconStyles: '',
-    },
-    {
-      tagLabel: 'label', onClickTag: () => {},
-      tagIcon: 'Tag', iconStyles: '',
-    },
-    {
-      tagLabel: 'due date', onClickTag: () => {},
-      tagIcon: 'Calendar', iconStyles: '',
-    },
-  ];
-  const postMetadataTags:MetadataTagProps[] = [
-    {
-      tagIcon: 'Link', iconStyles: '',
-      onClickTag: () => {},
-    },
-    {
-      tagIcon: 'CodeBracket', iconStyles: '',
-      onClickTag: () => {},
-    },
-    {
-      tagIcon: 'AtSymbol', iconStyles: '',
-      onClickTag: () => {},
-    },
-  ];
 
   // Radio buttons
   const radioButtonId = useId();
@@ -371,7 +343,7 @@ export const CustomContent = () => {
               placeholder="input text..."
               submitButtonText='Create'
               { ...textareaProps }
-              metadataTags={boxMetadataTags}
+              metadataTags={defaultBoxMetadataTags}
               error={false}
               errorMessage="invalid input"
             />
@@ -385,7 +357,7 @@ export const CustomContent = () => {
               placeholder="input text..."
               submitButtonText='Post'
               { ...textareaProps }
-              metadataTags={postMetadataTags}
+              metadataTags={defaultPostMetadataTags}
               error={false}
               errorMessage="invalid input"
             />

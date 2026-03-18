@@ -39,13 +39,13 @@ export const WelcomeSection = () => {
 
 
   return (
-    <div className='span-12 col w-full'>
+    <div className='span-12 col w-full' id='welcome-section'>
       <Background className='spacing'>
         <Overlay className='spacing place-content-center
           p-8 pt-44 min-h-[45rem] xl:min-h-[54rem]  2xl:min-h-[60rem] 
           bg-gradient-to-br from-slate-950/80 from-25% via-slate-700/20 via-65% to-transparent
         '>
-          <div className='span-12 md:span-9 lg:span-7 xl:span-6 2xl:span-5 col items-start gap-4 p-2 pb-14'>
+          <div className='span-12 md:span-9 lg:span-7 xl:span-6 2xl:span-5 col items-start gap-2 p-2 pb-14 lg:pb-24'>
             
             {/* Dev / Production Config */}
             <div className='rowStart gap-4 pt-2'> 
@@ -53,7 +53,6 @@ export const WelcomeSection = () => {
                 onClick={() => whatsNewMenu()}
                 size='default'
                 color='none'
-                // color='primary'
                 additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
               />
 
@@ -61,18 +60,23 @@ export const WelcomeSection = () => {
                 onClick={() => environmentMenu()}
                 size='default'
                 color='none'
-                // color='primary'
                 additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
               />
             </div>
 
             {/* Introduction and Description */}
-            <h1 className='py-2 text-4xl md:text-5xl lg:text-6xl text-slate-200 dark:text-slate-100 font-semibold text-shadow-lg'>
-              Deploy to the cloud with confidence
+            <h1 className='py-2 text-4xl md:text-5xl lg:text-6xl text-slate-100 dark:text-slate-100 font-semibold text-shadow-lg'>
+              Welcome to my site
             </h1>
-            <p className='pb-4 text-lg text-slate-300 dark:text-slate-300 text-shadow-md'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
-              labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+            <p className='py-2 pb-4 text-xl text-slate-200 dark:text-slate-200 text-shadow-md'>
+              Over the years I've worked with multiple teams to develop and automate production level applications using best practices 
+              and design patterns. I've deployed multiple nationwide projects, helping both take part in designing or recreating modern 
+              versions. And I've enjoyed in helping take part in each team I've been with. I'm always looking for a new opportunity! 
+              Here's some of my current experience shared to you
+            </p>
+
+            <p className='text-lg placeholder-text italic text-slate-300 dark:text-slate-300 text-shadow-md'>
+              Check out some of my side projects here.
             </p>
 
             {/* Buttons */}
@@ -96,12 +100,12 @@ export const WelcomeSection = () => {
           </div>
         </Overlay>
       </Background>
-      <div className='-mt-10 py-14 
+
+      <FadeToBackground className='-mt-10 py-14 
         bg-gradient-to-t from-75% to-90% 
         from-slate-300 dark:from-slate-900 
         to-transparent 
       ' />
-      {/* TODO: make the background behind the image darker to prevent every component having negative margin */}
     </div>
   );
 }
@@ -116,3 +120,4 @@ const Background = styled.div`
   background-position: center;
   background-repeat: no-repeat;
 `;
+const FadeToBackground = styled.div``;

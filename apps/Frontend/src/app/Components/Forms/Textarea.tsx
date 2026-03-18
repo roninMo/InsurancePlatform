@@ -154,7 +154,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   else if (type == 'box') {
     return (<>
       <Container className="col bg-default outline-css outline-styles rounded-lg w-full">
-        { label && <h4 className="p-4 placeholder-text font-normal">{ label }</h4> }
+        { label && <h4 className="p-4 text-colors font-normal">{ label }</h4> }
         
         <div className="pl-4">
           <InputComponent { ...allProps } />
@@ -167,17 +167,19 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
           row justify-between items-center p-2
           border-styles border-t"
         >
-          <div className="rowStart gap-2">
-            <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles + 'hover:text-slate-800 dark:hover:text-slate-200'} />
+          <div className="rowStart gap-2 *:cursor-pointer *:transition *:hover:text-slate-800 *:dark:hover:text-slate-200">
+            <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles + ''} />
             <p className="italic">Attach a file</p>
           </div>
 
-          <Button 
-            displayText={submitButtonText ? submitButtonText : 'Create'} 
-            onClick={e => onSubmit && onSubmit(e)} 
-            size="default" 
-            additionalStyles="px-3" 
-          />
+          <div className="margin-auto-div-fix">
+            <Button 
+              displayText={submitButtonText ? submitButtonText : 'Create'} 
+              onClick={e => onSubmit && onSubmit(e)} 
+              size="default" 
+              additionalStyles="px-3" 
+            />
+          </div>
         </ButtonsAndLinks>
       </Container>
       
@@ -241,12 +243,14 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
             description={description} 
           />
 
-          <Button 
-            displayText="Post" 
-            onClick={e => onSubmit && onSubmit(e)} 
-            size="default" 
-            additionalStyles="px-3 self-start" 
-          />
+          <div className="margin-auto-div-fix">
+            <Button 
+              displayText="Post" 
+              onClick={e => onSubmit && onSubmit(e)} 
+              size="default" 
+              additionalStyles="px-3 self-start" 
+            />
+          </div>
         </div>
       </Container>
     );
@@ -354,6 +358,38 @@ export interface AttachFileProps {
   iconStyles: string;
 }
 
+
+// Default metadata tags
+export const defaultBoxMetadataTags: MetadataTagProps[] = [
+{
+  tagLabel: 'assign', onClickTag: () => {},
+  tagIcon: 'Profile', iconStyles: '',
+},
+{
+  tagLabel: 'label', onClickTag: () => {},
+  tagIcon: 'Tag', iconStyles: '',
+},
+{
+  tagLabel: 'due date', onClickTag: () => {},
+  tagIcon: 'Calendar', iconStyles: '',
+},
+];
+export const defaultPostMetadataTags:MetadataTagProps[] = [
+{
+  tagIcon: 'Link', iconStyles: '',
+  onClickTag: () => {},
+},
+{
+  tagIcon: 'CodeBracket', iconStyles: '',
+  onClickTag: () => {},
+},
+{
+  tagIcon: 'AtSymbol', iconStyles: '',
+  onClickTag: () => {},
+},
+];
+
+// Styled Components
 const InputContainer = styled.div``;
 const Container = styled.div``;
 const ErrorAndDescription = styled.div``;

@@ -14,8 +14,8 @@ export interface PreviousWorkSectionProps {
 export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionProps) => {
   
   return (
-    <Container className={`span-12 place-items-center place-content-center gap-8 gap-x-4 p-4 py-8 bg-div -mt-6 mb-4 ${additionalStyles}`}>
-      <div className=''>
+    <Container className='span-12 lg:span-10 gap-8 gap-x-4 p-4 py-8 bg-div mb-4' id='previous-works-section'>
+      <div className='child-alignment-fix'>
         <div className='col gap-4 p-2'>
           <h1 className='py-3 text-5xl text-shadow-sm'>Previous Works</h1>
           <p className='text-lg'>Here's a list of the past places I've gotten to be a part of</p>
@@ -60,7 +60,8 @@ const previousWorks: PreviousWorksProps[] = [
     startDate: "Aug 2022",
     endDate: "Aug 2023",
     languagesAndTech: "Angular / .Net / Orleans / Bamboo / Microsoft Azure / Clustering / Rxjs / Playwright / AutoSave Claim State / etc. ",
-    content: "I got to take part in helping build the quoting platform for agents. Helping take the lead in designing the infrastructure for Liberty's home and auto platforms for users. Our team took on the task of building the home after I got to help the Spire team finish up with auto's.  and helped with the business logic on the backend. This was built in Angular with our own custom forms for validating quote information on the backend while the user created a quote. The server side was built in C# with the Orleans framework in place, and we automated and deployed everything separately. We only had a couple guys on our team, so the majority of the work was divided between everyone. The team made it fun, and I got to learn some of the best design patterns for angular and .net while constructing the business logic to create and handle claims for home and auto",
+    content: "read more content",
+    // content: "I got to take part in helping build the quoting platform for agents. Helping take the lead in designing the infrastructure for Liberty's home and auto platforms for users. Our team took on the task of building the home after I got to help the Spire team finish up with auto's.  and helped with the business logic on the backend. This was built in Angular with our own custom forms for validating quote information on the backend while the user created a quote. The server side was built in C# with the Orleans framework in place, and we automated and deployed everything separately. We only had a couple guys on our team, so the majority of the work was divided between everyone. The team made it fun, and I got to learn some of the best design patterns for angular and .net while constructing the business logic to create and handle claims for home and auto",
     backgroundImageUrl: LibertyMutual
   },
   {

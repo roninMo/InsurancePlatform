@@ -13,6 +13,8 @@ import { Icon_InfoBox } from "./InfoBox/Icon_InfoBox";
 import { Icon_Instagram } from "./Instagram/Icon_Instagram";
 import { Icon_LightTheme } from "./LightTheme/Icon_LightTheme";
 import { Icon_Link } from "./Link/Link";
+import { Icon_LinkedIn } from "./LinkedIn/Icon_LinkedIn";
+import { Icon_Phone } from "./Phone/Icon_Phone";
 import { Icon_Plus } from "./Plus/Icon_Plus";
 import { Icon_Profile } from "./Profile/Icon_Profile";
 import { Icon_SelectArrow } from "./SelectArrow/SelectArrow";
@@ -41,6 +43,8 @@ export type IconTypes =
   'Instagram' |
   'LightTheme' |
   'Link' |
+  'LinkedIn' |
+  'Phone' |
   'Plus' |
   'Profile' |
   'SelectArrow' |
@@ -85,6 +89,8 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);
   if (variant == 'Link')            return (<Icon_Link styles={iconStyles} />);
   if (variant == 'Plus')            return (<Icon_Plus styles={iconStyles} />);
+  if (variant == 'LinkedIn')        return (<Icon_LinkedIn styles={iconStyles} />);
+  if (variant == 'Phone')           return (<Icon_Phone styles={iconStyles} />);
   if (variant == 'Profile')         return (<Icon_Profile styles={iconStyles} />);
   if (variant == 'SelectArrow')     return (<Icon_SelectArrow styles={iconStyles} />);
   if (variant == 'Smile')           return (<Icon_Smile styles={iconStyles} />);

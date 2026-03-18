@@ -30,7 +30,7 @@
   .primary-text     { @apply text-blue-500 dark:text-blue-500; }
   .link-text {
     @apply
-      primary-text cursor-pointer transition 
+      primary-text cursor-pointer transition duration-300
       hover:theme-focus-2 dark:hover:theme-focus
 
       focus:underline dark:focus:underline
