@@ -3,16 +3,397 @@
 @tailwind utilities;
 /* You can add global styles to this file, and also import other style files */
 
+
+//------------------------------------------//
+// Project Theme Colors                     //
+//------------------------------------------//
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+
 /* Global Styles  */
 @layer base {
-  // Theme text colors
-  div, p {
-    @apply text-slate-800  dark:text-slate-400;
+  //------------------------------------------//
+  // Text Colors                              //
+  //------------------------------------------//
+  .input-colors   { @apply text-slate-800   dark:text-slate-200; }
+  .label-colors   { @apply text-slate-800   dark:text-slate-300; }
+  .header-colors  { @apply text-slate-800   dark:text-slate-100; }
+  .svg-colors     { @apply  text-slate-500  dark:text-slate-400; }
+  .text-colors    { @apply text-slate-900   dark:text-slate-400; }
+  
+  .placeholder-text { @apply text-slate-400 dark:text-slate-500; }
+  .disabled-text    { @apply text-gray-500  dark:text-gray-400; }
+  .warning-text     { @apply text-amber-500 dark:text-amber-400; }
+  .error-text       { @apply text-red-600   dark:text-red-500; }
+
+
+
+
+  //------------------------------------------//
+  // Element Text Colors                      //
+  //------------------------------------------//
+  h1, h2, h3, h4, h5, h6  { @apply header-colors; }
+  div, p, span            { @apply text-colors; }
+  label                   { @apply label-colors; }
+  input, select, textarea { @apply input-colors placeholder:placeholder-text }
+  svg                     { @apply svg-colors; }
+
+
+
+
+  //------------------------------------------//
+  // Background Colors                        //
+  //------------------------------------------//
+  html, body {
+    min-height: 100vh;
+    @apply bg-default;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply text-slate-600  dark:text-slate-200
+
+  // Quick utility styles for adjusting theme colors without creating new classes
+  .theme-focus {
+    @apply 
+      hover:brightness-150 active:brightness-90
+    ;
   }
+
+  .theme-focus-1 {
+    @apply 
+      hover:brightness-110 active:brightness-90
+    ;
+  }
+
+  .theme-focus-2 {
+    @apply 
+      hover:brightness-125 active:brightness-90
+    ;
+  }
+
+  // default background colors
+  .bg-default   { @apply bg-white     dark:bg-slate-800; }
+  .bg-div       { @apply bg-slate-300 dark:bg-slate-900; }
+  .bg-div-light { @apply bg-slate-400 dark:bg-slate-700; }
+  
+  // Input specific background theme
+  .bg-disabled { @apply  bg-gray-300  dark:bg-gray-700; }
+
+  // Button colors
+  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue; }
+  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue; }
+  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue; }
+
+  .btn-outline-white  { @apply outline-slate-200 dark:outline-slate-200; }
+  .btn-outline-blue   { @apply   outline-focus; }
+
+  .btn-primary-colors { @apply bg-indigo-600 dark:bg-indigo-500 outline-indigo-600 dark:outline-indigo-600; }
+  .btn-primary-hover { @apply bg-indigo-500 dark:bg-indigo-400; }
+  
+  .btn-gray-colors { @apply bg-div-light outline-slate-400 dark:outline-slate-700; }
+  .btn-gray-hover { @apply bg-slate-300 dark:bg-slate-600; }
+  
+  .btn-gray-focus-colors { @apply bg-default outline-white dark:outline-slate-800; }
+  .btn-gray-focus-hover { @apply bg-slate-200 dark:bg-slate-700; }
+
+  // hover states
+  .bg-div-hover { @apply bg-slate-200 dark:bg-slate-800; }
+
+
+
+
+  //------------------------------------------//
+  // Outline and Border                       //
+  //------------------------------------------//
+  // Default outline styles
+  .outline-init   { @apply outline rounded-md outline-1 -outline-offset-1; }
+  .outline-styles { @apply outline-default focus:outline-focus; }
+  .outline-css {
+    @apply
+      outline-init
+      focus:outline-2 focus:-outline-offset-2;
+  }
+
+  .outline-default  { @apply outline-blue-300   dark:outline-slate-700; }
+  .outline-focus    { @apply outline-blue-500   dark:outline-indigo-500; }
+  .outline-warning  { @apply outline-amber-500  dark:outline-amber-400; }
+  .outline-error    { @apply outline-red-400    dark:outline-red-500; }
+
+  // Border styles
+  .border-styles    { @apply border-default focus:border-focus; }
+  .border-default   { @apply border-blue-300    dark:border-slate-700; }
+  .border-focus     { @apply border-blue-500    dark:border-indigo-500; }
+  .border-warning   { @apply border-amber-500   dark:border-amber-400; }
+  .border-error     { @apply border-red-400     dark:border-red-500; }
+
+
+
+
+  //------------------------------------------//
+  // Text Sizes                               //
+  //------------------------------------------//
+  /* TODO: media query fonts sm:text-sm/5 */
+  label                   { @apply text-sm font-medium; }
+  span                    { @apply text-xs; }
+  label, div, p           { @apply text-sm; }
+  select, input, textarea { @apply text-sm; }
+
+  h1, h2, h3, h4, h5, h6  { @apply font-medium; }
+  h1                      { @apply text-[3rem]; }
+  h2                      { @apply text-[2rem]; }
+  h3                      { @apply text-[1.5rem]; }
+  h4                      { @apply text-[1.25rem]; }
+  h5                      { @apply text-[1rem]; }
+  h6                      { @apply text-sm; }
+
+
+
+
+  //------------------------------------------//
+  // Input Specific Styling                   //
+  //------------------------------------------//
+  label { @apply cursor-text; }
+  input, select, textarea {
+    @apply 
+      bg-default autofill-backgrounds
+      outline-css outline-styles px-3 py-2
+      transition;
+  }
+
+  textarea {
+    @apply scrollbar-theme transition;
+    resize: none;
+
+  }
+
+
+
+
+  //------------------------------------------//
+  // Selected Themes                          //
+  //------------------------------------------//
+  /* For containers that need highlighting when selected  */
+  .selected-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-10
+    bg-indigo-600 dark:bg-indigo-500
+      outline-focus 
+  }
+
+  .warning-box {
+    @apply 
+      bg-opacity-10 dark:bg-opacity-10
+    bg-amber-500 dark:bg-amber-400
+    outline-amber-500 dark:outline-amber-400;
+  }
+
+  .ok-box {
+    @apply
+      bg-opacity-10 dark:bg-opacity-10
+    bg-emerald-500 dark:bg-emerald-400
+    outline-emerald-500 dark:outline-emerald-400;
+  }
+  
+  .error-box {
+    @apply
+      bg-opacity-30 dark:bg-opacity-10
+    bg-red-500 dark:bg-red-500
+    outline-red-500 dark:outline-red-600;
+  }
+  
+  .input-error {
+    @apply 
+      input-colors placeholder:error-text
+      outline-error
+  }
+
+  .input-disabled {
+    @apply 
+      disabled-text placeholder:disabled-text
+      bg-disabled
+    outline-gray-400  dark:outline-gray-600;
+  }
+
+
+
+
+  //------------------------------------------//
+  // Layout Themes                            //
+  //------------------------------------------//
+  .row        { @apply flex flex-row; }
+  .col        { @apply flex flex-col; }
+  .rowStart   { @apply flex flex-row justify-start; }
+  .rowBetween { @apply flex flex-row justify-between; }
+  .colStart   { @apply flex flex-col justify-start; }
+
+  .spacing    { @apply grid grid-cols-12 gap-x-4 gap-2  col-span-12; }
+  .span-12    { @apply col-span-12; }
+  .span-11    { @apply col-span-11; }
+  .span-10    { @apply col-span-10; }
+  .span-9     { @apply col-span-9; }
+  .span-8     { @apply col-span-8; }
+  .span-7     { @apply col-span-7; }
+  .span-6     { @apply col-span-6; }
+  .span-5     { @apply col-span-5; }
+  .span-4     { @apply col-span-4; }
+  .span-3     { @apply col-span-3; }
+  .span-2     { @apply col-span-2; }
+  .span-1     { @apply col-span-1; }
+
+
+
+
+
+  //------------------------------------------//
+  // Utility                                  //
+  //------------------------------------------//
+  .transition { @apply transition-all duration-200; }
+
+  // Faded borders for creating overlays and subtle shading for background
+  .opacity-bg-0    { @apply bg-opacity-0    dark:bg-opacity-0; }
+  .opacity-bg-10   { @apply bg-opacity-10   dark:bg-opacity-10; }
+  .opacity-bg-20   { @apply bg-opacity-20   dark:bg-opacity-20; }
+  .opacity-bg-30   { @apply bg-opacity-30   dark:bg-opacity-30; }
+  .opacity-bg-40   { @apply bg-opacity-40   dark:bg-opacity-40; }
+  .opacity-bg-50   { @apply bg-opacity-50   dark:bg-opacity-50; }
+  .opacity-bg-60   { @apply bg-opacity-60   dark:bg-opacity-60; }
+  .opacity-bg-70   { @apply bg-opacity-70   dark:bg-opacity-70; }
+  .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
+  .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
+  .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
+
+  // the scrollbar for dark themes
+  .scrollbar-theme {
+    &::-webkit-scrollbar {
+      width: 0.74rem;
+      background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+    }
+      
+    &::-webkit-scrollbar-track {
+      border-bottom-right-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+      background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+      
+    }
+      
+    &::-webkit-scrollbar-thumb {
+      border-radius: 0.375rem;
+      background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
+    }
+  }
+
+  .disable-transitions,
+  .disable-transitions *,
+  .disable-transitions *::before,
+  .disable-transitions *::after {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    -ms-transition: none !important;
+    transition: none !important;
+  }
+
+
+
+
+  //------------------------------------------//
+  // Hack for native autofill text color      //
+  //------------------------------------------//
+  input:-webkit-autofill, 
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.slate.800') !important;
+    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; /* The only way to beat FieldText !important is with this infinite hack */
+  }
+
+  .dark input:-webkit-autofill, 
+  .dark input:-webkit-autofill:hover, 
+  .dark input:-webkit-autofill:focus, 
+  .dark input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.slate.100') !important;
+  }
+
+
 }
+
+
+
+
+/* Project Layers  */
+@layer components {
+  //------------------------------------------//
+  // Component Themes                         //
+  //------------------------------------------//
+
+  // Radio button styles
+  .radio-button {
+    @apply 
+      p-[6px] mt-[2px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
+
+      /* Adjusted border to create the selected radio circle icon */
+      border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
+      disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
+      
+
+      /******************** 
+      * Light Theme       *
+      ********************/
+      /* outer circle */
+      border-slate-300
+      disabled:border-slate-300 
+
+      /* inner circle */
+      bg-white 
+      disabled:bg-slate-300
+      
+      /* Radio Selected Circle (Outer) */
+      checked:outline-indigo-500 
+      disabled:checked:outline-slate-400
+
+      /* Radio Selected Circle (Inner) */
+      checked:bg-white 
+      disabled:checked:bg-slate-200
+
+
+      
+      /******************** 
+      * Dark Theme        *
+      ********************/
+      /* outer circle */
+      dark:border-slate-500
+      dark:disabled:border-slate-600 
+
+      /* inner circle */
+      dark:bg-slate-800 
+      dark:disabled:bg-slate-700
+      
+      /* Radio Selected Circle (Outer) */
+      dark:checked:outline-indigo-500 
+      dark:disabled:checked:outline-slate-500
+
+      /* Radio Selected Circle (Inner) */
+      dark:checked:bg-slate-100
+      dark:disabled:checked:bg-slate-400
+    ;
+  }
+
+  .checkmark {
+    // clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  // This removes native backgrounds and lets us customize
+  .autofill-backgrounds {
+    @apply 
+      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
+      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
+    ;
+  }
+
+}
+
+
+/* Selectors quick ref
+  - children of a specific html tag '[&>p]:'
+  - all descendants of a tag '[&_p]:'
+  - specific classes '[&_.tooltip]:'
+*/

@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import RadioButton from './RadioButton';
+import InputHandler from './InputHandlers';
 
-describe('RadioButton', () => {
+describe('InputHandler', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<RadioButton />);
+    const { baseElement } = render(<InputHandler />);
     expect(baseElement).toBeTruthy();
   });
 });

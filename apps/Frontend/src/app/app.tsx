@@ -1,5 +1,5 @@
-import { ChangeEvent, createContext, SyntheticEvent, useEffect, useId, useState } from 'react';
-import { Link, Routes, Route } from 'react-router-dom';
+import { createContext, useEffect, useState } from 'react';
+import { RouterProvider } from 'react-router-dom';
 
 import { UserTokenInformation } from '@Project/Classes';
 import { jwtDecode } from 'jwt-decode';
@@ -7,17 +7,12 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 
-import NxWelcome from './nx-welcome';
-import { Button, Input, ProjectReactComponents } from '@Project/ReactComponents';
+import { Navbar } from './Components/Navbar/Navbar';
+import { router } from './routes';
 
 
-const AppSpacing = styled.div`
-  margin: 0;
-  padding: 0;
-  min-width: 100vh;
-  min-height: 100vh;
-`;
-// p-2 pb-4 text-sm/6 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8
+const AppSpacing = styled.div``;
+// pb-4 p-2 mx-auto max-w-7xl px-2 lg:px-8 sm:px-6
 
 
 // Authentication Context
@@ -31,19 +26,10 @@ export const LoginContext = createContext<LoginContextProps>({});
 
 
 export function App() {
-  const [currentTheme, SetCurrentTheme] = useState<string>(localStorage.getItem('theme') || '');
   const [userTokenInformation, setUserTokenInformation] = useState<UserTokenInformation | null>(null);
   const [accessToken, setAccessToken] = useState<string>();
 
   useEffect(() => {
-    // Themes and display settings
-    if (!currentTheme) {
-      const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      localStorage.setItem('theme', userPreferenceTheme);
-      SetCurrentTheme(userPreferenceTheme);
-    }
-    updateTheme(currentTheme);
-
     // Retrieve login information
     if (!accessToken || !userTokenInformation) {
       getAccessToken();
@@ -53,8 +39,8 @@ export function App() {
     Cookies.get('thisWebsite-metadata');
 
     // Console Information
-    console.log('\ninformation: ', { userTokenInformation, accessToken, currentTheme });
-  }, [accessToken, currentTheme, userTokenInformation]);
+    console.log('\ninformation: ', { userTokenInformation, accessToken });
+  }, [accessToken, userTokenInformation]);
 
   // Retrieve the access token (login info) in the event the user is already logged in.
   const getAccessToken = async () => {
@@ -84,145 +70,88 @@ export function App() {
       }
   };
 
-  const setTheme = () => {
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    localStorage.setItem('theme', newTheme);
-    SetCurrentTheme(newTheme);
-    updateTheme(currentTheme);
-    // console.log('theme status: ', {currentTheme, newTheme});
-  }
 
-  const updateTheme = (theme: 'light' | 'dark' | string) => {
-    if (theme === 'dark') document.documentElement.classList.add('dark')
-    else document.documentElement.classList.remove('dark')
-  }
-
-  const InputId = useId();
-  const [input, setInput] = useState<string>("");
-
-  const InputChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e?.target?.value;
-    setInput(newValue);
-
-    console.log({Event: e, newValue});
-  }
-
-  const [error, setError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const buttonPress = (e: any) => {
-    setError(!error); 
-    setErrorMessage("Invalid text."); 
-    
-    console.log('set error to ', !error);
-  }
 
   return (
-    <AppSpacing className={themeContainerStyles + ``}>
-      <div className='bg-white dark:bg-gray-800'>
+    <AppSpacing className="bg-default">
+      <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
+        {/* Router */}
+        <RouterProvider router={router} />
 
-        <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
-          <div role="navigation" className='p-2'>
-            <ul>
-              <li className='pb-1'>
-                <Link to="/">Home</Link>
-              </li>
-              <li className='pb-1'>
-                <Link to="/page-2">Page 2</Link>
-              </li>
-            </ul>
-          </div>
+          {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
+          {/* TODO: Add a sidebar for displaying and debugging save state, that captures both saved and retrieved information that's sent to the backend when autosaved during submissions and during retrieval */}
+          {/* TODO: Add debugging and your own util function that overrides console logging (and learn how to use other libraries for capturing and diagnostics, and how to have it as a universal import) */}
 
-          <div className='m-10'>
-            <Routes>
-              <Route 
-                path="/"
-                element={
-                  <div className={`p-2 pb-4 text-sm/6`}>
-                    
-                  <div>
-                    <h2 className={`mb-2`}>Home Page</h2>
-                    <p className={`mb-4`}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  
-                    <button onClick={setTheme}>{currentTheme === "dark" ? 'set to light' : 'set to dark'}</button>
-                  </div>
+          {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
+          {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}
+          {/* TODO: Create the login/sign in pages and the dashboard */}
 
+          {/* Different platforms to navigate to: */}
+          {/* 
+            Homepage navbar 
+              - Home 
+              - Demos
+              - Mock Database
+              - Contact
+              - Backend form state save capture Demo
+              - etc.
 
+            Settings/User Login
+              - User
+              - Settings
+              - etc.
+          */}
 
-                  </div>
-                } 
-              />
-              
-              <Route
-                path="/page-2"
-                element={
-                  <div className={`p-2 pb-4 text-sm/6`}>
-                    <Link to="/">Click here to go back to root page.</Link>
-                  </div>
-                }
-              />
-            </Routes>
-
-
-            {/* <div className={"mx-auto sm:px-6 lg:px-8 " + styles}> */} 
-            <div className=' grid grid-cols-12 gap-x-6 gap-y-4 px-6 py-4 bg-slate-900'>
-              <div className='col-span-6 md:col-span-6'>
-                <Input 
-                  type="currency"
-                  name="Input"
-                  label="Input"
-                  description=""
-                  value={input}
-                  placeholder=""
-                  id={InputId}
-
-                  onChange={InputChanged}
-                  // onBlur={onBlur}
-                  // onFocus={onFocus}
-                  // onClick={mouseClick}
-
-                  error={error}
-                  errorMessage={errorMessage}
-                  required={false}
-                  disabled={false}
-
-                  autocomplete='email'
-                />
-              </div>
-
-              <div className='col-span-12 mt-2'>
-                <Button displayText="Toggle Error" onClick={buttonPress} />
-              </div>
-              
-              <div className='pb-10'></div>
-            </div>
-          </div>
-          
-
-
-            {/* TODO: Create a nice landing page and dashboard that's interactive with the ability to sign in, create a claim, and navigate to next steps / user's policy information for home and auto */}
-            {/* TODO: Create an interactive application with animations and a step by step process for creating a claim for both home and auto  */}
-            {/* TODO: Create the login/sign in pages and the dashboard */}
-
-            {/* Different platforms to navigate to: */}
-            {/* 
-              This project
-                - User dashboard
-                - Landing page -> with links to navigate to the other portals
-            */}
-
-            {/* Submit a claim, for home and auto */}
-            {/* The Agent portal for accessing and handling user claims (no clue what to build here) */}
+          {/* 
+            Mock Database
+              A way to create fake databases. Creating individual tables, their values, and relations
+                - Created data gets sent to the backend for constructing mock databases dynamically. Attach
+                    databases to each account, and retrieve values from the backend when logging in.
+                    The data is transient, but the table structures can be cached in localStorage
             
-            {/* Backends for handling data, and try out clustering */}
+              Popovers
+              - Sidebar (Tables of the current database)
+                - Allows the user to select and rearrange the current list of tables for the selected database
+              - TopBar - Information / Data / Edit
+                - Information:  The information about the current table (to edit / move the list of it's params)
+                - Data:         The values that the database currently has on the table
+              - BottomBar (the list of databases, and where to create a new one)
+                - Contains boxes of the current databases, and the way to create additional ones.
+                - Separate menu for creating a database from scratch, use the edit tab of a specific database to delete it
 
-        </LoginContext.Provider>
-      </div>
+              - skeleton loaders for values on each of the tabs, loading / error / okay state for color / glow loading anim
+              - drag and drop functionality for reordering the table's params, or the values of a table
+              - ability to select table and it's foreign keys to display in the data tables
+              - eventual bottom border display for inputs on whether the current value is being saved or 
+                  in sync with the backend. Like a horizontal loading bar that slides to the right while loading
+
+          */}
+
+          {/* 
+            Insurance Demo
+              - User dashboard
+              - Landing page -> with links to navigate to the other portals
+              - Submit a claim page - home and auto
+                - Sidebar for steps, fade in/out animations for each step, with a way to add and navigate between steps
+                - Business logic for dynamically handling what needs to be filled out during a quote
+                - Current submit claim state should be saved on the backend, tied the guid for retrieval
+                - Eventual logic should save the form data to the backend while they're entering the information on the backend
+          */}
+
+          {/* Backend form state save capture Demo
+              - Create a quick form to show save state being captured on the backend. It's current state, when we capture save data,
+                  and the progress and response of the data being saved on the backend. With information displaying the state/progress
+           */}
+
+          {/* Submit a claim, for home and auto */}
+          {/* Login page should accept dummy data, or a universal user for quick access */}
+          {/* An additional settings page to determine whether to use mock data for the insurance page, or a backend */}
+          {/* Backends for handling data, and try out clustering */}
+
+      </LoginContext.Provider>
     </AppSpacing>
   );
 }
 
-
-const themeContainerStyles = `bg-white dark:bg-gray-800`;
 
 export default App;

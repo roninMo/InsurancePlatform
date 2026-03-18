@@ -1,12 +1,14 @@
-import { ChangeEvent, FocusEvent, MouseEvent, RefObject, useState } from 'react';
+import { ChangeEvent, FocusEvent, MouseEvent, RefObject, useEffect, useRef, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
+import { Icon } from '../../Common/Icons/Icon';
+import { InputEventHandlers } from '../../Common/Utilities/Utils';
 
 
 export type TextInputTypes = 'text' | 'email' | 'password' | 'phone' | 'creditCard' | 'currency' | 'policyNumber' | 'search';
-export type TextInputAutoCompleteTypes = "email"  | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
+export type TextInputAutoCompleteTypes = "email"  | "tel" | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
 
 interface InputProps {
   type?: TextInputTypes
@@ -17,18 +19,13 @@ interface InputProps {
   value: string;
   placeholder?: string;
   id: string;
-  
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: FocusEvent<HTMLInputElement, Element>) => void;
-  onFocus?: (e: FocusEvent<HTMLInputElement, Element>) => void;
-  onClick?: (e: MouseEvent<HTMLInputElement, Element>) => void;
-  onMouseEnter?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
-  onMouseLeave?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
 
   error?: boolean;
   errorMessage?: string | null;
-  required?: boolean;
   disabled?: boolean;
+  required?: boolean;
+  tooltip?: boolean;
+  tooltipText?: string;
 
   autocomplete?: TextInputAutoCompleteTypes;
   aria?: string | null;
@@ -37,37 +34,42 @@ interface InputProps {
 
 export const Input = ({
   type = 'text', name, label, description, value, placeholder, id,
-  required = false, disabled = false, error = false, errorMessage,
+  error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  autocomplete, aria
-}: InputProps) => {
-  let maskRef: RefObject<HTMLInputElement> | null = null;
-  // const rawValue = value.replace(/\D/g, ''); // To retrieve raw mask values
+  autocomplete, aria, ...props
+}: InputProps & InputEventHandlers) => {
+  const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
+  
+  // TODO: Removed for variation, implement react-hook-forms
+  // #region Input Masking
+  // const rawMaskValue = value.replace(/\D/g, ''); // To retrieve raw mask values
+  // let phoneMaskRef: RefObject<HTMLInputElement> = useMask({
+  //   mask: '(___) ___-____', // '+0 (___) ___-____'
+  //   replacement: { _: /\d/ },
+  // });
+  
+  // let creditCardMaskRef: RefObject<HTMLInputElement> = useMask({
+  //   mask: '____ ____ ____ ____',
+  //   replacement: { _: /\d/ },
+  // });
+  
+  // let policyNumberMaskRef: RefObject<HTMLInputElement> = useMask({
+  //   mask: '_________',
+  //   replacement: { _: /\d/ },
+  // });
 
-  // #region Masking for different input types
-  if (type == 'text') {
-
-  } else if (type == 'email') {
-    const regexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
+  const getMaskRef = (type: TextInputTypes): RefObject<HTMLInputElement> | undefined => {
+    // TODO: prevent errors when maskRef tries to validate other masks if the input type was changed during runtime
+    // if (type == 'phone') return phoneMaskRef;
+    // if (type == 'creditCard') return creditCardMaskRef;
+    // if (type == 'policyNumber') return policyNumberMaskRef;
+    return undefined
   }
+  // #endregion
 
-  else if (type == 'phone') {
-    if (placeholder == '') placeholder = '(000)-00-0000';
-    maskRef = useMask({
-      mask: '(___) ___-____', // '+0 (___) ___-____'
-      replacement: { _: /\d/ },
-    });
-  }
 
-  else if (type ==  'creditCard') {
-    if (placeholder == '') placeholder = '0000 0000 0000 0000';
-    maskRef = useMask({
-      mask: '____ ____ ____ ____',
-      replacement: { _: /\d/ },
-    });
-  }
-
-  else if (type == 'currency') {
+  // placeholder logic
+  if (type == 'currency') {
     const currencyType = '$';
     if (placeholder == '') placeholder = `${currencyType} 0.00`;
   }
@@ -75,42 +77,49 @@ export const Input = ({
   else if (type == 'policyNumber') {
     if (placeholder == '') {
       // if (isAutoPolicy) placeholder = '000000000';
-      // if (isHomePolicy) placeholder = 'A000A000A000A';
+      // if (isHomePolicy) placeholder = 'B000A000A000A';
       placeholder = '000000000';
-      
-      maskRef = useMask({
-        mask: '_________',
-        replacement: { _: /\d/ },
-      });
     }
   }
 
   else if (type == 'search') {
     // TODO: Add search results, and possibly another component to avoid overhead problems with the input component
   }
-  // #endregion
 
-  const toolTipHover = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>, state: 'onEnter' | 'onLeave'): void => {
-    console.log('tooltip hover: ', {Event: e, state});
 
-    if (state == 'onLeave') {
+  // Error handling
+  const shouldDisplayError = (): boolean => error && !disabled;
 
-    } else if (state == 'onEnter') {
 
-    }
-
-    // https://tailwindcss.com/plus/ui-blocks/application-ui/forms/select-menus
+  // Tooltip logic
+  const [tooltipActive, setTooltipActive] = useState<boolean>(false);
+  const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
+  const tooltipMouseEnter = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
+    // console.log('mouse enter tooltip', {Event: e});
+    setTooltipActive(true);
+  }
+  
+  const tooltipMouseLeave = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
+    // console.log('mouse leave tooltip', {Event: e});
+    setTooltipActive(false);
   }
 
+  const toolTipHover = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>): void => {
+    const coordinates = { x: e.clientX, y: e.clientY };
+    tooltipCoordinates.current = coordinates;
+    // console.log(`mouseCoordinates: `, tooltipCoordinates.current); //  {x: coordinates.x, y: coordinates.y });
+  }
+
+
   return (
-    <TextInput>
-      <label htmlFor={type} className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{label}</label>
+    <TextInput className='input'>
+      <label htmlFor={type} className=""> { label } </label>
       <div className="mt-2 grid grid-cols-1">
         <input 
           type={type}
           name={name}
-          value={value}
-          ref={type == 'creditCard' || 'policyNumber' || 'currency' || 'phone' ? maskRef : null}
+          value={!disabled ? value : placeholder}
+          ref={getMaskRef(type)}
           placeholder={placeholder}
           id={id}
 
@@ -128,132 +137,84 @@ export const Input = ({
           aria-describedby={aria || autocomplete || ''}
           aria-invalid={error ? "true" : "false"}
 
-          className={getInputClasses(error, type)}
+          className={`${getInputClasses(error, type, disabled)} peer`}
+          { ...props }
         />
 
         {/* Elements preceding the input */}
-        { type == 'email' && 
-          <EmailIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4 dark:text-gray-500">
-            <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-            <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-          </EmailIcon>
-        }
+        <PrecedingInputElements className={`pointer-events-none col-start-1 row-start-1 justify-center self-center`}>
+          { type == 'email' && <Icon variant='Envelope' styles='size-4 ml-3' /> }
+          { type == 'policyNumber' && <Icon variant='Profile' styles='size-4 ml-3' /> }
+          {/* TODO: custom icons preceding input */}
+        </PrecedingInputElements>
 
-        {/* Elements at the end of the input */}
-        { type == 'currency' ? 
-          <CurrencyDropdown className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
-            <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
-              <option>USD</option>
-              <option>CAD</option>
-              <option>EUR</option>
-            </CurrencySelect>
-            <DropdownArrowIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-              <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" fillRule="evenodd" />
-            </DropdownArrowIcon>
-          </CurrencyDropdown>
 
-        : type == 'search' ? 
-          <SortSearchResults className="pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative">
-            <button type="button" className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-white/10 dark:text-white dark:outline-gray-700 dark:hover:bg-white/20 dark:focus:outline-indigo-500">
-              <SearchListIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="-ml-0.5 size-4 text-gray-400">
-                <path d="M2 2.75A.75.75 0 0 1 2.75 2h9.5a.75.75 0 0 1 0 1.5h-9.5A.75.75 0 0 1 2 2.75ZM2 6.25a.75.75 0 0 1 .75-.75h5.5a.75.75 0 0 1 0 1.5h-5.5A.75.75 0 0 1 2 6.25Zm0 3.5A.75.75 0 0 1 2.75 9h3.5a.75.75 0 0 1 0 1.5h-3.5A.75.75 0 0 1 2 9.75ZM9.22 9.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V8.56l-.97.97a.75.75 0 0 1-1.06 0Z" clipRule="evenodd" fillRule="evenodd" />
-              </SearchListIcon>
-              Sort
-            </button>
-          </SortSearchResults>
+        {/* Elements after the input */}
+        <SubsequentInputElements className={`${iconContainerStyles} ${borderSelectStyles(error)} peer-focus:[&_button]:border-l-2`}>
+          <div className={`row flex-grow justify-items-end items-center`}>
+            { shouldDisplayError() ?
+              <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
+            : 
+              <TooltipIcon 
+                onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
+                onMouseOver={e => tooltip && toolTipHover(e)} 
+                onMouseLeave={e => tooltip && tooltipMouseLeave(e)} 
+                className={`cursor-pointer`}
+              >
+                <Icon variant='InfoBox' styles='mr-3 size-4' /> 
+              </TooltipIcon>
+            }
 
-        : error &&
-          <TooltipContainer className="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end ">
-            <ErrorIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="text-red-500 sm:size-4 dark:text-red-400">
-              <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" fillRule="evenodd" />
-            </ErrorIcon>
+            {/* Currency and Search */}
+            { type == 'currency' ? 
+              <CurrencySelectContainer className='row relative'>
+                <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
+                  <option>USD</option> <option>CAD</option> <option>EUR</option>
+                </CurrencySelect>
+                <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
+              </CurrencySelectContainer>
 
-          {/* : tooltip && 
-            <TooltipIcon viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="text-gray-400 sm:size-4 dark:text-gray-500">
-              <path d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-6 3.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.293 5.293a1 1 0 1 1 .99 1.667c-.459.134-1.033.566-1.033 1.29v.25a.75.75 0 1 0 1.5 0v-.115a2.5 2.5 0 1 0-2.518-4.153.75.75 0 1 0 1.061 1.06Z" clipRule="evenodd" fillRule="evenodd" />
-            </TooltipIcon> */}
-          </TooltipContainer>
-        }
+            : type == 'search' ? 
+              <SortSearchButton type="button" className={`
+                flex items-center gap-x-1.5 shrink-0 
+                cursor-pointer pointer-events-auto
+                ${sortButtonStyles} ${sortBorderStyles}
+              `}>
+                <Icon variant='Sort' styles='size-5 text-slate-100 dark:text-slate-400' />
+                Sort
+              </SortSearchButton>
+            : <></>
+            }
+          </div>
+        </SubsequentInputElements>
       </div>
 
       {/* Error / Description messages */}
-      { error && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 text-sm text-red-600 dark:text-red-400">
-          {errorMessage}
-        </p>
+      { shouldDisplayError() && errorMessage ? 
+        <p id={`${id}-error-message`} className="mt-2 ml-1 error-text"> { errorMessage } </p>
       : description && 
-        <p id={`${id}-email-description`} className="mt-2 text-sm">
-          {description}
-        </p>
+        <p id={`${id}-email-description`} className="mt-2 ml-1"> { description } </p>
       }
+
+      {/* Tooltip Text */}
+      {tooltip && 
+        <Tooltip 
+          style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
+          className={`${tooltipTheme_Styles} ${tooltipHoverStyles} ${tooltipCoordinates} ${tooltipActive ? tooltipVisible : tooltipHidden}`}
+        >
+          {tooltipText}
+        </Tooltip>
+      }
+
     </TextInput>
   );
 }
 
 
-const getInputClasses = (error: boolean, type: string): string => {
-  let classes = `col-start-1 row-start-1 block w-full 
-    rounded-md sm:text-sm/6 px-3 py-1.5 text-base 
-    outline outline-1 -outline-offset-1 
-    focus:outline-2 focus:-outline-offset-2 
-    bg-white dark:bg-white/5 
-  `;
-
-  // Icon spacing
-  if (type == 'email') classes += ` pl-9`; 
-
-  // Static themes for default/error display
-  if (error) {
-    classes += getErrorThemes();
-  } else {
-    classes += ` 
-      text-slate-900 dark:text-white 
-      placeholder:text-slate-400  dark:placeholder:text-slate-500 
-
-      outline-gray-300 dark:outline-white/10 
-      focus:outline-indigo-600 dark:focus:outline-indigo-500 
-    `;
-  }
-
-  return classes;
-}
-
-const getDropdownClasses = (error: boolean): string => {
-  let classes = ` 
-    col-start-1 row-start-1 w-full appearance-none rounded-md py-1.5 pr-7 pl-3 
-    text-base sm:text-sm/6 
-    outline outline-1 -outline-offset-1 
-    focus:outline-2 focus:-outline-offset-2 
-    dark:bg-gray-800 dark:*:bg-gray-800 
-  `;
-  
-  // Static themes for default/error display
-  if (error) {
-    classes += getErrorThemes();
-  } else {
-    classes += ` 
-      text-gray-500 dark:text-gray-400 
-      placeholder:text-slate-400 dark:placeholder:text-slate-500 
-
-      outline-gray-300 dark:outline-white/10 
-      focus:outline-indigo-600 dark:focus:outline-indigo-500 
-    `;
-  }
-
-  return classes;
-}
-
-const getErrorThemes = (): string => {
-  return ` 
-    text-red-900 dark:text-red-400 
-    placeholder:text-red-300 dark:placeholder:text-red-400/70
-    
-    outline-red-300 dark:outline-red-500/50 
-    focus:outline-red-600 dark:focus:outline-red-400 
-  `;
-}
 
 
+// #region Component Styles
+// Elements 
 const TextInput = styled.div``;
 const EmailInput = styled.div``;
 const PasswordInput = styled.div``;
@@ -262,13 +223,99 @@ const CurrencyInput = styled.div``;
 const PolicyNumberInput = styled.div``;
 const SearchInput = styled.div``;
 
-const SortSearchResults = styled.div``;
-const TooltipContainer = styled.div``;
-const CurrencyDropdown = styled.div``;
+const PrecedingInputElements = styled.div``;
+const SubsequentInputElements = styled.div``;
+const SortSearchButton = styled.button``;
+const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
+const TooltipIcon = styled.div`pointer-events: all;`;
+const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
 
-const ErrorIcon = styled.svg``;
-const SearchListIcon = styled.svg``;
-const TooltipIcon = styled.svg``;
-const EmailIcon = styled.svg``;
-const DropdownArrowIcon = styled.svg``;
+const sortButtonStyles = `rounded-r-md px-3 py-2 font-semibold bg-blue-500 dark:bg-slate-700 text-white`;
+const sortBorderStyles = `border-l border-default transition-all`;
+const borderSelectStyles = (error: boolean): string => 
+  `peer-focus:[&_button]:border-indigo-600 dark:peer-focus:[&_button]:border-indigo-500
+    ${error && '[&_button]:border-red-400 dark:[&_button]:border-red-500'}`;
+
+
+// Input themes and error styles
+// TODO: Default theme styles for input element text and border/outline colors
+const getInputClasses = (error: boolean, type: string, disabled?: boolean): string => {
+  let classes = `col-start-1 row-start-1 block w-full`; // Keep layout styling specific to components
+
+  // Icon spacing
+  if (type == 'email' || type == 'policyNumber') classes += ` pl-9`; 
+
+  // Static themes for default/error display
+  if (disabled)  classes += getDisabledThemes();
+  else if (error)  classes += getErrorThemes();
+  return classes;
+}
+
+const getDisabledThemes = (): string => ` disabled`;
+const getErrorThemes = (): string => ` error-text outline-error`;
+
+
+// for the currency selection button
+const getDropdownClasses = (error: boolean): string => {
+  let classes = `col-start-1 row-start-1 w-full appearance-none outline-css pl-3 py-2 pr-7`;
+  
+  // Static themes for default/error display
+  if (error) classes += getErrorThemes();
+  else       classes += ` outline-styles`;
+  return classes;
+}
+
+
+// Tooltip Styling TODO: this needs to be fixed positioning to handle proper placement with scroll
+const Tooltip = styled.div``;
+const tooltipTheme_Styles = ` 
+  text-xs italic shadow-lg p-2 pr-4 max-w-64
+  bg-default border rounded-md border-styles
+  pointer-events-none transition-all
+`;
+
+const tooltipHoverStyles = `absolute top-0 left-0 z-10 duration-200 ease-in`;
+const tooltipHidden = `opacity-0 *:opacity-0 transition-all`;
+const tooltipVisible = `opacity-100 *:opacity-100 transition-opacity`;
+// #endregion 
+
+
+// #region Input Type Props
+type InputPropsPartial = Partial<InputProps> & { type: TextInputTypes } & any;
+export const InputProps_Text: InputPropsPartial = {
+  type: 'text',
+  name: 'text',
+}
+
+export const InputProps_Email: InputPropsPartial = {
+  type: 'email',
+  name: 'email',
+  label: 'Email',
+  description: 'What is your email address?',
+  placeholder: 'yourname@email.com',
+  tooltip: true,
+  tooltipText: 'The email used to create your account.',
+  autocomplete: 'email',
+}
+
+export const InputProps_Password: InputPropsPartial = {
+  type: 'password',
+  name: 'password',
+  label: 'Password',
+  description: 'Create your password.',
+  tooltip: true,
+  tooltipText: 'The used for your account.',
+  autocomplete: 'password',
+}
+
+export const InputProps_Phone: InputPropsPartial = {
+  type: 'phone',
+  name: 'phone',
+  label: 'Phone',
+  description: 'What is your phone number?',
+  tooltip: true,
+  tooltipText: 'Your phone number, including the area code. ex: (000)-000-0000',
+  autocomplete: 'tel',
+}
+// #endregion
