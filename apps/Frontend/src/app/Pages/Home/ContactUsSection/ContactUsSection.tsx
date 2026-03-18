@@ -11,9 +11,9 @@ export const ContactUsSection = () => {
   const linkedInProfileLink = 'https://www.linkedin.com/in/kieran-schwegman/';
   const phoneNumber = '+3179082517';
   const displayPhoneNumber = '+1 (317) 908-2517';
-  const recipient = 'schwegmank@gmail.com';
-  const subject = encodeURIComponent('Interested in applying for a potential job?');
-  const body = encodeURIComponent('');
+  const myEmail = 'schwegmank@gmail.com';
+  const defaultSubject = 'What do you need me to do?';
+  const body = "";
 
   // first name
   const [firstName, setFirstName] = useState<string>('');
@@ -49,6 +49,19 @@ export const ContactUsSection = () => {
     setMessageErrorText("");
 
     // TODO: create email
+    const recipient = myEmail;
+    const subject = defaultSubject;
+    const baseComposeUrl = 'https://mail.google.com/mail/?view=cm&fs=1';
+    const gmailLink = `${baseComposeUrl}&to=${recipient}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+
+    window.open(gmailLink, '_blank', 'noopener,noreferrer');
+    // console.log('urls: ', gmailLink);
+    /*
+
+  https://mail.google.com/mail/?view=cm&fs=1&to=kschwegman1@gmail.com&su=jobApp&body=MessageHere
+
+
+    */
   }
   
 
@@ -71,10 +84,11 @@ export const ContactUsSection = () => {
           <div className='col gap-2 *:rowStart *:items-center *:gap-4 *:p-2'>
             <div>
               <Icon variant='Envelope' styles='text-slate-500 dark:text-slate-300 size-6 lg:size-8 hover:theme-focus transition' />
-              <a href={`mailto:${recipient}?subject=${subject}&body=${body}`} 
+              <a href={`mailto:${encodeURIComponent(myEmail)}?subject=${encodeURIComponent(defaultSubject)}&body=${encodeURIComponent(body)}`} 
                   className='text-base lg:text-lg italic placeholder-text hover:link-text'
               >
-                Email me
+                Email me - 
+                <span className='text-base lg:text-lg italic primary-text'>&nbsp;{ myEmail }</span>
               </a>
             </div>
 
@@ -83,7 +97,8 @@ export const ContactUsSection = () => {
               <a href={`tel:${phoneNumber}`} 
                   className='text-base lg:text-lg italic placeholder-text hover:link-text'
               >
-                Call {displayPhoneNumber}
+                Call 
+                <span className='text-base lg:text-lg italic label-text'>&nbsp;{ displayPhoneNumber }</span>
               </a>
             </div>
 

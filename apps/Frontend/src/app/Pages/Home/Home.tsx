@@ -8,6 +8,7 @@ import { PreviousWorksSection } from './PreviousWorksSection/PreviousWorksSectio
 import { Footer } from './Footer/Footer';
 import { Card } from '../../Components/Layouts/Card/Card';
 import { ContactUsSection } from './ContactUsSection/ContactUsSection';
+import { Experiences } from './Experiences/Experiences';
 
 
 
@@ -21,7 +22,6 @@ export const Home = () => {
       <Navbar />
       
       <MainContent className='spacing gap-0'>
-        {/* Welcome page w/GetStarted and Docs */}
         <WelcomeSection />
 
         {/* Previous Works */}
@@ -31,17 +31,8 @@ export const Home = () => {
           <div className='span-1 hidden lg:block' />
         </div>
 
-
-        {/* Experience, Languages, Frameworks, Adaptability */}
-        <div className='spacing p-4 py-12 bg-div'>
-          <Card border='default' additionalStyles='span-12 p-4 py-40 my-12'>
-            Experience, Languages, Frameworks, Adaptability
-          </Card>
-        </div>
-
-        {/* Contact */}
+        <Experiences />
         <ContactUsSection />
-
         <Footer />
       </MainContent>
     </>
