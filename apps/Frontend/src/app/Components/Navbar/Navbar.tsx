@@ -55,7 +55,7 @@ export const Navbar = ({}: NavbarProps) => {
 
 
   return (
-    <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-40 w-full shadow-2xl'>
+    <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-2xl'>
         <div className='w-full row justify-between items-center relative z-10 bg-div px-3'>
 
           <div id='NavLinks' className='NavLinks rowStart items-center gap-8'>

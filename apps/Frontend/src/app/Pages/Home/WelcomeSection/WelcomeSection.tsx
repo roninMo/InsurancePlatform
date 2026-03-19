@@ -5,13 +5,14 @@ import { Button } from '@Project/ReactComponents';
 
 import downtown_city_night from '../../../../assets/images/downtown_city_night.png';
 import styles from './WelcomeSection.module.scss';
+import { Modal } from '../../../Components/Layouts/Modal/Modal';
 
 
 export const WelcomeSection = () => {
   const navigate = useNavigate();
   
   // Modal
-  const [navModalOpen, setNavModalOpen] = useState<boolean>(false);
+  const [navModalOpen, setNavModalOpen] = useState<boolean>(true);
   const navModalId = useId();
 
   const openNavMenu = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -88,6 +89,13 @@ export const WelcomeSection = () => {
                 color='primary'
                 additionalStyles='text-base rounded-lg'
               />
+              <Modal isModalOpen={navModalOpen} setModalOpen={setNavModalOpen} additionalStyles='row'>
+                <div className='rowStart items-center gap-2 p-4 outline-css outline-default bg-div'>
+                  <div className='col gap-4 w-[50vw] h-[65vh]'>
+                      Modal Component
+                  </div>
+                </div>
+              </Modal>
 
               <Button displayText='Documentation'
                 onClick={() => navigateToDocs()}

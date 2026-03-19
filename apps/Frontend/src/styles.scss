@@ -246,6 +246,8 @@
   // Utility                                  //
   //------------------------------------------//
   .transition { @apply transition-all duration-200; }
+  .op-init    { @apply transition duration-300 opacity-0; }
+  .op-render  { @apply opacity-100; }
 
   // Faded borders for creating overlays and subtle shading for background
   .opacity-bg-0    { @apply bg-opacity-0    dark:bg-opacity-0; }
@@ -259,10 +261,6 @@
   .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
   .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
   .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
-
-  .overlay-gradient {
-    @apply ;
-  }
 
   .svg-theme {
     @apply svg-init text-colors hover:primary-text;

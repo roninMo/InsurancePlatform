@@ -52,7 +52,7 @@ import { Icon_Atlassian } from "./Tech/Automation/Atlassian/Icon_Atlassian";
 import { Icon_ApolloGraphQl } from "./Tech/Backend/Apollo/Icon_Apollo";
 import { Icon_Twitter } from "./SocialMedia/Twitter/Icon_Twitter";
 import { Icon_VennDiagram } from "./Default/VennDiagram/VennDiagram";
-
+// TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes;
 export interface IconAttributes {
