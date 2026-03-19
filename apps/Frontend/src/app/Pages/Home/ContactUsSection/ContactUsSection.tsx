@@ -4,6 +4,7 @@ import { Input, Icon } from '@Project/ReactComponents';
 import { defaultBoxMetadataTags, Textarea } from '../../../Components/Forms/Textarea';
 
 import styles from './ContactUsSection.module.scss';
+import { TechIcon } from '../../../../../../../libraries/ReactComponents/src/Common/Icons/Icon';
 
 
 export const ContactUsSection = () => {
@@ -76,7 +77,7 @@ export const ContactUsSection = () => {
           Looking for a developer?
         </h2>
 
-        <p className='py-2 text-lg lg:text-2xl md:w-8/12 xl:w-6/12 text-center'>
+        <p className='py-2 text-base lg:text-xl md:w-7/12 xl:w-5/12 text-center'>
           Sometimes I have trouble making it to the phone, but I'll get back to you shortly if I don't pick up. I'm looking forward to speaking with you!
         </p>
 

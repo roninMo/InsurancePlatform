@@ -1,6 +1,11 @@
+import styled from '@emotion/styled';
 import styles from './Experiences.module.scss';
 
 export const Experiences =() => {
+  const headerStyles = ``;
+  const descriptionStyles = ``;
+  const languageStyles = ``;
+
 
   return (
     <div className='span-12 p-4 col gap-2 items-center bg-div'>
@@ -12,16 +17,21 @@ export const Experiences =() => {
 
         {/* Frontend Languages and Frameworks */}
         <div>
-          <h2>Frontend Languages and Frameworks</h2>
+          <Header className=''>
+            Frontend Languages and Frameworks
+          </Header>
 
-          <p>
+          <Description className=''>
+
+          </Description>
+          <Languages>
             text here
-          </p>
+          </Languages>
         </div>
 
         {/* Backend and Database Architecture */}
         <div>
-          <h2>Backend and Database Architecture</h2>
+          <Header>Backend and Database Architecture</Header>
 
           <p>
             text here
@@ -30,7 +40,7 @@ export const Experiences =() => {
         
         {/* Devops and Automated Deployment */}
         <div>
-          <h2>Devops and Automated Deployment</h2>
+          <Header>Devops and Automated Deployment</Header>
 
           <p>
             text here
@@ -40,3 +50,8 @@ export const Experiences =() => {
     </div>
   );
 }
+
+// Styled Components
+const Header = styled.div``;
+const Description = styled.div``;
+const Languages = styled.p``;
