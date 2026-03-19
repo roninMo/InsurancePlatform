@@ -104,11 +104,9 @@ export const WelcomeSection = () => {
                 color='primary'
                 additionalStyles='text-base rounded-lg'
               />
-              <Modal isModalOpen={navModalOpen} setModalOpen={setNavModalOpen} additionalStyles='row'>
-                <div className='rowStart items-center gap-2 p-4 outline-css outline-default bg-div'>
-                  <div className='col gap-4 w-[50vw] h-[65vh]'>
-                      Modal Component
-                  </div>
+              <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen}>
+                <div className='col gap-4 w-[50vw] h-[65vh]'>
+                    Modal Component
                 </div>
               </Modal>
 

@@ -52,9 +52,14 @@ import { Icon_Atlassian } from "./Tech/Automation/Atlassian/Icon_Atlassian";
 import { Icon_ApolloGraphQl } from "./Tech/Backend/Apollo/Icon_Apollo";
 import { Icon_Twitter } from "./SocialMedia/Twitter/Icon_Twitter";
 import { Icon_VennDiagram } from "./Default/VennDiagram/VennDiagram";
+import { JSX } from "react";
+import { Icon_Close } from "./Default/Close/Icon_Close";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes;
+const defaultIconStyles = `size-5 justify-center self-center`;
+
+// Used in the svg element classes
 export interface IconAttributes {
   styles?: string;
 }
@@ -65,56 +70,18 @@ interface IconProps {
   styles?: string;
 }
 
-const defaultIconStyles = `size-5 justify-center self-center`;
-export const Icon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
-  const defaultErrorStyles = defaultIconStyles + ` text-red-500 dark:text-red-400`;
-  const defaultOkayStyles = defaultIconStyles + ` text-emerald-500 dark:text-emerald-400`;
-  
-  
-  // Default icons
-  if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
-  if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
-  if (variant == 'Calendar')        return (<Icon_Calendar styles={styles} />);
-  if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
-  if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
-  if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
-  if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
-  if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
-  if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
-  if (variant == 'Error')           return (<Icon_Error styles={styles ? styles : defaultErrorStyles} />);
-  if (variant == 'InfoBox')         return (<Icon_InfoBox styles={iconStyles} />);
-  if (variant == 'Instagram')       return (<Icon_Instagram styles={iconStyles} />);
-  if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);
-  if (variant == 'Link')            return (<Icon_Link styles={iconStyles} />);
-  if (variant == 'Plus')            return (<Icon_Plus styles={iconStyles} />);
-  if (variant == 'Phone')           return (<Icon_Phone styles={iconStyles} />);
-  if (variant == 'Profile')         return (<Icon_Profile styles={iconStyles} />);
-  if (variant == 'SelectArrow')     return (<Icon_SelectArrow styles={iconStyles} />);
-  if (variant == 'Smile')           return (<Icon_Smile styles={iconStyles} />);
-  if (variant == 'Sort')            return (<Icon_Sort styles={iconStyles} />);
-  if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
-  if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
-  if (variant == 'Trash')           return (<Icon_Trash styles={styles ? styles : defaultErrorStyles} />);
-  if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
-
-  
-  // Social media icons
-  if (variant == 'Facebook')        return (<Icon_Facebook styles={iconStyles} />);
-  if (variant == 'Github')          return (<Icon_Github styles={iconStyles} />);
-  if (variant == 'LinkedIn')        return (<Icon_LinkedIn styles={iconStyles} />);
-  if (variant == 'Twitter')         return (<Icon_Twitter styles={iconStyles} />);
-  if (variant == 'Youtube')         return (<Icon_Youtube styles={iconStyles} />);
-
-  return (<></>);
-}
 
 
+
+//------------------------------------//
+// Icon Component                     //
+//------------------------------------//
 export type DefaultIconTypes = 
   'AtSymbol' |
   'AttachFile' |
   'Calendar' |
   'Checkbox' |
+  'Close' |
   'CodeBracket' |
   'DarkTheme' |
   'Database' |
@@ -137,6 +104,56 @@ export type DefaultIconTypes =
   'VennDiagram' 
 ;
 
+export const Icon = ({ variant, styles = ''}: IconProps) => {
+  const iconStyles = styles ? styles : defaultIconStyles;
+  const defaultErrorStyles = defaultIconStyles + ` text-red-500 dark:text-red-400`;
+  const defaultOkayStyles = defaultIconStyles + ` text-emerald-500 dark:text-emerald-400`;
+  
+  
+  // Default icons
+  if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
+  if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
+  if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
+  if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
+  if (variant == 'Close')           return (<Icon_Close styles={iconStyles} />);
+  if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
+  if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
+  if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
+  if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
+  if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
+  if (variant == 'Error')           return (<Icon_Error styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'InfoBox')         return (<Icon_InfoBox styles={iconStyles} />);
+  if (variant == 'Instagram')       return (<Icon_Instagram styles={iconStyles} />);
+  if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);
+  if (variant == 'Link')            return (<Icon_Link styles={iconStyles} />);
+  if (variant == 'Plus')            return (<Icon_Plus styles={iconStyles} />);
+  if (variant == 'Phone')           return (<Icon_Phone styles={iconStyles} />);
+  if (variant == 'Profile')         return (<Icon_Profile styles={iconStyles} />);
+  if (variant == 'SelectArrow')     return (<Icon_SelectArrow styles={iconStyles} />);
+  if (variant == 'Smile')           return (<Icon_Smile styles={iconStyles} />);
+  if (variant == 'Sort')            return (<Icon_Sort styles={iconStyles} />);
+  if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
+  if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
+  if (variant == 'Trash')           return (<Icon_Trash styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
+
+  // Social Media Icons
+  const mediaIcon = MediaIcon({variant, styles});
+  if (mediaIcon) return mediaIcon;
+  
+  // Tech Icons
+  const techIcon = TechIcon({variant, styles});
+  if (techIcon) return techIcon;
+
+  return (<></>);
+}
+
+
+
+
+//------------------------------------//
+// Media Icons                        //
+//------------------------------------//
 export type MediaIconTypes =
   'Facebook' |
   'Github' |
@@ -145,7 +162,26 @@ export type MediaIconTypes =
   'Youtube'
 ;
 
+export const MediaIcon = ({ variant, styles = ''}: IconProps) => {
+  const iconStyles = styles ? styles : defaultIconStyles;
+  let Icon: JSX.Element | undefined = undefined;
 
+
+  // Social media icons
+  if (variant == 'Facebook')        Icon = (<Icon_Facebook styles={iconStyles} />);
+  if (variant == 'Github')          Icon = (<Icon_Github styles={iconStyles} />);
+  if (variant == 'LinkedIn')        Icon = (<Icon_LinkedIn styles={iconStyles} />);
+  if (variant == 'Twitter')         Icon = (<Icon_Twitter styles={iconStyles} />);
+  if (variant == 'Youtube')         Icon = (<Icon_Youtube styles={iconStyles} />);
+  return Icon;
+}
+
+
+
+
+//------------------------------------//
+// Tech and Language Icons            //
+//------------------------------------//
 export type FrontendFrameworks = 'Angular' | 'React' | 'Vue';
 export type BackendFrameworks = 'Express' | '.Net' | 'Node';
 export type FrontendTechs = 'RxJs' | 'ReactHookForms' | 'Redux' | 'Jest' | 'Playwright' | 'Axios' | 'ReactiveFormsModule';
@@ -167,51 +203,45 @@ export type TechIconTypes =
   'CI/CD Pipelines' | 'Azure Devops' | 'Atlassian'
 ;
 
-
 export const TechIcon = ({ variant, styles = ''}: IconProps) => {
-  let iconStyles = styles ? styles : defaultIconStyles;
-  iconStyles += ' size-16';
-
-  return (
-    <Icon_ApolloGraphQl styles={iconStyles} />
-  );
-
+  const iconStyles = styles ? styles : defaultIconStyles;
+  let Icon: JSX.Element | undefined = undefined;
 
   // Automation
-  if (variant == 'Atlassian')           return (<Icon_Atlassian styles={iconStyles} />);
-  if (variant == 'AWS CDK')             return (<Icon_AwsCdk styles={iconStyles} />);
-  if (variant == 'Azure Devops')        return (<Icon_AzureDevops styles={iconStyles} />);
-  if (variant == 'Bamboo')              return (<Icon_Bamboo styles={iconStyles} />);
-  if (variant == 'CI/CD Pipelines')     return (<Icon_Database styles={iconStyles} />);
-  if (variant == 'Docker')              return (<Icon_Docker styles={iconStyles} />);
-  if (variant == 'Kubernetes')          return (<Icon_Kubernetes styles={iconStyles} />);
+  if (variant == 'Atlassian')           Icon = (<Icon_Atlassian styles={iconStyles} />);
+  if (variant == 'AWS CDK')             Icon = (<Icon_AwsCdk styles={iconStyles} />);
+  if (variant == 'Azure Devops')        Icon = (<Icon_AzureDevops styles={iconStyles} />);
+  if (variant == 'Bamboo')              Icon = (<Icon_Bamboo styles={iconStyles} />);
+  if (variant == 'CI/CD Pipelines')     Icon = (<Icon_Database styles={iconStyles} />);
+  if (variant == 'Docker')              Icon = (<Icon_Docker styles={iconStyles} />);
+  if (variant == 'Kubernetes')          Icon = (<Icon_Kubernetes styles={iconStyles} />);
   
   // Backend
-  if (variant == 'ApolloGraphQL')       return (<Icon_ApolloGraphQl styles={iconStyles} />);
-  if (variant == 'Express')             return (<Icon_Express styles={iconStyles} />);
-  if (variant == 'MongoDB')             return (<Icon_Mongo styles={iconStyles} />);
-  if (variant == 'Net')                 return (<Icon_Net styles={iconStyles} />);
-  if (variant == 'Node')                return (<Icon_Node styles={iconStyles} />);
-  if (variant == 'Orleans')             return (<Icon_Orleans styles={iconStyles} />);
-  if (variant == 'Postgres')            return (<Icon_Postgres styles={iconStyles} />);
+  if (variant == 'ApolloGraphQL')       Icon = (<Icon_ApolloGraphQl styles={iconStyles} />);
+  if (variant == 'Express')             Icon = (<Icon_Express styles={iconStyles} />);
+  if (variant == 'MongoDB')             Icon = (<Icon_Mongo styles={iconStyles} />);
+  if (variant == 'Net')                 Icon = (<Icon_Net styles={iconStyles} />);
+  if (variant == 'Node')                Icon = (<Icon_Node styles={iconStyles} />);
+  if (variant == 'Orleans')             Icon = (<Icon_Orleans styles={iconStyles} />);
+  if (variant == 'Postgres')            Icon = (<Icon_Postgres styles={iconStyles} />);
 
   // CLoud
-  if (variant == 'AWS')                 return (<Icon_AWS styles={iconStyles} />);
-  if (variant == 'Azure')               return (<Icon_Azure styles={iconStyles} />);
-  if (variant == 'GCP')                 return (<Icon_GCP styles={iconStyles} />);
+  if (variant == 'AWS')                 Icon = (<Icon_AWS styles={iconStyles} />);
+  if (variant == 'Azure')               Icon = (<Icon_Azure styles={iconStyles} />);
+  if (variant == 'GCP')                 Icon = (<Icon_GCP styles={iconStyles} />);
 
   // Frontend
-  if (variant == 'Angular')             return (<Icon_Angular styles={iconStyles} />);
-  if (variant == 'Axios')               return (<Icon_Axios styles={iconStyles} />);
-  if (variant == 'Jest')                return (<Icon_Jest styles={iconStyles} />);
-  if (variant == 'Playwright')          return (<Icon_Playwright styles={iconStyles} />);
-  if (variant == 'ReactHookForms')      return (<Icon_ReactHookForms styles={iconStyles} />);
-  if (variant == 'React')               return (<Icon_React styles={iconStyles} />);
+  if (variant == 'Angular')             Icon = (<Icon_Angular styles={iconStyles} />);
+  if (variant == 'Axios')               Icon = (<Icon_Axios styles={iconStyles} />);
+  if (variant == 'Jest')                Icon = (<Icon_Jest styles={iconStyles} />);
+  if (variant == 'Playwright')          Icon = (<Icon_Playwright styles={iconStyles} />);
+  if (variant == 'ReactHookForms')      Icon = (<Icon_ReactHookForms styles={iconStyles} />);
+  if (variant == 'React')               Icon = (<Icon_React styles={iconStyles} />);
 
-  if (variant == 'Redux')               return (<Icon_Redux styles={iconStyles} />);
-  if (variant == 'RxJs')                return (<Icon_RxJs styles={iconStyles} />);
-  if (variant == 'Vue')                 return (<Icon_Bue styles={iconStyles} />);
-  return (<></>);
+  if (variant == 'Redux')               Icon = (<Icon_Redux styles={iconStyles} />);
+  if (variant == 'RxJs')                Icon = (<Icon_RxJs styles={iconStyles} />);
+  if (variant == 'Vue')                 Icon = (<Icon_Bue styles={iconStyles} />);
+  return Icon;
 }
 
 

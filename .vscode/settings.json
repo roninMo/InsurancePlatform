@@ -13,6 +13,7 @@
     "className",
     "ngClass",
     ".*additionalStyles.*", // Add your custom prop pattern here
+    ".*styles.*", 
     ".*Styles.*" // Or another pattern
   ]
 }
