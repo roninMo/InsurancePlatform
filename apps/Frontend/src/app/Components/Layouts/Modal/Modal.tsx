@@ -49,7 +49,7 @@ export const Modal = ({isModalOpen, setModalOpen, onCloseModal, additionalStyles
     <Overlay 
       id={overlayId} onClick={(e) => onClickedOutsideOfModal(e)}
       className={`fixed top-0 left-0 min-w-full min-h-full z-40 
-        bg-black opacity-bg-40 rounded-none 
+        bg-black bg-opacity-40 dark:bg-opacity-40 
         row justify-center items-center
         op-init ${startModalFade && 'op-render'} 
         ${additionalStyles}

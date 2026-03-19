@@ -2,17 +2,20 @@ import { useState, useId, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Button } from '@Project/ReactComponents';
+import { Modal } from '../../../Components/Layouts/Modal/Modal';
 
+import Lottie from "lottie-react";
+import BackgroundAnim from "../../../../assets/lottie/Background looping animation.json";
 import downtown_city_night from '../../../../assets/images/downtown_city_night.png';
 import styles from './WelcomeSection.module.scss';
-import { Modal } from '../../../Components/Layouts/Modal/Modal';
+
 
 
 export const WelcomeSection = () => {
   const navigate = useNavigate();
   
   // Modal
-  const [navModalOpen, setNavModalOpen] = useState<boolean>(true);
+  const [navModalOpen, setNavModalOpen] = useState<boolean>(false);
   const navModalId = useId();
 
   const openNavMenu = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -41,12 +44,24 @@ export const WelcomeSection = () => {
 
   return (
     <div className='span-12 col w-full' id='welcome-section'>
+      <div className='bg-default w-full pt-24 absolute top-0 left-0
+        min-h-[45rem] xl:min-h-[54rem]  2xl:min-h-[60rem] 
+      '>
+        <Lottie 
+          animationData={BackgroundAnim} 
+          loop={true} 
+          className='w-full h-full'
+          rendererSettings={{
+            preserveAspectRatio: "xMidYMid slice" // This works like "background-size: cover"
+          }}    
+        />
+      </div>
       <Background className='spacing'>
         <Overlay className='spacing place-content-center
           p-8 pt-44 min-h-[45rem] xl:min-h-[54rem]  2xl:min-h-[60rem] 
           bg-gradient-to-br from-slate-950/80 from-25% via-slate-700/20 via-65% to-transparent
         '>
-          <div className='span-12 md:span-9 lg:span-7 xl:span-6 2xl:span-5 col items-start gap-2 p-2 pb-14 lg:pb-24'>
+          <div className='span-12 md:span-9 lg:span-7 xl:span-6 2xl:span-6 col items-start gap-2 p-8 pb-14 lg:pb-24 z-10 bg-div outline-css outline-default opacity-bg-60'>
             
             {/* Dev / Production Config */}
             <div className='rowStart gap-4 pt-2'> 
@@ -109,11 +124,11 @@ export const WelcomeSection = () => {
         </Overlay>
       </Background>
 
-      <FadeToBackground className='-mt-10 py-14 
+      {/* <FadeToBackground className='-mt-10 py-14 
         bg-gradient-to-t from-75% to-90% 
         from-slate-300 dark:from-slate-900 
         to-transparent 
-      ' />
+      ' /> */}
     </div>
   );
 }
@@ -121,11 +136,11 @@ export const WelcomeSection = () => {
 // Styled Components
 const Overlay = styled.div``;
 const Background = styled.div`
-  background-image: url(${downtown_city_night});
+  /* background-image: url(${downtown_city_night});
   background-size: cover;
   background-position-x: -2px;
   background-position-y: 70px;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
 `;
 const FadeToBackground = styled.div``;
