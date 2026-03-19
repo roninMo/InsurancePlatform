@@ -13,6 +13,7 @@ import styles from './WelcomeSection.module.scss';
 
 export const WelcomeSection = () => {
   const navigate = useNavigate();
+  const backgroundDimensions = `lg:min-h-[40rem] xl:min-h-[54rem]  2xl:min-h-[40rem]`;
   
   // Modal
   const [navModalOpen, setNavModalOpen] = useState<boolean>(false);
@@ -41,86 +42,80 @@ export const WelcomeSection = () => {
     console.log(`Dev / Prod`);
   }
 
-
   return (
-    <div className='span-12 col w-full' id='welcome-section'>
-      <div className='bg-default w-full pt-24 absolute top-0 left-0
-        min-h-[45rem] xl:min-h-[54rem]  2xl:min-h-[60rem] 
-      '>
-        <Lottie 
-          animationData={BackgroundAnim} 
-          loop={true} 
-          className='w-full h-full'
-          rendererSettings={{
-            preserveAspectRatio: "xMidYMid slice" // This works like "background-size: cover"
-          }}    
-        />
-      </div>
-      <Background className='spacing'>
-        <Overlay className='spacing place-content-center
-          p-8 pt-44 min-h-[45rem] xl:min-h-[54rem]  2xl:min-h-[60rem] 
-          bg-gradient-to-br from-slate-950/80 from-25% via-slate-700/20 via-65% to-transparent
-        '>
-          <div className='span-12 md:span-9 lg:span-7 xl:span-6 2xl:span-6 col items-start gap-2 p-8 pb-14 lg:pb-24 z-10 bg-div outline-css outline-default opacity-bg-60'>
-            
-            {/* Dev / Production Config */}
-            <div className='rowStart gap-4 pt-2'> 
-              <Button displayText="What's new"
-                onClick={() => whatsNewMenu()}
-                size='default'
-                color='none'
-                additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
-              />
+    <div id='welcome-section' className='span-12 col w-full'>
+      <Container className={`spacing place-content-center lg:pt-44 relative`}>
+        <Background className={`home-bg-sm lg:home-bg-lg `}>
+          <Lottie 
+            animationData={BackgroundAnim} 
+            loop={true} 
+            rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }} // This works like "background-size: cover"
+            className={`home-bg-sm-lottie lg:home-bg-lg-lottie`}
+          />
+        </Background>
 
-              <Button displayText='Development 1.0.0'
-                onClick={() => environmentMenu()}
-                size='default'
-                color='none'
-                additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
-              />
-            </div>
+        <Content className={`
+          z-10 span-12 lg:span-7 xl:span-6 2xl:span-6 
+          p-4 md:px-8  pb-14 lg:pb-24 col items-start gap-2 
+        `}>
+          
+          {/* Dev / Production Config */}
+          <div className='rowStart gap-4 pt-2'> 
+            <Button displayText="What's new"
+              onClick={() => whatsNewMenu()}
+              size='default'
+              color='none'
+              additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
+            />
 
-            {/* Introduction and Description */}
-            <h1 className='py-2 text-4xl md:text-5xl lg:text-6xl text-slate-100 dark:text-slate-100 font-semibold text-shadow-lg'>
-              Welcome to my site
-            </h1>
-            <p className='py-2 pb-4 text-xl text-slate-200 dark:text-slate-200 text-shadow-md'>
-              Over the years I've worked with multiple teams to develop and automate production level applications using best practices 
-              and design patterns. I've deployed multiple nationwide projects, helping both take part in designing or recreating modern 
-              versions. And I've enjoyed in helping take part in each team I've been with. I'm always looking for a new opportunity! 
-              Here's some of my current experience shared to you
-            </p>
-
-            <p className='text-lg placeholder-text italic text-slate-300 dark:text-slate-300 text-shadow-md'>
-              Check out some of my side projects here.
-            </p>
-
-            {/* Buttons */}
-            <div className='rowStart gap-4 pt-2'> 
-              <Button displayText='Get Started'
-                onClick={(e) => openNavMenu(e)}
-                size='lg'
-                // color='none'
-                color='primary'
-                additionalStyles='text-base rounded-lg'
-              />
-              <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen}>
-                <div className='col gap-4 w-[50vw] h-[65vh]'>
-                    Modal Component
-                </div>
-              </Modal>
-
-              <Button displayText='Documentation'
-                onClick={() => navigateToDocs()}
-                size='lg'
-                // color='none'
-                color='primary'
-                additionalStyles='text-base rounded-lg'
-              />
-            </div>
+            <Button displayText='Development 1.0.0'
+              onClick={() => environmentMenu()}
+              size='default'
+              color='none'
+              additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
+            />
           </div>
-        </Overlay>
-      </Background>
+
+
+          {/* Introduction and Description */}
+          <h1 className='py-2 text-4xl md:text-5xl lg:text-6xl text-slate-100 dark:text-slate-100 font-semibold text-shadow-lg'>
+            Welcome to my site
+          </h1>
+          <p className='py-2 pb-4 text-xl text-slate-200 dark:text-slate-200 text-shadow-md'>
+            Over the years I've worked with multiple teams to develop and automate production level applications using best practices 
+            and design patterns. I've deployed multiple nationwide projects, helping both take part in designing or recreating modern 
+            versions. And I've enjoyed in helping take part in each team I've been with. I'm always looking for a new opportunity! 
+            Here's some of my current experience shared to you
+          </p>
+
+          <p className='text-lg placeholder-text italic text-slate-300 dark:text-slate-300 text-shadow-md'>
+            Check out some of my side projects here.
+          </p>
+
+
+          {/* Buttons */}
+          <div className='rowStart gap-4 pt-2'> 
+            <Button displayText='Get Started'
+              onClick={(e) => openNavMenu(e)}
+              size='lg'
+              color='primary'
+              additionalStyles='text-base rounded-lg'
+            />
+            <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen}>
+              <div className='col gap-4 w-[50vw] h-[65vh]'>
+                  Modal Component
+              </div>
+            </Modal>
+
+            <Button displayText='Documentation'
+              onClick={() => navigateToDocs()}
+              size='lg'
+              color='primary'
+              additionalStyles='text-base rounded-lg'
+            />
+          </div>
+        </Content>
+      </Container>
 
       {/* <FadeToBackground className='-mt-10 py-14 
         bg-gradient-to-t from-75% to-90% 
@@ -132,13 +127,16 @@ export const WelcomeSection = () => {
 }
 
 // Styled Components
-const Overlay = styled.div``;
-const Background = styled.div`
-  /* background-image: url(${downtown_city_night});
+const Background = styled.div``;
+const Container = styled.div``;
+const Content = styled.div``;
+
+/* 
+  background-image: url(${downtown_city_night});
   background-size: cover;
   background-position-x: -2px;
   background-position-y: 70px;
   background-position: center;
-  background-repeat: no-repeat; */
+  background-repeat: no-repeat; 
 `;
-const FadeToBackground = styled.div``;
+*/

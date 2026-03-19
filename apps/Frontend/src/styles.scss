@@ -335,6 +335,22 @@
   //------------------------------------------//
   // Component Themes                         //
   //------------------------------------------//
+  .home-bg-init {
+    @apply span-12 pt-24 bg-slate-800 dark:bg-slate-800;
+  }
+
+  .home-bg-lg-lottie { @apply w-full h-full -mr-[20vw] -mt-20; }
+  .home-bg-lg { 
+    @apply home-bg-init 
+      absolute top-0 left-0 right-0 bottom-0 
+      row justify-end items-center overflow-hidden; 
+  }
+
+  .home-bg-sm-lottie { @apply w-full; }
+  .home-bg-sm { 
+    @apply home-bg-init; 
+  }
+
 
   // Radio button styles
   .radio-button {
