@@ -58,6 +58,9 @@ import { Icon_LibertyLogo } from "./Companies/LibertyLogo/Icon_LibertyLogo";
 import { Icon_LibertyMutual } from "./Companies/LibertyMutual/Icon_LibertyMutual";
 import { Icon_StateAutoLogo } from "./Companies/StateAutoLogo/Icon_StateAutoLogo";
 import { Icon_StateAuto } from "./Companies/StateAuto/Icon_StateAuto";
+import { Icon_Computer } from "./Default/Computer/Icon_Computer";
+import { Icon_Cloud } from "./Default/Cloud/Icon_Cloud";
+import { Icon_DataDog } from "./Tech/Analytics/DataDog/Icon_DataDog";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
@@ -86,7 +89,9 @@ export type DefaultIconTypes =
   'Calendar' |
   'Checkbox' |
   'Close' |
+  'Cloud' |
   'CodeBracket' |
+  'Computer' |
   'DarkTheme' |
   'Database' |
   'DropdownArrow' |
@@ -120,7 +125,9 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
   if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
   if (variant == 'Close')           return (<Icon_Close styles={iconStyles} />);
+  if (variant == 'Cloud')           return (<Icon_Cloud styles={iconStyles} />);
   if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
+  if (variant == 'Computer')        return (<Icon_Computer styles={iconStyles} />);
   if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
   if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
   if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
@@ -206,7 +213,8 @@ export type TechIconTypes =
   'RxJs' | 'ReactHookForms' | 'Redux' | 'Jest' | 'Playwright' | 'Axios' | 
   'Orleans' | 'ApolloGraphQL' | 'Postgres' | 'MongoDB' | 
 
-  'AWS' | 'Azure' | 'GCP' |
+  'DataDog' |
+  'AWS' | 'Azure' | 'GCP' | 
 
   'AWS CDK' |'Kubernetes' | 'Bamboo' | 'Docker' |
   'CI/CD Pipelines' | 'Azure Devops' | 'Atlassian'
@@ -250,6 +258,7 @@ export const TechIcon = ({ variant, styles = ''}: IconProps) => {
   else if (variant == 'Redux')               Icon = (<Icon_Redux styles={iconStyles} />);
   else if (variant == 'RxJs')                Icon = (<Icon_RxJs styles={iconStyles} />);
   else if (variant == 'Vue')                 Icon = (<Icon_Bue styles={iconStyles} />);
+  else if (variant == 'DataDog')             Icon = (<Icon_DataDog styles={iconStyles} />);
   return Icon;
 }
 

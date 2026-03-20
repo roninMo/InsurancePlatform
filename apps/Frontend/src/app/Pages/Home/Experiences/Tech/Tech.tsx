@@ -1,29 +1,28 @@
+import { Icon, IconTypes } from '@Project/ReactComponents';
 import styles from './Tech.module.scss';
 
 
-export type FrontendFrameworks = 'Angular' | 'React' | 'Vue' | '' ;
-export type BackendFrameworks = '.Net' | 'Express' | 'Node' | 'Ruby';
-export type FrontendTechs = '';
-export type BackendTechs = '';
-export type CloudServiceProviders = 'AWS' | 'Azure' | 'GCP';
-export type AutomationTools = 'AWS CDK' |'Kubernetes' | 'Bamboo' | 'Docker';
-export type AutomationKeywords = 'CI/CD Pipelines' | 'Azure Devops' | 'Atlassian Stack';
-
-export type TechTypes = FrontendFrameworks | BackendFrameworks | FrontendTechs | BackendTechs | CloudServiceProviders | AutomationTools | AutomationKeywords; 
 export interface TechProps {
-  type: TechTypes;
-  description: string;
+  type: IconTypes;
+  label: string;
+  iconStyles?: string;
   additionalStyles?: string;
+  noDiv?: boolean;
 }
 
-export const Tech = ({ type, description, additionalStyles }: TechProps) => {
+export const Tech = ({ type, label, iconStyles, additionalStyles, noDiv }: TechProps) => {
+  const techIconStyles = 'size-6';
 
   return (
-    <div className={`rowStart inline-flex ${additionalStyles}`}>
-      
-      <div>
-
-      </div>
+    <div className={`rowStart items-center inline-flex gap-1 p-2 transition hover:scale-110
+      text-base lg:text-lg font-semibold label-colors ${additionalStyles}`
+    }>
+      <Icon variant={type} styles={iconStyles ? iconStyles : techIconStyles} />
+      { label }
     </div>
   );
+}
+
+export const Dot = () => {
+  return <div className='mx-2 w-2 h-2 mt-[2px] rounded-full bg-slate-100' />;
 }

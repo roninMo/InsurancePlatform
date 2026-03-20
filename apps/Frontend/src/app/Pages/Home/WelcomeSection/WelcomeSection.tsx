@@ -98,7 +98,7 @@ export const WelcomeSection = () => {
             Welcome to my site
           </h1>
           <p className='py-2 pb-4 text-xl text-slate-200 dark:text-slate-200 text-shadow-md'>
-            Over the years I've worked with multiple teams to develop and automate production level applications using best practices 
+            Hello, over the past couple years I've worked with multiple teams to develop and automate production level applications using best practices 
             and design patterns. I've deployed multiple nationwide projects, helping both take part in designing or recreating modern 
             versions. And I've enjoyed in helping take part in each team I've been with. I'm always looking for a new opportunity! 
             Here's some of my current experience shared to you

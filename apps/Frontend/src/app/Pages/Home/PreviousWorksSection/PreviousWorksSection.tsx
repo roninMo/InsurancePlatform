@@ -18,7 +18,7 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
   return (
     <Container id='previous-works-section' className='span-12 lg:span-10 gap-8 gap-x-4 py-8 bg-div mb-4'>
       <div className='child-alignment-fix'>
-        <div className='col gap-4 p-2'>
+        <div className='col p-2 pt-12'>
           <h1 className='py-3 text-4xl text-shadow-sm'>Explore some of my projects and past work experience</h1>
           
           <div className={`height-trans ${activeTab == 'demos' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
@@ -29,7 +29,7 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
               </div>
             </div>
 
-          <div className={`height-trans ${activeTab == 'experience' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+          <div className={`height-trans pb-10 ${activeTab == 'experience' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
               <div className='overflow-hidden text-2xl'>
                 Here's some of the past places I've gotten the pleasure to be a part of.
               </div>
