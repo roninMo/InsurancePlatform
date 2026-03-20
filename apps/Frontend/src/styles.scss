@@ -1,5 +1,6 @@
 @tailwind base;
 @tailwind components;
+@tailwind home;
 @tailwind utilities;
 /* You can add global styles to this file, and also import other style files */
 
@@ -75,9 +76,10 @@
   .bg-disabled { @apply  bg-gray-300  dark:bg-gray-700; }
 
   // Button colors
-  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue; }
-  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue; }
-  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue; }
+  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue;  }
+  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue;  }
+  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue;  }
+  .btn-text         { @apply input-colors; }
 
   .btn-outline-white  { @apply outline-slate-200 dark:outline-slate-200; }
   .btn-outline-blue   { @apply   outline-focus; }
@@ -170,7 +172,7 @@
   /* For containers that need highlighting when selected  */
   .selected-box { 
     @apply 
-      bg-opacity-30 dark:bg-opacity-10
+      bg-opacity-20 dark:bg-opacity-10
     bg-blue-600 dark:bg-blue-500
       outline-focus 
   }
@@ -272,85 +274,17 @@
 
 
 
-  // the scrollbar for dark themes
-  .scrollbar-theme {
-    &::-webkit-scrollbar {
-      width: 0.74rem;
-      background-color: rgb(30 41 59 / var(--tw-bg-opacity));
-    }
-      
-    &::-webkit-scrollbar-track {
-      border-bottom-right-radius: 0.375rem;
-      border-top-right-radius: 0.375rem;
-      background-color: rgb(51 65 85 / var(--tw-bg-opacity));
-      
-    }
-      
-    &::-webkit-scrollbar-thumb {
-      border-radius: 0.375rem;
-      background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
-    }
-  }
-
-  .disable-transitions,
-  .disable-transitions *,
-  .disable-transitions *::before,
-  .disable-transitions *::after {
-    -webkit-transition: none !important;
-    -moz-transition: none !important;
-    -o-transition: none !important;
-    -ms-transition: none !important;
-    transition: none !important;
-  }
-
-
-
 
   //------------------------------------------//
   // Hack for native autofill text color      //
   //------------------------------------------//
-  input:-webkit-autofill, 
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
-  input:-webkit-autofill:active { 
-    -webkit-text-fill-color: theme('colors.slate.800') !important;
-    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; /* The only way to beat FieldText !important is with this infinite hack */
+  // This removes native input backgrounds and lets us customize
+  .autofill-backgrounds {
+    @apply 
+      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
+      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
+    ;
   }
-
-  .dark input:-webkit-autofill, 
-  .dark input:-webkit-autofill:hover, 
-  .dark input:-webkit-autofill:focus, 
-  .dark input:-webkit-autofill:active { 
-    -webkit-text-fill-color: theme('colors.slate.100') !important;
-  }
-
-
-}
-
-
-
-
-/* Project Layers  */
-@layer components {
-  //------------------------------------------//
-  // Component Themes                         //
-  //------------------------------------------//
-  .home-bg-init {
-    @apply span-12 pt-24 bg-slate-800 dark:bg-slate-800;
-  }
-
-  .home-bg-lg-lottie { @apply w-full h-full -mr-[20vw] -mt-20; }
-  .home-bg-lg { 
-    @apply home-bg-init 
-      absolute top-0 left-0 right-0 bottom-0 
-      row justify-end items-center overflow-hidden; 
-  }
-
-  .home-bg-sm-lottie { @apply w-full; }
-  .home-bg-sm { 
-    @apply home-bg-init; 
-  }
-
 
   // Radio button styles
   .radio-button {
@@ -382,7 +316,6 @@
       disabled:checked:bg-slate-200
 
 
-      
       /******************** 
       * Dark Theme        *
       ********************/
@@ -404,21 +337,129 @@
     ;
   }
 
-  .checkmark {
-    // clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  // the scrollbar for dark themes
+  .scrollbar-theme {
+    &::-webkit-scrollbar {
+      width: 0.74rem;
+      background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+    }
+      
+    &::-webkit-scrollbar-track {
+      border-bottom-right-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+      background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+      
+    }
+      
+    &::-webkit-scrollbar-thumb {
+      border-radius: 0.375rem;
+      background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
+    }
   }
 
-  // This removes native backgrounds and lets us customize
-  .autofill-backgrounds {
-    @apply 
-      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
-      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
-    ;
+
+
+
+  //------------------------------------------//
+  // Hack for native autofill text color      //
+  //------------------------------------------//
+  input:-webkit-autofill, 
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.slate.800') !important;
+    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; /* The only way to beat FieldText !important is with this infinite hack */
   }
+
+  .dark input:-webkit-autofill, 
+  .dark input:-webkit-autofill:hover, 
+  .dark input:-webkit-autofill:focus, 
+  .dark input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.slate.100') !important;
+  }
+
 
 }
 
+
+
+
+/* Project and Component Layers  */
+@layer components {
+  //------------------------------------------//
+  // Home Page Themes                         //
+  //------------------------------------------//
+  .home-bg-init {
+    @apply span-12 pt-24 bg-slate-800 dark:bg-slate-800;
+  }
+
+  .home-bg-lg-lottie { @apply w-full h-full -mr-[20vw] -mt-20; }
+  .home-bg-lg { 
+    @apply home-bg-init 
+      absolute top-0 left-0 right-0 bottom-0 
+      row justify-end items-center overflow-hidden; 
+  }
+
+  .home-bg-sm-lottie { @apply w-full; }
+  .home-bg-sm { 
+    @apply home-bg-init; 
+  }
+
+
+
+
+  .project-tab {
+    @apply 
+      py-3 
+      transition cursor-pointer
+      text-xl
+      label-colors hover:primary-text
+
+      border-b-2 border-transparent 
+      hover:border-b-2 active:border-b-2
+      hover:border-blue-500 dark:hover:border-blue-500
+      
+    ;
+  }
+
+  .tab-active {
+    @apply active:border-blue-500 dark:active:border-blue-500;
+  }
+
+
+
+
+  //------------------------------------------//
+  // Components                               //
+  //------------------------------------------//
+
+}
+
+
+
+
+@layer utilities {
+  //------------------------------------------//
+  // Utilities                                //
+  //------------------------------------------//
+  // The grid height transition hack (child div needs overflow:hidden
+  .height-trans {
+    @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for transition
+  
+
+  // Theme transition class
+  .disable-transitions,
+  .disable-transitions *,
+  .disable-transitions *::before,
+  .disable-transitions *::after {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    -ms-transition: none !important;
+    transition: none !important;
+  }
+}
 
 /* Selectors quick ref
   - children of a specific html tag '[&>p]:'

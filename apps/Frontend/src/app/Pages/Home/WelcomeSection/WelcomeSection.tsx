@@ -1,10 +1,10 @@
-import { useState, useId, MouseEvent } from 'react';
+import { useState, useId, MouseEvent, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Button } from '@Project/ReactComponents';
 import { Modal } from '../../../Components/Layouts/Modal/Modal';
 
-import Lottie from "lottie-react";
+import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import BackgroundAnim from "../../../../assets/lottie/Background looping animation.json";
 import downtown_city_night from '../../../../assets/images/downtown_city_night.png';
 import styles from './WelcomeSection.module.scss';
@@ -12,8 +12,23 @@ import styles from './WelcomeSection.module.scss';
 
 
 export const WelcomeSection = () => {
+  const lottieRef = useRef<LottieRefCurrentProps>(null);
   const navigate = useNavigate();
-  const backgroundDimensions = `lg:min-h-[40rem] xl:min-h-[54rem]  2xl:min-h-[40rem]`;
+
+  useEffect(() => {
+    // Resume animation
+    if (lottieRef.current) {
+      lottieRef.current.play();
+    }
+
+    // 2. cleanup for lottie (sometimes it's causing slowness)
+    return () => {
+      if (!lottieRef?.current) return;
+      
+      const animationItem = lottieRef.current as any;
+      animationItem?.destroy(); // Destroys this specific instance
+    };
+  }, [lottieRef]); // Re-runs if animation data changes
   
   // Modal
   const [navModalOpen, setNavModalOpen] = useState<boolean>(false);
@@ -47,7 +62,8 @@ export const WelcomeSection = () => {
       <Container className={`spacing place-content-center lg:pt-44 relative`}>
         <Background className={`home-bg-sm lg:home-bg-lg `}>
           <Lottie 
-            animationData={BackgroundAnim} 
+            lottieRef={lottieRef}
+            animationData={JSON.parse(JSON.stringify(BackgroundAnim))} // this is required 
             loop={true} 
             rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }} // This works like "background-size: cover"
             className={`home-bg-sm-lottie lg:home-bg-lg-lottie`}

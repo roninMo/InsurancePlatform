@@ -30,7 +30,7 @@ export function Button({
       className={` 
         inline-flex items-center 
         shadow-md dark:shadow-none transition 
-        outline-css text-white font-semibold text-nowrap m-auto
+        outline-css font-semibold text-nowrap m-auto
         
         ${  size == 'default' ? 'px-2.5  py-1.5' 
           : size == 'md'      ? 'px-3    py-2 ' 
@@ -39,9 +39,9 @@ export function Button({
           : ''
         } 
 
-        ${  color == 'primary'    ? 'btn-primary'
-          : color == 'gray'       ? 'btn-gray' 
-          : color == 'gray-focus' ? 'btn-gray-focus' 
+        ${  color == 'primary'    ? 'btn-primary text-white'
+          : color == 'gray'       ? 'btn-gray text-black dark:text-white' 
+          : color == 'gray-focus' ? 'btn-gray-focus text-black dark:text-white' 
           : '' 
         } 
 

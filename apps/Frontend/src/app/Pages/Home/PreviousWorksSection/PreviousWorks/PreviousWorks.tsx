@@ -20,21 +20,29 @@ export interface PreviousWorksProps {
   learnMoreContent?: ReactNode;
   backgroundImageUrl: string;
 
+  index?: number;
   additionalStyles?: string;
 }
 
 export const PreviousWorks = ({
   company, title, team, startDate, endDate, languagesAndTech, 
-  content, learnMoreContent, backgroundImageUrl, additionalStyles
+  content, learnMoreContent, backgroundImageUrl, index = 0, additionalStyles, 
 }: PreviousWorksProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>();
 
   return (
-    <div className={`span-12 col gap-2 
-      bg-default outline-css outline-default rounded-lg
-      transition duration-300 hover:scale-105 active:selected-box
-      ${additionalStyles} 
-    `}>
+    <div 
+    className={`col gap-2
+      bg-div outline-css outline-default rounded-lg shadow-lg
+      transition duration-300 
+      
+      opacity-0 animate-fade-in-slow
+      hover:selected-box active:selected-box 
+      hover:scale-105
+
+      ${additionalStyles} `}
+      style={{ animationDelay: `${index * 200}ms` }}
+    >
       {/* Content and Image */}
       <div className='spacing *:span-12 *:lg:span-6'>
 

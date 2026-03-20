@@ -68,7 +68,7 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
         aria-invalid={error ? "true" : "false"}
 
         className={`w-full p-0 h-24 text-base
-          ${type == 'default' && 'bg-div'}
+          ${type == 'default' && 'bg-div placeholder:text-slate-500'}
           ${type == 'box'     && 'h-16'}
           ${type == 'post'    && 'bg-default outline-css outline-styles p-2 pl-4'}
           ${type != 'post' && `
@@ -103,7 +103,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   if (type === 'default') {
     return (
       <div className="w-full flex flex-col gap-2">
-        { label && <h4 className="py-2 placeholder-text font-normal">{ label }</h4> }
+        { label && <h4 className="py-2 text-slate-800 dark:text-slate-500 font-normal">{ label }</h4> }
         <Container className="rowStart gap-2 justify-items-start items-start">
           <Avatar className="bg-div-light rounded-full p-1.5 mt-1">
             <Icon variant='Profile' styles="size-4" />  
@@ -200,7 +200,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
 
     return (
       <Container>
-        { label && <h4 className="py-2 placeholder-text font-normal">{ label }</h4> }
+        { label && <h4 className="py-2 text-slate-800 dark:text-slate-500 font-normal">{ label }</h4> }
 
         <ButtonsAndLinks className="row justify-between items-center py-2">
           <div className="row gap-2">
@@ -269,7 +269,7 @@ const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => 
       `}>
         { error && errorMessage ?
           <div className="error-text">{ errorMessage }</div>
-        : <div className="placeholder-text">{ description }</div>
+        : <div className="text-slate-800 dark:text-slate-500">{ description }</div>
         }
       </ErrorAndDescription>
     } </>

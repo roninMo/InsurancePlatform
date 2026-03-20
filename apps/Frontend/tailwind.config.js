@@ -15,17 +15,14 @@ module.exports = {
     extend: {
       animation: {
         'fade-in': 'fade-in 0.2s ease-out forwards',
+        'fade-in-slow': 'fade-in 0.64s ease-out forwards',
         'fade-out': 'fade-out 0.3s ease-in forwards'
+        
       },
       keyframes: {
-        'fade-in': {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' }
-        },
-        'fade-out': {
-          '0%': { opacity: '1' },
-          '100%': { opacity: '0' }
-        }
+        'fade-in':      { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+        'fade-in-slow': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+        'fade-out':     { '0%': { opacity: '1' }, '100%': { opacity: '0' } }
       }
     },
   },

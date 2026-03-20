@@ -6,39 +6,87 @@ import DemandJump from '../../../../assets/images/Demandjump.jpg';
 import StateAuto from '../../../../assets/images/StateAuto.png';
 import LibertyMutual from '../../../../assets/images/LibertyMutual.png';
 import styles from './PreviousWorksSection.module.scss';
+import { Button, Icon } from '@Project/ReactComponents';
 
 export interface PreviousWorkSectionProps {
   additionalStyles?: string;
 }
 
 export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionProps) => {
+  const [activeTab, setActiveTab] = useState<'demos' | 'experience'>('demos');
   
   return (
-    <Container className='span-12 lg:span-10 gap-8 gap-x-4 p-4 py-8 bg-div mb-4' id='previous-works-section'>
+    <Container id='previous-works-section' className='span-12 lg:span-10 gap-8 gap-x-4 py-8 bg-div mb-4'>
       <div className='child-alignment-fix'>
         <div className='col gap-4 p-2'>
-          <h1 className='py-3 text-5xl text-shadow-sm'>Previous Works</h1>
-          <p className='text-lg'>Here's a list of the past places I've gotten to be a part of</p>
-          <div className='mb-8 border-b border-blue-300 dark:border-slate-600' />
+          <h1 className='py-3 text-4xl text-shadow-sm'>Explore some of my projects and past work experience</h1>
+          
+          <div className={`height-trans ${activeTab == 'demos' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+            <div className='overflow-hidden text-2xl'>
+              Here's a list of demos I've created to test my skills with designing best practices 
+              and challenging tasks deployed here just for you. 
+              From FullStack applications with complex backend logic to random challenging projects, they're all here.
+              </div>
+            </div>
+
+          <div className={`height-trans ${activeTab == 'experience' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+              <div className='overflow-hidden text-2xl'>
+                Here's some of the past places I've gotten the pleasure to be a part of.
+              </div>
+            </div>
         </div>
 
         {/* Previous works */}
-        <div className='spacing justify-center gap-8'>
-          { previousWorks.map((props: PreviousWorksProps, index: number) => 
-            <PreviousWorks 
-              key={`previous-works-${props.title}-${index}`}
-              company={props.company}
-              title={props.title}
-              team={props.team}
-              startDate={props.startDate}
-              endDate={props.endDate}
-              languagesAndTech={props.languagesAndTech}
-              content={props.content}
-              learnMoreContent={props.learnMoreContent}
-              backgroundImageUrl={props.backgroundImageUrl}
-              additionalStyles=''
-            />
-          )}
+        <div className='spacing gap-0 mt-10 p-2 px-4 pt-12 lg:px-6 bg-default rounded-lg shadow-xl'>
+          <div className='span-12 place-self-start row justify-start items-center gap-5 px-2'>
+            <ProjectTab onClick={() => setActiveTab('demos')} className={`project-tab ${activeTab == 'demos' && 'activeTab'}`}>
+              Demos
+            </ProjectTab>
+            <ProjectTab onClick={() => setActiveTab('experience')} className={`project-tab ${activeTab == 'experience' && 'activeTab'}`}>
+              Work Experience
+            </ProjectTab>
+          </div>
+          <div className='span-12 mb-10 border-b border-blue-300 dark:border-slate-600' />
+          
+          { activeTab == 'demos' ?
+            <div className='span-12 col gap-4 pb-5'>
+              { previousWorks.map((props: PreviousWorksProps, index: number) => 
+                <PreviousWorks 
+                  key={`demos-${props.title}-${index}`}
+                  company={props.company}
+                  title={props.title}
+                  team={props.team}
+                  startDate={props.startDate}
+                  endDate={props.endDate}
+                  languagesAndTech={props.languagesAndTech}
+                  content={props.content}
+                  learnMoreContent={props.learnMoreContent}
+                  backgroundImageUrl={props.backgroundImageUrl}
+                  additionalStyles='span-12'
+                  index={index}
+                />
+              )}
+            </div>
+          :
+            <div className='span-12 col gap-4 pb-5'>
+              { previousWorks.map((props: PreviousWorksProps, index: number) => 
+                <PreviousWorks 
+                  key={`previous-works-${props.title}-${index}`}
+                  company={props.company}
+                  title={props.title}
+                  team={props.team}
+                  startDate={props.startDate}
+                  endDate={props.endDate}
+                  languagesAndTech={props.languagesAndTech}
+                  content={props.content}
+                  learnMoreContent={props.learnMoreContent}
+                  backgroundImageUrl={props.backgroundImageUrl}
+                  additionalStyles='span-12'
+                  index={index}
+                />
+              )}
+            </div>
+          }
         </div>
 
       </div>
@@ -48,6 +96,7 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
 
 // Styled components
 const Container = styled.div``;
+const ProjectTab = styled.div``;
 
 
 // Previous works

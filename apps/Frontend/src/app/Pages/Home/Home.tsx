@@ -24,9 +24,6 @@ export const Home = () => {
       <MainContent className='spacing gap-0'>
         <WelcomeSection />
 
-        {/* Fix welcome page background image */}
-        {/* Finish up modal component - closeButtonOption, overlayStyles, etc. */}
-        {/* Add Projects and Work Experience tabs to previous work section - use key animations with anim delay */}
         {/* Add a section for tech and language experience -> header -> frontend/backend/cloud/automation flex-wrap w/ TechIcon components */}
         {/* Finish up the footer links */}
 

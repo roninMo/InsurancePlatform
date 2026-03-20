@@ -54,9 +54,13 @@ import { Icon_Twitter } from "./SocialMedia/Twitter/Icon_Twitter";
 import { Icon_VennDiagram } from "./Default/VennDiagram/VennDiagram";
 import { JSX } from "react";
 import { Icon_Close } from "./Default/Close/Icon_Close";
+import { Icon_LibertyLogo } from "./Companies/LibertyLogo/Icon_LibertyLogo";
+import { Icon_LibertyMutual } from "./Companies/LibertyMutual/Icon_LibertyMutual";
+import { Icon_StateAutoLogo } from "./Companies/StateAutoLogo/Icon_StateAutoLogo";
+import { Icon_StateAuto } from "./Companies/StateAuto/Icon_StateAuto";
 // TODO: LazyLoading
 
-export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes;
+export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
 const defaultIconStyles = `size-5 justify-center self-center`;
 
 // Used in the svg element classes
@@ -144,6 +148,11 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   // Tech Icons
   const techIcon = TechIcon({variant, styles});
   if (techIcon) return techIcon;
+  
+  // Company Icons
+  const companyIcon = CompanyIcon({variant, styles});
+  if (companyIcon) return companyIcon;
+  
 
   return (<></>);
 }
@@ -209,40 +218,51 @@ export const TechIcon = ({ variant, styles = ''}: IconProps) => {
 
   // Automation
   if (variant == 'Atlassian')           Icon = (<Icon_Atlassian styles={iconStyles} />);
-  if (variant == 'AWS CDK')             Icon = (<Icon_AwsCdk styles={iconStyles} />);
-  if (variant == 'Azure Devops')        Icon = (<Icon_AzureDevops styles={iconStyles} />);
-  if (variant == 'Bamboo')              Icon = (<Icon_Bamboo styles={iconStyles} />);
-  if (variant == 'CI/CD Pipelines')     Icon = (<Icon_Database styles={iconStyles} />);
-  if (variant == 'Docker')              Icon = (<Icon_Docker styles={iconStyles} />);
-  if (variant == 'Kubernetes')          Icon = (<Icon_Kubernetes styles={iconStyles} />);
+  else if (variant == 'AWS CDK')             Icon = (<Icon_AwsCdk styles={iconStyles} />);
+  else if (variant == 'Azure Devops')        Icon = (<Icon_AzureDevops styles={iconStyles} />);
+  else if (variant == 'Bamboo')              Icon = (<Icon_Bamboo styles={iconStyles} />);
+  else if (variant == 'CI/CD Pipelines')     Icon = (<Icon_Database styles={iconStyles} />);
+  else if (variant == 'Docker')              Icon = (<Icon_Docker styles={iconStyles} />);
+  else if (variant == 'Kubernetes')          Icon = (<Icon_Kubernetes styles={iconStyles} />);
   
   // Backend
-  if (variant == 'ApolloGraphQL')       Icon = (<Icon_ApolloGraphQl styles={iconStyles} />);
-  if (variant == 'Express')             Icon = (<Icon_Express styles={iconStyles} />);
-  if (variant == 'MongoDB')             Icon = (<Icon_Mongo styles={iconStyles} />);
-  if (variant == 'Net')                 Icon = (<Icon_Net styles={iconStyles} />);
-  if (variant == 'Node')                Icon = (<Icon_Node styles={iconStyles} />);
-  if (variant == 'Orleans')             Icon = (<Icon_Orleans styles={iconStyles} />);
-  if (variant == 'Postgres')            Icon = (<Icon_Postgres styles={iconStyles} />);
+  else if (variant == 'ApolloGraphQL')       Icon = (<Icon_ApolloGraphQl styles={iconStyles} />);
+  else if (variant == 'Express')             Icon = (<Icon_Express styles={iconStyles} />);
+  else if (variant == 'MongoDB')             Icon = (<Icon_Mongo styles={iconStyles} />);
+  else if (variant == 'Net')                 Icon = (<Icon_Net styles={iconStyles} />);
+  else if (variant == 'Node')                Icon = (<Icon_Node styles={iconStyles} />);
+  else if (variant == 'Orleans')             Icon = (<Icon_Orleans styles={iconStyles} />);
+  else if (variant == 'Postgres')            Icon = (<Icon_Postgres styles={iconStyles} />);
 
   // CLoud
-  if (variant == 'AWS')                 Icon = (<Icon_AWS styles={iconStyles} />);
-  if (variant == 'Azure')               Icon = (<Icon_Azure styles={iconStyles} />);
-  if (variant == 'GCP')                 Icon = (<Icon_GCP styles={iconStyles} />);
+  else if (variant == 'AWS')                 Icon = (<Icon_AWS styles={iconStyles} />);
+  else if (variant == 'Azure')               Icon = (<Icon_Azure styles={iconStyles} />);
+  else if (variant == 'GCP')                 Icon = (<Icon_GCP styles={iconStyles} />);
 
   // Frontend
-  if (variant == 'Angular')             Icon = (<Icon_Angular styles={iconStyles} />);
-  if (variant == 'Axios')               Icon = (<Icon_Axios styles={iconStyles} />);
-  if (variant == 'Jest')                Icon = (<Icon_Jest styles={iconStyles} />);
-  if (variant == 'Playwright')          Icon = (<Icon_Playwright styles={iconStyles} />);
-  if (variant == 'ReactHookForms')      Icon = (<Icon_ReactHookForms styles={iconStyles} />);
-  if (variant == 'React')               Icon = (<Icon_React styles={iconStyles} />);
+  else if (variant == 'Angular')             Icon = (<Icon_Angular styles={iconStyles} />);
+  else if (variant == 'Axios')               Icon = (<Icon_Axios styles={iconStyles} />);
+  else if (variant == 'Jest')                Icon = (<Icon_Jest styles={iconStyles} />);
+  else if (variant == 'Playwright')          Icon = (<Icon_Playwright styles={iconStyles} />);
+  else if (variant == 'ReactHookForms')      Icon = (<Icon_ReactHookForms styles={iconStyles} />);
+  else if (variant == 'React')               Icon = (<Icon_React styles={iconStyles} />);
 
-  if (variant == 'Redux')               Icon = (<Icon_Redux styles={iconStyles} />);
-  if (variant == 'RxJs')                Icon = (<Icon_RxJs styles={iconStyles} />);
-  if (variant == 'Vue')                 Icon = (<Icon_Bue styles={iconStyles} />);
+  else if (variant == 'Redux')               Icon = (<Icon_Redux styles={iconStyles} />);
+  else if (variant == 'RxJs')                Icon = (<Icon_RxJs styles={iconStyles} />);
+  else if (variant == 'Vue')                 Icon = (<Icon_Bue styles={iconStyles} />);
   return Icon;
 }
 
 
 
+export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo';
+export const CompanyIcon = ({ variant, styles = ''}: IconProps) => {
+  const iconStyles = styles ? styles : defaultIconStyles;
+  let Icon: JSX.Element | undefined = undefined;
+
+  if (variant == 'LibertyLogo')              Icon = (<Icon_LibertyLogo styles={iconStyles} />);
+  else if (variant == 'LibertyMutual')       Icon = (<Icon_LibertyMutual styles={iconStyles} />);
+  else if (variant == 'StateAuto')           Icon = (<Icon_StateAuto styles={iconStyles} />);
+  else if (variant == 'StateAutoLogo')       Icon = (<Icon_StateAutoLogo styles={iconStyles} />);
+  return Icon;
+}
