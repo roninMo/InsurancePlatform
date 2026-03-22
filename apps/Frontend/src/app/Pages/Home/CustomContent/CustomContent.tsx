@@ -685,12 +685,7 @@ export const CustomContent = () => {
       </div>
 
 
-      <div className='pb-96'></div>
-      <div className='pb-96'></div>
-      <div className='pb-96'></div>
-      <div className='pb-96'></div>
-      <div className='pb-96'></div>
-      <div className='pb-96'></div>
+      <div className='pb-24'></div>
     </>
   );
 }

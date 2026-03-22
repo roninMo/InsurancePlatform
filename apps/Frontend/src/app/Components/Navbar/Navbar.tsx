@@ -55,7 +55,7 @@ export const Navbar = ({}: NavbarProps) => {
 
 
   return (
-    <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-2xl'>
+    <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-xl'>
         <div className='w-full row justify-between items-center relative z-10 bg-div px-3'>
 
           <div id='NavLinks' className='NavLinks rowStart items-center gap-8'>
@@ -104,7 +104,7 @@ export const Navbar = ({}: NavbarProps) => {
         <Dropdown id='navbar-dropdown' className={`absolute w-full h-10 
           bg-div border-styles border-b transition duration-300 ease-in-out
           row items-center -translate-y-12 opacity-0
-          ${showDropdown && 'translate-y-0 opacity-100'} shadow-2xl
+          ${showDropdown && 'translate-y-0 opacity-100'} shadow-xl
         `}>
           Navbar dropdown
         </Dropdown>

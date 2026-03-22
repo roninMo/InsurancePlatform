@@ -427,6 +427,22 @@
   }
 
 
+  //------------------------------------------//
+  // Footer Page Themes                       //
+  //------------------------------------------//
+  .footer-link-styles {
+    @apply 
+    hover:primary-text active:link-text 
+    text-base cursor-pointer transition;
+  }
+
+  .footer-link-header {
+    @apply footer-link-styles label-colors;
+  }
+
+  .footer-link { 
+    @apply footer-link-styles text-colors;
+  }
 
 
   //------------------------------------------//

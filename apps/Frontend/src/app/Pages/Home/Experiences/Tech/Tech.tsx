@@ -24,5 +24,5 @@ export const Tech = ({ type, label, iconStyles, additionalStyles, noDiv }: TechP
 }
 
 export const Dot = () => {
-  return <div className='mx-2 w-2 h-2 mt-[2px] rounded-full bg-slate-100' />;
+  return <div className='mx-2 w-2 h-2 mt-[2px] rounded-full bg-slate-950 dark:bg-slate-100' />;
 }

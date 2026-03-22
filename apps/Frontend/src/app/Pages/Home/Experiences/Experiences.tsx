@@ -10,19 +10,19 @@ export const Experiences =() => {
 
 
   return (
-    <div className='span-12 p-4 col gap-2 items-center bg-div'>
+    <div id="experiences-section" className='span-12 p-4 col gap-2 items-center bg-div'>
       <div className='w-full pt-12'>
         <div className='mx-6 border-styles border-b ' />
       </div>
 
-      <Content className='col gap-2 pt-14 xl:w-8/12'>
+      <Content className='col gap-2 pt-14 md:w-11/12 xl:w-8/12'>
         <label className='header-colors text-3xl lg:text-5xl text-shadow-lg'>
           Tech and Language Experience
         </label>
 
-        <div className='py-8 text-colors text-xl lg:text-xl w-4/6'>
+        <div className='py-8 text-colors text-xl lg:text-xl md:w-4/6'>
           I've worked with a variety of stacks and languages and have a solid understanding of the concepts and 
-          best practices for creating clean and reliable code. Here's a list of what I've built with my previous teams
+          best practices for creating clean and reliable code. Here's a list of just what I've built with my previous teams
         </div>
 
         <div className='col gap-2 pb-4 *:py-4 *:col *:gap-2'>
@@ -35,10 +35,10 @@ export const Experiences =() => {
               Frontend Languages and Frameworks
             </Header>
 
-            <Description className='text-base lg:text-xl'>
-              Description
+            <Description className='text-base lg:text-xl md:w-4/6'>
+              Design patterns, State Management, Monitoring, Security, Authorization, Deployment, Unit Testing, E2E
             </Description>
-            <Languages className='py-2 rowStart items-center flex-wrap text-center w-4/6'>
+            <Languages className='py-2 rowStart items-center flex-wrap text-center md:w-4/6'>
               <Tech type="React" label='React' /> <Dot />
               <Tech type="Angular" label='Angular' /> <Dot />
               <Tech type="Vue" label='Vue' /> <Dot />
@@ -62,10 +62,10 @@ export const Experiences =() => {
               Backend and Database Architecture
             </Header>
 
-            <Description className='text-base lg:text-xl'>
-              Description
+            <Description className='text-base lg:text-xl md:w-4/6'>
+              Infrastructure, Api and Controllers, Routing, Authorization, Version Control, Caching, Monitoring, Testing
             </Description>
-            <Languages className='py-2 rowStart items-center flex-wrap text-center w-4/6'>
+            <Languages className='py-2 rowStart items-center flex-wrap text-center md:w-4/6'>
               <Tech type="Express" label='Express' /> <Dot />
               <Tech type="Net" label='Net' /> <Dot />
               <Tech type="Node" label='Node' /> <Dot />
@@ -86,12 +86,12 @@ export const Experiences =() => {
               Devops and Automated Deployment
             </Header>
 
-            <Description className='text-base lg:text-xl'>
-              Description
+            <Description className='text-base lg:text-xl md:w-4/6'>
+              IaC, CI/CD, Observability and Monitoring, Cloud, everything DevOps
             </Description>
-            <Languages className='py-2 rowStart items-center flex-wrap text-center w-4/6'>
-              <Tech type="AWS" label='AWS' /> <Dot />
+            <Languages className='py-2 rowStart items-center flex-wrap text-center md:w-4/6'>
               <Tech type="Azure" label='Azure' /> <Dot />
+              <Tech type="AWS" label='AWS' /> <Dot />
               <Tech type="GCP" label='Google Cloud Platform' /> <Dot />
 
               <Tech type="AWS CDK" label='AWS CDK' /> <Dot />

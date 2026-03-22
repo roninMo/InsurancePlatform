@@ -1,16 +1,20 @@
 import { Button, Icon } from '@Project/ReactComponents';
 import styles from './Footer.module.scss';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import { NavigateOptions, useNavigate } from 'react-router-dom';
 
 
 export const Footer = () => {
   const navigate = useNavigate();
 
-  const navigateTo = (url: string) => {
+  const navigateTo = (url: string, type: 'router' | 'page' = 'router', opts?: NavigateOptions) => {
     if (!url) return;
 
-
+    if (type == 'router') {
+      navigate(url, opts);
+    } else if (type == 'page') {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   }
 
   return (
@@ -22,43 +26,63 @@ export const Footer = () => {
         </div>
 
         <FooterLinks className='row justify-between px-8 lg:px-12 p-4 
-          *:col *:gap-6 *:pr-0 *:lg:pr-24 [&_p]:text-base [&_label]:text-base [&_p]:cursor-pointer [&_p]:transition'
+          *:col *:gap-6 *:pr-0 *:lg:pr-24'
         >
           <div>
-            <label>Home</label>
-            <p className='hover:primary-text active:link-text'>Welcome</p>
-            <p className='hover:primary-text active:link-text'>Previous Works</p>
-            <p className='hover:primary-text active:link-text'>Experience</p>
-            <p className='hover:primary-text active:link-text'>Resume</p>
+            <label onClick={() => navigateTo('/', 'router')} className='footer-link-header'>
+              Home
+            </label>
+            <p className='footer-link'
+                onClick={() => navigateTo('/', 'router', { state: { targetId: 'welcome-section'}})} >
+              Welcome
+            </p>
+            <p className='footer-link'
+                onClick={() => navigateTo('/', 'router', { state: { targetId: 'previous-works-section'}})} >
+              Previous Works
+            </p>
+            <p className='footer-link'
+                onClick={() => navigateTo('/', 'router',  { state: { targetId: 'experiences-section'}})} >
+              Experience
+            </p>
+            <p className='footer-link'
+                onClick={() => navigateTo('/', 'page')} >
+              Resume
+            </p>
           </div>
           
           <div>
-            <label>Demos</label>
-            <p className='hover:primary-text active:link-text'>Insurance Application</p>
-            <p className='hover:primary-text active:link-text'>Spotify Demo</p>
-            <p className='hover:primary-text active:link-text'>Mock Database</p>
-            <p className='hover:primary-text active:link-text'>ServerSide Autosave Demo</p>
+            <label onClick={() => navigateTo('/Demos', 'router')} className='footer-link-header'>
+              Demos
+            </label>
+            <p onClick={() => navigateTo('/Demos/', 'router')} className='footer-link'>Insurance Application</p>
+            <p onClick={() => navigateTo('/Demos/', 'router')} className='footer-link'>Spotify Demo</p>
+            <p onClick={() => navigateTo('/MockDatabase', 'router')} className='footer-link'>Mock Database</p>
+            <p onClick={() => navigateTo('/Demos/', 'router')} className='footer-link'>ServerSide Autosave Demo</p>
           </div>
           
           <div>
-            <label>Documentation</label>
-            <p className='hover:primary-text active:link-text'>Forms</p>
-            <p className='hover:primary-text active:link-text'>Components</p>
-            <p className='hover:primary-text active:link-text'>Presentation</p>
+            <label onClick={() => navigateTo('/Documentation', 'router')} className='footer-link-header'>
+              Documentation
+            </label>
+            <p onClick={() => navigateTo('/Documentation', 'router')} className='footer-link'>Forms</p>
+            <p onClick={() => navigateTo('/Documentation', 'router')} className='footer-link'>Components</p>
+            <p onClick={() => navigateTo('/Documentation', 'router')} className='footer-link'>Presentation</p>
           </div>
 
           <div>
-            <label>Contact</label>
-            <p className='hover:primary-text active:link-text'>Email</p>
-            <p className='hover:primary-text active:link-text'>Phone</p>
-            <p className='hover:primary-text active:link-text'>Social Media</p>
-            <p className='hover:primary-text active:link-text'>Page</p>
+            <label onClick={() => navigateTo('/Contact', 'router')} className='footer-link-header'>
+              Contact
+            </label>
+            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Email</p>
+            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Phone</p>
+            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Social Media</p>
+            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Page</p>
           </div>
         </FooterLinks>
       </FooterSection>
       
       <HorizontalBorder className='pt-10 mx-8 span-12 border-styles border-b ' />
-      <LLCSection className='p-4 px-8 pb-32 span-12 row justify-between items-center '>
+      <LLCSection className='p-4 px-8 pb-10 span-12 row justify-between items-center '>
         <p className=''>
           © 2024 Your Company, Inc. All rights reserved.
         </p>

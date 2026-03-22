@@ -1,5 +1,6 @@
 import { Navbar } from '../../Components/Navbar/Navbar';
 import { CustomContent } from '../Home/CustomContent/CustomContent';
+import { Footer } from '../Home/Footer/Footer';
 import styles from './Documentation.module.scss';
 
 export const Documentation =() => {
@@ -12,6 +13,8 @@ export const Documentation =() => {
       <div className='spacing gap-4 p-4'>
         <CustomContent />
       </div>
+
+      <Footer />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../../Components/Navbar/Navbar";
 import styles from './Demos.module.scss';
+import { Footer } from "../Home/Footer/Footer";
 
 export const Demos =() => {
   return (
@@ -14,6 +15,9 @@ export const Demos =() => {
 
         <Outlet />
       </div>
+      
+      <div className="py-96" />
+      <Footer />
     </>
   );
 }
