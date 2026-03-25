@@ -26,7 +26,7 @@
   .placeholder-text { @apply text-slate-400 dark:text-slate-500; }
   .disabled-text    { @apply text-gray-500  dark:text-gray-400; }
   .warning-text     { @apply text-amber-500 dark:text-amber-400; }
-  .error-text       { @apply text-red-600   dark:text-red-500; }
+  .error-text       { @apply text-red-700   dark:text-red-500; }
 
   .primary-text     { @apply text-blue-500 dark:text-blue-500; }
   .link-text {
@@ -114,7 +114,7 @@
   .outline-default  { @apply outline-blue-300   dark:outline-slate-700; }
   .outline-focus    { @apply outline-blue-500   dark:outline-indigo-500; }
   .outline-warning  { @apply outline-amber-500  dark:outline-amber-400; }
-  .outline-error    { @apply outline-red-400    dark:outline-red-500; }
+  .outline-error    { @apply outline-red-500    dark:outline-red-600; }
 
   // Border styles
   .border-styles    { @apply border-default focus:border-focus; }

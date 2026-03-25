@@ -20,6 +20,7 @@ export interface TextareaProps {
   metadataTags?: MetadataTagProps[] | boolean;
   onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   submitButtonText?: string;
+  submitButtonDisabled?: boolean;
 
   error?: boolean;
   errorMessage?: string | null;
@@ -42,7 +43,8 @@ export interface MetadataTagProps {
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
   const { type = 'default', name, value, placeholder, id, metadataTags,
-    onSubmit, submitButtonText, error = false, errorMessage, required, disabled,
+    error = false, errorMessage, required, disabled,
+    onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     aria, ...props
   } = allProps;
@@ -84,8 +86,10 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
 
 
 export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
-  const { type = 'default', name, label, description, value, placeholder, id, metadataTags, onAttachFile, 
-    onSubmit, submitButtonText, error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
+  const { type = 'default', name, label, description, value, placeholder, id, 
+    metadataTags, onAttachFile, tooltip = false, tooltipText,
+    error = false, errorMessage, required = false, disabled = false, 
+    onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     aria, ...props
   } = allProps;
@@ -153,7 +157,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   //--------------------------------//
   else if (type == 'box') {
     return (<>
-      <Container className="col bg-default outline-css outline-styles rounded-lg w-full">
+      <Container className={`col bg-default outline-css rounded-lg w-full ${error ? 'outline-error' : 'outline-styles'}`}>
         { label && <h4 className="p-4 text-colors font-normal">{ label }</h4> }
         
         <div className="pl-4">
@@ -173,12 +177,14 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
           </div>
 
           <div className="margin-auto-div-fix">
-            <Button 
-              displayText={submitButtonText ? submitButtonText : 'Create'} 
-              onClick={e => onSubmit && onSubmit(e)} 
-              size="default" 
-              additionalStyles="px-3" 
-            />
+            { !submitButtonDisabled && 
+              <Button 
+                displayText={submitButtonText ? submitButtonText : 'Create'} 
+                onClick={e => onSubmit && onSubmit(e)} 
+                size="default" 
+                additionalStyles="px-3" 
+              />
+            }
           </div>
         </ButtonsAndLinks>
       </Container>

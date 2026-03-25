@@ -6,7 +6,6 @@ import { defaultBoxMetadataTags, Textarea } from '../../../Components/Forms/Text
 import styles from './ContactUsSection.module.scss';
 import { TechIcon } from '../../../../../../../libraries/ReactComponents/src/Common/Icons/Icon';
 
-
 export const ContactUsSection = () => {
   // LinkedIn, phone, and email information 
   const linkedInProfileLink = 'https://www.linkedin.com/in/kieran-schwegman/';
@@ -23,31 +22,29 @@ export const ContactUsSection = () => {
   const [phone, setPhone] = useState<string>('');
   const [message, setMessage] = useState<string>('');
 
-  const updateValue = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, setState: Dispatch<SetStateAction<string>>) => {
+  const updateValue = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, 
+    setState: Dispatch<SetStateAction<string>>,
+    type: ContactInputTypes
+  ) => {
     if (!setState) return;
 
     const value = e?.target?.value;
     setState(value);
+    checkAndValidate(type, value);
   }
 
   // onSubmit
-  const [submitError, setSubmitError] = useState<boolean>(false);
-  const [messageErrorText, setMessageErrorText] = useState<string>("");
   const onSubmit = () => {
-    // Error handling
-    if (!firstName || !lastName || !email || !message) {
-      setSubmitError(true);
-      
-      // Hacky until react hook forms
-      if (!firstName)     setMessageErrorText("First name is required.");
-      else if (!lastName) setMessageErrorText("Last name is required.");
-      else if (!email)    setMessageErrorText("Email is required.");
-      else if (!message)  setMessageErrorText("Don't forget to type a message!");
-      return;
-    }
-
-    setSubmitError(false);
-    setMessageErrorText("");
+    const validations: Partial<Record<ContactInputTypes, Validation | null>> = {};
+    // Error handling - Hacky until react hook forms
+    validations.firstName = checkValidity('firstName', firstName);
+    validations.lastName = checkValidity('lastName', lastName);
+    validations.email = checkValidity('email', email);
+    validations.phone = checkValidity('phone', phone);
+    validations.message = checkValidity('message', message);
+    setErrors(validations);
+    console.log('validations: ', validations);
 
     // TODO: create email
     const recipient = myEmail;
@@ -55,16 +52,36 @@ export const ContactUsSection = () => {
     const baseComposeUrl = 'https://mail.google.com/mail/?view=cm&fs=1';
     const gmailLink = `${baseComposeUrl}&to=${recipient}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
 
-    window.open(gmailLink, '_blank', 'noopener,noreferrer');
-    // console.log('urls: ', gmailLink);
-    /*
-
-  https://mail.google.com/mail/?view=cm&fs=1&to=kschwegman1@gmail.com&su=jobApp&body=MessageHere
-
-
-    */
+    // window.open(gmailLink, '_blank', 'noopener,noreferrer'); // new tab / Safe, NoHTTP Referrer
   }
   
+  // #region Quick Validation Errors
+  const [errors, setErrors] = useState<Record<string, Validation | null>>({});
+  const checkValidity = (type: ContactInputTypes, value: string): Validation | null => {
+    let validation: Validation | null = null;
+    if (type == 'firstName')  validation = value ? null : { error: true, message: 'First name is required.'}; 
+    if (type == 'lastName')   validation = value ? null : { error: true, message: 'Last name is required.'}; 
+    if (type == 'email')      validation = value ? null : { error: true, message: 'Email is required.'}; 
+    if (type == 'phone')      validation = value ? null : { error: true, message: 'Phone number is required.'}; 
+    if (type == 'message')    validation = value ? null : { error: true, message: "Don't forget to type a message!"}; 
+    // console.log('CheckValidity: ', type, validation);
+    return validation;
+  }
+
+  const setError = (error: Validation | null, type: ContactInputTypes) => {
+    if (type == 'firstName') setErrors(prevValue => ({...prevValue, firstName: error}));
+    if (type == 'lastName') setErrors(prevValue => ({...prevValue, lastName: error}));
+    if (type == 'email') setErrors(prevValue => ({...prevValue, email: error}));
+    if (type == 'phone') setErrors(prevValue => ({...prevValue, phone: error}));
+    if (type == 'message') setErrors(prevValue => ({...prevValue, message: error}));
+  }
+
+  const checkAndValidate = (type: ContactInputTypes, value: string) => {
+    const validation: Validation | null = checkValidity(type, value);
+    setError(validation, type);
+  }
+  
+  //#endregion
 
   return (
     <div className='spacing bg-div' id='contact-us'>
@@ -126,11 +143,11 @@ export const ContactUsSection = () => {
               label="First Name"
               placeholder="Your first name"
               value={firstName}
-              onChange={(e) => updateValue(e, setFirstName)}
+              onChange={(e) => updateValue(e, setFirstName, 'firstName')}
 
               required={false}
-              error={false}
-              errorMessage={""}
+              error={errors?.firstName?.error}
+              errorMessage={errors?.firstName?.message}
 
               id="ContactUs-FirstName"
               name="ContactUs-FirstName"
@@ -144,11 +161,11 @@ export const ContactUsSection = () => {
               label="Last Name"
               placeholder="Your last name"
               value={lastName}
-              onChange={(e) => updateValue(e, setLastName)}
+              onChange={(e) => updateValue(e, setLastName, 'lastName')}
 
               required={false}
-              error={false}
-              errorMessage={""}
+              error={errors?.lastName?.error}
+              errorMessage={errors?.lastName?.message}
 
               id="ContactUs-LastName"
               name="ContactUs-LastName"
@@ -162,11 +179,11 @@ export const ContactUsSection = () => {
               label="Email"
               placeholder="Your email"
               value={email}
-              onChange={(e) => updateValue(e, setEmail)}
+              onChange={(e) => updateValue(e, setEmail, 'email')}
 
               required={false}
-              error={false}
-              errorMessage={""}
+              error={errors?.email?.error}
+              errorMessage={errors?.email?.message}
 
               id="ContactUs-Email"
               name="ContactUs-Email"
@@ -180,11 +197,11 @@ export const ContactUsSection = () => {
               label="Phone Number"
               placeholder="Your phone number"
               value={phone}
-              onChange={(e) => updateValue(e, setPhone)}
+              onChange={(e) => updateValue(e, setPhone, 'phone')}
 
               required={false}
-              error={false}
-              errorMessage={""}
+              error={errors?.phone?.error}
+              errorMessage={errors?.phone?.message}
 
               id="ContactUs-Email"
               name="ContactUs-Email"
@@ -199,7 +216,7 @@ export const ContactUsSection = () => {
               name="ContactUs-Message"
               label="Email to schwegmank@gmail.com"
               value={message}
-              onChange={(e) => updateValue(e, setMessage)}
+              onChange={(e) => updateValue(e, setMessage, 'message')}
               placeholder="Enter text here..."
               description="Shoot me a message, I'll get back to you soon"
               // onAttachFile={() => {}}
@@ -207,8 +224,8 @@ export const ContactUsSection = () => {
             
               onSubmit={(e) => onSubmit()}
               submitButtonText="Submit"
-              // error={messageError}
-              // errorMessage={messageErrorText}
+              error={errors?.message?.error}
+              errorMessage={errors?.message?.message}
             
               // disabled={messageDisabled}
               // required={messageRequired}
@@ -229,3 +246,9 @@ export const ContactUsSection = () => {
 const ContactSection = styled.div``;
 const ContactOptions = styled.div``;
 const FormSection = styled.div``;
+
+type ContactInputTypes = 'firstName' | 'lastName' | 'email' | 'phone' | 'message';
+interface Validation {
+  error: boolean;
+  message?: string;
+}
