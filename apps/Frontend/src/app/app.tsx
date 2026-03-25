@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider, ScrollRestoration, useLocation } from 'react-router-dom';
 import { router } from './routes';
 
 import axios from 'axios';
@@ -27,6 +27,7 @@ export function App() {
   const [userTokenInformation, setUserTokenInformation] = useState<UserTokenInformation | null>(null);
   const [accessToken, setAccessToken] = useState<string>();
 
+  // Authentication
   useEffect(() => {
     // Retrieve login information
     if (!accessToken || !userTokenInformation) {

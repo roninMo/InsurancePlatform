@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavigateOptions, useNavigate } from 'react-router-dom';
+import { NavigateOptions, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
@@ -9,11 +9,16 @@ import styles from './Navbar.module.scss';
 export interface NavbarProps {}
 
 export const Navbar = ({}: NavbarProps) => {
-  const [currentTheme, setCurrentTheme] = useState<string>(localStorage.getItem('theme') || '');
   const navigate = useNavigate();
 
+  // Handles the current theme that's rendered from the page via user preference and localStorage
+  const [currentTheme, setCurrentTheme] = useState<string>(localStorage.getItem('theme') || '');
+
+  // Scroll behavior logic
+  const { hash } = useLocation();
+
+  // Initialize the Theme and display settings
   useEffect(() => {
-    // Initialize the Theme and display settings
     if (!currentTheme) {
       const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       localStorage.setItem('theme', userPreferenceTheme);
@@ -42,6 +47,20 @@ export const Navbar = ({}: NavbarProps) => {
     setCurrentTheme(newTheme);
   }
 
+  // React Router Hash Link ScrollRestoration Logic when navigate is used with an id
+  useEffect(() => {
+    if (hash) {
+      // Ensure the page is loaded before we try to scroll
+      const timeout = setTimeout(() => {
+        const id = hash.replace("#", "");
+        const element = document.getElementById(id);
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }, 10);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [hash]);
+
   const onNavigate = (url: string, opts?: NavigateOptions) => {
     if (!url) return;
     navigate(url, opts);
@@ -56,6 +75,7 @@ export const Navbar = ({}: NavbarProps) => {
 
   return (
     <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-xl'>
+        {/* <ScrollRestoration /> */} {/* This is for instant scroll behavior */}
         <div className='w-full row justify-between items-center relative z-10 bg-div px-3'>
 
           <div id='NavLinks' className='NavLinks rowStart items-center gap-8'>

@@ -33,15 +33,15 @@ export const Footer = () => {
               Home
             </label>
             <p className='footer-link'
-                onClick={() => navigateTo('/', 'router', { state: { targetId: 'welcome-section'}})} >
+                onClick={() => navigateTo('/#welcome-section', 'router')} >
               Welcome
             </p>
             <p className='footer-link'
-                onClick={() => navigateTo('/', 'router', { state: { targetId: 'previous-works-section'}})} >
+                onClick={() => navigateTo('/#previous-works-section', 'router')} >
               Previous Works
             </p>
             <p className='footer-link'
-                onClick={() => navigateTo('/', 'router',  { state: { targetId: 'experiences-section'}})} >
+                onClick={() => navigateTo('/#experiences-section', 'router')} >
               Experience
             </p>
             <p className='footer-link'
