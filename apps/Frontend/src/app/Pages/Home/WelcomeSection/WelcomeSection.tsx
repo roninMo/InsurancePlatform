@@ -1,7 +1,7 @@
-import { useState, useId, MouseEvent, useRef, useEffect } from 'react';
+import { useState, useId, MouseEvent, useRef, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { Button } from '@Project/ReactComponents';
+import { Button, Icon, IconTypes } from '@Project/ReactComponents';
 import { Modal } from '../../../Components/Utils/Modal/Modal';
 
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
@@ -119,8 +119,10 @@ export const WelcomeSection = () => {
               additionalStyles='text-base rounded-lg'
             />
             <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen}>
-              <div className='col gap-4 w-[50vw] h-[65vh]'>
+              <div className='col gap-4 w-[70vw] h-[65vh]'>
                   Modal Component
+
+
               </div>
             </Modal>
 
@@ -141,6 +143,47 @@ export const WelcomeSection = () => {
       ' /> */}
     </div>
   );
+}
+
+
+type Status = 'Error' | 'Loading' | 'Ok';
+export interface DropdownProps {
+  label: string;
+  styles?: string;
+  icon?: IconTypes;
+  iconStyles?: string;
+  children: ReactNode;
+}
+
+export const Dropdown = ({ label, styles, icon, iconStyles, children }: DropdownProps) => {
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [initialVisuals, setInitialVisuals] = useState<Record<string, Status>>({});
+
+  return (
+    <div className='col gap-2 w-full'>
+      <Header className="w-full rowStart gap-2">
+        <Icon variant={icon ? icon : 'DropdownArrow'} styles={iconStyles ? iconStyles : 'dropdown-icon'} />
+        <p className={styles ? styles : 'text-2xl header-colors font-medium'}>
+          { label }
+        </p>
+      </Header>
+
+      <Container className={`height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className='height-trans-content'>
+          { children }
+        </div>
+      </Container>
+    </div>
+  );
+}
+
+
+// Styled Components
+const Header = styled.div``;
+const Container = styled.div``;
+
+export const QuickLink = () => {
+
 }
 
 // Styled Components

@@ -58,7 +58,7 @@ export const Navbar = ({}: NavbarProps) => {
   //------------------------------------------------------------------------------------//
   useEffect(() => {
     const didNavigate = state?.fromNavigate;
-    console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
+    // console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
 
     if (didNavigate) {
       const scrollOpts: ScrollIntoViewOptions = { behavior: 'smooth' }

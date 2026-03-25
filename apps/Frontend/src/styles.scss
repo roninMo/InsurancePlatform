@@ -447,7 +447,15 @@
   //------------------------------------------//
   // Components                               //
   //------------------------------------------//
-
+  .dropdown-icon {
+    @apply 
+      size-5 text-colors
+      cursor-pointer transition 
+      hover:theme-focus-2 
+      focus:theme-focus-2 focus:rotate-90 
+      active:theme-focus-2 active:rotate-90
+    ;
+  }
 }
 
 
@@ -462,6 +470,9 @@
     @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
   } // transition between grid-rows-[0fr] and [1fr] for transition
   
+  .height-trans-content {
+    @apply overflow-hidden;
+  }
 
   // Theme transition class
   .disable-transitions,

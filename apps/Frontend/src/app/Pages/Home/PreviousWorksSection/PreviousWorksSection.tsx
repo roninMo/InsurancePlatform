@@ -22,15 +22,15 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
           <h1 className='py-3 text-4xl text-shadow-sm'>Explore some of my projects and past work experience</h1>
           
           <div className={`height-trans ${activeTab == 'demos' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-            <div className='overflow-hidden text-2xl'>
+            <div className='height-trans-content text-2xl'>
               Here's a list of demos I've created to test my skills with designing best practices 
               and challenging tasks deployed here just for you. 
               From FullStack applications with complex backend logic to random challenging projects, they're all here.
-              </div>
             </div>
+          </div>
 
           <div className={`height-trans pb-10 ${activeTab == 'experience' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-              <div className='overflow-hidden text-2xl'>
+              <div className='height-trans-content text-2xl'>
                 Here's some of the past places I've gotten the pleasure to be a part of.
               </div>
             </div>
