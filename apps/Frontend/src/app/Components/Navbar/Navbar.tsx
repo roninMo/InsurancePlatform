@@ -4,6 +4,7 @@ import { Icon } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
 import styles from './Navbar.module.scss';
+import { HashLink } from '../Utils/HashLink/HashLink';
 
 
 export interface NavbarProps {}
@@ -15,8 +16,12 @@ export const Navbar = ({}: NavbarProps) => {
   const [currentTheme, setCurrentTheme] = useState<string>(localStorage.getItem('theme') || '');
 
   // Scroll behavior logic
-  const { hash } = useLocation();
+  const { hash, key, pathname, state } = useLocation();
 
+
+  //------------------------------------------------//
+  // Theme                                          //
+  //------------------------------------------------//
   // Initialize the Theme and display settings
   useEffect(() => {
     if (!currentTheme) {
@@ -47,25 +52,43 @@ export const Navbar = ({}: NavbarProps) => {
     setCurrentTheme(newTheme);
   }
 
-  // React Router Hash Link ScrollRestoration Logic when navigate is used with an id
+
+  //------------------------------------------------------------------------------------//
+  // React Router Hash Link ScrollRestoration Logic when navigate is used with an id    //
+  //------------------------------------------------------------------------------------//
   useEffect(() => {
-    if (hash) {
+    const didNavigate = state?.fromNavigate;
+    console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
+
+    if (didNavigate) {
+      const scrollOpts: ScrollIntoViewOptions = { behavior: 'smooth' }
+
       // Ensure the page is loaded before we try to scroll
       const timeout = setTimeout(() => {
-        const id = hash.replace("#", "");
-        const element = document.getElementById(id);
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
+        if (hash) {
+          const id = hash.replace("#", "");
+          const element = document.getElementById(id);
+          if (element) element.scrollIntoView(scrollOpts);
+        } else {
+          document.documentElement.scrollIntoView(scrollOpts);
+        }
+
+        // We've already rerendered from navigation, just clear the state
+        window.history.replaceState({...state, fromNavigate: false}, '');
       }, 10);
       
       return () => clearTimeout(timeout);
     }
-  }, [hash]);
+
+  }, [pathname, /* hash, */ key]); // when the page is updated, or the user navigates to another id on the page
 
   const onNavigate = (url: string, opts?: NavigateOptions) => {
     if (!url) return;
     navigate(url, opts);
   }
 
+
+  // Navbar Dropdown
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const onHoverDropdown = (hovering: boolean) => {
     if (hovering && !showDropdown) setShowDropdown(true);
@@ -75,20 +98,16 @@ export const Navbar = ({}: NavbarProps) => {
 
   return (
     <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-xl'>
-        {/* <ScrollRestoration /> */} {/* This is for instant scroll behavior */}
+        {/* <ScrollRestoration /> This is for instant scroll behavior */}
         <div className='w-full row justify-between items-center relative z-10 bg-div px-3'>
 
           <div id='NavLinks' className='NavLinks rowStart items-center gap-8'>
-            <WebpageAndLinks className='rowStart items-center gap-3'>
-              <div id='HomeLink' 
-                onClick={() => onNavigate('/')} 
-                className='rowStart gap-2 p-2 transition duration-300 theme-focus
-                            cursor-pointer bg-default outline-css rounded-lg outline-focus'
-              >
+            <HomeIcon id="HomeLink" className='rowStart items-center gap-3'>
+              <HashLink url="/" styles='rowStart gap-2 p-2 transition duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
                 <Icon variant='CodeBracket' styles='size-6 text-blue-600 dark:text-indigo-400' />
-              </div>
+              </HashLink>
               <h4 className='label-colors'>Portfolio</h4>
-            </WebpageAndLinks>
+            </HomeIcon>
 
             <Links 
               id='Links' 
@@ -96,11 +115,11 @@ export const Navbar = ({}: NavbarProps) => {
               onMouseLeave={() => onHoverDropdown(false)}
               className='rowStart gap-0 *:p-6 *:px-4 *:transition *:text-base *:cursor-pointer'
             >
-              <p onClick={() => onNavigate('/')} className='bg-div hover:bg-div-hover'>Home</p>
-              <p onClick={() => onNavigate('/Demos')} className='bg-div hover:bg-div-hover'>Demos</p>
-              <p onClick={() => onNavigate('/MockDatabase')} className='bg-div hover:bg-div-hover'>Mock Database</p>
-              <p onClick={() => onNavigate('/Contact')} className='bg-div hover:bg-div-hover'>Contact</p>
-              <p onClick={() => onNavigate('/Documentation')} className='bg-div hover:bg-div-hover'>Documentation</p>
+              <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
+              <HashLink label="Demos" url="/Demos" styles='bg-div hover:bg-div-hover' />
+              <HashLink label="Mock Database" url="/MockDatabase" styles='bg-div hover:bg-div-hover' />
+              <HashLink label="Contact" url="/Contact" styles='bg-div hover:bg-div-hover' />
+              <HashLink label="Documentation" url="/Documentation" styles='bg-div hover:bg-div-hover' />
             </Links>
           </div>
 
@@ -133,7 +152,7 @@ export const Navbar = ({}: NavbarProps) => {
 }
 
 
-const WebpageAndLinks = styled.div``;
+const HomeIcon = styled.div``;
 const Links = styled.div``;
 const Profile = styled.div``;
 const Dropdown = styled.div``;

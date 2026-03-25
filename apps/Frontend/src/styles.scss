@@ -1,6 +1,5 @@
 @tailwind base;
 @tailwind components;
-@tailwind home;
 @tailwind utilities;
 /* You can add global styles to this file, and also import other style files */
 
@@ -437,7 +436,7 @@
   }
 
   .footer-link-header {
-    @apply footer-link-styles label-colors;
+    @apply footer-link-styles label-colors font-medium;
   }
 
   .footer-link { 

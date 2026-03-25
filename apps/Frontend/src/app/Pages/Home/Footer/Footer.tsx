@@ -1,21 +1,13 @@
 import { Button, Icon } from '@Project/ReactComponents';
-import styles from './Footer.module.scss';
 import styled from '@emotion/styled';
-import { NavigateOptions, useNavigate } from 'react-router-dom';
+
+import styles from './Footer.module.scss';
+import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
 
 
 export const Footer = () => {
-  const navigate = useNavigate();
 
-  const navigateTo = (url: string, type: 'router' | 'page' = 'router', opts?: NavigateOptions) => {
-    if (!url) return;
-
-    if (type == 'router') {
-      navigate(url, opts);
-    } else if (type == 'page') {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-  }
+  const navigateTo = (url: string, type: string) => ({});
 
   return (
     <div className='spacing bg-div' id='footer'>
@@ -29,54 +21,35 @@ export const Footer = () => {
           *:col *:gap-6 *:pr-0 *:lg:pr-24'
         >
           <div>
-            <label onClick={() => navigateTo('/', 'router')} className='footer-link-header'>
-              Home
-            </label>
-            <p className='footer-link'
-                onClick={() => navigateTo('/#welcome-section', 'router')} >
-              Welcome
-            </p>
-            <p className='footer-link'
-                onClick={() => navigateTo('/#previous-works-section', 'router')} >
-              Previous Works
-            </p>
-            <p className='footer-link'
-                onClick={() => navigateTo('/#experiences-section', 'router')} >
-              Experience
-            </p>
-            <p className='footer-link'
-                onClick={() => navigateTo('/', 'page')} >
-              Resume
-            </p>
+            <HashLink label="Home"            url="/" styles="footer-link-header" />
+            <HashLink label="Welcome"         url="/#welcome-section" styles="footer-link" />
+            <HashLink label="Previous Works"  url="/#previous-works-section" styles="footer-link" />
+            <HashLink label="Experience"      url="/#experiences-section" styles="footer-link" />
+            <HashLink label="Resume"          url="/"  opts={{ type: 'page' }} styles="footer-link" />
           </div>
           
           <div>
-            <label onClick={() => navigateTo('/Demos', 'router')} className='footer-link-header'>
-              Demos
-            </label>
-            <p onClick={() => navigateTo('/Demos/', 'router')} className='footer-link'>Insurance Application</p>
-            <p onClick={() => navigateTo('/Demos/', 'router')} className='footer-link'>Spotify Demo</p>
-            <p onClick={() => navigateTo('/MockDatabase', 'router')} className='footer-link'>Mock Database</p>
-            <p onClick={() => navigateTo('/Demos/', 'router')} className='footer-link'>ServerSide Autosave Demo</p>
+            <HashLink label="Demos"                     url="/Demos" styles="footer-link-header" />
+            <HashLink label="Insurance Application"     url="/Demos" styles="footer-link" />
+            <HashLink label="Spotify Demo"              url="/Demos" styles="footer-link" />
+            <HashLink label="Mock Database"             url="/MockDatabase" styles="footer-link" />
+            <HashLink label="ServerSide Autosave Demo"  url="/Demos" styles="footer-link" />
+
           </div>
           
           <div>
-            <label onClick={() => navigateTo('/Documentation', 'router')} className='footer-link-header'>
-              Documentation
-            </label>
-            <p onClick={() => navigateTo('/Documentation', 'router')} className='footer-link'>Forms</p>
-            <p onClick={() => navigateTo('/Documentation', 'router')} className='footer-link'>Components</p>
-            <p onClick={() => navigateTo('/Documentation', 'router')} className='footer-link'>Presentation</p>
+            <HashLink label="Documentation"   url="/Documentation" styles="footer-link-header" />
+            <HashLink label="Forms"           url="/Documentation" styles="footer-link" />
+            <HashLink label="Components"      url="/Documentation" styles="footer-link" />
+            <HashLink label="Layout"          url="/Documentation" styles="footer-link" />
           </div>
 
           <div>
-            <label onClick={() => navigateTo('/Contact', 'router')} className='footer-link-header'>
-              Contact
-            </label>
-            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Email</p>
-            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Phone</p>
-            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Social Media</p>
-            <p onClick={() => navigateTo('/Contact', 'router')} className='footer-link'>Page</p>
+            <HashLink label="Contact"       url="/Contact" styles="footer-link-header" />
+            <HashLink label="Email"         url="/Contact" styles="footer-link" />
+            <HashLink label="Phone"         url="/Contact" styles="footer-link" />
+            <HashLink label="Social Media"  url="/Contact" styles="footer-link" />
+            <HashLink label="Form"          url="/Contact" styles="footer-link" />
           </div>
         </FooterLinks>
       </FooterSection>
@@ -114,6 +87,7 @@ export const Footer = () => {
     </div>
   );
 }
+
 
 // Styled Components
 const ContactSection = styled.div``;

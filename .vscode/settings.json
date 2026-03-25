@@ -8,6 +8,9 @@
     "Svgs",
     "Textareas"
   ],
+  // Tailwind @apply css binds
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
   "tailwindCSS.classAttributes": [
     "class",
     "className",
@@ -15,5 +18,5 @@
     ".*additionalStyles.*", // Add your custom prop pattern here
     ".*styles.*", 
     ".*Styles.*" // Or another pattern
-  ]
+  ],
 }

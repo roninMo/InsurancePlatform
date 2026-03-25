@@ -2,7 +2,7 @@ import { useState, useId, MouseEvent, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Button } from '@Project/ReactComponents';
-import { Modal } from '../../../Components/Layouts/Modal/Modal';
+import { Modal } from '../../../Components/Utils/Modal/Modal';
 
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import BackgroundAnim from "../../../../assets/lottie/Background looping animation.json";
@@ -15,6 +15,7 @@ export const WelcomeSection = () => {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
   const navigate = useNavigate();
 
+  // Background Animation
   useEffect(() => {
     // Resume animation
     if (lottieRef.current) {
@@ -45,7 +46,7 @@ export const WelcomeSection = () => {
   }
 
   const navigateToDocs = () => {
-    console.log('opening the navigation modal');
+    navigate('Documentation');
   }
   
   // Development / Production Config
