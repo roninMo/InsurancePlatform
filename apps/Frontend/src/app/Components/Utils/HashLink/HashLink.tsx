@@ -41,7 +41,6 @@ export const HashLink = ({ url, label, opts = { type: 'router'}, styles, childre
 
   const linkStyles = styles ? styles : 'footer-link';
   if (children) {
-    console.log(`has children \n`);
     return (
       <Link to={url} state={state} className={linkStyles}>
         { children }

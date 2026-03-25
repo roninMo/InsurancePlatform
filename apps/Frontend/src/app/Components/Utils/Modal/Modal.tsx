@@ -57,9 +57,15 @@ export const Modal = ({
         ${overlayStyles}
       `} 
     >
-      <Container id={modalId} className={`col items-center gap-2 p-4 outline-css outline-default bg-div ${additionalStyles}`}>
-        <div className='pt-1 pb-4 w-full row justify-between items-center'>
-          <label className='text-xl lg:text-2xl'>
+      <Container id={modalId} className={`
+        col items-center gap-2 p-4 
+        outline-css outline-default bg-div 
+        overflow-auto overflow-x-hidden scrollbar-theme
+        ${additionalStyles}
+      `}>
+        
+        <Header className='p-4 pt-1 pr-1 w-full row justify-between items-center'>
+          <label className='text-xl lg:text-2xl header-colors'>
             { label }
           </label>
 
@@ -68,7 +74,7 @@ export const Modal = ({
               <Icon variant='Close' styles={closeModalStyles ? closeModalStyles : 'size-8 lg:size-10 transition hover:text-blue-500 dark:hover:text-blue-500 cursor-pointer'} />
             }
           </div>
-        </div>
+        </Header>
 
         {/* User Content */}
         { children }
@@ -82,3 +88,4 @@ export const Modal = ({
 // Styled Components
 const Overlay = styled.div``;
 const Container = styled.div``;
+const Header = styled.div``;

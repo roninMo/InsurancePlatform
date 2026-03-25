@@ -61,6 +61,7 @@ import { Icon_StateAuto } from "./Companies/StateAuto/Icon_StateAuto";
 import { Icon_Computer } from "./Default/Computer/Icon_Computer";
 import { Icon_Cloud } from "./Default/Cloud/Icon_Cloud";
 import { Icon_DataDog } from "./Tech/Analytics/DataDog/Icon_DataDog";
+import { Icon_Loading } from "./Default/Loading/Icon_Loading";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
@@ -100,6 +101,7 @@ export type DefaultIconTypes =
   'InfoBox' |
   'LightTheme' |
   'Link' |
+  'Loading' |
   'LinkedIn' |
   'Phone' |
   'Plus' |
@@ -137,6 +139,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'Instagram')       return (<Icon_Instagram styles={iconStyles} />);
   if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);
   if (variant == 'Link')            return (<Icon_Link styles={iconStyles} />);
+  if (variant == 'Loading')         return (<Icon_Loading styles={iconStyles} />);
   if (variant == 'Plus')            return (<Icon_Plus styles={iconStyles} />);
   if (variant == 'Phone')           return (<Icon_Phone styles={iconStyles} />);
   if (variant == 'Profile')         return (<Icon_Profile styles={iconStyles} />);

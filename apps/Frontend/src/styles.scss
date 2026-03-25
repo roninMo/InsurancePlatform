@@ -16,16 +16,17 @@
   //------------------------------------------//
   // Text Colors                              //
   //------------------------------------------//
-  .input-colors   { @apply text-slate-800   dark:text-slate-200; }
-  .label-colors   { @apply text-slate-800   dark:text-slate-300; }
-  .header-colors  { @apply text-slate-800   dark:text-slate-100; }
-  .svg-colors     { @apply  text-slate-500  dark:text-slate-400; }
-  .text-colors    { @apply text-slate-900   dark:text-slate-400; }
+  .input-colors   { @apply text-slate-800     dark:text-slate-200; }
+  .label-colors   { @apply text-slate-800     dark:text-slate-300; }
+  .header-colors  { @apply text-slate-800     dark:text-slate-100; }
+  .svg-colors     { @apply  text-slate-500    dark:text-slate-400; }
+  .text-colors    { @apply text-slate-900     dark:text-slate-400; }
   
-  .placeholder-text { @apply text-slate-400 dark:text-slate-500; }
-  .disabled-text    { @apply text-gray-500  dark:text-gray-400; }
-  .warning-text     { @apply text-amber-500 dark:text-amber-400; }
-  .error-text       { @apply text-red-700   dark:text-red-500; }
+  .placeholder-text { @apply text-slate-400   dark:text-slate-500; }
+  .disabled-text    { @apply text-gray-500    dark:text-gray-400; }
+  .warning-text     { @apply text-amber-600   dark:text-amber-400; }
+  .error-text       { @apply text-red-700     dark:text-red-500; }
+  .ok-text          { @apply text-emerald-600 dark:text-emerald-400; }
 
   .primary-text     { @apply text-blue-500 dark:text-blue-500; }
   .link-text {
@@ -114,6 +115,7 @@
   .outline-focus    { @apply outline-blue-500   dark:outline-indigo-500; }
   .outline-warning  { @apply outline-amber-500  dark:outline-amber-400; }
   .outline-error    { @apply outline-red-500    dark:outline-red-600; }
+  .ouline-ok       { @apply outline-emerald-600 dark:outline-emerald-600; }
 
   // Border styles
   .border-styles    { @apply border-default focus:border-focus; }
@@ -449,13 +451,43 @@
   //------------------------------------------//
   .dropdown-icon {
     @apply 
-      size-5 text-colors
-      cursor-pointer transition 
+      size-7 text-colors
+      cursor-pointer transition duration-300
       hover:theme-focus-2 
-      focus:theme-focus-2 focus:rotate-90 
-      active:theme-focus-2 active:rotate-90
     ;
   }
+
+  .dropdown-link-container {
+    @apply
+      spacing gap-1 transition
+      p-1.5 outline-css outline-styles
+    ;
+  }
+
+  .dropdown-link-icon { 
+    @apply size-4 cursor-pointer transition hover:theme-focus-2;
+  }
+
+  .dropdown-link-text {
+    @apply
+      cursor-pointer transition duration-300 
+      hover:theme-focus-2 dark:hover:theme-focus-2
+      
+      focus:underline dark:focus:underline
+      hover:underline dark:hover:underline;
+  }
+
+  .dropdown-env { 
+    @apply
+      px-[5px] py-[4px] italic font-medium 
+      bg-slate-200 dark:bg-slate-900
+      outline-css outline-default
+      transition duration-300 opacity-75 dark:opacity-75
+      hover:opacity-100 dark:hover:opacity-100
+      dark:hover:theme-focus-2
+    ;
+  }
+
 }
 
 
@@ -485,6 +517,8 @@
     -ms-transition: none !important;
     transition: none !important;
   }
+
+  .loading-text { @apply animate-skeleton-text dark:animate-skeleton-text-dark; }
 }
 
 /* Selectors quick ref

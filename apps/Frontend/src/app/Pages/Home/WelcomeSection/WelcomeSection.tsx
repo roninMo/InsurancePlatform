@@ -1,8 +1,11 @@
-import { useState, useId, MouseEvent, useRef, useEffect, ReactNode } from 'react';
+import { useState, useId, MouseEvent, useRef, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { Button, Icon, IconTypes } from '@Project/ReactComponents';
+import { Button } from '@Project/ReactComponents';
 import { Modal } from '../../../Components/Utils/Modal/Modal';
+import { Dropdown } from '../../../Components/Content/Dropdown/Dropdown';
+import { InsuranceAppLinks, MockDatabaseLinks, QuickLinkProps, QuickLinks, QuickLinksProps, SpotifyDemoLinks, SSAutoSaveLinks } from './QuickLinks/QuickLinks';
+import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
+import styled from '@emotion/styled';
 
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import BackgroundAnim from "../../../../assets/lottie/Background looping animation.json";
@@ -15,7 +18,9 @@ export const WelcomeSection = () => {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
   const navigate = useNavigate();
 
-  // Background Animation
+  //--------------------------------------------//
+  // Background Animation                       //
+  //--------------------------------------------//
   useEffect(() => {
     // Resume animation
     if (lottieRef.current) {
@@ -30,25 +35,44 @@ export const WelcomeSection = () => {
       animationItem?.destroy(); // Destroys this specific instance
     };
   }, [lottieRef]); // Re-runs if animation data changes
-  
-  // Modal
+
+
+  //--------------------------------------------//
+  // Modal and Quick Links                      //
+  //--------------------------------------------//
   const [navModalOpen, setNavModalOpen] = useState<boolean>(false);
-  const navModalId = useId();
+  const openNavMenu = () => setNavModalOpen(true);
+  const closeNavMenu = () => setNavModalOpen(false);
 
-  const openNavMenu = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-    setNavModalOpen(true);
-    console.log('opening the navigation modal', event);
+  // Quick links
+  const [mockDBLinks, setMockDBLinks] = useState<QuickLinkProps[]>(MockDatabaseLinks);
+  const [insPlatLinks, setInsPlatLinks] = useState<QuickLinkProps[]>(InsuranceAppLinks);
+  const [spotifyLinks, setSpotifyLinks] = useState<QuickLinkProps[]>(SpotifyDemoLinks);
+  const [SSASLinks, setSSASLinks] = useState<QuickLinkProps[]>(SSAutoSaveLinks);
+
+  // Opened dropdown state
+  const [openedMockDB, setOpenedMockDB] = useState<boolean>(false);
+  const [openedInsPlat, setOpenedInsPlat] = useState<boolean>(false);
+  const [openedSpotify, setOpenedSpotify] = useState<boolean>(false);
+  const [openedSSAS, setOpenedSSAS] = useState<boolean>(false);
+
+  const setOpenedDropdown = (opened: boolean, setState: Dispatch<SetStateAction<boolean>>) => {
+    setState(opened);
   }
 
-  const closeNavMenu = () => {
-    setNavModalOpen(false);
-    console.log('closing the navigation modal');
+  const setQuickLinks = (
+    links: QuickLinkProps[], 
+    setState: Dispatch<SetStateAction<QuickLinkProps[]>>, 
+    openState: Dispatch<SetStateAction<boolean>>
+  ) => {
+    setState(links);
+    openState(false);
   }
 
-  const navigateToDocs = () => {
-    navigate('Documentation');
-  }
-  
+
+  //--------------------------------------------//
+  // Development / Production / Env Config      //
+  //--------------------------------------------//
   // Development / Production Config
   const whatsNewMenu = () => {
     console.log(`What's new`);
@@ -113,28 +137,60 @@ export const WelcomeSection = () => {
           {/* Buttons */}
           <div className='rowStart gap-4 pt-2'> 
             <Button displayText='Get Started'
-              onClick={(e) => openNavMenu(e)}
+              onClick={() => openNavMenu()}
               size='lg'
               color='primary'
               additionalStyles='text-base rounded-lg'
             />
-            <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen}>
-              <div className='col gap-4 w-[70vw] h-[65vh]'>
-                  Modal Component
 
-
-              </div>
-            </Modal>
-
-            <Button displayText='Documentation'
-              onClick={() => navigateToDocs()}
-              size='lg'
-              color='primary'
-              additionalStyles='text-base rounded-lg'
-            />
+            <HashLink url="/Documentation" opts={{ type: 'useNavigate' }}>
+              <Button displayText='Documentation'
+                onClick={() => {}}
+                size='lg'
+                color='primary'
+                additionalStyles='text-base rounded-lg'
+              />
+            </HashLink>
           </div>
         </Content>
       </Container>
+
+
+      {/* Get Started Modal */}
+      <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen}>
+        <div className='col gap-4 w-[70vw] h-[65vh] px-4 ='>
+            
+            {/* Mock Database */}
+            <Dropdown label="Mock Database" hasBeenOpened={openedMockDB} setHasBeenOpened={setOpenedMockDB} styles='text-base lg:text-lg header-colors font-medium' >
+              <div className="pl-8">
+                <QuickLinks links={mockDBLinks} initialRender={openedMockDB} />
+              </div>
+            </Dropdown>
+
+            {/* Insurance Platform */}
+            <Dropdown label="Insurance Platform" hasBeenOpened={openedInsPlat} setHasBeenOpened={setOpenedInsPlat} styles='text-base lg:text-lg header-colors font-medium' >
+              <div className="pl-8">
+                <QuickLinks links={insPlatLinks} initialRender={openedInsPlat} />
+              </div>
+            </Dropdown>
+
+            {/* Spotify Demo */}
+            <Dropdown label="Spotify Demo" hasBeenOpened={openedSpotify} setHasBeenOpened={setOpenedSpotify} styles='text-base lg:text-lg header-colors font-medium' >
+              <div className="pl-8">
+                <QuickLinks links={spotifyLinks} initialRender={openedSpotify} />
+              </div>
+            </Dropdown>
+
+            {/* ServerSide AutoSave */}
+            <Dropdown label="ServerSide Autosave" hasBeenOpened={openedSSAS} setHasBeenOpened={setOpenedSSAS} styles='text-base lg:text-lg header-colors font-medium' >
+              <div className="pl-8">
+                <QuickLinks links={SSASLinks} initialRender={openedSSAS} />
+              </div>
+            </Dropdown>
+
+
+        </div>
+      </Modal>
 
       {/* <FadeToBackground className='-mt-10 py-14 
         bg-gradient-to-t from-75% to-90% 
@@ -145,46 +201,6 @@ export const WelcomeSection = () => {
   );
 }
 
-
-type Status = 'Error' | 'Loading' | 'Ok';
-export interface DropdownProps {
-  label: string;
-  styles?: string;
-  icon?: IconTypes;
-  iconStyles?: string;
-  children: ReactNode;
-}
-
-export const Dropdown = ({ label, styles, icon, iconStyles, children }: DropdownProps) => {
-  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const [initialVisuals, setInitialVisuals] = useState<Record<string, Status>>({});
-
-  return (
-    <div className='col gap-2 w-full'>
-      <Header className="w-full rowStart gap-2">
-        <Icon variant={icon ? icon : 'DropdownArrow'} styles={iconStyles ? iconStyles : 'dropdown-icon'} />
-        <p className={styles ? styles : 'text-2xl header-colors font-medium'}>
-          { label }
-        </p>
-      </Header>
-
-      <Container className={`height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <div className='height-trans-content'>
-          { children }
-        </div>
-      </Container>
-    </div>
-  );
-}
-
-
-// Styled Components
-const Header = styled.div``;
-const Container = styled.div``;
-
-export const QuickLink = () => {
-
-}
 
 // Styled Components
 const Background = styled.div``;
