@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { Card } from '../../../../Components/Layouts/Card/Card';
+import { Card } from '../../../../Components/Content/Card/Card';
 import styled from '@emotion/styled';
 
 import styles from './PreviousWorks.module.scss';

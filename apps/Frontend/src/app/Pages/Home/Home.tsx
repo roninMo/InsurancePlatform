@@ -6,7 +6,7 @@ import styles from './Home.module.scss';
 import { WelcomeSection } from './WelcomeSection/WelcomeSection';
 import { PreviousWorksSection } from './PreviousWorksSection/PreviousWorksSection';
 import { Footer } from './Footer/Footer';
-import { Card } from '../../Components/Layouts/Card/Card';
+import { Card } from '../../Components/Content/Card/Card';
 import { ContactUsSection } from './ContactUsSection/ContactUsSection';
 import { Experiences } from './Experiences/Experiences';
 

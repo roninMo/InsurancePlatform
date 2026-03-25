@@ -1,6 +1,6 @@
 import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId } from 'react';
 
-import { Card } from '../../../Components/Layouts/Card/Card';
+import { Card } from '../../../Components/Content/Card/Card';
 import { CheckboxItem, Checkbox, CheckboxProps } from '../../../Components/Forms/Checkbox/Checkbox';
 import { defaultBoxMetadataTags, defaultPostMetadataTags, MetadataTagProps, Textarea } from '../../../Components/Forms/Textarea';
 import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
