@@ -344,12 +344,14 @@
   .scrollbar-theme {
     &::-webkit-scrollbar {
       width: 0.74rem;
+      // border-bottom-right-radius: 0.375rem;
+      // border-top-right-radius: 0.375rem;
+      border-radius: 0.375rem;
       background-color: rgb(30 41 59 / var(--tw-bg-opacity));
     }
       
     &::-webkit-scrollbar-track {
-      border-bottom-right-radius: 0.375rem;
-      border-top-right-radius: 0.375rem;
+      border-radius: 0.375rem;
       background-color: rgb(51 65 85 / var(--tw-bg-opacity));
       
     }
@@ -503,8 +505,20 @@
     @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
   } // transition between grid-rows-[0fr] and [1fr] for transition
   
+  .height-trans-opacity {
+    @apply grid;
+    transition:
+      grid-template-rows 0.3s ease,
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
+  }
+  
   .height-trans-content {
     @apply overflow-hidden;
+  }
+  .height-trans-op-content {
+    visibility: visible;
+    transition-delay: 0s;
   }
 
   // Theme transition class

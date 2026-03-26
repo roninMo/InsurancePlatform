@@ -1,4 +1,4 @@
-import { Dispatch, MouseEvent, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, MouseEvent, ReactNode, SetStateAction, useEffect, useId, useState } from 'react';
 import styled from '@emotion/styled';
 
 import styles from './Modal.module.scss';
@@ -29,9 +29,12 @@ export const Modal = ({
   closeModalButton = true, closeModalStyles, 
   children 
 }: ModalProps) => {
-  const modalId = 'modal-element';
+  const modalId = useId();
+  const renderedModalId = `modal-${label}-${modalId}`;
+  const closeModalId = `modal-element`;
 
   const closeModal = () => {
+    console.log('modal setState function', {isModalOpen, setModalOpen});
     setModalOpen(false);
     if (onCloseModal) onCloseModal();
   }
@@ -40,7 +43,7 @@ export const Modal = ({
     const element: any = event?.target as HTMLElement;
 
     // Checks element and ancestors
-    const isWithinModal = element.closest(`#${modalId}`);
+    const isWithinModal = element.closest(`#${closeModalId}`);
     if (!isWithinModal) {
       closeModal();
       return;
@@ -49,6 +52,7 @@ export const Modal = ({
 
   if (isModalOpen) return (
     <Overlay 
+      id={renderedModalId}
       onClick={(e) => userClicked(e)}
       className={`fixed top-0 left-0 min-w-full min-h-full z-40 
         row justify-center items-center 
@@ -57,10 +61,10 @@ export const Modal = ({
         ${overlayStyles}
       `} 
     >
-      <Container id={modalId} className={`
+      <Container id={closeModalId} className={`
         col items-center gap-2 p-4 
         outline-css outline-default bg-div 
-        overflow-auto overflow-x-hidden scrollbar-theme
+        overflow-auto overflow-x-hidden scrollbar-theme 
         ${additionalStyles}
       `}>
         

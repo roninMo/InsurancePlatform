@@ -39,7 +39,7 @@ export function Button({
           : ''
         } 
 
-        ${  color == 'primary'    ? 'btn-primary text-white'
+        ${  color == 'primary'    ? 'btn-primary text-white' 
           : color == 'gray'       ? 'btn-gray text-black dark:text-white' 
           : color == 'gray-focus' ? 'btn-gray-focus text-black dark:text-white' 
           : '' 

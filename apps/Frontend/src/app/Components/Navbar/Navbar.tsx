@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {MouseEvent, useEffect, useState} from 'react';
 import { NavigateOptions, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
@@ -88,20 +88,31 @@ export const Navbar = ({}: NavbarProps) => {
   }
 
 
-  // Navbar Dropdown
+  //------------------------------------------------//
+  // Navbar Dropdown                                //
+  //------------------------------------------------//
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  const onHoverDropdown = (hovering: boolean) => {
-    if (hovering && !showDropdown) setShowDropdown(true);
-    else if (!hovering && showDropdown) setShowDropdown(false);1
+  const navbarDropdownId = 'navbar-dropdown';
+  const navbarLinks = 'navbar-links';
+
+  const hoveringOverDropdown = (hovering: boolean, event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    const element: any = event?.target as HTMLElement;
+    const isWithinDropdown = element.closest(`#${navbarDropdownId}`);
+    // const isWithinLinks = element.closest(`#${navbarLinks}`);
+    
+    // Since it's an element hidden behind the navbar, only this is needed
+    if (!hovering && isWithinDropdown) setShowDropdown(false);
+    else setShowDropdown(true);
+    // setShowDropdown(true);
   }
 
 
   return (
-    <div role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-xl'>
+    <NavbarAndDropdown role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-xl'>
         {/* <ScrollRestoration /> This is for instant scroll behavior */}
-        <div className='w-full row justify-between items-center relative z-10 bg-div px-3'>
+        <Container className='w-full row justify-between items-center relative z-10 bg-div px-3'>
 
-          <div id='NavLinks' className='NavLinks rowStart items-center gap-8'>
+          <NavLinkContainer id={navbarLinks} className='NavLinks rowStart items-center gap-8'>
             <HomeIcon id="HomeLink" className='rowStart items-center gap-3'>
               <HashLink url="/" styles='rowStart gap-2 p-2 transition duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
                 <Icon variant='CodeBracket' styles='size-6 text-blue-600 dark:text-indigo-400' />
@@ -111,8 +122,8 @@ export const Navbar = ({}: NavbarProps) => {
 
             <Links 
               id='Links' 
-              onMouseEnter={() => onHoverDropdown(true)}
-              onMouseLeave={() => onHoverDropdown(false)}
+              onMouseEnter={(e) => hoveringOverDropdown(true, e)}
+              onMouseLeave={(e) => hoveringOverDropdown(false, e)}
               className='rowStart gap-0 *:p-6 *:px-4 *:transition *:text-base *:cursor-pointer'
             >
               <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
@@ -121,7 +132,7 @@ export const Navbar = ({}: NavbarProps) => {
               <HashLink label="Contact" url="/Contact" styles='bg-div hover:bg-div-hover' />
               <HashLink label="Documentation" url="/Documentation" styles='bg-div hover:bg-div-hover' />
             </Links>
-          </div>
+          </NavLinkContainer>
 
 
           <Profile className='rowStart items-center gap-4'>
@@ -138,20 +149,63 @@ export const Navbar = ({}: NavbarProps) => {
               }
             </div>
           </Profile>
-        </div>
+        </Container>
 
-        <Dropdown id='navbar-dropdown' className={`absolute w-full h-10 
-          bg-div border-styles border-b transition duration-300 ease-in-out
-          row items-center -translate-y-12 opacity-0
-          ${showDropdown && 'translate-y-0 opacity-100'} shadow-xl
+
+        <Dropdown
+          id={navbarDropdownId}
+          onMouseEnter={(e) => hoveringOverDropdown(true, e)}
+          onMouseLeave={(e) => hoveringOverDropdown(false, e)}
+          className={`absolute w-full bg-div border-styles border-y shadow-xl transition
+            height-trans-opacity ${showDropdown ? 'opacity-100 grid-rows-[1fr]' : 'opacity-0 grid-rows-[0fr]'}
         `}>
-          Navbar dropdown
+          <div className={`height-trans-content visible ${showDropdown && 'height-trans-op-content'}`}>
+            <Links className='row justify-center gap-8 pr-14 pb-10 pt-4 *:mx-4 *:my-2 *:col *:gap-3'>
+              <div>
+                <HashLink label="Home"            url="/" styles="footer-link-header" />
+                <HashLink label="Welcome"         url="/#welcome-section" styles="footer-link" />
+                <HashLink label="Previous Works"  url="/#previous-works-section" styles="footer-link" />
+                <HashLink label="Experience"      url="/#experiences-section" styles="footer-link" />
+                <HashLink label="Resume"          url="/"  opts={{ type: 'page' }} styles="footer-link" />
+              </div>
+            
+              <div>
+                <HashLink label="Demos"                     url="/Demos" styles="footer-link-header" />
+                <HashLink label="Insurance Application"     url="/Demos" styles="footer-link" />
+                <HashLink label="Spotify Demo"              url="/Demos" styles="footer-link" />
+                <HashLink label="Mock Database"             url="/MockDatabase" styles="footer-link" />
+                <HashLink label="ServerSide Autosave Demo"  url="/Demos" styles="footer-link" />
+            
+              </div>
+            
+              <div>
+                <HashLink label="Documentation"   url="/Documentation" styles="footer-link-header" />
+                <HashLink label="Forms"           url="/Documentation" styles="footer-link" />
+                <HashLink label="Components"      url="/Documentation" styles="footer-link" />
+                <HashLink label="Layout"          url="/Documentation" styles="footer-link" />
+              </div>
+            
+              <div>
+                <HashLink label="Contact"       url="/Contact" styles="footer-link-header" />
+                <HashLink label="Email"         url="/Contact" styles="footer-link" />
+                <HashLink label="Phone"         url="/Contact" styles="footer-link" />
+                <HashLink label="Social Media"  url="/Contact" styles="footer-link" />
+                <HashLink label="Form"          url="/Contact" styles="footer-link" />
+              </div>
+            </Links>
+          </div>
         </Dropdown>
-    </div>
+          
+          
+    </NavbarAndDropdown>
   );
 }
 
 
+// Styled Components
+const NavbarAndDropdown = styled.div``;
+const Container = styled.div``;
+const NavLinkContainer = styled.div``;
 const HomeIcon = styled.div``;
 const Links = styled.div``;
 const Profile = styled.div``;
