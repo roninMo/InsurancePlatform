@@ -58,6 +58,8 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
       const timeout = setTimeout(async () => {
         try {
           const response = await fetch(url, { mode: 'no-cors', signal: AbortSignal.timeout(5000) });
+
+          // if (env == 'stage') setStatus('Error');
           setStatus('Ok');// The site is up
         } 
 

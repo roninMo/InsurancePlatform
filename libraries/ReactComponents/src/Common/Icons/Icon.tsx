@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 import { Icon_AtSymbol } from "./Default/AtSymbol/AtSymbol";
 import { Icon_AttachFile } from "./Default/AttachFile/Icon_AttachFile";
 import { Icon_Calendar } from "./Default/Calendar/Icon_Calendar";
@@ -51,8 +53,7 @@ import { Icon_AwsCdk } from "./Tech/Automation/AwsCdk/Icon_AwsCdk";
 import { Icon_Atlassian } from "./Tech/Automation/Atlassian/Icon_Atlassian";
 import { Icon_ApolloGraphQl } from "./Tech/Backend/Apollo/Icon_Apollo";
 import { Icon_Twitter } from "./SocialMedia/Twitter/Icon_Twitter";
-import { Icon_VennDiagram } from "./Default/VennDiagram/VennDiagram";
-import { JSX } from "react";
+import { Icon_VennDiagram } from "./Default/VennDiagram/Icon_VennDiagram";
 import { Icon_Close } from "./Default/Close/Icon_Close";
 import { Icon_LibertyLogo } from "./Companies/LibertyLogo/Icon_LibertyLogo";
 import { Icon_LibertyMutual } from "./Companies/LibertyMutual/Icon_LibertyMutual";

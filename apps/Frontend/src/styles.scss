@@ -113,17 +113,18 @@
 
   .outline-default  { @apply outline-blue-300   dark:outline-slate-700; }
   .outline-focus    { @apply outline-blue-500   dark:outline-indigo-500; }
-  .outline-warning  { @apply outline-amber-500  dark:outline-amber-400; }
+  .outline-warning  { @apply outline-amber-600  dark:outline-amber-400; }
   .outline-error    { @apply outline-red-500    dark:outline-red-600; }
-  .ouline-ok       { @apply outline-emerald-600 dark:outline-emerald-600; }
-
+  .oultine-ok       { @apply outline-emerald-600 dark:outline-emerald-400; }
+  
   // Border styles
   .border-styles    { @apply border-default focus:border-focus; }
   .border-default   { @apply border-blue-300    dark:border-slate-700; }
   .border-focus     { @apply border-blue-500    dark:border-indigo-500; }
   .border-warning   { @apply border-amber-500   dark:border-amber-400; }
   .border-error     { @apply border-red-400     dark:border-red-500; }
-
+  .border-ok        { @apply border-emerald-600 dark:border-emerald-400; }
+  
 
 
 
@@ -460,7 +461,7 @@
   .dropdown-link-container {
     @apply
       spacing gap-1 transition
-      p-1.5 outline-css outline-styles
+      p-1 outline-css outline-styles
     ;
   }
 
@@ -519,6 +520,7 @@
   }
 
   .loading-text { @apply animate-skeleton-text dark:animate-skeleton-text-dark; }
+  .loading-bar { @apply animate-skeleton-bar dark:animate-skeleton-bar-dark; }
 }
 
 /* Selectors quick ref

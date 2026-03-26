@@ -1,4 +1,5 @@
-import { IconAttributes } from "../Icon";
+import { IconAttributes } from "../../Icon";
+
 
 export const Icon_VennDiagram = ({ styles }: IconAttributes) => {
   return (
