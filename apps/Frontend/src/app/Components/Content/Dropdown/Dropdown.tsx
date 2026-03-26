@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { IconTypes, Icon } from "@Project/ReactComponents";
 import styled from "@emotion/styled";
 import styles from './Dropdown.module.scss';
@@ -10,6 +10,7 @@ export interface DropdownProps {
   icon?: IconTypes;
   iconStyles?: string;
 
+  openByDefault?: boolean;
   hasBeenOpened?: boolean;
   setHasBeenOpened?: Dispatch<SetStateAction<boolean>>;
 
@@ -17,11 +18,21 @@ export interface DropdownProps {
 }
 
 export const Dropdown = ({ 
-  label, styles, icon, iconStyles, 
+  label, styles, icon, iconStyles, openByDefault,
   hasBeenOpened, setHasBeenOpened, children 
 }: DropdownProps) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const defaultIconStyles = `dropdown-icon ${dropdownOpen ? '' : '-rotate-90'}`;
+
+  useEffect(() => {
+    if (openByDefault) {
+      setDropdownOpen(true);
+      if (setHasBeenOpened) {
+        if (hasBeenOpened == undefined) setHasBeenOpened(true);
+        else if (hasBeenOpened == false) setHasBeenOpened(true);
+      }
+    }
+  }, []);
 
   const toggleDropdown = () => {
     const prevState = dropdownOpen;

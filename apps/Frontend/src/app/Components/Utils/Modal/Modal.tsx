@@ -25,7 +25,7 @@ export interface ModalProps {
 export const Modal = ({
   isModalOpen, setModalOpen, onCloseModal,
   label, additionalStyles, 
-  overlay, overlayStyles,
+  overlay = true, overlayStyles,
   closeModalButton = true, closeModalStyles, 
   children 
 }: ModalProps) => {
@@ -51,8 +51,8 @@ export const Modal = ({
     <Overlay 
       onClick={(e) => userClicked(e)}
       className={`fixed top-0 left-0 min-w-full min-h-full z-40 
-        bg-black bg-opacity-40 dark:bg-opacity-40 
         row justify-center items-center 
+        ${overlay ? 'bg-black bg-opacity-40 dark:bg-opacity-40' : ''} 
         animate-fade-in
         ${overlayStyles}
       `} 

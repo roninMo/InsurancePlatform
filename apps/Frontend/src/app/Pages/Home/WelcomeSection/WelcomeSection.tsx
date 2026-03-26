@@ -161,14 +161,14 @@ export const WelcomeSection = () => {
         <div className='col gap-4 w-[70vw] h-[65vh] px-4 ='>
             
             {/* Mock Database */}
-            <Dropdown label="Mock Database" hasBeenOpened={openedMockDB} setHasBeenOpened={setOpenedMockDB} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Mock Database" openByDefault hasBeenOpened={openedMockDB} setHasBeenOpened={setOpenedMockDB} styles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={mockDBLinks} initialRender={openedMockDB} />
               </div>
             </Dropdown>
 
             {/* Insurance Platform */}
-            <Dropdown label="Insurance Platform" hasBeenOpened={openedInsPlat} setHasBeenOpened={setOpenedInsPlat} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Insurance Platform" openByDefault hasBeenOpened={openedInsPlat} setHasBeenOpened={setOpenedInsPlat} styles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={insPlatLinks} initialRender={openedInsPlat} />
               </div>

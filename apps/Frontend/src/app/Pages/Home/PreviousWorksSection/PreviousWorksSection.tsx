@@ -7,6 +7,7 @@ import StateAuto from '../../../../assets/images/StateAuto.png';
 import LibertyMutual from '../../../../assets/images/LibertyMutual.png';
 import styles from './PreviousWorksSection.module.scss';
 import { Button, Icon } from '@Project/ReactComponents';
+import { Modal } from '../../../Components/Utils/Modal/Modal';
 
 export interface PreviousWorkSectionProps {
   additionalStyles?: string;
@@ -38,11 +39,11 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
 
         {/* Previous works */}
         <div className='spacing gap-0 mt-10 p-2 px-4 pt-12 lg:px-6 bg-default rounded-lg shadow-xl'>
-          <div className='span-12 place-self-start row justify-start items-center gap-5 px-2'>
-            <ProjectTab onClick={() => setActiveTab('demos')} className={`project-tab ${activeTab == 'demos' && 'activeTab'}`}>
+          <div className='span-12 place-self-start row justify-start items-center gap-4'>
+            <ProjectTab onClick={() => setActiveTab('demos')} className={`project-tab ${activeTab == 'demos' && 'tab-active'}`}>
               Demos
             </ProjectTab>
-            <ProjectTab onClick={() => setActiveTab('experience')} className={`project-tab ${activeTab == 'experience' && 'activeTab'}`}>
+            <ProjectTab onClick={() => setActiveTab('experience')} className={`project-tab ${activeTab == 'experience' && 'tab-active'}`}>
               Work Experience
             </ProjectTab>
           </div>

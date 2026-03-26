@@ -113,11 +113,9 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
 
 
       {/* Loading bar animation */}
-      <div className={`${status == 'Loading' ? 'animate-loading-bar opacity-75' : 'opacity-0'} 
-          absolute bottom-0 left-0 p-[1px] w-2/3 
-          bg-blue-600 dark:bg-blue-500
-      `}
-      style={{ animationDelay: `${index * 100}ms` }}
+      <LoadingBar 
+        className={`loading-bar-css bg-primary  ${status == 'Loading' ? 'animate-loading-bar opacity-75' : 'opacity-0'} `}
+        style={{ animationDelay: `${index * 100}ms` }}
       />
     </div>
   );
@@ -126,6 +124,7 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
 
 // Styled components
 const Container = styled.div``;
+const LoadingBar = styled.div``;
 const Text = styled.p``;
 
 /* 

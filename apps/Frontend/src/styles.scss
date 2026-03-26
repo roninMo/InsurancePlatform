@@ -71,6 +71,7 @@
   .bg-default   { @apply bg-white     dark:bg-slate-800; }
   .bg-div       { @apply bg-slate-300 dark:bg-slate-900; }
   .bg-div-light { @apply bg-slate-400 dark:bg-slate-700; }
+  .bg-primary   { @apply bg-blue-600  dark:bg-blue-500; }
   
   // Input specific background theme
   .bg-disabled { @apply  bg-gray-300  dark:bg-gray-700; }
@@ -412,10 +413,8 @@
 
   .project-tab {
     @apply 
-      py-3 
-      transition cursor-pointer
-      text-xl
-      label-colors hover:primary-text
+      py-3 px-2 transition cursor-pointer duration-200
+      text-xl label-colors hover:primary-text
 
       border-b-2 border-transparent 
       hover:border-b-2 active:border-b-2
@@ -425,7 +424,8 @@
   }
 
   .tab-active {
-    @apply active:border-blue-500 dark:active:border-blue-500;
+    @apply border-blue-500 dark:border-blue-500
+      ;
   }
 
 
@@ -518,6 +518,11 @@
     -ms-transition: none !important;
     transition: none !important;
   }
+
+  /* This is intended for the animation bars */
+  .loading-bar-css {
+    @apply absolute bottom-0 left-0 p-[1px] w-2/3 bg-primary;
+  } // Parent needs "relative overflow-hidden"
 
   .loading-text { @apply animate-skeleton-text dark:animate-skeleton-text-dark; }
   .loading-bar { @apply animate-skeleton-bar dark:animate-skeleton-bar-dark; }
