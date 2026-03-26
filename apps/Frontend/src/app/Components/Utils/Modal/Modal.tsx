@@ -29,6 +29,7 @@ export const Modal = ({
   closeModalButton = true, closeModalStyles, 
   children 
 }: ModalProps) => {
+  const [isModalRendered, setIsModalRendered] = useState<boolean>(false);
   const modalId = useId();
   const renderedModalId = `modal-${label}-${modalId}`;
   const closeModalId = `modal-element`;
@@ -38,6 +39,23 @@ export const Modal = ({
     setModalOpen(false);
     if (onCloseModal) onCloseModal();
   }
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (isModalOpen) {
+      setIsModalRendered(true);
+    }
+    else if (isModalRendered && !isModalOpen) {
+      timeoutId = setTimeout(() => setIsModalRendered(false), 200);
+      return () => clearTimeout(timeoutId); // finished
+    }
+    
+    // If the effect was called again before the timer completes
+    return () => {
+      clearTimeout(timeoutId);
+    }
+  }, [isModalOpen]);
 
   const userClicked = (event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     const element: any = event?.target as HTMLElement;
@@ -50,14 +68,14 @@ export const Modal = ({
     }
   }
 
-  if (isModalOpen) return (
+  if (isModalRendered) return (
     <Overlay 
       id={renderedModalId}
       onClick={(e) => userClicked(e)}
       className={`fixed top-0 left-0 min-w-full min-h-full z-40 
         row justify-center items-center 
         ${overlay ? 'bg-black bg-opacity-40 dark:bg-opacity-40' : ''} 
-        animate-fade-in
+        ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} transition
         ${overlayStyles}
       `} 
     >
@@ -65,6 +83,7 @@ export const Modal = ({
         col items-center gap-2 p-4 
         outline-css outline-default bg-div 
         overflow-auto overflow-x-hidden scrollbar-theme 
+        transition ${isModalOpen ? 'opacity-100' : 'opacity-0'}
         ${additionalStyles}
       `}>
         
