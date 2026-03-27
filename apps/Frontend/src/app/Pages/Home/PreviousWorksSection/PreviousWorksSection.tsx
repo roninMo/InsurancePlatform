@@ -16,6 +16,22 @@ export interface PreviousWorkSectionProps {
 export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionProps) => {
   const [activeTab, setActiveTab] = useState<'demos' | 'experience'>('demos');
   
+	// add a list style layout to give images better dimensions
+	/*
+	
+	  company / logo
+		position / teams
+		duration / begin and end date
+		tech dtacks / experiences
+		learn more 
+	*/
+	
+	/*
+	  Then edit the modal scroll to the content
+		 section and add better padding for different medias
+	
+	*/ 
+	
   return (
     <Container id='previous-works-section' className='span-12 lg:span-10 gap-8 gap-x-4 py-8 bg-div mb-4'>
       <div className='child-alignment-fix'>
