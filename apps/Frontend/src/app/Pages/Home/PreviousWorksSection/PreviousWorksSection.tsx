@@ -16,21 +16,6 @@ export interface PreviousWorkSectionProps {
 export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionProps) => {
   const [activeTab, setActiveTab] = useState<'demos' | 'experience'>('demos');
   
-	// add a list style layout to give images better dimensions
-	/*
-	
-	  company / logo
-		position / teams
-		duration / begin and end date
-		tech dtacks / experiences
-		learn more 
-	*/
-	
-	/*
-	  Then edit the modal scroll to the content
-		 section and add better padding for different medias
-	
-	*/ 
 	
   return (
     <Container id='previous-works-section' className='span-12 lg:span-10 gap-8 gap-x-4 py-8 bg-div mb-4'>
@@ -70,17 +55,23 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
               { previousWorks.map((props: PreviousWorksProps, index: number) => 
                 <PreviousWorks 
                   key={`demos-${props.title}-${index}`}
+                  index={index}
+                  
                   company={props.company}
+                  companyLogo={props.companyLogo}
                   title={props.title}
-                  team={props.team}
+                  teams={props.teams}
+                  
+                  duration={props.duration}
                   startDate={props.startDate}
                   endDate={props.endDate}
+                  
                   languagesAndTech={props.languagesAndTech}
-                  content={props.content}
                   learnMoreContent={props.learnMoreContent}
-                  backgroundImageUrl={props.backgroundImageUrl}
+                  teamImageUrl={props.teamImageUrl}
+                  
                   additionalStyles='span-12'
-                  index={index}
+                  iconStyles={props.iconStyles}
                 />
               )}
             </div>
@@ -89,17 +80,24 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
               { previousWorks.map((props: PreviousWorksProps, index: number) => 
                 <PreviousWorks 
                   key={`previous-works-${props.title}-${index}`}
+                  index={index}
+                  
                   company={props.company}
+                  companyLogo={props.companyLogo}
                   title={props.title}
-                  team={props.team}
+                  teams={props.teams}
+                  
+                  duration={props.duration}
                   startDate={props.startDate}
                   endDate={props.endDate}
+                  
                   languagesAndTech={props.languagesAndTech}
-                  content={props.content}
+                  summary={props.summary}
                   learnMoreContent={props.learnMoreContent}
-                  backgroundImageUrl={props.backgroundImageUrl}
+                  teamImageUrl={props.teamImageUrl}
+                  
                   additionalStyles='span-12'
-                  index={index}
+                  iconStyles={props.iconStyles}
                 />
               )}
             </div>
@@ -121,43 +119,61 @@ const ProjectTab = styled.div``;
 const previousWorks: PreviousWorksProps[] = [
   {
     company: "Liberty Mutual",
-    title: "Software Engineer (Fullstack)",
-    team: "Spire Team",
+    companyLogo: "LibertyLogo",
+    title: "Fullstack Software Engineer",
+    teams: ["Tux Team (Home)", "Spire Team (Auto)", "Aspire Team (Frontend)"],
+    
+    duration: "1 year",
     startDate: "Aug 2022",
     endDate: "Aug 2023",
+    
     languagesAndTech: "Angular / .Net / Orleans / Bamboo / Microsoft Azure / Clustering / Rxjs / Playwright / AutoSave Claim State / etc. ",
-    content: "read more content",
     // content: "I got to take part in helping build the quoting platform for agents. Helping take the lead in designing the infrastructure for Liberty's home and auto platforms for users. Our team took on the task of building the home after I got to help the Spire team finish up with auto's.  and helped with the business logic on the backend. This was built in Angular with our own custom forms for validating quote information on the backend while the user created a quote. The server side was built in C# with the Orleans framework in place, and we automated and deployed everything separately. We only had a couple guys on our team, so the majority of the work was divided between everyone. The team made it fun, and I got to learn some of the best design patterns for angular and .net while constructing the business logic to create and handle claims for home and auto",
-    backgroundImageUrl: LibertyMutual
+    summary: "",
+    teamImageUrl: LibertyMutual
   },
   {
     company: "State Auto Insurance",
-    title: "Software Engineer (Fullstack)",
-    team: "Digital Claims Experience Team",
+    companyLogo: "StateAutoLogo",
+    title: "Fullstack Software Engineer",
+    teams: ["PaceSetter Team", "Digital Claims Experience Team (DCX Team)"],
+    
+    duration: "1.5 years",
     startDate: "Apr 2021",
     endDate: "Aug 2022",
+    
     languagesAndTech: "React / React Native / Redux / GraphQL / AWS CDK / Everything AWS - IAM, Networking, Auth, Monitoring and Storage, Lambda, Automated Deployments",
-    content: "Read more content",
-    backgroundImageUrl: StateAuto
+    summary: "",
+    teamImageUrl: StateAuto
   },
   {
     company: "State Auto Insurance",
-    title: "Software Engineer (Fullstack)",
-    team: "(Intern) PC Agg Team",
+    companyLogo: "StateAutoLogo",
+    title: "Intern - Software Engineer",
+    teams: ["PC Agg Team (Property and Casualty Aggregate)"],
+    
+    duration: "1 year",
     startDate: "Jul 2020",
     endDate: "Mar 2021",
-    languagesAndTech: "Languages and tech",
-    content: "Read more content",
-    backgroundImageUrl: StateAuto
+    
+    languagesAndTech: "React / NodeJs / AWS SAM / AWS CloudFormation / AWS Solutions Architect / Gosu",
+    summary: "",
+    teamImageUrl: StateAuto
   },
   {
     company: "Demand Jump",
-    title: "(Intern) Software Engineer",
-    team: "Research and Development",
+    companyLogo: "DemandJump",
+    
+    title: "Intern - Software Engineer",
+    teams: ["Research and Development team"],
+    
+    duration: "1 year",
     startDate: "Jul 2019",
     endDate: "Apr 2020",
-    languagesAndTech: "Languages and tech",
-    content: "DemandJump is one of the fastest growing startup companies in the Midwest with an award-winning, AI-powered marketing platform that consumes all consumer behavior, competitive, and marketing data for a company and recommends action to improve sales.",
-    backgroundImageUrl: DemandJump
+    
+    languagesAndTech: "Angular / Kubernetes / Google Big Query / Looker / Data Visualizations / R&D Development / Any task required / Data Science ",
+    // content: "DemandJump is one of the fastest growing startup companies in the Midwest with an award-winning, AI-powered marketing platform that consumes all consumer behavior, competitive, and marketing data for a company and recommends action to improve sales.",
+    summary: "",
+    teamImageUrl: DemandJump
   },
 ];

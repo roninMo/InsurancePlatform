@@ -63,6 +63,7 @@ import { Icon_Computer } from "./Default/Computer/Icon_Computer";
 import { Icon_Cloud } from "./Default/Cloud/Icon_Cloud";
 import { Icon_DataDog } from "./Tech/Analytics/DataDog/Icon_DataDog";
 import { Icon_Loading } from "./Default/Loading/Icon_Loading";
+import { Icon_Demandjump } from "./Companies/Demandjump/Icon_Demandjump";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
@@ -96,6 +97,7 @@ export type DefaultIconTypes =
   'Computer' |
   'DarkTheme' |
   'Database' |
+  'DemandJump' |
   'DropdownArrow' |
   'Envelope' |
   'Error' |
@@ -133,6 +135,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'Computer')        return (<Icon_Computer styles={iconStyles} />);
   if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
   if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
+  if (variant == 'DemandJump')      return (<Icon_Demandjump styles={iconStyles} />);
   if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
   if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
   if (variant == 'Error')           return (<Icon_Error styles={styles ? styles : defaultErrorStyles} />);

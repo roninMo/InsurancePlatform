@@ -81,13 +81,8 @@ export const Navbar = ({}: NavbarProps) => {
     }
 
   }, [pathname, /* hash, */ key]); // when the page is updated, or the user navigates to another id on the page
-
-  const onNavigate = (url: string, opts?: NavigateOptions) => {
-    if (!url) return;
-    navigate(url, opts);
-  }
-
-
+  
+  
   //------------------------------------------------//
   // Navbar Dropdown                                //
   //------------------------------------------------//

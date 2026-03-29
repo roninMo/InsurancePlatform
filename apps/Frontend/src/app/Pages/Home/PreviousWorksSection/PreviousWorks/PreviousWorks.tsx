@@ -1,39 +1,52 @@
 import { ReactNode, useState } from 'react';
 import { Card } from '../../../../Components/Content/Card/Card';
+import {Icon, IconTypes} from "@Project/ReactComponents";
+import { Modal } from '../../../../Components/Utils/Modal/Modal';
 import styled from '@emotion/styled';
 
 import styles from './PreviousWorks.module.scss';
 
-import DemandJump from '../../../../../assets/images/Demandjump.jpg';
-import StateAuto from '../../../../../assets/images/StateAuto.png';
-import LibertyMutual from '../../../../../assets/images/LibertyMutual.png';
-import downtown_city_night from '../../../../../assets/images/downtown_city_night.png';
-import { Modal } from '../../../../Components/Utils/Modal/Modal';
 
 export interface PreviousWorksProps {
   company: string;
+  companyLogo?: IconTypes;
+  
   title: string;
-  team: string;
+  teams: string[];
+  
+  duration: string;
   startDate: string;
   endDate: string;
+  
   languagesAndTech: string;
-  content: string;
-  learnMoreContent?: ReactNode;
-  backgroundImageUrl: string;
+  teamImageUrl: string;
 
+  summary: string;
+  learnMoreContent?: ReactNode;
+
+  // Component Specific
   index?: number;
   additionalStyles?: string;
+  iconStyles?: string;
 }
 
+
+/*
+
+  TODO: Determine whether you should add icons for each language used in the previous works section
+  Edit the modal scroll to the content section and add better padding for different medias
+
+*/
 export const PreviousWorks = ({
-  company, title, team, startDate, endDate, languagesAndTech, 
-  content, learnMoreContent, backgroundImageUrl, index = 0, additionalStyles, 
+    company, companyLogo, title, teams, teamImageUrl,
+    duration, startDate, endDate, languagesAndTech,
+    summary, learnMoreContent, index = 0, additionalStyles, iconStyles
 }: PreviousWorksProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   return (
     <>
-      <div 
+      <Container 
       className={`col gap-2
         bg-div outline-css outline-default rounded-lg shadow-lg
         transition duration-300 
@@ -43,86 +56,118 @@ export const PreviousWorks = ({
         hover:scale-105
 
         ${additionalStyles} `}
-        style={{ animationDelay: `${index * 200}ms` }}
+      style={{ animationDelay: `${index * 200}ms` }}
       >
         {/* Content and Image */}
         <div className='spacing *:span-12 *:lg:span-6'>
-
-          {/* Content */}
-          <Content className='pl-6 pr-2 py-8 col gap-2'>
-            <CardHeader className='row lg:col xl:row justify-between items-center'>
-              <h3 className='py-2 text-nowrap text-shadow-sm'>
-                { company }
-              </h3>
+          
+          <div className="p-4">
+            <CompanyAndLogo className='px-4 row lg:col xl:row gap-1 justify-between items-center'>
+              <h3 className='py-2 text-nowrap text-shadow-sm'>{ company }</h3>
+              <div className="overflow-hidden max-h-14 lg:max-h-20 row items-center">
+                { companyLogo && <Icon variant={companyLogo} styles={iconStyles ? iconStyles : 'size-32 lg:size-40'} /> }
+              </div>
+            </CompanyAndLogo>
+            
+            {/* Ghost Grid dual column alignment layout "grid-rows-subgrid" tells this div to use the parent's row tracks */}
+            <TwoColumnLayout className="grid grid-cols-[max-content_1fr] gap-x-4 p-4 *:grid *:grid-rows-subgrid *:row-span-6">
+              <Labels className="justify-items-end *:placeholder-text *:text-sm *:italic">
+                <span className="">Title: </span>
+                <span className="">Teams: </span>
+                <span className="">Duration: </span>
+                <span className="">LanguagesAndTech: </span>
+                <span className="mb-2">Summary: </span>
+                <span className="">LearnMore: </span>
+              </Labels>
               
-              <Duration className='row items-center gap-2 py-1 xl:py-0'>
-                <div className='p-[3px] rounded-full btn-primary-colors lg:hidden xl:block' />
-                <label className='primary-text text-nowrap'>{ startDate }</label>
-                <div className='ml-2 border-styles border-b w-4 xl:w-10' />
-                <label className='primary-text text-nowrap'>{ endDate }</label>
-              </Duration>
-            </CardHeader>
-
-            <TeamAndTitle className='row justify-between gap-2 pb-4'>
-              <div className='rowStart gap-2 items-center'>
-                <label className='label-colors text-base'>
-                  { team } 
-                </label>
-                <label className='text-colors font-normal text-sm mt-[1px] pl-2 italic'>
+              <Content className='col'>
+                <Title className='row justify-between gap-2 pb-4'>
                   { title }
-                </label>
-              </div>
-            </TeamAndTitle>
-
-            <About className='col gap-4'>
-              <div className='placeholder-text'>
-                { languagesAndTech }
-              </div>
-              <div className='text-colors'>
-                { content }
-              </div>
-            </About>
-
-            <LearnMore>
-              <span onClick={() => setModalOpen(true)} className='link-text text-sm'>
-                Learn more
-              </span>
-            </LearnMore>
-          </Content>
-
+                </Title>
+                
+                <Teams className='row justify-between gap-2 pb-4'>
+                  <label className='text-colors font-normal text-sm mt-[1px] pl-2 italic'>
+                    { teams.join(', ') }
+                  </label>
+                </Teams>
+                
+                <Duration className="rowStart gap-2 items-center pb-4">
+                  <span className="placeholder-text italic text-sm">
+                    { duration } -
+                  </span>
+                  <span className="text-colors text-sm">
+                    { startDate } / { endDate }
+                  </span>
+                </Duration>
+    
+                <LanguagesAndTech className='placeholder-text'>
+                  { languagesAndTech }
+                </LanguagesAndTech>
+                
+                <Summary className="">
+                  { summary }
+                </Summary>
+    
+                <LearnMore>
+                  <span onClick={() => setModalOpen(true)} className='link-text text-sm'>
+                    Learn more
+                  </span>
+                </LearnMore>
+              </Content>
+            </TwoColumnLayout>
+          </div>
+          
+          
           {/* Background Image */}
-          <Background imgUrl={backgroundImageUrl} className={`w-full min-h-64 sm:min-h-[45vw] md:min-h-64 spacing rounded-r-lg`}>
+          <TeamImage imgUrl={teamImageUrl} className={`w-full min-h-64 sm:min-h-[45vw] md:min-h-64 spacing rounded-r-lg`}>
             <Overlay className='span-12 bg-gradient-to-br from-slate-950/30 from-15% via-slate-700/10 via-55% to-transparent rounded-r-lg' />
-          </Background>
+          </TeamImage>
         </div>
-      </div>
+      </Container>
 
 
       {/* Learn More Modal */}
       <Modal label='Hello' isModalOpen={modalOpen} setModalOpen={setModalOpen}>
           Modal Content
           { learnMoreContent }
+        
+          {/* Modal Layout  
+                - Two Sections (Retain Readability / Easy rearranging for mobile)
+                
+                - Left side
+                  - Content section about your time spent at each job and what you did
+                - Right side
+                  - Image, and then the information displayed above 
+                
+                - Refactor this component to render the content section without recreating it for this modal
+            
+          */}
       </Modal>
     </>
   );
 }
 
 // Styled Components
+const Container = styled.div``;
+const TwoColumnLayout = styled.div``;
+const Labels = styled.div``;
 const Content = styled.div``;
-const TeamImage = styled.div``;
 const Overlay = styled.div``;
 
-const CardHeader = styled.div``;
+const CompanyAndLogo = styled.div``;
+const Title = styled.div``;
+const Teams = styled.div``;
 const Duration = styled.div``;
-const TeamAndTitle = styled.div``;
-const About = styled.div``;
+const LanguagesAndTech = styled.div``;
+const Summary = styled.div``;
 const LearnMore = styled.div``;
 
 interface ImageDivProps {
   imgUrl: string;
 }
-const Background = styled.div<ImageDivProps>`
+const TeamImage = styled.div<ImageDivProps>`
   background-image: url(${props => props.imgUrl});
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
 `;
