@@ -30,6 +30,7 @@ export const Documentation =() => {
                 - grid container for even spacing
                     - divided into Name, type, and description
                 - pass in name as a string, type as an element for color coding, and description as a react node to add highlighting and docLinks
+								- a class that can be to specific params to change colors/background for an additional params table on component variants params (for specific types)
 			
             - ParamType
                 - quick element for theme styling, pass in the type
