@@ -20,6 +20,7 @@ export interface TextareaProps {
   metadataTags?: MetadataTagProps[] | boolean;
   onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   submitButtonText?: string;
+  submitButtonDisabled?: boolean;
 
   error?: boolean;
   errorMessage?: string | null;
@@ -42,7 +43,8 @@ export interface MetadataTagProps {
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
   const { type = 'default', name, value, placeholder, id, metadataTags,
-    onSubmit, submitButtonText, error = false, errorMessage, required, disabled,
+    error = false, errorMessage, required, disabled,
+    onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     aria, ...props
   } = allProps;
@@ -68,7 +70,7 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
         aria-invalid={error ? "true" : "false"}
 
         className={`w-full p-0 h-24 text-base
-          ${type == 'default' && 'bg-div'}
+          ${type == 'default' && 'bg-div placeholder:text-slate-500'}
           ${type == 'box'     && 'h-16'}
           ${type == 'post'    && 'bg-default outline-css outline-styles p-2 pl-4'}
           ${type != 'post' && `
@@ -84,8 +86,10 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
 
 
 export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
-  const { type = 'default', name, label, description, value, placeholder, id, metadataTags, onAttachFile, 
-    onSubmit, submitButtonText, error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
+  const { type = 'default', name, label, description, value, placeholder, id, 
+    metadataTags, onAttachFile, tooltip = false, tooltipText,
+    error = false, errorMessage, required = false, disabled = false, 
+    onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     aria, ...props
   } = allProps;
@@ -103,7 +107,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   if (type === 'default') {
     return (
       <div className="w-full flex flex-col gap-2">
-        { label && <h4 className="py-2 placeholder-text font-normal">{ label }</h4> }
+        { label && <h4 className="py-2 text-slate-800 dark:text-slate-500 font-normal">{ label }</h4> }
         <Container className="rowStart gap-2 justify-items-start items-start">
           <Avatar className="bg-div-light rounded-full p-1.5 mt-1">
             <Icon variant='Profile' styles="size-4" />  
@@ -153,8 +157,8 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   //--------------------------------//
   else if (type == 'box') {
     return (<>
-      <Container className="col bg-default outline-css outline-styles rounded-lg w-full">
-        { label && <h4 className="p-4 placeholder-text font-normal">{ label }</h4> }
+      <Container className={`col bg-default outline-css rounded-lg w-full ${error ? 'outline-error' : 'outline-styles'}`}>
+        { label && <h4 className="p-4 text-colors font-normal">{ label }</h4> }
         
         <div className="pl-4">
           <InputComponent { ...allProps } />
@@ -167,17 +171,21 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
           row justify-between items-center p-2
           border-styles border-t"
         >
-          <div className="rowStart gap-2">
-            <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles + 'hover:text-slate-800 dark:hover:text-slate-200'} />
+          <div className="rowStart gap-2 *:cursor-pointer *:transition *:hover:text-slate-800 *:dark:hover:text-slate-200">
+            <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles + ''} />
             <p className="italic">Attach a file</p>
           </div>
 
-          <Button 
-            displayText={submitButtonText ? submitButtonText : 'Create'} 
-            onClick={e => onSubmit && onSubmit(e)} 
-            size="default" 
-            additionalStyles="px-3" 
-          />
+          <div className="margin-auto-div-fix">
+            { !submitButtonDisabled && 
+              <Button 
+                displayText={submitButtonText ? submitButtonText : 'Create'} 
+                onClick={e => onSubmit && onSubmit(e)} 
+                size="default" 
+                additionalStyles="px-3" 
+              />
+            }
+          </div>
         </ButtonsAndLinks>
       </Container>
       
@@ -198,7 +206,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
 
     return (
       <Container>
-        { label && <h4 className="py-2 placeholder-text font-normal">{ label }</h4> }
+        { label && <h4 className="py-2 text-slate-800 dark:text-slate-500 font-normal">{ label }</h4> }
 
         <ButtonsAndLinks className="row justify-between items-center py-2">
           <div className="row gap-2">
@@ -241,12 +249,14 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
             description={description} 
           />
 
-          <Button 
-            displayText="Post" 
-            onClick={e => onSubmit && onSubmit(e)} 
-            size="default" 
-            additionalStyles="px-3 self-start" 
-          />
+          <div className="margin-auto-div-fix">
+            <Button 
+              displayText="Post" 
+              onClick={e => onSubmit && onSubmit(e)} 
+              size="default" 
+              additionalStyles="px-3 self-start" 
+            />
+          </div>
         </div>
       </Container>
     );
@@ -265,7 +275,7 @@ const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => 
       `}>
         { error && errorMessage ?
           <div className="error-text">{ errorMessage }</div>
-        : <div className="placeholder-text">{ description }</div>
+        : <div className="text-slate-800 dark:text-slate-500">{ description }</div>
         }
       </ErrorAndDescription>
     } </>
@@ -354,6 +364,38 @@ export interface AttachFileProps {
   iconStyles: string;
 }
 
+
+// Default metadata tags
+export const defaultBoxMetadataTags: MetadataTagProps[] = [
+{
+  tagLabel: 'assign', onClickTag: () => {},
+  tagIcon: 'Profile', iconStyles: '',
+},
+{
+  tagLabel: 'label', onClickTag: () => {},
+  tagIcon: 'Tag', iconStyles: '',
+},
+{
+  tagLabel: 'due date', onClickTag: () => {},
+  tagIcon: 'Calendar', iconStyles: '',
+},
+];
+export const defaultPostMetadataTags:MetadataTagProps[] = [
+{
+  tagIcon: 'Link', iconStyles: '',
+  onClickTag: () => {},
+},
+{
+  tagIcon: 'CodeBracket', iconStyles: '',
+  onClickTag: () => {},
+},
+{
+  tagIcon: 'AtSymbol', iconStyles: '',
+  onClickTag: () => {},
+},
+];
+
+// Styled Components
 const InputContainer = styled.div``;
 const Container = styled.div``;
 const ErrorAndDescription = styled.div``;

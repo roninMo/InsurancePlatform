@@ -38,9 +38,9 @@ export const Input = ({
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, aria, ...props
 }: InputProps & InputEventHandlers) => {
-  const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`;
+  const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
+  const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This might mess with seeing loading with actual load times
   
-  // TODO: Removed for variation, implement react-hook-forms
   // #region Input Masking
   // const rawMaskValue = value.replace(/\D/g, ''); // To retrieve raw mask values
   // let phoneMaskRef: RefObject<HTMLInputElement> = useMask({
@@ -114,7 +114,7 @@ export const Input = ({
   return (
     <TextInput className='input'>
       <label htmlFor={type} className=""> { label } </label>
-      <div className="mt-2 grid grid-cols-1">
+      <InputContainer className="mt-2 grid grid-cols-1">
         <input 
           type={type}
           name={name}
@@ -187,7 +187,14 @@ export const Input = ({
             }
           </div>
         </SubsequentInputElements>
-      </div>
+        
+        <LoadingBar className='col-start-1 row-start-1 relative overflow-hidden rounded-md'>
+          <div 
+            className={`loading-bar-css bg-primary ${false ? 'animate-loading-bar opacity-75' : 'opacity-0'} `}
+            style={{ animationDelay: `${loadBarRandDelay}ms` }}
+          />
+        </LoadingBar>
+      </InputContainer>
 
       {/* Error / Description messages */}
       { shouldDisplayError() && errorMessage ? 
@@ -223,8 +230,10 @@ const CurrencyInput = styled.div``;
 const PolicyNumberInput = styled.div``;
 const SearchInput = styled.div``;
 
+const InputContainer = styled.div``;
 const PrecedingInputElements = styled.div``;
 const SubsequentInputElements = styled.div``;
+const LoadingBar = styled.div``;
 const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
@@ -275,7 +284,7 @@ const tooltipTheme_Styles = `
   pointer-events-none transition-all
 `;
 
-const tooltipHoverStyles = `absolute top-0 left-0 z-10 duration-200 ease-in`;
+const tooltipHoverStyles = `fixed top-0 left-0 z-10 duration-200 ease-in`;
 const tooltipHidden = `opacity-0 *:opacity-0 transition-all`;
 const tooltipVisible = `opacity-100 *:opacity-100 transition-opacity`;
 // #endregion 
