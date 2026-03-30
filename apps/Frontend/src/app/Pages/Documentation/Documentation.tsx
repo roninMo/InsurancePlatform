@@ -97,7 +97,7 @@ export const Documentation =() => {
       <Container className="spacing pt-10">
         
         {/* Page Content*/}
-        <ContentAndSidebar className="span-12 md:span-8 lg:span-9 rowStart gap-4">
+        <ContentAndSidebar className="min-h-[80vh] span-12 md:span-8 lg:span-9 rowStart gap-4">
           <Sidebar 
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
@@ -119,7 +119,9 @@ export const Documentation =() => {
         </ContentAndSidebar>
         
         <div className="span-2  md:span-3 lg:span-3 xs:hidden md:visible outline-css outline-styles">
-          <Hashbar />
+          <Hashbar 
+            linkSections={[]}
+          />
         </div>
       </Container>
       
@@ -149,16 +151,16 @@ const PageContent = styled.div``;
 export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
   // Inputs Page and Subroutes
   {
-    sectionLink: { label: "Inputs", url: "Inputs" }, // TODO: Add redirects to create individual "home" page content for the quicklinks of each section
+    sectionLink: { label: "Forms", url: "Forms" }, // TODO: Add redirects to create individual "home" page content for the quicklinks of each section
     subLinks: [
-      { label: 'Button', url: '/Documentation/Inputs/Button' },
-      { label: 'Checkbox', url: '/Documentation/Inputs/Checkbox' },
-      { label: 'Input', url: '/Documentation/Inputs/Input' },
-      { label: 'Radio', url: '/Documentation/Inputs/Radio' },
-      { label: 'Radio Table', url: '/Documentation/Inputs/RadioTable' },
-      { label: 'Select', url: '/Documentation/Inputs/Select' },
-      { label: 'Slider', url: '/Documentation/Inputs/Slider' },
-      { label: 'Textarea', url: '/Documentation/Inputs/Textarea' },
+      { label: 'Button', url: '/Documentation/Forms/Button' },
+      { label: 'Checkbox', url: '/Documentation/Forms/Checkbox' },
+      { label: 'Input', url: '/Documentation/Forms/Input' },
+      { label: 'Radio', url: '/Documentation/Forms/Radio' },
+      { label: 'Radio Table', url: '/Documentation/Forms/RadioTable' },
+      { label: 'Select', url: '/Documentation/Forms/Select' },
+      { label: 'Slider', url: '/Documentation/Forms/Slider' },
+      { label: 'Textarea', url: '/Documentation/Forms/Textarea' },
     ]
   },
   // Content Page and Subroutes
@@ -179,4 +181,3 @@ export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
     ]
   }
 ]
-

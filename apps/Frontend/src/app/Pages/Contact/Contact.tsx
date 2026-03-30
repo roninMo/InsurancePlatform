@@ -14,7 +14,7 @@ export const Contact = () => {
 
       </div>
       
-      <div className="py-96" />
+      {/* <div className="py-96" /> */}
       <Footer />
     </>
   );

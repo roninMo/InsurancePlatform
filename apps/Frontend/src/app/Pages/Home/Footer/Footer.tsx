@@ -39,9 +39,9 @@ export const Footer = () => {
           
           <div>
             <HashLink label="Documentation"   url="/Documentation" styles="footer-link-header" />
-            <HashLink label="Forms"           url="/Documentation" styles="footer-link" />
-            <HashLink label="Components"      url="/Documentation" styles="footer-link" />
-            <HashLink label="Layout"          url="/Documentation" styles="footer-link" />
+            <HashLink label="Forms"           url="/Documentation/Forms" styles="footer-link" />
+            <HashLink label="Content"         url="/Documentation/Content" styles="footer-link" />
+            <HashLink label="Utils"           url="/Documentation/Utils" styles="footer-link" />
           </div>
 
           <div>

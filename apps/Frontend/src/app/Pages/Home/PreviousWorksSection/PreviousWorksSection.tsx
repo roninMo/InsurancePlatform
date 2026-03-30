@@ -6,8 +6,6 @@ import DemandJump from '../../../../assets/images/Demandjump.jpg';
 import StateAuto from '../../../../assets/images/StateAuto.png';
 import LibertyMutual from '../../../../assets/images/LibertyMutual.png';
 import styles from './PreviousWorksSection.module.scss';
-import { Button, Icon } from '@Project/ReactComponents';
-import { Modal } from '../../../Components/Utils/Modal/Modal';
 
 export interface PreviousWorkSectionProps {
   additionalStyles?: string;
@@ -67,6 +65,7 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
                   endDate={props.endDate}
                   
                   languagesAndTech={props.languagesAndTech}
+                  summary={props.summary}
                   learnMoreContent={props.learnMoreContent}
                   teamImageUrl={props.teamImageUrl}
                   
