@@ -23,12 +23,12 @@ export interface ModalProps {
 }
 
 export const Modal = ({
-                        isModalOpen, setModalOpen, onCloseModal,
-                        label, additionalStyles,
-                        overlay = true, overlayStyles,
-                        closeModalButton = true, closeModalStyles,
-                        children
-                      }: ModalProps) => {
+  isModalOpen, setModalOpen, onCloseModal,
+  label, additionalStyles,
+  overlay = true, overlayStyles,
+  closeModalButton = true, closeModalStyles,
+  children
+}: ModalProps) => {
   const [isModalRendered, setIsModalRendered] = useState<boolean>(false);
   const modalId = useId();
   const renderedModalId = `modal-${label}-${modalId}`;

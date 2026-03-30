@@ -341,8 +341,12 @@
     ;
   }
 
-  // the scrollbar for dark themes
-  
+  // the scrollbar themes
+  .scrollbar-none {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
   
   .scrollbar-theme {
     @apply scrollbar-theme-base;
@@ -510,10 +514,12 @@
   //------------------------------------------//
   // Documentation Page Themes                //
   //------------------------------------------//
+  // Sidebar
   .sidebar {
     @apply
-      overflow-hidden overflow-y-scroll scrollbar-theme-thin 
-      bg-div border-r-4 border-div
+      h-0 min-h-[100%] /* Dependent on parent height */
+      overflow-hidden overflow-y-auto scrollbar-theme-thin 
+      bg-div border-r border-default
     ;
   }
   
@@ -538,18 +544,49 @@
   
   .sidebar-link-base {
     @apply
-      py-[0.35rem]
-      whitespace-nowrap
+      py-[0.35rem] whitespace-nowrap
       cursor-pointer transition duration-300 
     ;
   }
   
   .sidebar-link-base:hover { @apply primary-text; }
   .sidebar-link-base:active { @apply link-text; }
+
+
+  // Hashbar
+  .hashbar {
+    @apply 
+      h-0 min-h-[100%] /* Dependent on parent height */
+      overflow-hidden overflow-y-auto scrollbar-none
+      border-l border-default
+    ;
+  }
   
+  .hashbar-link-header {
+    @apply 
+      sidebar-link-base
+      text-base font-normal
+      text-colors 
+    ;
+  }
+
+  .hashbar-link {
+    @apply 
+      sidebar-link-base
+      text-sm font-normal
+      placeholder-text
+      
+      border-l border-default
+      hover:border-l-2 hover:border-focus
+    ;
+  }
   
-  
-  
+  .hashbar-link-base {
+    @apply 
+      py-[0.35rem] whitespace-nowrap
+      cursor-pointer transition duration-300 
+    ;
+  }
 
 }
 

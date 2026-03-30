@@ -1,13 +1,13 @@
-import styles from './Sidebar.module.scss';
+import {Dispatch, SetStateAction, useState} from "react";
+import { HashLink } from "../Utils/HashLink/HashLink";
+
 import styled from "@emotion/styled";
-import {Dispatch, SetStateAction} from "react";
-import {HashLink} from "../Utils/HashLink/HashLink";
+import styles from './Sidebar.module.scss';
 
 
 export interface SidebarLinkProps {
   label: string;
   url: string;
-  styles?: string;
 }
 
 export interface SubPageLinkProps {
@@ -24,9 +24,8 @@ export interface SidebarProps {
 
   LinkSections: SubPageLinkProps[];
 }
-export const Sidebar = ({
-  sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSections 
-}: SidebarProps) => {
+export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSections }: SidebarProps) => {
+  const [sidebarRendered, setSidebarRendered] = useState<boolean>(); // We might need a delay hooked to this for open/close animations 
   
   const toggleSidebar = (setOpened: boolean) => {
     setSidebarOpen(setOpened);
@@ -35,14 +34,18 @@ export const Sidebar = ({
   
   return (
     <Container className="sidebar col gap-2 p-4 pr-20">
-      {/* Eventual open close arrow with fixed positioning */}
+      {/* TODO: Eventual open close arrow with fixed positioning */}
       
       <h4 className="pb-6">
         Navigation
       </h4>
 
-      { LinkSections.map(({ sectionLink, subLinks }: SubPageLinkProps) => 
-        <SidebarLinks sectionLink={sectionLink} subLinks={subLinks} />
+      { LinkSections.map(({ sectionLink, subLinks }: SubPageLinkProps, index: number) => 
+        <SidebarLinks 
+          sectionLink={sectionLink} 
+          subLinks={subLinks} 
+          key={`sidebar-section-${sectionLink.label}-${index}`} 
+        />
       )}
       
     </Container>
@@ -55,13 +58,15 @@ const SidebarLinks = ({ sectionLink, subLinks }: SubPageLinkProps) => {
     <div className="colStart pb-4">
       <HashLink 
         url={sectionLink.url} label={sectionLink.label} 
-        styles={"pb-2 " + (sectionLink?.styles ? sectionLink.styles : 'sidebar-link-header')} 
+        styles="pb-2 sidebar-link-header" 
       />
 
-      { subLinks.map(({url, label, styles}: SidebarLinkProps, index: number) =>
-        <HashLink key={`sidebar-link(${index})-${label}`} 
-          url={url} label={label} 
-          styles={"pl-4 " + (styles ? styles : 'sidebar-link')}
+      { subLinks.map(({url, label}: SidebarLinkProps, index: number) =>
+        <HashLink 
+          label={label} 
+          url={url} 
+          styles="pl-4 sidebar-link"
+          key={`sidebar-link(${index})-${label}`} 
         />
       )}
     </div>
