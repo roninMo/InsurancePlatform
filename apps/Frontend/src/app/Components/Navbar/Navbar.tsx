@@ -64,6 +64,7 @@ export const Navbar = ({}: NavbarProps) => {
       const scrollOpts: ScrollIntoViewOptions = { behavior: 'smooth' }
 
       // Ensure the page is loaded before we try to scroll
+      // TODO: Check that navigation to new page scenarios account (or perhaps add) proper scroll restoration. I don't know if I want certain behavior here on revisits
       const timeout = setTimeout(() => {
         if (hash) {
           const id = hash.replace("#", "");

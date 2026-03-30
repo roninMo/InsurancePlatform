@@ -17,7 +17,7 @@ export interface HashLinkProps {
 export const HashLink = ({ url, label, opts = { type: 'router'}, styles, children }: HashLinkProps) => {
   const navigate = useNavigate();
   const customNavFunction = opts?.customNavFunction;
-  const state = { ...opts.state, fromNavigate: true };
+  const state = { ...opts.state,  ...{ fromNavigate: true }};
   const type = opts.type;
 
   const onClickToNavigate = () => {

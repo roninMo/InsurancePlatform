@@ -5,8 +5,10 @@ import { Documentation } from "./Pages/Documentation/Documentation";
 import { Demos } from "./Pages/Demos/Demos";
 import MockDatabase from "./Pages/MockDatabase/MockDatabase";
 import { Contact } from "./Pages/Contact/Contact";
+import {DocumentationPageRoutes} from "./Pages/Documentation/routes_Documentation";
 
 
+export const defaultNavState = { fromNavigate: true }; // Allows @see Navbar.tsx to implement scroll behavior with hash links and pages
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -16,23 +18,20 @@ export const router = createBrowserRouter([
   {
     path: "/Demos",
     element: <Demos />,
-    errorElement: <ErrorPage />,
   },
   {
     path: "/MockDatabase",
     element: <MockDatabase />,
-    errorElement: <ErrorPage />,
   },
   {
     path: "/Contact",
     element: <Contact />,
-    errorElement: <ErrorPage />,
   },
+  DocumentationPageRoutes,
   {
-    path: "/Documentation",
-    element: <Documentation />,
-    errorElement: <ErrorPage />,
-  },
+    path: '*',
+    element: <ErrorPage />
+  }
 
 
   // Home page

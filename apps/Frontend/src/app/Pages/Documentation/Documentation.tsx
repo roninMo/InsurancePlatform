@@ -1,10 +1,25 @@
+import { useState } from 'react';
 import { Navbar } from '../../Components/Navbar/Navbar';
-import { CustomContent } from '../Home/CustomContent/CustomContent';
+import {Sidebar, SubPageLinkProps} from "../../Components/Sidebar/Sidebar";
+import { Hashbar } from '../../Components/Hashbar/Hashbar';
 import { Footer } from '../Home/Footer/Footer';
+import { CustomContent } from '../Home/CustomContent/CustomContent';
+
+import styled from "@emotion/styled";
 import styles from './Documentation.module.scss';
+import {Outlet} from "react-router-dom";
+import {Docs_Button} from "./Pages/Inputs/Button/Docs_Button";
+import {Docs_Checkbox} from "./Pages/Inputs/Checkbox/Docs_Checkbox";
+import {Docs_Input} from "./Pages/Inputs/Input/Docs_Input";
+import {Docs_Radio} from "./Pages/Inputs/Radio/Docs_Radio";
+import {Docs_RadioTable} from "./Pages/Inputs/RadioTable/Docs_RadioTable";
+import {Docs_Select} from "./Pages/Inputs/Select/Docs_Select";
+import {Docs_Slider} from "./Pages/Inputs/Slider/Docs_Slider";
+import {Docs_Textarea} from "./Pages/Inputs/Textarea/Docs_Textarea";
+import {Icon} from "@Project/ReactComponents";
+
 
 export const Documentation =() => {
-	
 	/*
 	
 	  documentation pages
@@ -66,32 +81,102 @@ export const Documentation =() => {
 			- Footer
 		
 	*/
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const onSetSidebarState = (wasOpened: boolean) => {
+    console.log(`The sidebar was ` + wasOpened ? 'opened' : 'closed');
+  };
 	
+  
 	
   return (
     <>
       {/* Navbar */}
       <Navbar />
-      <div className='dropdown-spacing py-14' />
+      <div className='dropdown-spacing py-4' />
+        
+      <Container className="spacing pt-10">
+        
+        {/* Page Content*/}
+        <ContentAndSidebar className="span-12 md:span-8 lg:span-9 rowStart gap-4">
+          <Sidebar 
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            onSetSidebarState={onSetSidebarState}
+            LinkSections={DocumentationPage_SidebarLinks}
+          />
+          
+          
+          <NotificationContainer className="w-full py-2">
+            <div className="p-2 rowStart gap-2 selected-box outline-css outline-focus">
+              <Icon variant="InfoBox" styles="size-5 primary-text" />
+              Notification
+            </div>
+            
+            <PageContent className="py-4">
+              <Outlet />
+            </PageContent>
+          </NotificationContainer>
+        </ContentAndSidebar>
+        
+        <div className="span-2  md:span-3 lg:span-3 xs:hidden md:visible outline-css outline-styles">
+          <Hashbar />
+        </div>
+      </Container>
+      
+        
 
-      <div className='spacing gap-4 p-4'>
-        <CustomContent />
-      </div>
+      {/*<div className='spacing gap-4 p-4'>*/}
+      {/*  /!*<CustomContent />*!/*/}
+      {/*</div>*/}
 
+      {/*<div className="p-8">*/}
+      {/*  <CustomContent />*/}
+      {/*</div>*/}
       <Footer />
     </>
   );
 }
 
-/*
-  import { HashLink as Link } from 'react-router-hash-link';
 
-  /// ... inside your component
-  <nav>
-    <Link to="/#section1">Section 1</Link>
-    <Link to="/about#section2">About Section 2</Link>
-  </nav>
+// Styled Components
+const Container = styled.div``;
+const ContentAndSidebar = styled.div``;
+const NotificationContainer = styled.div``;
+const PageContent = styled.div``;
 
-  /// ... in your content
-  <section id="section1">...</section>
-*/
+
+// Documentation Sidebar Links
+export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
+  // Inputs Page and Subroutes
+  {
+    sectionLink: { label: "Inputs", url: "Inputs" }, // TODO: Add redirects to create individual "home" page content for the quicklinks of each section
+    subLinks: [
+      { label: 'Button', url: '/Documentation/Inputs/Button' },
+      { label: 'Checkbox', url: '/Documentation/Inputs/Checkbox' },
+      { label: 'Input', url: '/Documentation/Inputs/Input' },
+      { label: 'Radio', url: '/Documentation/Inputs/Radio' },
+      { label: 'Radio Table', url: '/Documentation/Inputs/RadioTable' },
+      { label: 'Select', url: '/Documentation/Inputs/Select' },
+      { label: 'Slider', url: '/Documentation/Inputs/Slider' },
+      { label: 'Textarea', url: '/Documentation/Inputs/Textarea' },
+    ]
+  },
+  // Content Page and Subroutes
+  {
+    sectionLink: { label: "Content", url: "Content" },
+    subLinks: [
+      { label: 'Card', url: '/Documentation/Content/Card' },
+      { label: 'Container', url: '/Documentation/Content/Container' },
+    ]
+  },
+  // Utils Page and Subroutes
+  {
+    sectionLink: { label: "Utils", url: "Utils" },
+    subLinks: [
+      { label: 'DragAndDrop', url: '/Documentation/Utils/DragAndDrop' },
+      { label: 'Modal', url: '/Documentation/Utils/Modal' },
+      { label: 'Notifications', url: '/Documentation/Utils/Notifications' },
+    ]
+  }
+]
+
