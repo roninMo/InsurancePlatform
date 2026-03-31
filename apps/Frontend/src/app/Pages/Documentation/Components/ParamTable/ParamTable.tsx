@@ -24,7 +24,7 @@ export function ParamTable() {
 			
 			export interface ParamItem {
 				name: string;
-				type: ParamType;
+				type: ParamType | ReactNode;
 				description: ReactNode;
 			}
 				
@@ -37,11 +37,13 @@ export function ParamTable() {
 					  <label classname="span-12 md:span-7">Description</label>
 					</Headers>
 					
-					<Param classname="spacing gap-2 outline-css rounded-none outline-styles">
-					  <label classname="span-6 md:span-3">Name</label>
-					  <label classname="span-6 md:span-2">Type</label>
-					  <label classname="span-12 md:span-7">Description</label>
-					</Param>
+					{ params.map(({ name, type, description}: ParamItem) =>
+					  <Param classname="spacing gap-2 outline-css rounded-none outline-styles">
+					    <label classname="span-6 md:span-3">{ name }</label>
+					    <label classname="span-6 md:span-2">{ type }</label>
+					    <label classname="span-12 md:span-7">{ description }</label>
+					  </Param>
+					)}
 				</Container>
 			
 			

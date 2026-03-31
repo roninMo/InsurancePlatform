@@ -1,9 +1,11 @@
 import styles from './ParamType.module.scss';
 
-export function ParamType() {
+export const ParamType = () => {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to ParamType!</h1>
+    <div className="">
+      <h5>Welcome to ParamType!</h5>
+			
+			{//}
     </div>
   );
 }
