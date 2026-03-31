@@ -42,6 +42,13 @@ export const ShowcaseElement = ({ jsx, children }: ShowcaseElementProps) => {
       <Content className='w-full'>
         <RenderedComponent className={`height-trans ${displayContent('component', activeTab)}`}>
           <div className='height-trans-content'>
+					  {/* add a list of bubbles for the different states of the component 
+						      - default
+									- error
+									- disabled
+									- the custom states for certain variants (use modals for interactive things)
+						*/}
+					
             { children }
           </div>
         </RenderedComponent>
@@ -49,6 +56,7 @@ export const ShowcaseElement = ({ jsx, children }: ShowcaseElementProps) => {
         { activeTab == 'jsx' && <>
           <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
             <div className={`height-trans-content`}>
+						  {/* Add the copy code snippet here */}
               <Suspense>
                 <div className='-my-[7px] react-syntax-highlighter-margin-fix'>
                   <CodeBlock language='tsx' code={jsx} showLineNumbers />
