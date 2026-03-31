@@ -104,12 +104,14 @@ export const Documentation =() => {
         
         {/* Page Content*/}
         <ContentAndSidebar className="min-h-[80vh] span-12 rowStart gap-4">
-          <Sidebar 
-            sidebarOpen={sidebarOpen}
-            setSidebarOpen={setSidebarOpen}
-            onSetSidebarState={onSetSidebarState}
-            LinkSections={DocumentationPage_SidebarLinks}
-          />
+          <div className="min-w-[20%] 2xl:min-w-[12%]">
+            <Sidebar 
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+              onSetSidebarState={onSetSidebarState}
+              LinkSections={DocumentationPage_SidebarLinks}
+            />
+          </div>
           
           
           <NotificationContainer className="w-full py-2">
@@ -123,7 +125,7 @@ export const Documentation =() => {
             </PageContent>
           </NotificationContainer>
 
-          <div className="xs:hidden md:visible pt-2 min-w-[22%]">
+          <div className="hidden 2xl:block pt-2 min-w-[20%] 2xl:min-w-[15%]">
             <Hashbar />
           </div>
         </ContentAndSidebar>

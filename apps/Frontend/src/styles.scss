@@ -69,7 +69,7 @@
 
   // default background colors
   .bg-default   { @apply bg-white     dark:bg-slate-800; }
-  .bg-div       { @apply bg-slate-300 dark:bg-slate-900; }
+  .bg-div       { @apply bg-slate-100 dark:bg-slate-900; }
   .bg-div-light { @apply bg-slate-400 dark:bg-slate-700; }
   .bg-primary   { @apply bg-blue-600  dark:bg-blue-500; }
   

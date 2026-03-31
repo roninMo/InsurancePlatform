@@ -15,7 +15,7 @@ export const Contact = () => {
 
       </div>
       
-      <div className='p-4'>
+      <div className='p-4 px-8 col gap-4'>
         <CustomContent />
       </div>
 
