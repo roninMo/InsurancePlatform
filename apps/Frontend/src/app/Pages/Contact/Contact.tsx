@@ -1,4 +1,5 @@
 import { Navbar } from '../../Components/Navbar/Navbar';
+import { CustomContent } from '../Home/CustomContent/CustomContent';
 import { Footer } from '../Home/Footer/Footer';
 import styles from './Contact.module.scss';
 
@@ -14,6 +15,10 @@ export const Contact = () => {
 
       </div>
       
+      <div className='p-4'>
+        <CustomContent />
+      </div>
+
       {/* <div className="py-96" /> */}
       <Footer />
     </>

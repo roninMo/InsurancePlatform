@@ -1,4 +1,4 @@
-import {MouseEvent, useEffect, useState} from 'react';
+import {MouseEvent, useEffect, useRef, useState} from 'react';
 import { NavigateOptions, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
@@ -88,11 +88,31 @@ export const Navbar = ({}: NavbarProps) => {
   // Navbar Dropdown                                //
   //------------------------------------------------//
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [isDropdownAllowed, setIsDropdownAllowed] = useState<boolean>(false); // delay
+  const navbarRef = useRef(null);
   const navbarDropdownId = 'navbar-dropdown';
   const navbarLinks = 'navbar-links';
 
+  // Prevent the dropdown from opening right after they navigate so they have time to navigate
+  useEffect(() => {
+    setIsDropdownAllowed(false);
+
+    // once the delay is done, check if we're already hovering over the navbar
+    const timeout = setTimeout(() => {
+      setIsDropdownAllowed(true);
+      const dropdownElement: any = navbarRef.current;
+      const isHovering = dropdownElement.matches(':hover');
+      // console.log(`dropdownElement, hovering: ${isHovering}`, dropdownElement);
+      if (isHovering) setShowDropdown(true);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [key]);
+
   const hoveringOverDropdown = (hovering: boolean, event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    if (!isDropdownAllowed) return;
+    
     const element: any = event?.target as HTMLElement;
+    console.log('hoveringOverDropdown: ', element);
     const isWithinDropdown = element.closest(`#${navbarDropdownId}`);
     // const isWithinLinks = element.closest(`#${navbarLinks}`);
     
@@ -120,6 +140,7 @@ export const Navbar = ({}: NavbarProps) => {
               id='Links' 
               onMouseEnter={(e) => hoveringOverDropdown(true, e)}
               onMouseLeave={(e) => hoveringOverDropdown(false, e)}
+              ref={navbarRef}
               className='rowStart gap-0 *:p-6 *:px-4 *:transition *:text-base *:cursor-pointer'
             >
               <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
@@ -155,7 +176,7 @@ export const Navbar = ({}: NavbarProps) => {
           className={`absolute w-full bg-div border-styles border-y shadow-xl transition
             height-trans-opacity ${showDropdown ? 'opacity-100 grid-rows-[1fr]' : 'opacity-0 grid-rows-[0fr]'}
         `}>
-          <div className={`height-trans-content visible ${showDropdown && 'height-trans-op-content'}`}>
+          <div className={`height-trans-content ${showDropdown && 'height-trans-op-content'}`}>
             <Links className='row justify-center gap-8 pr-14 pb-10 pt-4 *:mx-4 *:my-2 *:col *:gap-3'>
               <div>
                 <HashLink label="Home"            url="/" styles="footer-link-header" />

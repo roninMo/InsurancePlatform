@@ -22,7 +22,7 @@ export const Hashbar = () => {
 
 
   return (
-    <Container className="hashbar col gap-2 p-4 pt-16 mt-2">
+    <Container className="hashbar col gap-2 p-4 pt-16">
       {/* TODO: should we add this to the mobile popover navbar? Perhaps tabbing between nav and this page */}
       
       <h4 className="pb-2 label-colors font-normal">

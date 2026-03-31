@@ -177,29 +177,36 @@
   .selected-box { 
     @apply 
       bg-opacity-20 dark:bg-opacity-10
-    bg-blue-600 dark:bg-blue-500
+      bg-blue-600 dark:bg-blue-500
       outline-focus 
   }
 
   .warning-box {
     @apply 
       bg-opacity-10 dark:bg-opacity-10
-    bg-amber-500 dark:bg-amber-400
-    outline-amber-500 dark:outline-amber-400;
+      bg-amber-500 dark:bg-amber-400
+      outline-amber-500 dark:outline-amber-400;
   }
 
   .ok-box {
     @apply
       bg-opacity-10 dark:bg-opacity-10
-    bg-emerald-500 dark:bg-emerald-400
-    outline-emerald-500 dark:outline-emerald-400;
+      bg-emerald-500 dark:bg-emerald-400
+      outline-emerald-500 dark:outline-emerald-400;
   }
   
   .error-box {
     @apply
       bg-opacity-30 dark:bg-opacity-10
-    bg-red-500 dark:bg-red-500
-    outline-red-500 dark:outline-red-600;
+      bg-red-500 dark:bg-red-500
+      outline-red-500 dark:outline-red-600;
+  }
+  
+  .faded-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-40
+      bg-div
+      outline-default 
   }
   
   .input-error {
@@ -212,7 +219,7 @@
     @apply 
       disabled-text placeholder:disabled-text
       bg-disabled
-    outline-gray-400  dark:outline-gray-600;
+      outline-gray-400  dark:outline-gray-600;
   }
 
 
@@ -433,7 +440,7 @@
 
 
 
-  .project-tab {
+  .tab-default {
     @apply 
       py-3 px-2 transition cursor-pointer duration-200
       text-xl label-colors hover:primary-text
@@ -564,18 +571,17 @@
   
   .hashbar-link-header {
     @apply 
-      sidebar-link-base
-      text-base font-normal
-      text-colors 
+      hashbar-link-base
+      text-base text-colors font-normal 
     ;
   }
 
   .hashbar-link {
     @apply 
-      sidebar-link-base
-      text-sm font-normal
-      placeholder-text
+      hashbar-link-base
+      text-sm placeholder-text 
       
+      my-[0.1rem]
       border-l border-default
       hover:border-l-2 hover:border-focus
     ;
@@ -583,10 +589,28 @@
   
   .hashbar-link-base {
     @apply 
-      py-[0.35rem] whitespace-nowrap
+      py-[0.15rem] whitespace-nowrap
       cursor-pointer transition duration-300 
     ;
   }
+
+
+  //------------------------------------------//
+  // Documentation Page Themes                //
+  //------------------------------------------//
+  .showcase-element-container {
+    @apply
+      p-4 
+      faded-box outline-css
+    ;
+  }
+
+  .showcase-text {
+    @apply text-colors text-lg;
+  }
+
+
+
 
 }
 
@@ -632,11 +656,16 @@
 
   /* This is intended for the animation bars */
   .loading-bar-css {
-    @apply absolute bottom-0 left-0 p-[1px] w-2/3 bg-primary;
+    @apply 
+      p-[1px] w-2/3 bg-primary 
+      absolute bottom-0 left-0 
+      group-focus-within:p-[2px]
+    ;
   } // Parent needs "relative overflow-hidden"
 
   .loading-text { @apply animate-skeleton-text dark:animate-skeleton-text-dark; }
   .loading-bar { @apply animate-skeleton-bar dark:animate-skeleton-bar-dark; }
+  .skeleton-bg { @apply animate-skeleton-bg dark:animate-skeleton-bg-dark; }
 }
 
 /* Selectors quick ref

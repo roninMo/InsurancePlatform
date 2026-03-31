@@ -249,7 +249,7 @@ export const CustomContent = () => {
 
       {/* Input and Textarea */}
       <div className='spacing p-2 bg-div outline-css outline-styles'>
-        {/* List of the different input types (For quick testing) */}
+        {/* List of the different input types */}
         <div className='colStart p-4 pb-8  span-12 md:span-6 lg:span-4 *:w-full *:py-2'>
           <h4 className='label-colors'>Inputs</h4>
           <Input 

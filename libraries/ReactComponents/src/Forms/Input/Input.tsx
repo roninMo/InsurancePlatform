@@ -114,7 +114,7 @@ export const Input = ({
   return (
     <TextInput className='input'>
       <label htmlFor={type} className=""> { label } </label>
-      <InputContainer className="mt-2 grid grid-cols-1">
+      <InputContainer className="mt-2 grid grid-cols-1 group">
         <input 
           type={type}
           name={name}
@@ -150,7 +150,7 @@ export const Input = ({
 
 
         {/* Elements after the input */}
-        <SubsequentInputElements className={`${iconContainerStyles} ${borderSelectStyles(error)} peer-focus:[&_button]:border-l-2`}>
+        <SubsequentInputElements className={`${iconContainerStyles} ${borderSelectStyles(error)} group-focus-within:[&_button]:border-l-2 z-10`}>
           <div className={`row flex-grow justify-items-end items-center`}>
             { shouldDisplayError() ?
               <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
@@ -188,7 +188,7 @@ export const Input = ({
           </div>
         </SubsequentInputElements>
         
-        <LoadingBar className='col-start-1 row-start-1 relative overflow-hidden rounded-md'>
+        <LoadingBar className='col-start-1 row-start-1 relative overflow-hidden rounded-md pointer-events-none'>
           <div 
             className={`loading-bar-css bg-primary ${false ? 'animate-loading-bar opacity-75' : 'opacity-0'} `}
             style={{ animationDelay: `${loadBarRandDelay}ms` }}

@@ -1,22 +1,27 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
+import { Outlet } from "react-router-dom";
+import { SyntaxHighlighterProps } from 'react-syntax-highlighter';
+
 import { Navbar } from '../../Components/Navbar/Navbar';
-import {Sidebar, SubPageLinkProps} from "../../Components/Sidebar/Sidebar";
+import { Sidebar, SubPageLinkProps } from "../../Components/Sidebar/Sidebar";
 import { Hashbar } from '../../Components/Hashbar/Hashbar';
 import { Footer } from '../Home/Footer/Footer';
-import { CustomContent } from '../Home/CustomContent/CustomContent';
+import { Icon } from "@Project/ReactComponents";
+
+import { Docs_Button } from "./Pages/Inputs/Button/Docs_Button";
+import { Docs_Checkbox } from "./Pages/Inputs/Checkbox/Docs_Checkbox";
+import { Docs_Input } from "./Pages/Inputs/Input/Docs_Input";
+import { Docs_Radio } from "./Pages/Inputs/Radio/Docs_Radio";
+import { Docs_RadioTable } from "./Pages/Inputs/RadioTable/Docs_RadioTable";
+import { Docs_Select } from "./Pages/Inputs/Select/Docs_Select";
+import { Docs_Slider } from "./Pages/Inputs/Slider/Docs_Slider";
+import { Docs_Textarea } from "./Pages/Inputs/Textarea/Docs_Textarea";
 
 import styled from "@emotion/styled";
 import styles from './Documentation.module.scss';
-import {Outlet} from "react-router-dom";
-import {Docs_Button} from "./Pages/Inputs/Button/Docs_Button";
-import {Docs_Checkbox} from "./Pages/Inputs/Checkbox/Docs_Checkbox";
-import {Docs_Input} from "./Pages/Inputs/Input/Docs_Input";
-import {Docs_Radio} from "./Pages/Inputs/Radio/Docs_Radio";
-import {Docs_RadioTable} from "./Pages/Inputs/RadioTable/Docs_RadioTable";
-import {Docs_Select} from "./Pages/Inputs/Select/Docs_Select";
-import {Docs_Slider} from "./Pages/Inputs/Slider/Docs_Slider";
-import {Docs_Textarea} from "./Pages/Inputs/Textarea/Docs_Textarea";
-import {Icon} from "@Project/ReactComponents";
+
+export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSyntaxHighlighter')) as React.FC<SyntaxHighlighterProps | any>;
+
 
 
 export const Documentation =() => {
@@ -39,7 +44,8 @@ export const Documentation =() => {
                 
                 - documentation tabs
                   - pass in react nodes with props on the page
-                  - jsx content render
+                    - action bubbles for different states (default, error, disabled)
+                  - react-syntax-highlighter to render jsx content
 				
             - ParamTable
                 - grid container for even spacing
@@ -97,7 +103,7 @@ export const Documentation =() => {
       <Container className="spacing pt-10">
         
         {/* Page Content*/}
-        <ContentAndSidebar className="min-h-[80vh] span-12 md:span-8 lg:span-9 rowStart gap-4">
+        <ContentAndSidebar className="min-h-[80vh] span-12 rowStart gap-4">
           <Sidebar 
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
@@ -116,13 +122,12 @@ export const Documentation =() => {
               <Outlet />
             </PageContent>
           </NotificationContainer>
+
+          <div className="xs:hidden md:visible pt-2 min-w-[22%]">
+            <Hashbar />
+          </div>
         </ContentAndSidebar>
         
-        <div className="span-2  md:span-3 lg:span-3 xs:hidden md:visible outline-css outline-styles">
-          <Hashbar 
-            linkSections={[]}
-          />
-        </div>
       </Container>
       
         
