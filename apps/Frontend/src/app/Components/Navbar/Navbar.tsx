@@ -112,7 +112,7 @@ export const Navbar = ({}: NavbarProps) => {
     if (!isDropdownAllowed) return;
     
     const element: any = event?.target as HTMLElement;
-    console.log('hoveringOverDropdown: ', element);
+    // console.log('hoveringOverDropdown: ', element);
     const isWithinDropdown = element.closest(`#${navbarDropdownId}`);
     // const isWithinLinks = element.closest(`#${navbarLinks}`);
     

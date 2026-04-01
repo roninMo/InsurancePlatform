@@ -261,7 +261,7 @@ const getInputClasses = (error: boolean, type: string, disabled?: boolean): stri
   return classes;
 }
 
-const getDisabledThemes = (): string => ` disabled`;
+const getDisabledThemes = (): string => ` input-disabled`;
 const getErrorThemes = (): string => ` error-text outline-error`;
 
 

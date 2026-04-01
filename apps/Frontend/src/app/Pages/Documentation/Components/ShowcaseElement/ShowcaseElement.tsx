@@ -9,10 +9,11 @@ import styles from './ShowcaseElement.module.scss';
 type showcaseTabType = 'component' | 'jsx';
 export interface ShowcaseElementProps {
   jsx: string;
+  styles: string;
   children: ReactNode; // Used as the rendered component
 }
 
-export const ShowcaseElement = ({ jsx, children }: ShowcaseElementProps) => {
+export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps) => {
   const [activeTab, setActiveTab] = useState<showcaseTabType>('component');
   const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
 
@@ -29,8 +30,8 @@ export const ShowcaseElement = ({ jsx, children }: ShowcaseElementProps) => {
   }
 
   return (
-    <Container className='col bg-div outline-css outline-default'>
-      <Tabs className='w-full rowStart items-center gap-4 px-4 border-b border-default'>
+    <Container className='col outline-css outline-default'>
+      <Tabs className='w-full rowStart items-center gap-4 px-4 border-b border-default faded-box'>
         <div onClick={() => toggleTab('component')} className={`tab-default ${isTabActive('component', activeTab)}`}>
           Component
         </div>
@@ -39,43 +40,34 @@ export const ShowcaseElement = ({ jsx, children }: ShowcaseElementProps) => {
         </div>
       </Tabs>
 
-      <Content className='w-full'>
+      <Content className='w-full bg-div '>
         <RenderedComponent className={`height-trans ${displayContent('component', activeTab)}`}>
-          <div className='height-trans-content'>
-					  {/* add a list of bubbles for the different states of the component 
-						      - default
-									- error
-									- disabled
-									- the custom states for certain variants (use modals for interactive things)
-						*/}
-					
+          <div className={`height-trans-content ${styles}`}>
             { children }
           </div>
         </RenderedComponent>
         
-        { activeTab == 'jsx' && <>
-          <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
-            <div className={`height-trans-content`}>
-						  {/* Add the copy code snippet here */}
-              <Suspense>
-                <div className='-my-[7px] react-syntax-highlighter-margin-fix'>
-                  <CodeBlock language='tsx' code={jsx} showLineNumbers />
-                </div>
-              </Suspense>
-            </div>
-          </Jsx>
+        <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
+          <div className={`height-trans-content`}>
+            {/* Add the copy code snippet here */}
+            <Suspense>
+              <div className='-my-[7px] react-syntax-highlighter-margin-fix'>
+                <CodeBlock language='tsx' code={jsx} showLineNumbers />
+              </div>
+            </Suspense>
+          </div>
+        </Jsx>
 
-          <PreRenderContent className={`height-trans ${displayContent('jsx', activeTab, !isRenderDelayDone)}`}>
-            <div className={`height-trans-content`}>
-              <p className='p-4 italic loading-text'>Loading code...</p>
-
-              {/* TODO: Add skeleton loading components */}
-              {/* <div className='w-full p-4 skeleton-bg outline-css outline-default'>
+        <PreRenderContent className={`height-trans ${displayContent('jsx', activeTab, !isRenderDelayDone)}`}>
+          <div className={`height-trans-content`}>
+            <p className='p-4 italic loading-text'>Loading code...</p>
+            {/* TODO: Add skeleton loading components
+              <div className='w-full p-4 skeleton-bg outline-css outline-default'>
                 Hello
-              </div> */}
-            </div>
-          </PreRenderContent>
-        </>}
+              </div> 
+            */}
+          </div>
+        </PreRenderContent>
           
       </Content>
 

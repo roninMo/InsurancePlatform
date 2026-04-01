@@ -24,6 +24,7 @@ export const Hashbar = () => {
   return (
     <Container className="hashbar col gap-2 p-4 pt-16">
       {/* TODO: should we add this to the mobile popover navbar? Perhaps tabbing between nav and this page */}
+      {/* TODO: Find out how you can make this behave like a fixed component scroll wise (or if it should just be fixed) */}
       
       <h4 className="pb-2 label-colors font-semibold">
         On This Page
