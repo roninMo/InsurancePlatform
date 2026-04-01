@@ -16,7 +16,7 @@ export interface ParamTableProps {
 	additionalStyles?: string;
 }
 
-export function ParamTable() {
+export const ParamTable = () => {
   return (
     <div className="">
       <h4>Welcome to ParamTable!</h4>
