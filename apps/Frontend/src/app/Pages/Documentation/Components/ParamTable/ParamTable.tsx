@@ -1,5 +1,21 @@
 import styles from './ParamTable.module.scss';
 
+
+export interface ParamItem {
+	name: string;
+	type: ParamType | ReactNode;
+	description: ReactNode;
+	
+	contextParam?: boolean; // used to signify certain variants. e.g. type="email"
+	variantOption?: boolean;
+}
+
+export interface ParamTableProps {
+	params: ParamItem[];
+	variant: 'default' | 'additionalParams';
+	additionalStyles?: string;
+}
+
 export function ParamTable() {
   return (
     <div className="">
@@ -9,24 +25,14 @@ export function ParamTable() {
 		{/* 
 	    Grid layout or two column layout
 				- Header with Name, type, and description
-				- each param should have these values passed in with addition options
+				- each param should have these values passed in with additional options
 				  - custom options for variants with required values to change styles
 					- add contextual highlighting for these values (ex. type=email highlighted green)
 					- another theme for additional options specific to variant specific params
 			  - slightly different param table for additional params on each variant
 				- Either collapse the original table by default for variant with additional dropdown for variant param table below
 				
-			export interface ParamTableProps {
-				params: ParamItem[];
-				variant: 'default' | 'additionalParams';
-				additionalStyles?: string;
-			}
-			
-			export interface ParamItem {
-				name: string;
-				type: ParamType | ReactNode;
-				description: ReactNode;
-			}
+		
 				
 			
 			Layout - (Quick reference, try building it with grid's two column layout)
@@ -52,4 +58,9 @@ export function ParamTable() {
   );
 }
 
-export default ParamTable;
+
+// Styled Components
+const Container = styled.div´´;
+const Headers = styled.div´´;
+const Param = styled.div´´;
+

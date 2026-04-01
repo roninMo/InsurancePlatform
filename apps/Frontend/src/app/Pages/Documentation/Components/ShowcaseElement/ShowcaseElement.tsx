@@ -50,6 +50,8 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
         <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
           <div className={`height-trans-content`}>
             {/* Add the copy code snippet here */}
+					  {/* Add icons to the bubble element states, and different colors on select. maybe make it one element with no padding, and arrows on either side to transition between each */}
+						
             <Suspense>
               <div className='-my-[7px] react-syntax-highlighter-margin-fix'>
                 <CodeBlock language='tsx' code={jsx} showLineNumbers />

@@ -1,13 +1,20 @@
 import styles from './ParamType.module.scss';
 
-export const ParamType = () => {
+
+export type ParamTypes = "number" | "string" | "custom";		 
+export interface ParamTypeProps {
+	type: ParamTypes;
+	isArray?: boolean;
+}
+
+export const ParamType = (({ type, isArray }: ParamTypeProps)) => {			 
   return (
-    <div className="">
-      <h5>Welcome to ParamType!</h5>
-			
-			{//}
-    </div>
+	  <Container classname="p-2 bg-div hover:bg-div-light transition">
+	    { type } { isArray ? "[]" : "" }
+	  </Container>
   );
 }
 
-export default ParamType;
+
+// Styled Components 
+const Container = styled.div'';
