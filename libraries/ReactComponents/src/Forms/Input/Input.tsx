@@ -7,7 +7,7 @@ import { Icon } from '../../Common/Icons/Icon';
 import { InputEventHandlers } from '../../Common/Utilities/Utils';
 
 
-export type TextInputTypes = 'text' | 'email' | 'password' | 'phone' | 'creditCard' | 'currency' | 'policyNumber' | 'search';
+export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
 export type TextInputAutoCompleteTypes = "email"  | "tel" | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
 
 interface InputProps {
@@ -118,7 +118,7 @@ export const Input = ({
         <input 
           type={type}
           name={name}
-          value={!disabled ? value : placeholder}
+          value={value}
           ref={getMaskRef(type)}
           placeholder={placeholder}
           id={id}

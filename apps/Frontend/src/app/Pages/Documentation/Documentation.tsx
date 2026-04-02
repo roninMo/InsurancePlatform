@@ -24,68 +24,90 @@ export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSynt
 
 
 export const Documentation =() => {
-	/*
-	
-	  documentation pages
-        - Introduction - list of boxes displaying inputs for each subroot section
-            - Inputs, content, utils
-			- each subroot/ should have quicklist
-			
-			
+  /* TODO: From where we left off
+
+  - Add a state variable for the additional variant params and combine them with the current list of params 
+    - useState: record with keys to the list of params, containing the context and variant options for each param
+      - use the type to retrieve static elements that should be converted to an object list. UseTextInputTypes for key reference
+    
+    - When they select the tab to enable a new input, update the list of params for contextual highlighting and additional params
+      - Solve the nested objects to context params, or create a new param table for the options object "Object Params"
+
+  - HashLinks for the Input Documentation page (which doesn't really seem necessary anymore)
+  
+  - After that, finish and try out DocLinks and Keywords in the descriptions
+  - We need a tooltip util component to add to other components that lets you add a string, elements, or jsx code render within it
+  
+  - Then it's onto adding the other components to the documentation
+  - Finally, go through each component and refactor to make them very organized and themed
+    - Fix the styles, add themes to the global styles for reference
+    - Refactor things for efficiency, and make it more neat and organized
+    - Finish any of the uncompleted logic that we haven't added yet but left notes on building
+
+  */
+
+
+	/* 
+    - Documentation pages
+      - Introduction: list of boxes categorizing each subroot section 
+      - each subroot/ should have QuickList to display their components
+      - Inputs, content, utils component showcases
+
+
+
 		- Components		
-			- Quicklist - div that hovers with box and scale on hover
+			- QuickList (Intro pages for selecting a component) - div that hovers with box and scale on hover
 				- containing div should be placed behind it with z order and a background, not selectable
 				- the content or artificial image thats just a default render of each component
-				- wrap these in hashlinks for navigation of the docs
+				- wrap these in hashLinks for navigation of the docs
 		
-            - ShowcaseElement
-              - Tab Element (Array of title and elements ) to nav between the element and the jsx
-                
-                - documentation tabs
-                  - pass in react nodes with props on the page
-                    - action bubbles for different states (default, error, disabled)
-                  - react-syntax-highlighter to render jsx content
-				
-            - ParamTable
-                - grid container for even spacing
-                    - divided into Name, type, and description
-                - pass in name as a string, type as an element for color coding, and description as a react node to add highlighting and docLinks
-								- a class that can be to specific params to change colors/background for an additional params table on component variants params (for specific types)
-			
-            - ParamType
-                - quick element for theme styling, pass in the type
-			
-            - DocLink
-                - subclass the hashlink for theme styles
-			
-            - Keyword
-                - Custom <b> tag for highlighted text with background for keywords
-		
-		
+      - ShowcaseElement
+        - Tab Element (Array of title and elements ) to nav between the element and the jsx
+        - Jsx Tab: react-syntax-highlighter to render jsx content
+        - Component Tab: untangle the state so we can display different versions while showing proper construction of it
+        - action bubbles for different states (default, error, disabled)
+
+      - ParamTable
+        - grid container for even spacing
+        - divided into Name, type, and description, with hovers on the types for the default values, and perhaps other context scenarios?
+        - pass in name as a string, type as an element for color coding, and description as a react node to add highlighting and docLinks
+        - a class that can be to specific params to change colors/background for an additional params table on component variants params (for specific types)
+
+      - ParamType
+        - quick element for theme styling, pass in the type
+
+      - DocLink
+        - subclass the hashLink for theme styles
+
+      - Keyword
+        - Custom <b> tag for highlighted text with background for keywords
+
+
+
 		- Route Layout
-		  - Introduction
-		  - Inputs
-		    - /
-            - /inputs
-            - /textarea
-            - /radio
-            - /select
-            - /slider
-            - /radioTable
-            - /the rest
-				
-			- same for the other routes
-			
-			
+      - Introduction
+      - Inputs
+        - /
+          - /inputs
+          - /textarea
+          - /radio
+          - /select
+          - /slider
+          - /radioTable
+          - /the rest
+          - same for the other routes
+
+
 		- Page Layouts
-            - Doc Nav Sidebar (all pages)
-            - Content Section
-		        - Space for notifications
-                - Current page route for content (center)
+      - Doc Nav Sidebar (all pages)
+      - Space for notifications
+      - Content Section (Current route)
 			- Right side hash link sidebar
 			- Footer
-		
+      
 	*/
+
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const onSetSidebarState = (wasOpened: boolean) => {
     console.log(`The sidebar was ` + wasOpened ? 'opened' : 'closed');

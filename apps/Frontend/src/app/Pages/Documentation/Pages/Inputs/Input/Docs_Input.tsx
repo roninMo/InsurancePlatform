@@ -1,60 +1,73 @@
-import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction, Suspense, useId, useState } from 'react';
-import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { Input, TextInputTypes } from '@Project/ReactComponents';
+import { Dispatch, ReactNode, SetStateAction, useId, useState } from 'react';
+import styled from '@emotion/styled';
 import { SubPageLinkProps } from '../../../../../Components/Sidebar/Sidebar';
 import { ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
-import { CodeBlock } from '../../../Documentation';
-
-import styles from './Docs_Input.module.scss';
-import styled from '@emotion/styled';
-import { ElementState, ElementStateTypes } from '../../../Components/ShowcaseElement/ElementStates/ElementState';
 import { ParamItem, ParamTable } from '../../../Components/ParamTable/ParamTable';
+import { ElementState, ElementStateTypes } from '../../../Components/ShowcaseElement/ElementStates/ElementState';
 import { ParamType } from '../../../Components/ParamType/ParamType';
+import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+
+import InputCodeSnippets from './Docs_InputJsxComponents?raw';
+import { 
+  Example_CreditCardInput,
+  Example_CurrencyInput,
+  Example_EmailInput,
+  Example_NumberInput,
+  Example_PasswordInput,
+  Example_PhoneInput,
+  Example_PolicyNumberInput,
+  Example_SearchInput,
+  Example_TextInput,
+} from './Docs_InputJsxComponents';
+import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+import { TextInputTypes } from '@Project/ReactComponents';
 
 
 export const Docs_Input = () => {
-  const [text, setText] = useState<string>('');
+  const [currentTab, setCurrentTab] = useState<TextInputTypes>('text');
+  const tabs: TextInputTypes[] = ['text', 'number', 'email', 'password', 'search', 'policyNumber', 'phone', 'creditCard', 'currency'];
+  const tabLabels: string[] = ['Text', 'Number', 'Email', 'Password', 'Search', 'Policy Number', 'Phone', 'Credit Card', 'Currency'];
+
+  const showTabContent = (tab: TextInputTypes) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
+  const tabStyles = (tab: TextInputTypes) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
+  
+  const onClickTab = (tab: TextInputTypes) => {
+    setCurrentTab(tab);
+  }
+
+  // #region States
   const [textError, setTextError] = useState<string>('');
   const [textDisabled, setTextDisabled] = useState<boolean>(false);
   
-  const [number, setNumber] = useState<string>('0');
   const [numberError, setNumberError] = useState<string>('');
   const [numberDisabled, setNumberDisabled] = useState<boolean>(false);
   
-  const [email, setEmail] = useState<string>('example@email.com');
   const [emailError, setEmailError] = useState<string>('');
   const [emailDisabled, setEmailDisabled] = useState<boolean>(false);
   
-  const [password, setPassword] = useState<string>('password');
   const [passwordError, setPasswordError] = useState<string>('');
   const [passwordDisabled, setPasswordDisabled] = useState<boolean>(false);
   
-  const [search, setSearch] = useState<string>('');
   const [searchError, setSearchError] = useState<string>('');
   const [searchDisabled, setSearchDisabled] = useState<boolean>(false);
   
-  const [phone, setPhone] = useState<string>('(012)-345-6789');
   const [phoneError, setPhoneError] = useState<string>('');
   const [phoneDisabled, setPhoneDisabled] = useState<boolean>(false);
   
-  const [policy, setPolicy] = useState<string>('');
   const [policyError, setPolicyError] = useState<string>('');
   const [policyDisabled, setPolicyDisabled] = useState<boolean>(false);
   
-  const [credit, setCredit] = useState<string>('0000-0000-0000-0000');
   const [creditError, setCreditError] = useState<string>('');
   const [creditDisabled, setCreditDisabled] = useState<boolean>(false);
   
-  const [currency, setCurrency] = useState<string>('0.00');
   const [currencyError, setCurrencyError] = useState<string>('');
   const [currencyDisabled, setCurrencyDisabled] = useState<boolean>(false);
+  // #endregion
 
   const universalProps = {
     styles: "p-4 pt-6 pb-2 span-12 lg:span-8",
-    stateStyles: "p-4 span-12 lg:span-8 rowStart gap-2",
-    tooltip: true,
-    tooltipText: "Tooltip text...",
-  };1
+    stateStyles: "p-4 span-12 lg:span-8 rowStart gap-2"
+  };
 
   return (
     <Container className='spacing'>
@@ -71,26 +84,153 @@ export const Docs_Input = () => {
         </p>
       </div>
 
-      {/* Showcase Element */}
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="text"
-            label="Text Input"
-            description="The text input's description."
-            value={text}
-            setValue={setText}
-            placeholder="Type something..."
+      {/* Showcase Input Element Variants */}
+      <Tabs className='span-12 px-4 tab-container'>
+        { tabs.map((tab: TextInputTypes, index: number) => 
+          <div onClick={() => onClickTab(tab)} className={tabStyles(tab)} >
+            {/* { tab && tab.charAt(0) ? tab.charAt(0).toUpperCase() + tab.slice(1) : ''} */}
+            { tabLabels[index] }
+          </div>
+        )}
+      </Tabs>
+      
+      {/* Variants */}
+      <Variants className='span-12 py-2'>
+        {/* Currency */}
+        <div className={`height-trans ${showTabContent('currency')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_CurrencyInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={currencyError} setError={setCurrencyError}
+                disabled={currencyDisabled} setDisabled={setCurrencyDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_CurrencyInput error={currencyError} disabled={currencyDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
 
-            error={textError}
-            setError={setTextError}
-            disabled={textDisabled}
-            setDisabled={setTextDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
+        {/* Credit Card */}
+        <div className={`height-trans ${showTabContent('creditCard')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_CreditCardInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={creditError} setError={setCreditError}
+                disabled={creditDisabled} setDisabled={setCreditDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_CreditCardInput error={creditError} disabled={creditDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+        
+        {/* Phone Number */}
+        <div className={`height-trans ${showTabContent('phone')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_PhoneInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={phoneError} setError={setPhoneError}
+                disabled={phoneDisabled} setDisabled={setPhoneDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_PhoneInput error={phoneError} disabled={phoneDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+        
+        {/* Policy Number */}
+        <div className={`height-trans ${showTabContent('policyNumber')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_PolicyNumberInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={policyError} setError={setPolicyError}
+                disabled={policyDisabled} setDisabled={setPolicyDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_PolicyNumberInput error={policyError} disabled={policyDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className={`height-trans ${showTabContent('search')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_SearchInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={searchError} setError={setSearchError}
+                disabled={searchDisabled} setDisabled={setSearchDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_SearchInput error={searchError} disabled={searchDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+        
+        {/* Password */}
+        <div className={`height-trans ${showTabContent('password')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_PasswordInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={passwordError} setError={setPasswordError}
+                disabled={passwordDisabled} setDisabled={setPasswordDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_PasswordInput error={passwordError} disabled={passwordDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+        
+        {/* Email */}
+        <div className={`height-trans ${showTabContent('email')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_EmailInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={emailError} setError={setEmailError}
+                disabled={emailDisabled} setDisabled={setEmailDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_EmailInput error={emailError} disabled={emailDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+        
+        {/* Number */}
+        <div className={`height-trans ${showTabContent('number')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_NumberInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={numberError} setError={setNumberError}
+                disabled={numberDisabled} setDisabled={setNumberDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_NumberInput error={numberError} disabled={numberDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+        
+        {/* Text Input */}
+        <div className={`height-trans ${showTabContent('text')}`}>
+          <div className={`height-trans-content`}>
+            <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_TextInput")} styles="spacing gap-0">
+              <ShowcaseExample_StateRef 
+                error={textError} setError={setTextError}
+                disabled={textDisabled} setDisabled={setTextDisabled}
+                elementStateTypes={[]} { ...universalProps } 
+              >
+                <Example_TextInput error={textError} disabled={textDisabled} />
+              </ShowcaseExample_StateRef>
+            </ShowcaseElement>
+          </div>
+        </div>
+      </Variants>
       
       <h3 className="span-12 py-2 pt-8">
         Input Parameters
@@ -98,335 +238,37 @@ export const Docs_Input = () => {
       <div className='span-12 py-2'>
         <ParamTable params={ParamTableArgs_Input} />
       </div>
-
-
-
-
-      {/* Variants */}
-      <h3 className="span-12 py-2 pt-8">
-        Variants
-      </h3>
-
-
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Add a Number Input with Increment/Decrement
-      </h4>
-
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Email Input
-      </h4>
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="email"
-            label="Email Input"
-            description="The email input's description."
-            value={email}
-            setValue={setEmail}
-            placeholder="Type something..."
-
-            error={emailError}
-            setError={setEmailError}
-            disabled={emailDisabled}
-            setDisabled={setEmailDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
-      
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Password Input
-      </h4>
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="password"
-            label="Password Input"
-            description="The password input's description."
-            value={password}
-            setValue={setPassword}
-            placeholder="Type something..."
-
-            error={passwordError}
-            setError={setPasswordError}
-            disabled={passwordDisabled}
-            setDisabled={setPasswordDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
-      
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Search Input
-      </h4>
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="search"
-            label="Search Input"
-            description="The search's description."
-            value={search}
-            setValue={setSearch}
-            placeholder="Type something..."
-
-            error={searchError}
-            setError={setSearchError}
-            disabled={searchDisabled}
-            setDisabled={setSearchDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
-      
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Policy Number Input
-      </h4>
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="policyNumber"
-            label="Policy Number Input"
-            description="The policy number input's description."
-            value={policy}
-            setValue={setPolicy}
-            placeholder="Do something..."
-
-            error={policyError}
-            setError={setPolicyError}
-            disabled={policyDisabled}
-            setDisabled={setPolicyDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
-      
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Phone Input
-      </h4>
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="phone"
-            label="Phone Input"
-            description="The phone input's description."
-            value={phone}
-            setValue={setPhone}
-            placeholder="Type something..."
-
-            error={phoneError}
-            setError={setPhoneError}
-            disabled={phoneDisabled}
-            setDisabled={setPhoneDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
-      
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Credit Card Input
-      </h4>
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="creditCard"
-            label="Credit Card Input"
-            description="The credit card input's description."
-            value={credit}
-            setValue={setCredit}
-            placeholder="Type something..."
-
-            error={creditError}
-            setError={setCreditError}
-            disabled={creditDisabled}
-            setDisabled={setCreditDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
-      
-      <h4 className='span-12 py-2 pt-8 label-colors'>
-        Currency Input
-      </h4>
-      <div className='span-12 py-2'>
-        <ShowcaseElement jsx={JsxExample_Input()} styles="spacing gap-0">
-          <ShowcaseExample_Input
-            type="currency"
-            label="Currency Input"
-            description="The currency input's description."
-            value={currency}
-            setValue={setCurrency}
-            placeholder="Type something..."
-
-            error={currencyError}
-            setError={setCurrencyError}
-            disabled={currencyDisabled}
-            setDisabled={setCurrencyDisabled}
-            elementStateTypes={[]}
-            { ...universalProps }
-          />
-        </ShowcaseElement>
-      </div>
-      
-
-
     </Container>
   );
 }
 
 
-// The rendered component
-interface ShowcaseInputProps {
-  type: TextInputTypes;
-  label: string;
-  description: string;
-  value: string;
-  placeholder: string;
-
-  setValue: Dispatch<SetStateAction<string>>;
-  error: string;
-  setError: Dispatch<SetStateAction<string>>;
-  disabled: boolean;
-  setDisabled: Dispatch<SetStateAction<boolean>>;
-  elementStateTypes?: ElementStateTypes[];
-
-  styles: string;
-  stateStyles: string;
-  tooltip?: boolean;
-  tooltipText?: string;
-}
-
-const ShowcaseExample_Input = ({
-  type, label, description, value, placeholder,
-  setValue, error, setError, disabled, setDisabled,
-  elementStateTypes, tooltip, tooltipText = 'Tooltip',
-  styles, stateStyles
-}: ShowcaseInputProps) => {
-  const id = useId();
-  const [elementStates, setElementStates] = useState<Record<ElementStateTypes, boolean>>({
-    'default': false, 'error': false, 'disabled': false,
-    ...elementStateTypes?.map((stateType: ElementStateTypes) => ({[stateType]: false}))
-  });
+// Styled Components
+const Container = styled.div``;
+const Tabs = styled.div``;
+const Variants = styled.div``;
 
 
-  const onValueUpdated = (e: any) => {
-    const newValue = e?.target?.value;
-    setValue(newValue);
-  }
+//----------------------------------------------//
+// HashLinks                                    //
+//----------------------------------------------//
+export const DocsPageHashLinks_Input: SubPageLinkProps[] = [
 
-  const onSelectState = (type: ElementStateTypes | string) => {
-    const nextTypeValue = !elementStates?.[type as ElementStateTypes] || false;
-    const clearedState: any = Object.fromEntries(Object.entries(elementStates)
-      ?.map(([type, isSelected]) => [type, false]));
-
-    setElementStates((prevState: Record<ElementStateTypes, boolean>) => {
-      const nextState = clearedState;
-      nextState[type as ElementStateTypes] = nextTypeValue;
-      return nextState;
-    });
-
-    // Change input state
-    if (type == 'default') {
-      if (error) setError('');
-      if (disabled) setDisabled(false);
-    }
-    
-    else if (type == 'error') {
-      if (!error) setError('An error occurred.');
-      if (disabled) setDisabled(false);
-    } 
-    
-    else if (type == 'disabled') {
-      if (error) setError('');
-      if (!disabled) setDisabled(true);
-    }
-  }
+];
 
 
-  return (
-    <>
-      <div className={styles}>
-        <Input 
-          type={type} 
-          id={id} 
-
-          name={`${type}-input-${id}`}
-          label={label} 
-          value={value} 
-          // ref={getMaskRef(type)}
-          placeholder={placeholder}
-
-          error={error ? true : undefined}
-          errorMessage={error}
-          disabled={disabled}
-
-          onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-          onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-          onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-
-          description={description}
-          tooltip={tooltip}
-          tooltipText={tooltipText}
-        />
-      </div>
-      <div className={stateStyles}>
-        { Object.entries(elementStates)?.map(([type, isSelected]) => 
-          <ElementState type={type} isSelected={isSelected} onClick={() => onSelectState(type)} key={`${label}-${id}-element-state-${type}`} />
-        )}
-      </div>
-    </>
-  )
-}
-
-
-// Rendered code
-const JsxExample_Input = () => 
-`const InputExample = ({ label, description }: InputProps) => {
-  const id = useId();
-  const [value, setValue] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [disabled, setDisabled] = useState<boolean>(false);
-
-  const onValueUpdated = (e: any) => {
-    const newValue = e?.target?.value;
-    setValue(newValue);
-  }
-
-  return (
-    <Input 
-      type="text" 
-      id={id} 
-
-      name="ExampleInput"
-      label={label} 
-      value={value} 
-      placeholder="Input Text..."
-      // ref={getMaskRef(type)}
-
-      error={error ? true : undefined}
-      errorMessage={error}
-      disabled={disabled}
-
-      onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-      onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-      onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-
-      description={description}
-      tooltip 
-      tooltipText='tooltip text...'
-    />
-  );
-}
-`;
-
-
-// Input components rendered args
+//----------------------------------------------//
+// Input components param table rendered props  //
+//----------------------------------------------//
+// Note, this only works because these values are NOT using state params, preventing unnecessary overhead with state
 const ParamTableArgs_Input: (ParamItem | 'spacing')[] = [
+  { name: 'type', 
+    type: <ParamType type='TextInputTypes' />,
+    description:  
+    <div className='param-item-desc-text'>
+      The variant of the input component you're using. The types are text, number, email, password, search, policyNumber, phone, creditCard, and currency.
+    </div>
+  },
   { name: 'name', 
     type: <ParamType type='string' />,
     description:  
@@ -525,14 +367,20 @@ const ParamTableArgs_Input: (ParamItem | 'spacing')[] = [
   },
 ];
 
-
-// Styled Components
-const Container = styled.div``;
-
-
-//--------------------------//
-// HashLinks                //
-//--------------------------//
-export const DocsPageHashLinks_Input: SubPageLinkProps[] = [
-
+const ParamTableArgs_EmailInputContext: (Partial<ParamItem>)[] = [
+  { name: 'type', 
+    contextParam: true,
+    variantOption: false,
+  },
+  { name: 'options.showEmailIcon', 
+    contextParam: false,
+    variantOption: true,
+  },
+  // Email - show EmailIcon
+  // Password - show password visibility icon
+  // Search - enable sortButton, sortType
+  // PolicyNumber - showPolicyNumberIcon, "policyNumberMask"
+  // Phone - show PhoneIcon, "phoneNumberMask"
+  // CreditCard - showCreditCardIcon, "creditCardMask"
+  // Currency - ShowMoneySign, enable CurrencyType button
 ];

@@ -461,7 +461,13 @@
   }
 
 
-
+  .tab-container {
+    @apply
+      rowStart items-center gap-4
+      border-b border-default rounded-t-md
+      
+    ;
+  }
 
   .tab-default {
     @apply 
@@ -647,8 +653,10 @@
     @apply bg-div outline-css outline-styles
     
       /* Quick selector for first three (this is not necessary, but we're using a weird grid layout) */
-      [&>*:nth-child(-n+3)]:bg-default
-      [&>*:nth-child(-n+3)]:opacity-bg-40
+      [&>*:nth-child(-n+3)]:bg-slate-300
+      [&>*:nth-child(-n+3)]:dark:bg-slate-800
+      [&>*:nth-child(-n+3)]:bg-opacity-50
+      [&>*:nth-child(-n+3)]:dark:bg-opacity-60
     ;
   }
 
@@ -761,6 +769,10 @@
   .height-trans {
     @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
   } // transition between grid-rows-[0fr] and [1fr] for transition
+  
+  .height-trans-400 {
+  @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
+} // transition between grid-rows-[0fr] and [1fr] for transition
   
   .height-trans-opacity {
     @apply grid;
