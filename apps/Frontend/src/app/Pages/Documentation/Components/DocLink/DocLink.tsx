@@ -2,15 +2,19 @@ import styles from './DocLink.module.scss';
 
 
 export interface DocLinkProps {
-	
-}
-export const DocLink = ({ url, label }: DocLinkProps) => {
-  return (
-    <div className={styles['container']}>
-      <h1>Welcome to DocLink!</h1>
-    </div>
-  );
+	url: string;
+	label: string;
 }
 
-const Container = styled.div``;
+export const DocLink = ({ url, label }: DocLinkProps) => {
+	const linkStyles = "";
+	
+  return (
+    <HashLink url={url}>
+      <SeeRef /> { label }
+    </HashLink> 
+  ); 
+} 
+
+const SeeRef = styled.span``;
 
