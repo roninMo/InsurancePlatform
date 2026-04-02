@@ -131,6 +131,21 @@
 
 
 
+
+  //------------------------------------------//
+  // Icons                                    //
+  //------------------------------------------//
+  .svg-default-theme {
+    @apply text-blue-300 dark:text-slate-400;
+  }
+  
+  .svg-outline-theme {
+    @apply text-blue-300 dark:text-slate-400;
+  }
+
+
+
+
   //------------------------------------------//
   // Text Sizes                               //
   //------------------------------------------//
@@ -177,7 +192,7 @@
   /* For containers that need highlighting when selected  */
   .selected-box { 
     @apply 
-      bg-opacity-20 dark:bg-opacity-10
+      bg-opacity-20 dark:bg-opacity-20
       bg-blue-600 dark:bg-blue-500
       outline-focus 
   }
@@ -617,10 +632,111 @@
     @apply text-colors text-lg;
   }
 
+  .showcase-jsx-copy-snippet {
+    @apply
+      absolute z-10 top-0 right-0 
+      cursor-pointer transition
+      
+      outline-css outline-default
+      hover:selected-box
+    ;
+  }
+  
+  // ParamItem Css
+  .param-item-table {
+    @apply bg-div outline-css outline-styles
+    
+      /* Quick selector for first three (this is not necessary, but we're using a weird grid layout) */
+      [&>*:nth-child(-n+3)]:bg-default
+      [&>*:nth-child(-n+3)]:opacity-bg-40
+    ;
+  }
+
+  .param-item-base {
+    @apply 
+      p-3 rowStart items-center
+      border-t border-r border-default
+      
+      /* Table border rounding */
+      [&:nth-child(1)]:rounded-tl-md /* top left corner */
+      [&:nth-child(3)]:rounded-tr-md /* top right corner */
+      [&:nth-last-child(3)]:rounded-bl-md /* bottom left corner */
+      [&:nth-last-child(1)]:rounded-br-md /* bottom right corner */
+    ; 
+  }
+
+  .param-item-name { 
+    @apply 
+      py-0.5 px-1.5 
+      text-blue-500 dark:text-blue-500
+      
+      bg-opacity-10 dark:bg-opacity-20
+      bg-blue-600 dark:bg-blue-500
+      
+      // outline-init rounded-none
+      // outline-blue-500/50   dark:outline-indigo-500/50
+    ; 
+  }
+
+  .param-item-type { 
+    @apply param-item-base; 
+  }
+
+  .param-item-desc { 
+    @apply param-item-base; 
+  }
+  
+  .param-item-desc-text { 
+    @apply text-colors; 
+  }
+  
+  .param-item-spacing { 
+    @apply py-3 border-t border-default; 
+  }
+  
+  .param-item-context {
+    @apply selected-box;
+  }
+  
+  .param-item-variant-opt {
+    @apply ok-box;
+  }
+
+
+  // ParamType
+  .param-type {
+    @apply
+      py-[0.15rem] px-1.5 transition
+      text-sm font-semibold
+      
+      bg-opacity-40 dark:bg-opacity-30
+      bg-gray-300 dark:bg-gray-600
+    ;
+  }
+
+  .param-type-string {
+    @apply text-purple-600/90 dark:text-purple-500/90;
+  }
+  
+  .param-type-number {
+    @apply text-blue-500 dark:text-blue-500;
+  }
+  
+  .param-type-boolean {
+    @apply text-rose-600/90 dark:text-red-600/90;
+  }
+  
+  .param-type-custom {
+    @apply text-emerald-500/90 dark:text-green-500/90;
+  }
+
+
+  // Showcase Element State Buttons (default, error, disabled)
   .element-state { 
     @apply 
       cursor-pointer transition duration-300
-      px-2 py-1.5 outline-css rounded-full text-xs font-semibold italic
+      px-2 py-1.5 outline-css rounded-full 
+      text-sm font-semibold italic 
       placeholder-text outline-default
       
       hover:primary-text hover:outline-focus
@@ -652,6 +768,11 @@
       grid-template-rows 0.3s ease,
       opacity 0.3s ease,
       visibility 0s linear 0.3s;
+  }
+
+  // Column Layout hack. Aligns all values in a specific column based on the longest one.
+  .dual-column-3 { // recreate for number of columns what needs to use 1fr for content fills 
+    @apply grid grid-cols-[min-content_min-content_1fr];
   }
   
   .height-trans-content {

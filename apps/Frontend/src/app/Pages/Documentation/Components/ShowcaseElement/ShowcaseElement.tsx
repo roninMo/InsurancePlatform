@@ -4,6 +4,7 @@ import { CodeBlock } from '../../Documentation';
 
 import styled from '@emotion/styled';
 import styles from './ShowcaseElement.module.scss';
+import { Icon } from '@Project/ReactComponents';
 
 
 type showcaseTabType = 'component' | 'jsx';
@@ -17,6 +18,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
   const [activeTab, setActiveTab] = useState<showcaseTabType>('component');
   const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
 
+  // Quick Render delay for jsx code
   useEffect(() => {
     if (activeTab != 'jsx') return;
     if (isRenderDelayDone) return;
@@ -28,10 +30,22 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
   const toggleTab = (newTab: showcaseTabType) => {
     setActiveTab(newTab);
   }
+  
+  const copyCodeSnippet = async () => {
+    try {
+      // Sets the system clipboard to the specified text
+      await navigator.clipboard.writeText(jsx);
+      console.log('copied to clipboard: ', jsx);
+      alert('Copied to clipboard!'); // TODO: Add a tooltip like notification to notify when copied to clipboard
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  }
+
 
   return (
     <Container className='col outline-css outline-default'>
-      <Tabs className='w-full rowStart items-center gap-4 px-4 border-b border-default faded-box'>
+      <Tabs className='w-full rowStart items-center gap-4 px-4 border-b border-default rounded-t-md faded-box'>
         <div onClick={() => toggleTab('component')} className={`tab-default ${isTabActive('component', activeTab)}`}>
           Component
         </div>
@@ -40,7 +54,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
         </div>
       </Tabs>
 
-      <Content className='w-full bg-div '>
+      <Content className='w-full bg-div rounded-b-md'>
         <RenderedComponent className={`height-trans ${displayContent('component', activeTab)}`}>
           <div className={`height-trans-content ${styles}`}>
             { children }
@@ -49,12 +63,12 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
         
         <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
           <div className={`height-trans-content`}>
-            {/* Add the copy code snippet here */}
-					  {/* Add icons to the bubble element states, and different colors on select. maybe make it one element with no padding, and arrows on either side to transition between each */}
-						
             <Suspense>
-              <div className='-my-[7px] react-syntax-highlighter-margin-fix'>
+              <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
                 <CodeBlock language='tsx' code={jsx} showLineNumbers />
+                <JsxCopySnippet onClick={copyCodeSnippet} className='p-2 m-4 showcase-jsx-copy-snippet'>
+                  <Icon variant='CodeBracket' styles='size-6 svg-default-theme' />
+                </JsxCopySnippet>
               </div>
             </Suspense>
           </div>
@@ -66,7 +80,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
             {/* TODO: Add skeleton loading components
               <div className='w-full p-4 skeleton-bg outline-css outline-default'>
                 Hello
-              </div> 
+              </div>  
             */}
           </div>
         </PreRenderContent>
@@ -83,8 +97,8 @@ const Container = styled.div``;
 const Tabs = styled.div``;
 const Content = styled.div``;
 const RenderedComponent = styled.div``;
-const JsxAnimSwitch = styled.div``;
 const Jsx = styled.div``;
+const JsxCopySnippet = styled.div``;
 const PreRenderContent = styled.div``;
 
 // Conditional Styles
