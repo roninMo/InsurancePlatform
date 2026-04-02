@@ -28,7 +28,7 @@ interface InputProps {
   tooltipText?: string;
 
   autocomplete?: TextInputAutoCompleteTypes;
-  aria?: string | null;
+  aria?: string | null; // TODO: add props as optional params for passing this in
 }
 
 

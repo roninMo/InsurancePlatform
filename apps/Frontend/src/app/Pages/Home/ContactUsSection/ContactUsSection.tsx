@@ -229,13 +229,10 @@ export const ContactUsSection = () => {
             
               // disabled={messageDisabled}
               // required={messageRequired}
-            
-              aria=""
             />
           </div>
 
         </FormSection>
-
       </ContactSection>
     </div>
 

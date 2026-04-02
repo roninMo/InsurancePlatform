@@ -64,6 +64,10 @@ import { Icon_Cloud } from "./Default/Cloud/Icon_Cloud";
 import { Icon_DataDog } from "./Tech/Analytics/DataDog/Icon_DataDog";
 import { Icon_Loading } from "./Default/Loading/Icon_Loading";
 import { Icon_Demandjump } from "./Companies/Demandjump/Icon_Demandjump";
+import { Icon_DocText } from "./Default/DocText/Icon_DocText";
+import { Icon_CircleCheck } from "./Default/CircleCheck/Icon_CircleCheck";
+import { Icon_CircleError } from "./Default/CircleError/Icon_CircleError";
+import { Icon_CirclePause } from "./Default/CirclePause/Icon_CirclePause";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
@@ -91,12 +95,16 @@ export type DefaultIconTypes =
   'AttachFile' |
   'Calendar' |
   'Checkbox' |
+  'CircleCheck' |
+  'CircleError' |
+  'CirclePause' |
   'Close' |
   'Cloud' |
   'CodeBracket' |
   'Computer' |
   'DarkTheme' |
   'Database' |
+  'DocText' |
   'DemandJump' |
   'DropdownArrow' |
   'Envelope' |
@@ -129,12 +137,16 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
   if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
   if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
+  if (variant == 'CircleCheck')     return (<Icon_CircleCheck styles={iconStyles} />);
+  if (variant == 'CircleError')     return (<Icon_CircleError styles={iconStyles} />);
+  if (variant == 'CirclePause')     return (<Icon_CirclePause styles={iconStyles} />);
   if (variant == 'Close')           return (<Icon_Close styles={iconStyles} />);
   if (variant == 'Cloud')           return (<Icon_Cloud styles={iconStyles} />);
   if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
   if (variant == 'Computer')        return (<Icon_Computer styles={iconStyles} />);
   if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
   if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
+  if (variant == 'DocText')         return (<Icon_DocText styles={iconStyles} />);
   if (variant == 'DemandJump')      return (<Icon_Demandjump styles={iconStyles} />);
   if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
   if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
