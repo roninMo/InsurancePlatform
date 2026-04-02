@@ -41,10 +41,12 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles}: Par
 			<label className="param-item-base">Type</label>
 			<label className="param-item-base">Description</label>
 
-			{/* Param Items */}
+			{/* Param Items */} {/* Add variant context styles ex: type="text" */}
 			{ params?.map((item: ParamItem | 'spacing', index: number) => 
 				<TableItem item={item} key={`paramTableItem-${tableItemId}-${index}`} />
 			)}
+			
+		  {/* todo: Additional variant params */}
 		</Table>
   );
 }
