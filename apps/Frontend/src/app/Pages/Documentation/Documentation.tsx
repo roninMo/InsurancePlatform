@@ -23,7 +23,6 @@ import styles from './Documentation.module.scss';
 export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSyntaxHighlighter')) as React.FC<SyntaxHighlighterProps | any>;
 
 
-
 export const Documentation =() => {
 	/*
 	

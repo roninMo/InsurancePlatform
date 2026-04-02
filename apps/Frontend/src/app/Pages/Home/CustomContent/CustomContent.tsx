@@ -464,8 +464,6 @@ export const CustomContent = () => {
                 errorMessage={sliderErrorMessage}
                 required={false}
                 disabled={false}
-
-                aria="input slider ref"
                 key={`inputSlider-${index}`}
               />
             )}

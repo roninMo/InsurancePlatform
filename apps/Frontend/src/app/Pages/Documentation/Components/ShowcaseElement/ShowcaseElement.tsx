@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode, Suspense } from 'react';
+import { useState, useEffect, ReactNode, Suspense, useMemo } from 'react';
 import { CodeBlock } from '../../Documentation';
 // import { Notify } from '../../Pages/Utils/Notify/Notify'; // Alternative for delay, used w/Suspense and conditional render
 
@@ -30,7 +30,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
   const toggleTab = (newTab: showcaseTabType) => {
     setActiveTab(newTab);
   }
-  
+
   const copyCodeSnippet = async () => {
     try {
       // Sets the system clipboard to the specified text
@@ -41,6 +41,16 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
       console.error('Failed to copy: ', err);
     }
   }
+
+  // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
+  const memoizedCodeSnippet = useMemo(() => (
+    <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
+      <CodeBlock language='tsx' code={jsx} showLineNumbers />
+      <JsxCopySnippet onClick={copyCodeSnippet} className='p-2 m-4 showcase-jsx-copy-snippet'>
+        <Icon variant='CodeBracket' styles='size-6 svg-default-theme' />
+      </JsxCopySnippet>
+    </div>
+  ), []);
 
 
   return (
@@ -64,12 +74,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
         <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
           <div className={`height-trans-content`}>
             <Suspense>
-              <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
-                <CodeBlock language='tsx' code={jsx} showLineNumbers />
-                <JsxCopySnippet onClick={copyCodeSnippet} className='p-2 m-4 showcase-jsx-copy-snippet'>
-                  <Icon variant='CodeBracket' styles='size-6 svg-default-theme' />
-                </JsxCopySnippet>
-              </div>
+              { memoizedCodeSnippet }
             </Suspense>
           </div>
         </Jsx>
