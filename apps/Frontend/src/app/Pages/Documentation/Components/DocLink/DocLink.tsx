@@ -1,6 +1,10 @@
 import styles from './DocLink.module.scss';
 
-export function DocLink() {
+
+export interface DocLinkProps {
+	
+}
+export const DocLink = ({ url, label }: DocLinkProps) => {
   return (
     <div className={styles['container']}>
       <h1>Welcome to DocLink!</h1>
@@ -8,4 +12,5 @@ export function DocLink() {
   );
 }
 
-export default DocLink;
+const Container = styled.div``;
+
