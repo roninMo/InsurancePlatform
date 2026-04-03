@@ -50,7 +50,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
         <Icon variant='CodeBracket' styles='size-6 svg-default-theme' />
       </JsxCopySnippet>
     </div>
-  ), []);
+  ), [jsx]);
 
 
   return (
