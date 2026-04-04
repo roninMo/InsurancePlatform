@@ -26,36 +26,42 @@ export interface ParamItem {
 }
 
 export interface ParamTableProps {
-	params: (ParamItem | 'spacing')[]; // This is reliant on that the items come in threes
+	params?: (ParamItem | 'spacing')[]; // This is reliant on that the items come in threes
 	variant?: 'default' | 'additionalParams';
 	additionalStyles?: string;
+	children?: ReactNode;
 }
 
-export const ParamTable = ({ params, variant = 'default', additionalStyles}: ParamTableProps) => {
+export const ParamTable = ({ params, variant = 'default', additionalStyles, children }: ParamTableProps) => {
 	const tableItemId = useId();
   return (
-		<Table className="param-item-table dual-column-3">
-			
-			{/* Header */}
-			<label className="param-item-base">Name</label>
-			<label className="param-item-base">Type</label>
-			<label className="param-item-base">Description</label>
+		<Container className="height-trans grid-rows-[1fr]">
+			<Table className={`param-item-table dual-column-3 height-trans-content ${additionalStyles}`}>
+				
+				{/* Header */}
+				<label className="param-item-base">Name</label>
+				<label className="param-item-base">Type</label>
+				<label className="param-item-base">Description</label>
 
-			{/* Param Items */} {/* Add variant context styles ex: type="text" */}
-			{ params?.map((item: ParamItem | 'spacing', index: number) => 
-				<TableItem item={item} key={`paramTableItem-${tableItemId}-${index}`} />
-			)}
-			
-		  {/* todo: Additional variant params */}
-		</Table>
+				{/* Param Items */} {/* Add variant context styles ex: type="text" */}
+				{ children ? children : (
+					<>
+						{ params?.map((item: ParamItem | 'spacing', index: number) => 
+							<ParamTableItem item={item} key={`paramTableItem-${tableItemId}-${index}`} />
+						)}
+						{/* todo: Additional variant params */}
+					</>
+				)}
+			</Table>
+		</Container>
   );
 }
 
 
-interface TableItemProps {
+interface ParamTableItemProps {
 	item: ParamItem | 'spacing';
 }
-const TableItem = ({ item }: TableItemProps)  => {
+export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 	// Create spacing between each of the params, like an empty row
 	if (typeof item == "string") {
 		return (
@@ -89,5 +95,6 @@ const TableItem = ({ item }: TableItemProps)  => {
 }
 
 // Styled Components
+const Container = styled.div``;
 const Table = styled.div``;
 const Param = styled.div``;

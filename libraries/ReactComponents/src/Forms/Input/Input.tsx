@@ -29,6 +29,11 @@ interface InputProps {
 
   autocomplete?: TextInputAutoCompleteTypes;
   aria?: string | null; // TODO: add props as optional params for passing this in
+
+  // variant specific configurations
+  opts?: {
+
+  };
 }
 
 
@@ -36,7 +41,7 @@ export const Input = ({
   type = 'text', name, label, description, value, placeholder, id,
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  autocomplete, aria, ...props
+  autocomplete, aria, opts, ...props
 }: InputProps & InputEventHandlers) => {
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
   const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This might mess with seeing loading with actual load times

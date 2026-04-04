@@ -794,6 +794,13 @@
     visibility: visible;
     transition-delay: 0s;
   }
+  
+  // The browser skips the rendering work (layout and painting) for that element's 
+  // children as long as it's not on screen or is hidden. Place this on the children of the grid layout
+  .content-auto {
+    content-visibility: auto;
+  } // Skips Rendering, Preserves State, Instant-Wake-Up when visible ex: height-trans (grid-rows-[1fr]) 
+
 
   // Theme transition class
   .disable-transitions,

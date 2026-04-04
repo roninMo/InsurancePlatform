@@ -42,17 +42,6 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
     }
   }
 
-  // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
-  const memoizedCodeSnippet = useMemo(() => (
-    <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
-      <CodeBlock language='tsx' code={jsx} showLineNumbers />
-      <JsxCopySnippet onClick={copyCodeSnippet} className='p-2 m-4 showcase-jsx-copy-snippet'>
-        <Icon variant='CodeBracket' styles='size-6 svg-default-theme' />
-      </JsxCopySnippet>
-    </div>
-  ), [jsx]);
-
-
   return (
     <Container className='col outline-css outline-default'>
       <Tabs className='w-full rowStart items-center gap-4 px-4 border-b border-default rounded-t-md faded-box'>
@@ -66,21 +55,23 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
 
       <Content className='w-full bg-div rounded-b-md'>
         <RenderedComponent className={`height-trans ${displayContent('component', activeTab)}`}>
-          <div className={`height-trans-content ${styles}`}>
+          <div className={`height-trans-content content-auto ${styles}`}>
             { children }
           </div>
         </RenderedComponent>
         
         <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
-          <div className={`height-trans-content`}>
+          <div className={`height-trans-content content-auto`}>
+            {activeTab == 'jsx' && 
             <Suspense>
-              { memoizedCodeSnippet }
+              <MemoizedCodeSnippet jsx={jsx} onCopyCodeSnippet={copyCodeSnippet} />
             </Suspense>
+            }
           </div>
         </Jsx>
 
         <PreRenderContent className={`height-trans ${displayContent('jsx', activeTab, !isRenderDelayDone)}`}>
-          <div className={`height-trans-content`}>
+          <div className={`height-trans-content content-auto`}>
             <p className='p-4 italic loading-text'>Loading code...</p>
             {/* TODO: Add skeleton loading components
               <div className='w-full p-4 skeleton-bg outline-css outline-default'>
@@ -94,6 +85,25 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
 
     </Container>
   );
+}
+
+
+interface MemoizedCodeSnippetProps {
+  jsx: string;
+  onCopyCodeSnippet: () => Promise<void>;
+}
+const MemoizedCodeSnippet = ({ jsx, onCopyCodeSnippet }: MemoizedCodeSnippetProps) => {
+  // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
+  const memoizedSnippet = useMemo(() => (
+    <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
+      <CodeBlock language='tsx' code={jsx} showLineNumbers />
+      <JsxCopySnippet onClick={onCopyCodeSnippet} className='p-2 m-4 showcase-jsx-copy-snippet'>
+        <Icon variant='CodeBracket' styles='size-6 svg-default-theme' />
+      </JsxCopySnippet>
+    </div>
+  ), [jsx]);
+
+  return memoizedSnippet;
 }
 
 

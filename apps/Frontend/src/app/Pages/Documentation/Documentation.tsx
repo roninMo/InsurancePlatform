@@ -23,7 +23,7 @@ import styles from './Documentation.module.scss';
 export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSyntaxHighlighter')) as React.FC<SyntaxHighlighterProps | any>;
 
 
-export const Documentation =() => {
+export const Documentation = () => {
   /* TODO: From where we left off
 
   - Add a state variable for the additional variant params and combine them with the current list of params 
@@ -124,15 +124,17 @@ export const Documentation =() => {
       <Container className="spacing pt-10">
         
         {/* Page Content*/}
-        <ContentAndSidebar className="min-h-[80vh] span-12 rowStart gap-4">
-          <div className="min-w-[20%] 2xl:min-w-[12%]">
-            <Sidebar 
-              sidebarOpen={sidebarOpen}
-              setSidebarOpen={setSidebarOpen}
-              onSetSidebarState={onSetSidebarState}
-              LinkSections={DocumentationPage_SidebarLinks}
-            />
-          </div>
+        <ContentAndSidebar className="span-12 rowStart gap-4">
+          <StickyContainer className='flex items-start min-h-[80vh]'>
+            <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
+              <Sidebar 
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                onSetSidebarState={onSetSidebarState}
+                LinkSections={DocumentationPage_SidebarLinks}
+              />
+            </div>
+          </StickyContainer>
           
           
           <NotificationContainer className="w-full py-2">
@@ -158,10 +160,6 @@ export const Documentation =() => {
       {/*<div className='spacing gap-4 p-4'>*/}
       {/*  /!*<CustomContent />*!/*/}
       {/*</div>*/}
-
-      {/*<div className="p-8">*/}
-      {/*  <CustomContent />*/}
-      {/*</div>*/}
       <Footer />
     </>
   );
@@ -171,6 +169,7 @@ export const Documentation =() => {
 // Styled Components
 const Container = styled.div``;
 const ContentAndSidebar = styled.div``;
+const StickyContainer = styled.div``;
 const NotificationContainer = styled.div``;
 const PageContent = styled.div``;
 

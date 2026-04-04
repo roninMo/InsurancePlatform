@@ -14,7 +14,7 @@ export interface DropdownProps {
   hasBeenOpened?: boolean;
   setHasBeenOpened?: Dispatch<SetStateAction<boolean>>;
 
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 export const Dropdown = ({ 
@@ -47,7 +47,7 @@ export const Dropdown = ({
     <div className='col gap-2 w-full'>
       <Header className="w-full rowStart items-center gap-1" onClick={() => toggleDropdown()}>
         <Icon variant={icon ? icon : 'DropdownArrow'} styles={iconStyles ? iconStyles : defaultIconStyles} />
-        <p className={styles ? styles : 'text-xl lg:text-2xl header-colors font-medium'}>
+        <p className={styles ? styles : 'text-xl lg:text-2xl header-colors font-medium cursor-pointer'}>
           { label }
         </p>
       </Header>

@@ -13,7 +13,10 @@ export const Navbar = ({}: NavbarProps) => {
   const navigate = useNavigate();
 
   // Handles the current theme that's rendered from the page via user preference and localStorage
-  const [currentTheme, setCurrentTheme] = useState<string>(localStorage.getItem('theme') || '');
+  const [currentTheme, setCurrentTheme] = useState<string>(() => {
+    return localStorage.getItem('theme') || 
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
 
   // Scroll behavior logic
   const { hash, key, pathname, state } = useLocation();
@@ -27,13 +30,14 @@ export const Navbar = ({}: NavbarProps) => {
     if (!currentTheme) {
       const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       localStorage.setItem('theme', userPreferenceTheme);
+      
+      setAndUpdateTheme(userPreferenceTheme);
     }
     
-    setTheme(currentTheme);
 
   }, [currentTheme]);
 
-  const setTheme = (newTheme: string) => {
+  const updateTheme = (newTheme: string) => {
     localStorage.setItem('theme', newTheme);
 
     // Prevent transitions from affecting theme changes
@@ -48,8 +52,11 @@ export const Navbar = ({}: NavbarProps) => {
     // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
     window.getComputedStyle(document.body).opacity;
     document.body.classList.remove('disable-transitions');
+  }
 
-    setCurrentTheme(newTheme);
+  const setAndUpdateTheme = (newTheme: string) => {
+      setCurrentTheme(newTheme);
+      updateTheme(newTheme);
   }
 
 
@@ -92,6 +99,19 @@ export const Navbar = ({}: NavbarProps) => {
   const navbarRef = useRef(null);
   const navbarDropdownId = 'navbar-dropdown';
   const navbarLinks = 'navbar-links';
+  
+  // Just close the navbar once the mouse has left the page 
+  // This handles weird scenarios when it's left open when you move up to the search or off the page
+  useEffect(() => {
+    const onMouseLeftPage = () => {
+      setShowDropdown(false);
+    }
+    document.addEventListener('mouseleave', onMouseLeftPage);
+
+    // Remove event listeners when this component is unrendered
+    return () => document.removeEventListener('mouseleave', onMouseLeftPage);
+  }, [])
+
 
   // Prevent the dropdown from opening right after they navigate so they have time to navigate
   useEffect(() => {
@@ -159,7 +179,7 @@ export const Navbar = ({}: NavbarProps) => {
               <Icon variant='Profile' styles='size-6 text-slate-600 dark:text-slate-500' />
             </div>
 
-            <div className='' onClick={() => setTheme(currentTheme === 'light' ? 'dark' : 'light')}>
+            <div className='' onClick={() => setAndUpdateTheme(currentTheme === 'light' ? 'dark' : 'light')}>
               { currentTheme == 'light' ? 
                 <Icon variant='LightTheme' styles='size-10 cursor-pointer input-colors hover:text-blue-500 transition' /> : 
                 <Icon variant='DarkTheme' styles='size-10 cursor-pointer placeholder-text hover:text-blue-400 transition' />
@@ -176,7 +196,7 @@ export const Navbar = ({}: NavbarProps) => {
           className={`absolute w-full bg-div border-styles border-y shadow-xl transition
             height-trans-opacity ${showDropdown ? 'opacity-100 grid-rows-[1fr]' : 'opacity-0 grid-rows-[0fr]'}
         `}>
-          <div className={`height-trans-content ${showDropdown && 'height-trans-op-content'}`}>
+          <div className={`height-trans-content content-auto ${showDropdown && 'height-trans-op-content'}`}>
             <Links className='row justify-center gap-8 pr-14 pb-10 pt-4 *:mx-4 *:my-2 *:col *:gap-3'>
               <div>
                 <HashLink label="Home"            url="/" styles="footer-link-header" />
