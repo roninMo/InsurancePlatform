@@ -26,6 +26,11 @@ export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSynt
 export const Documentation = () => {
   /* TODO: From where we left off
 
+  - Wrap the HashLink in a memo, it should be a nuclear component because it's content isn't something that's rerendered
+  - The useNavigate hook should be passed in to the HashLinkComponents
+  - Start on the paramTable edits for increased efficiency and customization
+  - back to the current todo edits for the documentation project, we're just about done with the primary components
+
   - Add a state variable for the additional variant params and combine them with the current list of params 
     - useState: record with keys to the list of params, containing the context and variant options for each param
       - use the type to retrieve static elements that should be converted to an object list. UseTextInputTypes for key reference
