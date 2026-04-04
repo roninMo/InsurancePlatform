@@ -283,6 +283,7 @@ interface ParamContext {
   name?: string;
   contextParam?: boolean;
   variantOption?: boolean;
+	overwrite?: boolean;
 }
 
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
@@ -311,6 +312,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="number"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'incrementButtons', 
       contextParam: false,
@@ -321,6 +323,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="email"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'showEmailIcon', 
       contextParam: false,
@@ -331,6 +334,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="password"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'passwordVisibility', 
       contextParam: false,
@@ -341,6 +345,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="search"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'sortButton', 
       contextParam: false,
@@ -355,6 +360,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="policyNumber"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'showPolicyNumberIcon', 
       contextParam: false,
@@ -369,6 +375,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="phone"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'showPhoneIcon', 
       contextParam: false,
@@ -383,6 +390,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="creditCard"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'showCreditCardIcon', 
       contextParam: false,
@@ -397,6 +405,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
     { name: 'type="currency"', 
       contextParam: true,
       variantOption: false,
+			overwrite: 'type'
     },
     { name: 'showMoneySign', 
       contextParam: false,
