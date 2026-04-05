@@ -1,10 +1,10 @@
-import {MouseEvent, useEffect, useRef, useState} from 'react';
+import {MouseEvent, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import { NavigateOptions, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@Project/ReactComponents';
-import styled from '@emotion/styled';
-
-import styles from './Navbar.module.scss';
 import { HashLink } from '../Utils/HashLink/HashLink';
+
+import styled from '@emotion/styled';
+import styles from './Navbar.module.scss';
 
 
 export interface NavbarProps {}
@@ -27,7 +27,7 @@ export const Navbar = ({}: NavbarProps) => {
   // Theme                                          //
   //------------------------------------------------//
   // Initialize the Theme and display settings
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!currentTheme) {
       const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       localStorage.setItem('theme', userPreferenceTheme);
@@ -45,14 +45,15 @@ export const Navbar = ({}: NavbarProps) => {
     // Prevent transitions from affecting theme changes
     document.body.classList.add('disable-transitions');
 
-    // toggle dark mode
+    // Toggle dark mode
     // document.body.classList.toggle('dark');
     if (newTheme === 'dark') document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
 
-    // 3. Force a browser reflow/repaint
-    // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
-    window.getComputedStyle(document.body).opacity;
+    // Force a browser reflow/repaint (cheaply)
+    void(document.documentElement.offsetHeight); // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
+
+    // Add back transition logic for the elements.
     document.body.classList.remove('disable-transitions');
   }
 
@@ -73,7 +74,6 @@ export const Navbar = ({}: NavbarProps) => {
       const scrollOpts: ScrollIntoViewOptions = { behavior: 'smooth' }
 
       // Ensure the page is loaded before we try to scroll
-      // TODO: Check that navigation to new page scenarios account (or perhaps add) proper scroll restoration. I don't know if I want certain behavior here on revisits
       const timeout = setTimeout(() => {
         if (hash) {
           const id = hash.replace("#", "");
