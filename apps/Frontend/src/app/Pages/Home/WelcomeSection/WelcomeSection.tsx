@@ -1,5 +1,4 @@
-import { useState, useId, MouseEvent, useRef, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
 import { Button } from '@Project/ReactComponents';
 import { Modal } from '../../../Components/Utils/Modal/Modal';
 import { Dropdown } from '../../../Components/Content/Dropdown/Dropdown';
@@ -16,7 +15,6 @@ import styles from './WelcomeSection.module.scss';
 
 export const WelcomeSection = () => {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
-  const navigate = useNavigate();
 
   //--------------------------------------------//
   // Background Animation                       //

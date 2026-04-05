@@ -1,7 +1,6 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { Home } from "./Pages/Home/Home";
 import { ErrorPage } from "./Pages/ErrorPage/ErrorPage";
-import { Documentation } from "./Pages/Documentation/Documentation";
 import { Demos } from "./Pages/Demos/Demos";
 import MockDatabase from "./Pages/MockDatabase/MockDatabase";
 import { Contact } from "./Pages/Contact/Contact";
@@ -33,7 +32,6 @@ export const router = createBrowserRouter([
     element: <ErrorPage />
   }
 
-
   // Home page
   // Demos
   // Mock Database
@@ -43,8 +41,3 @@ export const router = createBrowserRouter([
   // Contact
   // Documentation
 ]);
-
-
-// function App() {
-//   return <RouterProvider router={router} />;
-// }

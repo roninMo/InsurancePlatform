@@ -1,5 +1,5 @@
-import {MouseEvent, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import { NavigateOptions, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
+import { memo, MouseEvent, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import { ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@Project/ReactComponents';
 import { HashLink } from '../Utils/HashLink/HashLink';
 
@@ -9,8 +9,7 @@ import styles from './Navbar.module.scss';
 
 export interface NavbarProps {}
 
-// this should be wrapped in a memo to make it a nuclear component, check if the effects and events for the dropdown, scroll, and theme still work
-export const Navbar = ({}: NavbarProps) => {
+const NavbarComponent = ({}: NavbarProps) => {
   const navigate = useNavigate();
 
   // Handles the current theme that's rendered from the page via user preference and localStorage
@@ -26,16 +25,14 @@ export const Navbar = ({}: NavbarProps) => {
   //------------------------------------------------//
   // Theme                                          //
   //------------------------------------------------//
+  // #region Theme Logic
   // Initialize the Theme and display settings
   useLayoutEffect(() => {
     if (!currentTheme) {
       const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       localStorage.setItem('theme', userPreferenceTheme);
-      
       setAndUpdateTheme(userPreferenceTheme)
-			// Todo; try out requestAnimationUpdate for updating the theme
     }
-    
 
   }, [currentTheme]);
 
@@ -44,28 +41,29 @@ export const Navbar = ({}: NavbarProps) => {
 
     // Prevent transitions from affecting theme changes
     document.body.classList.add('disable-transitions');
-
+    
     // Toggle dark mode
-    // document.body.classList.toggle('dark');
     if (newTheme === 'dark') document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
-
-    // Force a browser reflow/repaint (cheaply)
+    
+    // Force a browser reflow/repaint (cheaply) - do not use a double RequestAnimationFrame
     void(document.documentElement.offsetHeight); // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
-
+    
     // Add back transition logic for the elements.
     document.body.classList.remove('disable-transitions');
   }
 
   const setAndUpdateTheme = (newTheme: string) => {
-      setCurrentTheme(newTheme);
-      updateTheme(newTheme);
+    setCurrentTheme(newTheme);
+    updateTheme(newTheme);
   }
+  // #endregion
 
 
   //------------------------------------------------------------------------------------//
   // React Router Hash Link ScrollRestoration Logic when navigate is used with an id    //
   //------------------------------------------------------------------------------------//
+  // #region ScrollRestoration Logic 
   useEffect(() => {
     const didNavigate = state?.fromNavigate;
     // console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
@@ -91,8 +89,9 @@ export const Navbar = ({}: NavbarProps) => {
     }
 
   }, [pathname, /* hash, */ key]); // when the page is updated, or the user navigates to another id on the page
-  
-  
+  // #endregion
+
+
   //------------------------------------------------//
   // Navbar Dropdown                                //
   //------------------------------------------------//
@@ -105,27 +104,32 @@ export const Navbar = ({}: NavbarProps) => {
   // Just close the navbar once the mouse has left the page 
   // This handles weird scenarios when it's left open when you move up to the search or off the page
   useEffect(() => {
-    const onMouseLeftPage = () => {
-      setShowDropdown(false);
-    }
+    const onMouseLeftPage = () => setShowDropdown(false);
     document.addEventListener('mouseleave', onMouseLeftPage);
 
     // Remove event listeners when this component is unrendered
     return () => document.removeEventListener('mouseleave', onMouseLeftPage);
-  }, [])
+  }, []);
 
 
   // Prevent the dropdown from opening right after they navigate so they have time to navigate
   useEffect(() => {
+    // Don't prevent dropdown functionality if they clicked a same page link
+    const didNavigate = state?.fromNavigate;
+    const previousPath = state?.previousPathname;
+    if (didNavigate && previousPath == pathname) {
+      return;
+    }
+    
+    // Delay opening the dropdown for a second and let the user mouse it's mouse
     setIsDropdownAllowed(false);
-
-    // once the delay is done, check if we're already hovering over the navbar
     const timeout = setTimeout(() => {
       setIsDropdownAllowed(true);
       const dropdownElement: any = navbarRef.current;
       const isHovering = dropdownElement.matches(':hover');
       // console.log(`dropdownElement, hovering: ${isHovering}`, dropdownElement);
-      if (isHovering) setShowDropdown(true);
+      if (!isHovering && showDropdown) setShowDropdown(false);
+      else if (isHovering) setShowDropdown(true);
     }, 500);
     return () => clearTimeout(timeout);
   }, [key]);
@@ -134,14 +138,13 @@ export const Navbar = ({}: NavbarProps) => {
     if (!isDropdownAllowed) return;
     
     const element: any = event?.target as HTMLElement;
-    // console.log('hoveringOverDropdown: ', element);
     const isWithinDropdown = element.closest(`#${navbarDropdownId}`);
     // const isWithinLinks = element.closest(`#${navbarLinks}`);
+    // console.log('hoveringOverDropdown: ', element);
     
-    // Since it's an element hidden behind the navbar, only this is needed
+    // Since it's an element hidden behind the navbar, this is all we needed
     if (!hovering && isWithinDropdown) setShowDropdown(false);
     else setShowDropdown(true);
-    // setShowDropdown(true);
   }
 
 
@@ -234,11 +237,14 @@ export const Navbar = ({}: NavbarProps) => {
             </Links>
           </div>
         </Dropdown>
-          
-          
+        
+        
     </NavbarAndDropdown>
   );
 }
+
+// this should be wrapped in a memo to make it a nuclear component, check if the effects and events for the dropdown, scroll, and theme still work
+export const Navbar = memo(NavbarComponent); 
 
 
 // Styled Components

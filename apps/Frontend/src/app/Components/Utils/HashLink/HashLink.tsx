@@ -1,5 +1,5 @@
-import { ReactNode, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { memo, ReactNode, useMemo } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 
 export interface HashLinkProps {
@@ -14,20 +14,23 @@ export interface HashLinkProps {
   children?: ReactNode;
 }
 
+export const DEFAULT_OPTS: HashLinkProps['opts'] = { type: 'router'};
 export const BASE_NAV_STATE = { fromNavigate: true };
 
 // These don't need to rerender
 // export const HashLink = memo(({ url, label, opts, styles, children }: HashLinkProps) => 
-export const HashLink = ({ url, label, opts = { type: 'router'}, styles, children }: HashLinkProps) => {
-  const navigate = useNavigate(); // TODO: remove this from the HashLink component, and pass it in as a prop
+export const HashLink = memo(({ url, label, opts = DEFAULT_OPTS, styles, children }: HashLinkProps) => {
+  const navigate = useNavigate(); 
+  const { pathname } = useLocation();
   const customNavFunction = opts?.customNavFunction;
   const type = opts.type;
   
-  // 2. Only merge the objects when the source data actually changes
-const mergedState = useMemo(() => ({
-  ...opts?.state,
-  ...BASE_NAV_STATE
-}), [opts?.state]); // If opts.state is undefined/stable, this never re-runs
+  // Only merge the objects when the source state data actually changes
+  const mergedState = useMemo(() => ({
+    ...opts?.state,
+    ...BASE_NAV_STATE,
+    previousPathname: pathname,
+  }), [opts?.state, pathname]); // If opts.state is undefined/stable, this never re-runs
 
   const onClickToNavigate = () => {
     if (customNavFunction) {
@@ -43,7 +46,7 @@ const mergedState = useMemo(() => ({
     
     // External site navigation
     if (type == 'page') {
-      window.open(url, '_blank', 'noopener,noreferrer'); // new tab, Content Safe / NoHTTP Referrer
+      window.open(url, '_blank', 'noopener,noreferrer'); // new tab, Content Safe / NoHTTPs Referrer
       return;
     }
   }
@@ -65,4 +68,4 @@ const mergedState = useMemo(() => ({
       }
     </>
   );
-}
+});

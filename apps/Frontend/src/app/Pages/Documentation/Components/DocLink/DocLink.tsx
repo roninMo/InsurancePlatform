@@ -1,3 +1,6 @@
+import { HashLink } from '../../../../Components/Utils/HashLink/HashLink';
+
+import styled from '@emotion/styled';
 import styles from './DocLink.module.scss';
 
 

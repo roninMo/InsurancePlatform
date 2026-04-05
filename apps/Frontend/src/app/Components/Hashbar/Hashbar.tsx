@@ -16,7 +16,7 @@ export const Hashbar = () => {
   useEffect(() => {
     const hashLinkMap = pathname as UrlToHashLinkMap;
     const links: SubPageLinkProps[] = getPageHashLinks(hashLinkMap);
-    console.log('links: ', links);
+    // console.log('links: ', links);
     setHashLinks(links);
   }, [pathname]);
 

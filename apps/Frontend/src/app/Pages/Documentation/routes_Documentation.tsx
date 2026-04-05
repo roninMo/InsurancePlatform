@@ -1,10 +1,11 @@
-import { Navigate , RouteObject} from "react-router-dom";
+import { redirect, RouteObject} from "react-router-dom";
 
 import { Documentation } from "./Documentation";
 import { Docs_Forms } from "./Pages/Inputs/Docs_Forms";
 import { Docs_Content } from "./Pages/Content/Docs_Content";
 import { Docs_Utils } from "./Pages/Utils/Docs_Utils";
 
+// Documentation/Forms
 import { Docs_Button } from "./Pages/Inputs/Button/Docs_Button";
 import { Docs_Checkbox } from "./Pages/Inputs/Checkbox/Docs_Checkbox";
 import { Docs_Input } from "./Pages/Inputs/Input/Docs_Input";
@@ -14,13 +15,16 @@ import { Docs_Select } from "./Pages/Inputs/Select/Docs_Select";
 import { Docs_Slider } from "./Pages/Inputs/Slider/Docs_Slider";
 import { Docs_Textarea } from "./Pages/Inputs/Textarea/Docs_Textarea";
 
+// Documentation/
 import { Docs_Card } from "./Pages/Content/Card/Docs_Card";
 import { Docs_Container } from "./Pages/Content/Container/Docs_Container";
 
+// Documentation/
 import { Docs_DragAndDrop } from "./Pages/Utils/DragAndDrop/Docs_DragAndDrop";
 import { Docs_Notifications } from "./Pages/Utils/Notifications/Docs_Notifications";
 import { Docs_Modal } from "./Pages/Utils/Modal/Docs_Modal";
 import { Docs_Introduction } from "./Pages/Introduction/Docs_Introduction";
+import { RedirectWithState } from "../../Components/Utils/RedirectWithState/RedirectWithState";
 
 
 export const DocumentationPageRoutes: RouteObject = {
@@ -30,7 +34,9 @@ export const DocumentationPageRoutes: RouteObject = {
     // Homepage redirect
     {
       index: true,
-      element: <Navigate to="Introduction" state={{ fromNavigate: true }} replace/>
+      // Do not use a navigate element, the navbar's functionality 
+      // breaks and we shouldn't remount it during this process
+      loader: () => redirect("Introduction")
     },
     {
       path: 'Introduction',
