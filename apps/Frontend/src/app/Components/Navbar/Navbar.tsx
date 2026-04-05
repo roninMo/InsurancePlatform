@@ -18,52 +18,12 @@ const NavbarComponent = ({}: NavbarProps) => {
           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
 
-  // Scroll behavior logic
-  const { hash, key, pathname, state } = useLocation();
-
-
-  //------------------------------------------------//
-  // Theme                                          //
-  //------------------------------------------------//
-  // #region Theme Logic
-  // Initialize the Theme and display settings
-  useLayoutEffect(() => {
-    if (!currentTheme) {
-      const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      localStorage.setItem('theme', userPreferenceTheme);
-      setAndUpdateTheme(userPreferenceTheme)
-    }
-
-  }, [currentTheme]);
-
-  const updateTheme = (newTheme: string) => {
-    localStorage.setItem('theme', newTheme);
-
-    // Prevent transitions from affecting theme changes
-    document.body.classList.add('disable-transitions');
-    
-    // Toggle dark mode
-    if (newTheme === 'dark') document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-    
-    // Force a browser reflow/repaint (cheaply) - do not use a double RequestAnimationFrame
-    void(document.documentElement.offsetHeight); // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
-    
-    // Add back transition logic for the elements.
-    document.body.classList.remove('disable-transitions');
-  }
-
-  const setAndUpdateTheme = (newTheme: string) => {
-    setCurrentTheme(newTheme);
-    updateTheme(newTheme);
-  }
-  // #endregion
-
-
   //------------------------------------------------------------------------------------//
   // React Router Hash Link ScrollRestoration Logic when navigate is used with an id    //
   //------------------------------------------------------------------------------------//
   // #region ScrollRestoration Logic 
+  const { hash, key, pathname, state } = useLocation();
+
   useEffect(() => {
     const didNavigate = state?.fromNavigate;
     // console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
@@ -95,6 +55,7 @@ const NavbarComponent = ({}: NavbarProps) => {
   //------------------------------------------------//
   // Navbar Dropdown                                //
   //------------------------------------------------//
+  // #region Dropdown
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [isDropdownAllowed, setIsDropdownAllowed] = useState<boolean>(false); // delay
   const navbarRef = useRef(null);
@@ -146,6 +107,45 @@ const NavbarComponent = ({}: NavbarProps) => {
     if (!hovering && isWithinDropdown) setShowDropdown(false);
     else setShowDropdown(true);
   }
+  // #endregion
+
+
+  //------------------------------------------------//
+  // Theme                                          //
+  //------------------------------------------------//
+  // #region Theme Logic
+  // Initialize the Theme and display settings
+  useLayoutEffect(() => {
+    if (!currentTheme) {
+      const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      localStorage.setItem('theme', userPreferenceTheme);
+      setAndUpdateTheme(userPreferenceTheme)
+    }
+
+  }, [currentTheme]);
+
+  const updateTheme = (newTheme: string) => {
+    localStorage.setItem('theme', newTheme);
+
+    // Prevent transitions from affecting theme changes
+    document.body.classList.add('disable-transitions');
+    
+    // Toggle dark mode
+    if (newTheme === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+    
+    // Force a browser reflow/repaint (cheaply) - do not use a double RequestAnimationFrame
+    void(document.documentElement.offsetHeight); // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
+    
+    // Add back transition logic for the elements.
+    document.body.classList.remove('disable-transitions');
+  }
+
+  const setAndUpdateTheme = (newTheme: string) => {
+    setCurrentTheme(newTheme);
+    updateTheme(newTheme);
+  }
+  // #endregion
 
 
   return (
