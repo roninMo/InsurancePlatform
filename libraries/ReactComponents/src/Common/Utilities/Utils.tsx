@@ -8,7 +8,7 @@ export interface InputEventHandlers {
   onClick?: (e: MouseEvent<HTMLInputElement, Element>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
-  adjustValue?: (setState: Dispatch<SetStateAction<any>>) => void;
+  // adjustValue?: (setState: Dispatch<SetStateAction<any>>) => void;
 }
 
 export interface TextareaEventHandlers {
@@ -18,5 +18,5 @@ export interface TextareaEventHandlers {
   onClick?: (e: MouseEvent<HTMLTextAreaElement, globalThis.MouseEvent>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLTextAreaElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLTextAreaElement, globalThis.MouseEvent>) => void;
-  adjustValue?: (setState: Dispatch<SetStateAction<any>>) => void;
+  // adjustValue?: (setState: Dispatch<SetStateAction<any>>) => void;
 }

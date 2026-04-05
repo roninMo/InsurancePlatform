@@ -194,7 +194,7 @@ const NavbarComponent = ({}: NavbarProps) => {
         </Container>
 
 
-        <Dropdown
+        <NavbarDropdown
           id={navbarDropdownId}
           onMouseEnter={(e) => hoveringOverDropdown(true, e)}
           onMouseLeave={(e) => hoveringOverDropdown(false, e)}
@@ -236,7 +236,7 @@ const NavbarComponent = ({}: NavbarProps) => {
               </div>
             </Links>
           </div>
-        </Dropdown>
+        </NavbarDropdown>
         
         
     </NavbarAndDropdown>
@@ -254,4 +254,4 @@ const NavLinkContainer = styled.div``;
 const HomeIcon = styled.div``;
 const Links = styled.div``;
 const Profile = styled.div``;
-const Dropdown = styled.div``;
+const NavbarDropdown = styled.div``;

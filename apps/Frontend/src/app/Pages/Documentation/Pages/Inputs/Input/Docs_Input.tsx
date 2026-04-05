@@ -1,11 +1,15 @@
-import { JSX, useDeferredValue, useState } from 'react';
+import { useDeferredValue, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
-import { SubPageLinkProps } from '../../../../../Components/Sidebar/Sidebar';
 import { ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
-import { ParamItem, ParamTable, ParamTableItem } from '../../../Components/ParamTable/ParamTable';
+import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/ParamTable/ParamTable';
 import { ParamType } from '../../../Components/ParamType/ParamType';
-import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
+import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
+import { SubPageLinkProps } from '../../../../../Components/Sidebar/Sidebar';
+import { TextInputTypes } from '@Project/ReactComponents';
 
+import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
 import InputCodeSnippets from './Docs_InputJsxComponents?raw';
 import { 
   Example_CreditCardInput,
@@ -18,9 +22,6 @@ import {
   Example_SearchInput,
   Example_TextInput,
 } from './Docs_InputJsxComponents';
-import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { TextInputTypes } from '@Project/ReactComponents';
-import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 
 
 export const Docs_Input = () => {
@@ -34,7 +35,7 @@ export const Docs_Input = () => {
 
   const showTabContent = (tab: TextInputTypes) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: TextInputTypes) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-  
+
   const onClickTab = (tab: TextInputTypes) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
@@ -43,20 +44,26 @@ export const Docs_Input = () => {
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
-  // just render it once instead of 3 on updates - they're static mappings or boolean checks on update
-  // const [params, setParams] = useState<string[]>(defaultParams); 
-  // const [paramContext, setParamContext] = useState<ParamContext[]>([]);
-  const baseParamList: string[] = defaultParams || [];
-  const variantParams: string[] = variantParamsList[currentTab] || [];
-  const contextParams = paramContextsList[currentTab]; 
-  
-  // TODO: If this is still causing hiccups, use useDeferredValue
-  // const tableParams = [...defaultParams, ...(variantParamsList[deferredTab] || [])];
+  // #region Param Table State
+  const paramTableItems = useMemo(() => {
+    const baseParamList: string[] = defaultParams || [];
+    const contextParams: ParamContext[] = paramContextsList[currentTab]; 
+    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, paramTypeElements, paramDescriptionElements);
+    
+    // Variant specific params
+    const variantParams: string[] = variantParamsList[currentTab] || [];
+    const variantContextParams = paramContextsList[currentTab];
+    if (variantParams.length > 0) {
+      const spacing: (ParamItem | 'spacing')[] = ['spacing'];
+      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, paramTypeElements, paramDescriptionElements);
+      params.push(...spacing, ...variantParamItems);
+    }
 
-  // This uses NO extra memory and doesn't trigger secondary renders.
-  // const currentVariantParams = variantParamsList[currentTab] || [];
-  // const currentContextParams = paramContextsList[currentTab] || [];
-  // const allTableParams = [...defaultParams, ...currentVariantParams];
+    console.log(`\nparams: `, params);
+    return params;
+  }, [currentTab]);
+  // #endregion
+
 
   //--------------------------------//
   // Input State Management         //
@@ -235,24 +242,25 @@ export const Docs_Input = () => {
           </ShowcaseElement>
         }
       </Variants>
-      
 
-      {/* <div className='span-12 py-2 pt-10'>
-      <Dropdown label='Input Parameters' openByDefault>
-        <ParamTable params={ParamTableArgs_Input} additionalStyles='mt-4' />
-      </Dropdown>
+
+      <div className='span-12 py-2 pt-10'>
+        <Dropdown label='Input Parameters' openByDefault>
+          <ParamTable 
+            params={paramTableItems} 
+            additionalStyles='mt-4' 
+          />
+        </Dropdown>
       </div>
 
-
       <div className='span-12 py-2 pt-4'>
-      <Dropdown label='Options Parameter Values' openByDefault>
-        <p className='p-2 pl-1 showcase-text'>
-          The options param has multiple values that are specific to each variant you're using, 
-          and focus on customizing the styles, and adding additional contextual functionality for each input type
-        </p>
-        <ParamTable params={ParamTableArgs_Input} additionalStyles='mt-4' />
-      </Dropdown>
-      </div> */}
+        <Dropdown label='Event Handlers' openByDefault>
+          <p className='p-2 pl-1 showcase-text'>
+            The event handlers you can use with this component. Pass in your own event functions to interact with the element.
+          </p>
+          <EventParamTable additionalStyles='mt-4' />
+        </Dropdown>
+      </div>
     </Container>
   );
 }
@@ -268,6 +276,7 @@ const showCaseElementStyleProps = {
   stateStyles: "p-4 span-12 lg:span-8 rowStart gap-2"
 };
 
+
 //----------------------------------------------//
 // HashLinks                                    //
 //----------------------------------------------//
@@ -279,11 +288,11 @@ export const DocsPageHashLinks_Input: SubPageLinkProps[] = [
 //----------------------------------------------//
 // Input components param table logic           //
 //----------------------------------------------//
-interface ParamContext {
-  name?: string;
+export interface ParamContext {
+  name: string;
   contextParam?: boolean;
   variantOption?: boolean;
-	overwrite?: boolean;
+	overwrite?: string;
 }
 
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
@@ -422,13 +431,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
 //----------------------------------------------//
 // Param table static element references        //
 //----------------------------------------------//
-// If we need types, we could do this for conditional rendering
-// const paramDescriptionElements: Record<string, React.FC<DescriptionProps>> = {
-//   'type': ({ highlighted }) => (
-//     <div className={highlighted ? 'active' : ''}>...</div>
-//   ),
-// };
-
+// Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
   // Default params
   'type': () => <ParamType type='TextInputTypes' />,
@@ -568,7 +571,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
 
   'sortType' : () => 
   <div className='param-item-desc-text'>
-    What kind of sorting functionality do you want?
+    What kind of sorting functionality do you want for the search?
   </div>,
 
   'showPolicyNumberIcon' : () => 
@@ -613,110 +616,14 @@ const paramDescriptionElements: Record<string, React.FC> = {
 };
 
 
+//----------------------------------------------//
+// Param table static element references        //
+//----------------------------------------------//
+// The EventHandlers params used universally for input components - create a paramTable subclass for this
 
-// Note, this only works because these values are NOT using state params, preventing unnecessary overhead with state
-const ParamTableArgs_Input: (ParamItem | 'spacing')[] = [
-  { name: 'type', 
-    type: <ParamType type='TextInputTypes' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The variant of the input component you're using. The types are text, number, email, password, search, policyNumber, phone, creditCard, and currency.
-    </div>
-  },
-  { name: 'name', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The name of the input. Acts as a key for form data during submissions.
-    </div>
-  },
-  { name: 'label', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The label of the input. 
-    </div>
-  },
-  { name: 'description', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The description for this input element.
-    </div>
-  },
-  { name: 'value', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The value of the input. Use your own state management for handling editing this value.
-    </div>
-  },
-  { name: 'placeholder', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The input element's placeholder text. Rendered when the input is empty.
-    </div>
-  },
-  { name: 'id', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The id of the native input element. 
-    </div>
-  },
-  'spacing',
-  
-  { name: 'error', 
-    type: <ParamType type='boolean' />,
-    description:  
-    <div className='param-item-desc-text'>
-      Whether there's validation errors for this input.
-    </div>
-  },
-  { name: 'errorMessage', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The validation error message for this input.
-    </div>
-  },
-  { name: 'disabled', 
-    type: <ParamType type='boolean' />,
-    description:  
-    <div className='param-item-desc-text'>
-      Whether the input is disabled.
-    </div>
-  },
-  { name: 'required', 
-    type: <ParamType type='boolean' />,
-    description:  
-    <div className='param-item-desc-text'>
-      Is this input required during submission?
-    </div>
-  },
-  'spacing',
-  
-  { name: 'tooltip', 
-    type: <ParamType type='boolean' />,
-    description:  
-    <div className='param-item-desc-text'>
-      Should this component have a tooltip?
-    </div>
-  },
-  { name: 'tooltipText', 
-    type: <ParamType type='string' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The tooltip text.
-    </div>
-  },
-  
-  { name: 'autocomplete', 
-    type: <ParamType type='TextInputAutoCompleteTypes' />,
-    description:  
-    <div className='param-item-desc-text'>
-      The autocomplete text for this input.
-    </div>
-  },
-];
+// onChange={(e) => onChange ? onChange(e) : null}
+// onBlur={(e) => onBlur ? onBlur(e) : null}
+// onFocus={(e) => onFocus ? onFocus(e) : null}
+// onClick={(e) => onClick ? onClick(e) : null}
+// onMouseEnter={(e) => onMouseEnter ? onMouseEnter(e) : null}
+// onMouseLeave={(e) => onMouseLeave ? onMouseLeave(e) : null}

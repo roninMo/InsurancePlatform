@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import styles from './ParamType.module.scss';
 
 
-export type ParamTypes = "number" | "string" | "boolean" | "any" /* | "custom" */ | string & {};		 
+export type ParamTypes = "number" | "string" | "boolean" | "function" | "any" /* | "custom" */ | string & {};		 
 export interface ParamTypeProps {
 	type: ParamTypes;
 	isArray?: boolean;
@@ -26,6 +26,7 @@ const getTypeStyles = (type: ParamTypes) => {
 	if (type == 'string') return 'param-type-string';
 	if (type == 'number') return 'param-type-number';
 	if (type == 'boolean') return 'param-type-boolean';
+	if (type == 'function') return 'param-type-function';
 	if (type == 'any') return 'param-type-boolean';
 	return 'param-type-custom';
 	return 'text-slate-900 dark:text-slate-400';

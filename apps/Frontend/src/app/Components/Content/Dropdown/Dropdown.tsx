@@ -6,7 +6,13 @@ import styles from './Dropdown.module.scss';
 
 export interface DropdownProps {
   label: string;
+
+  // Dropdown
   styles?: string;
+  additionalStyles?: string;
+
+  // Component Styles
+  labelStyles?: string;
   icon?: IconTypes;
   iconStyles?: string;
 
@@ -18,7 +24,7 @@ export interface DropdownProps {
 }
 
 export const Dropdown = ({ 
-  label, styles, icon, iconStyles, openByDefault,
+  label, styles, additionalStyles, labelStyles, icon, iconStyles, openByDefault,
   hasBeenOpened, setHasBeenOpened, children 
 }: DropdownProps) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
@@ -44,10 +50,10 @@ export const Dropdown = ({
   }
 
   return (
-    <div className='col gap-2 w-full'>
-      <Header className="w-full rowStart items-center gap-1" onClick={() => toggleDropdown()}>
+    <div className={styles ? styles : `col gap-2 w-full animate-fade-in ${additionalStyles}`}>
+      <Header className="w-full rowStart items-center gap-1 " onClick={() => toggleDropdown()}>
         <Icon variant={icon ? icon : 'DropdownArrow'} styles={iconStyles ? iconStyles : defaultIconStyles} />
-        <p className={styles ? styles : 'text-xl lg:text-2xl header-colors font-medium cursor-pointer'}>
+        <p className={labelStyles ? labelStyles : 'text-xl lg:text-2xl header-colors font-medium cursor-pointer'}>
           { label }
         </p>
       </Header>

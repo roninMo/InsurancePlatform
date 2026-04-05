@@ -650,12 +650,16 @@
   
   // ParamItem Css
   .param-item-table {
-    @apply bg-div outline-css outline-styles
+    @apply 
+      bg-slate-200 dark:bg-slate-900
+      bg-opacity-70
+      outline-css outline-styles
     
       /* Quick selector for first three (this is not necessary, but we're using a weird grid layout) */
       [&>*:nth-child(-n+3)]:bg-slate-300
+      [&>*:nth-child(-n+3)]:bg-opacity-90
+      
       [&>*:nth-child(-n+3)]:dark:bg-slate-800
-      [&>*:nth-child(-n+3)]:bg-opacity-50
       [&>*:nth-child(-n+3)]:dark:bg-opacity-60
     ;
   }
@@ -703,11 +707,11 @@
   }
   
   .param-item-context {
-    @apply selected-box;
+    @apply text-green-600 dark:text-green-600;
   }
   
   .param-item-variant-opt {
-    @apply ok-box;
+    @apply selected-box dark:bg-opacity-10;
   }
 
 
@@ -717,7 +721,7 @@
       py-[0.15rem] px-1.5 transition
       text-sm font-semibold
       
-      bg-opacity-40 dark:bg-opacity-30
+      bg-opacity-80 dark:bg-opacity-30
       bg-gray-300 dark:bg-gray-600
     ;
   }
@@ -734,6 +738,10 @@
     @apply text-rose-600/90 dark:text-red-600/90;
   }
   
+  .param-type-function {
+    @apply text-sky-400/90 dark:text-sky-400/90;
+  }
+
   .param-type-custom {
     @apply text-emerald-500/90 dark:text-green-500/90;
   }

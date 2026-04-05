@@ -3,6 +3,7 @@ import { ParamType, ParamTypeProps } from '../ParamType/ParamType';
 
 import styled from '@emotion/styled';
 import styles from './ParamTable.module.scss';
+import { ParamContext } from '../../Pages/Inputs/Input/Docs_Input';
 
 /* Param Table	
 	Grid layout or two column layout
@@ -18,8 +19,8 @@ import styles from './ParamTable.module.scss';
 
 export interface ParamItem {
 	name: string;
-	type: ReactNode; // we're using ParamType
-	description: ReactNode;
+	type: React.FC; // we're using ParamType
+	description: React.FC;
 	
 	contextParam?: boolean; // used to signify certain variants. e.g. type="email"
 	variantOption?: boolean; // parameters highlighted because they're specific to a certain variant
@@ -75,20 +76,25 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 
 	// Standard logic
 	const { name, type, description, contextParam, variantOption } = item;
+	const ParamTypeElement = type;
+	const ParamDescriptionElement = description;
+	
+	let contextStyles = '';
 	let variantStyles = '';
-	if (contextParam) variantStyles += ' param-item-context';
-	if (variantOption) variantStyles += ' param-item-variant-opt';
+	if (contextParam) contextStyles = 'param-item-context';
+	if (variantOption) variantStyles = 'param-item-variant-opt';
+
 
 	return (
 		<>
 			<div className={`param-item-base ${variantStyles}`}>
-				<div className='param-item-name'>{ name }</div>
+				<div className={`param-item-name ${contextStyles}`}>{ name }</div>
 			</div>
 			<div className={`param-item-base ${variantStyles}`}>
-				{ type }
+				{ ParamTypeElement ? <ParamTypeElement /> : null }
 			</div>
 			<div className={`param-item-base ${variantStyles}`}>
-				{ description }
+				{ ParamDescriptionElement ? <ParamDescriptionElement /> : null }
 			</div>
 		</>
 	);
@@ -98,3 +104,41 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 const Container = styled.div``;
 const Table = styled.div``;
 const Param = styled.div``;
+
+
+export const getParamsTableItems = (
+	params: string[], 
+	contextParams: ParamContext[], 
+	typeElements: Record<string, React.FC>,
+	descriptionElements: Record<string, React.FC>,
+): (ParamItem | 'spacing')[] => {
+	const paramItems: (ParamItem | 'spacing')[] = [];
+	
+	params.forEach((listItem: string) => {
+		if (listItem == 'spacing') {
+			paramItems.push(listItem);
+			return;
+		}
+
+		let item: ParamItem;
+		const context: ParamContext | undefined = getOverwriteParam(listItem, contextParams);
+		const name: string = listItem;
+		item = { 
+			name: context?.overwrite ? context.name : listItem, 
+			type: typeElements[name], 
+			description: descriptionElements[name],
+			contextParam: context?.contextParam,
+			variantOption: context?.variantOption
+		};
+
+		paramItems.push(item);
+	});
+
+	return paramItems;
+}
+
+const getOverwriteParam = (name: string, params: ParamContext[]): ParamContext | undefined => {
+	let param: ParamContext | undefined;
+	params.forEach((val: ParamContext) => (name == val.name || name == val.overwrite) ? param = val : null);
+	return param;
+}
