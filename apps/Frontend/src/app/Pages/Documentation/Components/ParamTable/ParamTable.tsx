@@ -1,9 +1,8 @@
-import { ComponentType, ReactNode, useId } from 'react';
-import { ParamType, ParamTypeProps } from '../ParamType/ParamType';
+import { ReactNode, useId } from 'react';
+import { ParamContext } from '../../Pages/Inputs/Input/Docs_Input';
 
 import styled from '@emotion/styled';
 import styles from './ParamTable.module.scss';
-import { ParamContext } from '../../Pages/Inputs/Input/Docs_Input';
 
 /* Param Table	
 	Grid layout or two column layout

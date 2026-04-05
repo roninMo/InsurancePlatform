@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useState} from "react";
+import {Dispatch, SetStateAction} from "react";
 import { HashLink } from "../Utils/HashLink/HashLink";
 
 import styled from "@emotion/styled";
@@ -25,8 +25,6 @@ export interface SidebarProps {
   LinkSections: SubPageLinkProps[];
 }
 export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSections }: SidebarProps) => {
-  const [sidebarRendered, setSidebarRendered] = useState<boolean>(); // We might need a delay hooked to this for open/close animations 
-  
   const toggleSidebar = (setOpened: boolean) => {
     setSidebarOpen(setOpened);
     if (onSetSidebarState) onSetSidebarState(setOpened);

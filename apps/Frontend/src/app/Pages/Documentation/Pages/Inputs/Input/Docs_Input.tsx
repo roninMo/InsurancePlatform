@@ -57,7 +57,6 @@ export const Docs_Input = () => {
       params.push(...spacing, ...variantParamItems);
     }
 
-    console.log(`\nparams: `, params);
     return params;
   }, [currentTab]);
 
@@ -102,7 +101,7 @@ export const Docs_Input = () => {
 
       <div className='span-12' id="showcase-element">
         <p className='p-2 showcase-text'>
-          The input component is a custom input component with loads of functionality and customization 
+          The input component is designed with functionality and customization 
           to fit your needs for the varying form types. It comes with tooltips, 
           loading bars for server side autosaving, event hooks, error handling, and input masking. 
           Each type has varying icons and functionality so you know whether the input is for 

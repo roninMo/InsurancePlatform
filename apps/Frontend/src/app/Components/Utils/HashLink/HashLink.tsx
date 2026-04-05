@@ -54,7 +54,7 @@ export const HashLink = memo(({ url, label, opts = DEFAULT_OPTS, styles, childre
   const linkStyles = styles ? styles : 'footer-link';
   if (children) {
     return (
-      <Link to={url} state={mergedState} className={linkStyles}>
+      <Link to={url} state={mergedState}>
         { children }
       </Link>
     );

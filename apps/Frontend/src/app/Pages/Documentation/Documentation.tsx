@@ -1,4 +1,4 @@
-import { useState, Suspense, lazy } from 'react';
+import { useState, lazy } from 'react';
 import { Outlet } from "react-router-dom";
 import { SyntaxHighlighterProps } from 'react-syntax-highlighter';
 
@@ -26,21 +26,7 @@ export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSynt
 export const Documentation = () => {
   /* TODO: From where we left off
 
-  - Wrap the HashLink in a memo, it should be a nuclear component because it's content isn't something that's rerendered
-  - The useNavigate hook should be passed in to the HashLinkComponents
-  - Start on the paramTable edits for increased efficiency and customization
-  - back to the current todo edits for the documentation project, we're just about done with the primary components
-
-  - Add a state variable for the additional variant params and combine them with the current list of params 
-    - useState: record with keys to the list of params, containing the context and variant options for each param
-      - use the type to retrieve static elements that should be converted to an object list. UseTextInputTypes for key reference
-    
-    - When they select the tab to enable a new input, update the list of params for contextual highlighting and additional params
-      - Solve the nested objects to context params, or create a new param table for the options object "Object Params"
-
-  - HashLinks for the Input Documentation page (which doesn't really seem necessary anymore)
-  
-  - After that, finish and try out DocLinks and Keywords in the descriptions
+  - Finish and try out DocLinks and Keywords in the descriptions
   - We need a tooltip util component to add to other components that lets you add a string, elements, or jsx code render within it
   
   - Then it's onto adding the other components to the documentation
@@ -153,9 +139,11 @@ export const Documentation = () => {
             </PageContent>
           </NotificationContainer>
 
-          <div className="hidden 2xl:block pt-2 min-w-[20%] 2xl:min-w-[15%]">
-            <Hashbar />
-          </div>
+          <StickyContainer className='hidden 2xl:flex items-start pt-2 min-w-[20%] 2xl:min-w-[15%]'>
+            <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
+              <Hashbar />
+            </div>
+          </StickyContainer>
         </ContentAndSidebar>
         
       </Container>
