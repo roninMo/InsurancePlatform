@@ -6,7 +6,6 @@ import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/
 import { ParamType } from '../../../Components/ParamType/ParamType';
 import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
-import { SubPageLinkProps } from '../../../../../Components/Sidebar/Sidebar';
 import { TextInputTypes } from '@Project/ReactComponents';
 
 import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
@@ -44,7 +43,6 @@ export const Docs_Input = () => {
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
-  // #region Param Table State
   const paramTableItems = useMemo(() => {
     const baseParamList: string[] = defaultParams || [];
     const contextParams: ParamContext[] = paramContextsList[currentTab]; 
@@ -62,7 +60,6 @@ export const Docs_Input = () => {
     console.log(`\nparams: `, params);
     return params;
   }, [currentTab]);
-  // #endregion
 
 
   //--------------------------------//
@@ -103,7 +100,7 @@ export const Docs_Input = () => {
         Input Component
       </h3>
 
-      <div className='span-12'>
+      <div className='span-12' id="showcase-element">
         <p className='p-2 showcase-text'>
           The input component is a custom input component with loads of functionality and customization 
           to fit your needs for the varying form types. It comes with tooltips, 
@@ -244,7 +241,7 @@ export const Docs_Input = () => {
       </Variants>
 
 
-      <div className='span-12 py-2 pt-10'>
+      <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Input Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
@@ -253,7 +250,7 @@ export const Docs_Input = () => {
         </Dropdown>
       </div>
 
-      <div className='span-12 py-2 pt-4'>
+      <div className='span-12 py-2 pt-4' id="event-handler-table">
         <Dropdown label='Event Handlers' openByDefault>
           <p className='p-2 pl-1 showcase-text'>
             The event handlers you can use with this component. Pass in your own event functions to interact with the element.
@@ -275,14 +272,6 @@ const showCaseElementStyleProps = {
   styles: "p-4 pt-6 pb-2 span-12 lg:span-8",
   stateStyles: "p-4 span-12 lg:span-8 rowStart gap-2"
 };
-
-
-//----------------------------------------------//
-// HashLinks                                    //
-//----------------------------------------------//
-export const DocsPageHashLinks_Input: SubPageLinkProps[] = [
-
-];
 
 
 //----------------------------------------------//
@@ -614,16 +603,3 @@ const paramDescriptionElements: Record<string, React.FC> = {
     Adds a currency type select to the input, changing the money sign for this element.
   </div>,
 };
-
-
-//----------------------------------------------//
-// Param table static element references        //
-//----------------------------------------------//
-// The EventHandlers params used universally for input components - create a paramTable subclass for this
-
-// onChange={(e) => onChange ? onChange(e) : null}
-// onBlur={(e) => onBlur ? onBlur(e) : null}
-// onFocus={(e) => onFocus ? onFocus(e) : null}
-// onClick={(e) => onClick ? onClick(e) : null}
-// onMouseEnter={(e) => onMouseEnter ? onMouseEnter(e) : null}
-// onMouseLeave={(e) => onMouseLeave ? onMouseLeave(e) : null}

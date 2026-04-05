@@ -16,7 +16,7 @@ export const Hashbar = () => {
   useEffect(() => {
     const hashLinkMap = pathname as UrlToHashLinkMap;
     const links: SubPageLinkProps[] = getPageHashLinks(hashLinkMap);
-    // console.log('links: ', links);
+    console.log('current pathname: ', pathname);
     setHashLinks(links);
   }, [pathname]);
 
@@ -84,26 +84,40 @@ export type UrlToHashLinkMap =
 | '/Documentation/Utils/Notifications' 
 | ''; 
 const getPageHashLinks = (url: UrlToHashLinkMap): SubPageLinkProps[] => {
-  return DocumentationPage_SidebarLinks;
   if (url == '/Documentation') return [];
   if (url == '/Documentation/Forms' ) return [];
-  if (url == '/Documentation/Forms/Button' ) return [];
-  if (url == '/Documentation/Forms/Checkbox' ) return [];
-  if (url == '/Documentation/Forms/Input' ) return [];
-  if (url == '/Documentation/Forms/Radio' ) return [];
-  if (url == '/Documentation/Forms/RadioTable' ) return [];
-  if (url == '/Documentation/Forms/Select' ) return [];
-  if (url == '/Documentation/Forms/Slider' ) return [];
-  if (url == '/Documentation/Forms/Textarea' ) return [];
+  if (url == '/Documentation/Forms/Button' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/Checkbox' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/Input' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/Radio' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/RadioTable' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/Select' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/Slider' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/Textarea' ) return GenericDocHashLinkList;
+
   if (url == '/Documentation/Content' ) return [];
-  if (url == '/Documentation/Content/Card' ) return [];
-  if (url == '/Documentation/Content/Container' ) return [];
+  if (url == '/Documentation/Content/Card' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Content/Container' ) return GenericDocHashLinkList;
+  
   if (url == '/Documentation/Utils' ) return [];
-  if (url == '/Documentation/Utils/DragAndDrop' ) return [];
-  if (url == '/Documentation/Utils/Modal' ) return [];
-  if (url == '/Documentation/Utils/Notifications' ) return [];
+  if (url == '/Documentation/Utils/DragAndDrop' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Utils/Modal' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Utils/Notifications' ) return GenericDocHashLinkList;
   return [];
 }
 
 // Styled Components
 const Container = styled.div``;
+
+
+export const GenericDocHashLinkList: SubPageLinkProps[] = [
+  // Inputs Page and Subroutes
+  {
+    sectionLink: { label: "Input", url: "" }, 
+    subLinks: [
+      { label: 'Variants', url: '#showcase-element' },
+      { label: 'Parameters', url: '#param-table' },
+      { label: 'Event Handlers ', url: '#event-handler-table' },
+    ]
+  },
+];

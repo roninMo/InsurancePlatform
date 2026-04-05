@@ -159,28 +159,28 @@ export const WelcomeSection = () => {
         <div className='col gap-4 w-[70vw] h-[65vh] px-4 ='>
             
             {/* Mock Database */}
-            <Dropdown label="Mock Database" openByDefault hasBeenOpened={openedMockDB} setHasBeenOpened={setOpenedMockDB} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Mock Database" openByDefault hasBeenOpened={openedMockDB} setHasBeenOpened={setOpenedMockDB} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={mockDBLinks} initialRender={openedMockDB} />
               </div>
             </Dropdown>
 
             {/* Insurance Platform */}
-            <Dropdown label="Insurance Platform" openByDefault hasBeenOpened={openedInsPlat} setHasBeenOpened={setOpenedInsPlat} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Insurance Platform" openByDefault hasBeenOpened={openedInsPlat} setHasBeenOpened={setOpenedInsPlat} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={insPlatLinks} initialRender={openedInsPlat} />
               </div>
             </Dropdown>
 
             {/* Spotify Demo */}
-            <Dropdown label="Spotify Demo" hasBeenOpened={openedSpotify} setHasBeenOpened={setOpenedSpotify} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Spotify Demo" hasBeenOpened={openedSpotify} setHasBeenOpened={setOpenedSpotify} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={spotifyLinks} initialRender={openedSpotify} />
               </div>
             </Dropdown>
 
             {/* ServerSide AutoSave */}
-            <Dropdown label="ServerSide Autosave" hasBeenOpened={openedSSAS} setHasBeenOpened={setOpenedSSAS} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="ServerSide Autosave" hasBeenOpened={openedSSAS} setHasBeenOpened={setOpenedSSAS} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={SSASLinks} initialRender={openedSSAS} />
               </div>
