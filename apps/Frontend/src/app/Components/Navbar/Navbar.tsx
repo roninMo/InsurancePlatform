@@ -9,6 +9,7 @@ import { HashLink } from '../Utils/HashLink/HashLink';
 
 export interface NavbarProps {}
 
+// this should be wrapped in a memo to make it a nuclear component, check if the effects and events for the dropdown, scroll, and theme still work
 export const Navbar = ({}: NavbarProps) => {
   const navigate = useNavigate();
 
@@ -31,7 +32,8 @@ export const Navbar = ({}: NavbarProps) => {
       const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       localStorage.setItem('theme', userPreferenceTheme);
       
-      setAndUpdateTheme(userPreferenceTheme);
+      setAndUpdateTheme(userPreferenceTheme)
+			// Todo; try out requestAnimationUpdate for updating the theme
     }
     
 
