@@ -82,6 +82,7 @@ const Label = styled.p``;
 const Description = styled.p``;
 
 // Component styles
+// TODO: Add these to global styles and clean up the theme of this component
 const defaultStyles = `rowStart items-start gap-2 mr-6`;
 const columnStyles = `rowStart items-start gap-2`;
 const listStyles = `

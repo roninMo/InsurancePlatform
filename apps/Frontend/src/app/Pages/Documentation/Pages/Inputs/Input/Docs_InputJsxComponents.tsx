@@ -28,7 +28,7 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
         name={`text-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
@@ -80,7 +80,7 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         name={`email-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
@@ -122,7 +122,7 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         name={`password-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
@@ -164,7 +164,7 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         name={`search-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
@@ -205,7 +205,7 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         name={`search-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
@@ -247,7 +247,7 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         name={`phone-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
@@ -289,7 +289,7 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         name={`credit-card-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
@@ -331,7 +331,7 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         name={`currency-input-${id}`}
 
         value={value}
-        error={error ? true : undefined}
+        error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}

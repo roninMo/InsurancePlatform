@@ -1,8 +1,7 @@
-import { Dispatch, MouseEvent, SetStateAction } from 'react';
+import { MouseEvent, useId } from 'react';
+import styled from '@emotion/styled';
 
 import styles from './Checkbox.module.scss';
-import { RadioItem } from '@Project/ReactComponents';
-import styled from '@emotion/styled';
 
 
 export interface CheckboxItem {
@@ -13,34 +12,39 @@ export interface CheckboxItem {
   checked: boolean;
 }
 
+
+// TODO: the inline style should be refactored to just be a normal inline display style of checkboxes
+export type CheckboxVariant = 'default' | 'inline' | 'list';
 export interface CheckboxProps {
-  variant?: 'default' | 'inline' | 'list';
-  id: string;
+  variant?: CheckboxVariant;
   name: string;
   label?: string;
   description?: string;
 
+  // TODO: Change this to a record or a partial record. 
   items: { [key: string]: CheckboxItem };
   onSelect: (checked: CheckboxItem, event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 
+  // Add better error and disabled styles
   error?: boolean;
   errorMessage?: string;
   disabled?: boolean;
   required?: boolean;
-
-  aria?: string;
 }
 
 
 /** This component should be wrapped by another to prevent unnecessary component updates with it's parent, since there's multiple state values being passed in */
 export const Checkbox = ({
-  variant = 'default', id, name, label, description,
+  variant = 'default', name, label, description,
   items, onSelect, 
-  error = false, errorMessage, disabled = false, required = false, aria,
+  error = false, errorMessage, disabled = false, required = false,
   onMouseEnter, onMouseLeave
 }: CheckboxProps) => {
+  const id = useId();
+
+  // TODO: create global styles for this
   const getStyles = () => {
     const radioContainerStyles = `min-w-full pt-4 pb-6 px-1`;
     const listStyles = `colStart gap-1 border-b first:border-t border-default`;
@@ -51,7 +55,7 @@ export const Checkbox = ({
   }
 
   return (
-    <Container aria-describedby={aria}>
+    <Container>
       <HeaderContainer className='colStart px-1'>
         { label && <Label>{ label }</Label> }
         { description && <Description>{ description }</Description> }

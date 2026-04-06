@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useId } from 'react';
 import styled from '@emotion/styled';
 
 import { RadioItem } from '@Project/ReactComponents';
@@ -7,7 +7,6 @@ import styles from './RadioTable.module.scss';
 
 export interface RadioTableProps {
   variant?: 'inline' | 'block';
-  id: string;
   name: string;
   label?: string;
   description?: string;
@@ -22,17 +21,17 @@ export interface RadioTableProps {
   errorMessage?: string;
   disabled?: boolean;
   required?: boolean;
-
-  aria?: string;
 }
 
 
 export const RadioTable = ({
-  variant = 'block', id, name, label, description,
+  variant = 'block', name, label, description,
   radioItems, currentValue, onSelect, 
-  error = false, errorMessage, disabled = false, required = false, aria,
+  error = false, errorMessage, disabled = false, required = false,
   onMouseEnter, onMouseLeave
 }: RadioTableProps) => {
+  const id = useId();
+  
   const optionSelected = (item: RadioItem): boolean => {
     return currentValue.value == item.value;
   }
@@ -46,7 +45,7 @@ export const RadioTable = ({
   }
 
   return (
-    <Container aria-describedby={aria}>
+    <Container>
       <HeaderContainer className='colStart px-1'>
         { label && <Label>{ label }</Label> }
         { description && <Description>{ description }</Description> }

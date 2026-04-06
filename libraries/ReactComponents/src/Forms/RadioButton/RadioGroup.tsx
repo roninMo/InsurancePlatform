@@ -3,12 +3,12 @@ import styled from '@emotion/styled';
 import styles from './RadioGroup.module.scss';
 import { RadioGroupItem } from './RadioItem/RadioItem';
 import { InputEventHandlers } from '@Project/ReactComponents';
+import { useId } from 'react';
 
 
-export type RadioVariant = 'default' | 'column' | 'columnInline' | 'list' | 'table' | 'tableInline' | 'boxes';
+export type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
 export interface RadioGroupProps {
   variant?: RadioVariant;
-  id: string;
   name: string;
   label?: string;
   description?: string;
@@ -21,8 +21,6 @@ export interface RadioGroupProps {
   errorMessage?: string;
   disabled?: boolean;
   required?: boolean;
-
-  aria?: string;
 }
 
 export interface RadioItem {
@@ -34,19 +32,20 @@ export interface RadioItem {
 
 
 export const RadioGroup = ({
-  variant = 'default', id, name, label, description,
+  variant = 'default', name, label, description,
   radioItems, currentValue, onSelect, 
-  error = false, errorMessage, disabled = false, required = false, aria,
+  error = false, errorMessage, disabled = false, required = false,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
 }: InputEventHandlers & RadioGroupProps) => {
-  
+  const id = useId();
+
   const radioItemSelected = (item: RadioItem, index: number) => {
     // console.log(`\nA radio item was selected: `, {item, index});
     onSelect(item, index, currentValue);
   }
 
   return (
-    <Container className={`w-full colStart justify-start gap-2 ${getErrorThemes(error, disabled)}`} aria-describedby={aria}>
+    <Container className={`w-full colStart justify-start gap-2 ${getErrorThemes(error, disabled)}`}>
 
       {/* Radio Button Label w/description */}
       { (label || description) && 
@@ -66,6 +65,7 @@ export const RadioGroup = ({
         { radioItems.map((item: RadioItem, index: number) =>
           <RadioGroupItem
             checked={currentValue.value == item.value}
+            // TODO: this click event should encompass the whole radio item, at least including the label
             onSelect={(item: RadioItem, index: number) => radioItemSelected(item, index)}
             value={item}
             
@@ -77,6 +77,7 @@ export const RadioGroup = ({
             
             disabled={disabled ? true : item.disabled}
             error={error}
+            // TODO: We need better visuals for when there's error
 
             onBlur={onBlur}
             onFocus={onFocus}

@@ -1,8 +1,8 @@
 import { ReactNode, useId } from 'react';
-import { ParamContext } from '../../Pages/Inputs/Input/Docs_Input';
 
 import styled from '@emotion/styled';
 import styles from './ParamTable.module.scss';
+import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
 
 /* Param Table	
 	Grid layout or two column layout
@@ -113,7 +113,7 @@ export const getParamsTableItems = (
 ): (ParamItem | 'spacing')[] => {
 	const paramItems: (ParamItem | 'spacing')[] = [];
 	
-	params.forEach((listItem: string) => {
+	params?.forEach((listItem: string) => {
 		if (listItem == 'spacing') {
 			paramItems.push(listItem);
 			return;
@@ -138,6 +138,6 @@ export const getParamsTableItems = (
 
 const getOverwriteParam = (name: string, params: ParamContext[]): ParamContext | undefined => {
 	let param: ParamContext | undefined;
-	params.forEach((val: ParamContext) => (name == val.name || name == val.overwrite) ? param = val : null);
+	params?.forEach((val: ParamContext) => (name == val.name || name == val.overwrite) ? param = val : null);
 	return param;
 }

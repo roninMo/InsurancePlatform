@@ -24,6 +24,7 @@ const NavbarComponent = ({}: NavbarProps) => {
   // #region ScrollRestoration Logic 
   const { hash, key, pathname, state } = useLocation();
 
+  // TODO: handle scroll restoration with loader redirects on browser route lists
   useEffect(() => {
     const didNavigate = state?.fromNavigate;
     // console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});

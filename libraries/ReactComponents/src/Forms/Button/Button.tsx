@@ -4,24 +4,28 @@ import { Icon, IconTypes } from '../../Common/Icons/Icon';
 import styles from './Button.module.scss';
 
 
+export type ButtonSizes = 'default' | 'md' | 'lg' | 'xl' | 'none';
+export type ButtonColors = 'primary' | 'gray' | 'gray-focus' | 'none';
 export interface ButtonProps {
   displayText: string;
   onClick?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   disabled?: boolean;
 
+  size?: ButtonSizes;
+  color?: ButtonColors;
+  additionalStyles?: string | undefined;
+
   icon?: IconTypes;
   iconStyles?: string;
-  size?: 'default' | 'md' | 'lg' | 'xl' | 'none';
-  color?: 'primary' | 'gray' | 'gray-focus' | 'none';
-  additionalStyles?: string | undefined;
 }
 
-export function Button({ 
+export const Button = ({ 
   displayText,  onClick,  disabled,  
-  icon, iconStyles, 
-  size = 'default', color = 'primary', additionalStyles 
-}: ButtonProps) {
+  size = 'default', color = 'primary', 
+  additionalStyles, icon, iconStyles, 
+}: ButtonProps) => {
 
+  // TODO: disabled themes, and fix up the themes for this component using global styles
   return (
     <button 
       type="button" 
@@ -54,5 +58,3 @@ export function Button({
     </button>
   );
 }
-
-export default Button;

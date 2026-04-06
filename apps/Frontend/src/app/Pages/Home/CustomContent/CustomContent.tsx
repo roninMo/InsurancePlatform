@@ -167,7 +167,6 @@ export const CustomContent = () => {
 
   const RadioGroupProps: RadioGroupProps = {
     variant: 'default',
-    id: radioButtonId,
     name: 'radioButton',
     label: 'Favorite Foods',
     description: 'What is your favorite food?',
@@ -186,7 +185,6 @@ export const CustomContent = () => {
   const CheckboxProps: CheckboxProps = {
     name: 'checked favorite foods',
     variant: 'default',
-    id: checkboxId,
     items: checkedFoods,
     onSelect: checkedFavoriteFood,
 

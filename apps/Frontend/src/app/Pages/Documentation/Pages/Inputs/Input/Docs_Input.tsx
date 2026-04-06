@@ -1,6 +1,6 @@
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
-import { ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
+import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
 import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/ParamTable/ParamTable';
 import { ParamType } from '../../../Components/ParamType/ParamType';
@@ -28,7 +28,6 @@ export const Docs_Input = () => {
   // Tab Functionality              //
   //--------------------------------//
   const [currentTab, setCurrentTab] = useState<TextInputTypes>('text');
-  const deferredTab = useDeferredValue(currentTab);
   const tabs: TextInputTypes[] = ['text', 'number', 'email', 'password', 'search', 'policyNumber', 'phone', 'creditCard', 'currency'];
   const tabLabels: string[] = ['Text', 'Number', 'Email', 'Password', 'Search', 'Policy Number', 'Phone', 'Credit Card', 'Currency'];
 
@@ -51,7 +50,7 @@ export const Docs_Input = () => {
     // Variant specific params
     const variantParams: string[] = variantParamsList[currentTab] || [];
     const variantContextParams = paramContextsList[currentTab];
-    if (variantParams.length > 0) {
+    if (variantParams?.length > 0) {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
@@ -268,21 +267,14 @@ const Tabs = styled.div``;
 const Variants = styled.div``;
 
 const showCaseElementStyleProps = {
-  styles: "p-4 pt-6 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 span-12 lg:span-8 rowStart gap-2"
+  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
+  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
 };
 
 
-//----------------------------------------------//
-// Input components param table logic           //
-//----------------------------------------------//
-export interface ParamContext {
-  name: string;
-  contextParam?: boolean;
-  variantOption?: boolean;
-	overwrite?: string;
-}
-
+//---------------------------------------------//
+// Component param table logic                 //
+//---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
   'type', 'name', 'label', 'description', 'value', 'placeholder', 'id', 

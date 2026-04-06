@@ -7,6 +7,13 @@ import styles from './ShowcaseElement.module.scss';
 import { Icon } from '@Project/ReactComponents';
 
 
+export interface ParamContext {
+  name: string;
+  contextParam?: boolean;
+  variantOption?: boolean;
+	overwrite?: string;
+}
+
 type showcaseTabType = 'component' | 'jsx';
 export interface ShowcaseElementProps {
   jsx: string;
