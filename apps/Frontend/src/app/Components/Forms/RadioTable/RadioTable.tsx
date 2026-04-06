@@ -19,11 +19,14 @@ export interface RadioTableProps {
 
   error?: boolean;
   errorMessage?: string;
+  // TODO: we need better displays for when there are errors
   disabled?: boolean;
+  // TODO: the selection needs styles for when it's disabled
   required?: boolean;
 }
 
 
+// TODO: clean up the theme styles to be handled with global css styling
 export const RadioTable = ({
   variant = 'block', name, label, description,
   radioItems, currentValue, onSelect, 

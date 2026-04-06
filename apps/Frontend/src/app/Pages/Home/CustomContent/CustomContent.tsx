@@ -238,7 +238,6 @@ export const CustomContent = () => {
             value={inputType}
             values={inputTypes}
             onSelect={inputTypeChanged}
-            id={inputTypeId}
           />
         </div>
         
@@ -392,7 +391,6 @@ export const CustomContent = () => {
             value={currentIcon}
             values={selectIcons}
             onSelect={selectIconChanged}
-            id={selectIconId}
             placeholder='Select a value'
 
             error={selectIconError}

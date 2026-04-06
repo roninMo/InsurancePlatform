@@ -117,7 +117,7 @@ export const Docs_RadioTable = () => {
       </Variants>
 
       <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Input Parameters' openByDefault>
+        <Dropdown label='Radio Table Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 

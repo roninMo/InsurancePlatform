@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction, useId } from "react";
 
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 import { InputEventHandlers } from '../../Common/Utilities/Utils';
@@ -16,22 +16,20 @@ export interface SelectProps {
   values: SelectItemValues[];
   onSelect?: (selected: SelectItemValues, index: number) => void;
   placeholder?: string;
-  id: string;
 
   error?: boolean;
   errorMessage?: string;
   disabled?: boolean;
   required?: boolean;
-
-  aria?: string | null;
 }
 
 
 export const Select = ({
-  name, label, description, value, values, onSelect, placeholder, id,
+  name, label, description, value, values, onSelect, placeholder,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  error = false, errorMessage, disabled = false, required = false, aria, ...props
+  error = false, errorMessage, disabled = false, required = false, ...props
 }: SelectProps & InputEventHandlers) => {
+  const id = useId();
   // TODO: option to unfocus after the user has selected a value
 
   const selectPressed = (e: MouseEvent<HTMLInputElement, Element>) => {
@@ -52,7 +50,6 @@ export const Select = ({
         onBlur={e => onBlur && onBlur(e)}
         onFocus={e => onFocus && onFocus(e)}
         onClick={e => selectPressed(e)}
-        aria-describedby={aria || undefined}
         { ...props }
         className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-default`}
       >
@@ -65,6 +62,7 @@ export const Select = ({
           </div>
         </CurrentlySelected>
 
+        {/* TODO: this is affected by overflow, but it shouldn't */}
         <DropdownItems
           onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
           onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
@@ -98,6 +96,7 @@ export const Select = ({
 
 
 // #region Styling
+// TODO: These should be global theme styles
 const containerStyles = `w-full`;
 const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
 const currentlySelectedStyles = `min-w-full row justify-between items-center gap-2 p-2`;

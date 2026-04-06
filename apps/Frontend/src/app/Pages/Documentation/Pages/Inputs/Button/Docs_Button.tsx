@@ -95,7 +95,7 @@ export const Docs_Button = () => {
       </Variants>
 
       <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Input Parameters' openByDefault>
+        <Dropdown label='Button Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 

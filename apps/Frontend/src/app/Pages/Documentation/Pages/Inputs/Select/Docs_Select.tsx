@@ -8,6 +8,7 @@ import { ParamType } from '../../../Components/ParamType/ParamType';
 
 import SelectCodeSnippets from './Docs_SelectJsxComponents?raw';
 import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { Example_SelectInput } from './Docs_SelectJsxComponents';
 
 
 
@@ -17,9 +18,9 @@ export const Docs_Select = () => {
   //--------------------------------//
   // Tab Functionality              //
   //--------------------------------//
-  const [currentTab, setCurrentTab] = useState<string>('block');
-  const tabs: string[] = ['inline', 'block'];
-  const tabLabels: string[] = ['Inline', 'Block'];
+  const [currentTab, setCurrentTab] = useState<string>('Default');
+  const tabs: string[] = ['Default'];
+  const tabLabels: string[] = ['Default'];
 
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
@@ -53,11 +54,8 @@ export const Docs_Select = () => {
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
-  const [inlineError, setInlineError] = useState<string>('');
-  const [inlineDisabled, setInlineDisabled] = useState<boolean>(false);
-  
-  const [blockError, setBlockError] = useState<string>('');
-  const [blockDisabled, setBlockDisabled] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [disabled, setDisabled] = useState<boolean>(false);
 
 
   return (
@@ -87,34 +85,21 @@ export const Docs_Select = () => {
       
       {/* Variants */}
       <Variants className='span-12 py-2'>
-        { currentTab == 'inline' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioTableCodeSnippet, "Example_InlineRadioTable")} styles="spacing gap-0 opacity-0 animate-fade-in">
+        { currentTab == 'Default' && 
+          <ShowcaseElement jsx={getComponentSourceCode(SelectCodeSnippets, "Example_SelectInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
-              error={inlineError} setError={setInlineError}
-              disabled={inlineDisabled} setDisabled={setInlineDisabled}
+              error={error} setError={setError}
+              disabled={disabled} setDisabled={setDisabled}
               elementStateTypes={[]} { ...showCaseElementStyleProps } 
             >
-              <Example_InlineRadioTable error={inlineError} disabled={inlineDisabled} />
+              <Example_SelectInput error={error} disabled={disabled} />
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
-        { currentTab == 'block' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioTableCodeSnippet, "Example_BlockRadioTable")} styles="spacing gap-0 opacity-0 animate-fade-in">
-            <ShowcaseExample_StateRef 
-              error={blockError} setError={setBlockError}
-              disabled={blockDisabled} setDisabled={setBlockDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
-            >
-              <Example_BlockRadioTable error={blockError} disabled={blockDisabled} />
-            </ShowcaseExample_StateRef>
-          </ShowcaseElement>
-        }
-
       </Variants>
 
       <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Input Parameters' openByDefault>
+        <Dropdown label='Select Input Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 
@@ -143,11 +128,10 @@ const showCaseElementStyleProps = {
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'variant', 'name', 'label', 'description',
-  'spacing', 'radioItems', 'currentValue', 'onSelect', 'onMouseEnter', 'onMouseLeave',
+  'name', 'label', 'description',
+  'spacing', 'value', 'values', 'onSelect', 'placeholder',
   'spacing', 'error', 'errorMessage', 'disabled', 'required',
 ];
-
 
 
 const variantParamsList: Record<string, string[]> = {
@@ -176,16 +160,14 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'variant': () => <ParamType type="RadioVariant" />,
   'name': () => <ParamType type="string" />,
   'label': () => <ParamType type="string" />,
   'description': () => <ParamType type="string" />,
 
-  'radioItems': () => <ParamType type="RadioItem" isArray />,
-  'currentValue': () => <ParamType type="RadioItem" />,
+  'value': () => <ParamType type="SelectItemValues" />,
+  'values': () => <ParamType type="SelectItemValues" isArray />,
   'onSelect': () => <ParamType type="function" />,
-  'onMouseEnter': () => <ParamType type="function" />,
-  'onMouseLeave': () => <ParamType type="function" />,
+  'placeholder': () => <ParamType type="string" />,
 
   'error': () => <ParamType type="boolean" />,
   'errorMessage': () => <ParamType type="string" />,
@@ -194,10 +176,6 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 const paramDescriptionElements: Record<string, React.FC> = {
-  'variant': () => 
-    <div className='param-item-desc-text'>
-      The style of radio table you want. The options are inline, and block.
-    </div>,
   'name': () => 
     <div className='param-item-desc-text'>
       The internal id used for capturing values during submit and with form libraries like @see react-hook-forms.
@@ -211,42 +189,37 @@ const paramDescriptionElements: Record<string, React.FC> = {
       The description of the radio table.
     </div>,
 
-  'radioItems': () => 
+  'value': () => 
     <div className='param-item-desc-text'>
-      A list containing the information and state of each radio item. You should use the 
-      @see onSelect function for handling the state and which is selected, as this isn't handled internally.
+      The value of the currently selected item.
     </div>,
-  'currentValue': () => 
+  'values': () => 
     <div className='param-item-desc-text'>
-      The currently selected radio item.
+      A list of values used to construct the items that appear in the dropdown.
     </div>,
   'onSelect': () => 
     <div className='param-item-desc-text'>
-      The function used to handle when a new radio item is selected.
+      The function used to handle when a new item is selected.
     </div>,
-  'onMouseEnter': () => 
+  'placeholder': () => 
     <div className='param-item-desc-text'>
-      An optional function that runs when the user's mouse first hovers over this element.
-    </div>,
-  'onMouseLeave': () => 
-    <div className='param-item-desc-text'>
-      An optional function that runs when the user's mouse leaves the element. 
+      The placeholder text for when the user hasn't selected a value yet.
     </div>,
 
   'error': () =>
     <div className='param-item-desc-text'>
-      Whether there's an error for the radio table component.
+      Whether there's an error for the select component.
     </div>,
   'errorMessage': () =>
     <div className='param-item-desc-text'>
-      The error message for the radio table component.
+      The error message for the select component.
     </div>,
   'disabled': () =>
     <div className='param-item-desc-text'>
-      Whether the radio table component is disabled.
+      Whether the select component is disabled.
     </div>,
   'required': () =>
     <div className='param-item-desc-text'>
-      Whether the radio table component is required.
+      Whether the select component is required.
     </div>,
 };
