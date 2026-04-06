@@ -1,5 +1,5 @@
 import { RadioItem } from "@Project/ReactComponents";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { RadioTable } from "../../../../../Components/Forms/RadioTable/RadioTable";
 
 
@@ -9,7 +9,6 @@ export const Example_InlineRadioTable = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const radioTableId = useId();
   const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
@@ -29,7 +28,7 @@ export const Example_InlineRadioTable = ({ error, disabled }: {
     <div>
       <RadioTable
         variant="inline"
-        name={`radioTable-${radioTableId}`}
+        name={`radioTable-form-name`}
         label="Inline Style"
         description="The description of the radio table."
 
@@ -52,7 +51,6 @@ export const Example_BlockRadioTable = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const radioTableId = useId();
   const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
@@ -72,7 +70,7 @@ export const Example_BlockRadioTable = ({ error, disabled }: {
     <div>
       <RadioTable
         variant="block"
-        name={`radioTable-${radioTableId}`}
+        name={`radioTable-form-name`}
         label="Block Style"
         description="The description of the radio table."
 

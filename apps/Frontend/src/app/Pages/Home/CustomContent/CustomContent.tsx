@@ -157,7 +157,6 @@ export const CustomContent = () => {
   }
 
   // Slider component
-  const sliderId = useId();
   const [slider, setSlider] = useState<boolean>(false);
   const [sliderError, setSliderError] = useState<boolean>(false);
   const [sliderErrorMessage, setSliderErrorMessage] = useState<string>('');
@@ -208,7 +207,6 @@ export const CustomContent = () => {
             description=""
             value={input}
             placeholder="Input text..."
-            id={inputId}
             onChange={inputChanged}
             error={inputError} 
             errorMessage={inputErrorMessage} 
@@ -253,7 +251,6 @@ export const CustomContent = () => {
             type="text" name="TextInputShowcase"
             label="Text Input" description=""
             value="Hello " placeholder="Input Text..."
-            id="TextInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
 
@@ -261,7 +258,6 @@ export const CustomContent = () => {
             type="email" name="EmailInputShowcase"
             label="Email Input" description=""
             value="example@email.com" placeholder="Input Email..."
-            id="EmailInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
 
@@ -269,7 +265,6 @@ export const CustomContent = () => {
             type="password" name="PasswordInputShowcase"
             label="Password Input" description=""
             value="password" placeholder="Input Password..."
-            id="PasswordInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
 
@@ -277,7 +272,6 @@ export const CustomContent = () => {
             type="phone" name="PhoneInputShowcase"
             label="Phone Input" description=""
             value="(123)-456-7890" placeholder="Input Phone..."
-            id="PhoneInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
 
@@ -285,7 +279,6 @@ export const CustomContent = () => {
             type="creditCard" name="CreditCardInputShowcase"
             label="CreditCard Input" description=""
             value="0000 0000 0000 0000" placeholder="Input Credit Card..."
-            id="CreditCardInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
 
@@ -293,7 +286,6 @@ export const CustomContent = () => {
             type="currency" name="CurrencyInputShowcase"
             label="Currency Input" description=""
             value="$100.00" placeholder="Input Credit Card..."
-            id="CurrencyInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
 
@@ -301,7 +293,6 @@ export const CustomContent = () => {
             type="policyNumber" name="PolicyNumberInputShowcase"
             label="Policy Number Input" description=""
             value="90012345-AB" placeholder="Input Policy Number..."
-            id="PolicyNumberInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
 
@@ -309,7 +300,6 @@ export const CustomContent = () => {
             type="search" name="SearchInputShowcase"
             label="Search Input" description=""
             value="" placeholder="Search for Something..."
-            id="SearchInputShowcase" 
             tooltip tooltipText='tooltip text...'
           />
         </div>
@@ -454,7 +444,6 @@ export const CustomContent = () => {
                 description="A slider component"
                 value={slider}
                 onChange={onChangeSlider}
-                id={sliderId}
 
                 error={sliderError}
                 errorMessage={sliderErrorMessage}

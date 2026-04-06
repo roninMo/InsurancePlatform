@@ -277,7 +277,7 @@ const showCaseElementStyleProps = {
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'type', 'name', 'label', 'description', 'value', 'placeholder', 'id', 
+  'type', 'name', 'label', 'description', 'value', 'placeholder', 
   'spacing', 'error', 'errorMessage', 'disabled', 'required', 
   'spacing', 'tooltip', 'tooltipText', 'autocomplete', 'opts',
 ];
@@ -420,7 +420,6 @@ const paramTypeElements: Record<string, React.FC> = {
   'description': () => <ParamType type='string' />,
   'value': () => <ParamType type='string' />,
   'placeholder': () => <ParamType type='string' />,
-  'id': () => <ParamType type='string' />,
   'error': () => <ParamType type='boolean' />,
   'errorMessage': () => <ParamType type='string' />,
   'disabled': () => <ParamType type='boolean' />,
@@ -457,17 +456,14 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The variant of the input component you're using. The types are text, number, email, password, search, policyNumber, phone, creditCard, and currency.
     </div>,
-
   'name' : () =>
     <div className='param-item-desc-text'>
       The name of the input. Acts as a key for form data during submissions.
     </div>,
-
   'label' : () =>
     <div className='param-item-desc-text'>
       The label of the input. 
     </div>,
-
   'description' : () =>
     <div className='param-item-desc-text'>
       The description for this input element.
@@ -477,32 +473,23 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The value of the input. Use your own state management for handling editing this value.
     </div>,
-
   'placeholder' : () =>
     <div className='param-item-desc-text'>
       The input element's placeholder text. Rendered when the input is empty.
-    </div>,
-
-  'id' : () =>
-    <div className='param-item-desc-text'>
-      The id of the native input element. 
     </div>,
 
   'error' : () =>
     <div className='param-item-desc-text'>
       Whether there's validation errors for this input.
     </div>,
-
   'errorMessage' : () =>
     <div className='param-item-desc-text'>
       The validation error message for this input.
     </div>,
-
   'disabled' : () =>
     <div className='param-item-desc-text'>
       Whether the input is disabled.
     </div>,
-
   'required' : () =>
     <div className='param-item-desc-text'>
       Is this input required during submission?
@@ -512,7 +499,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Should this component have a tooltip?
     </div>,
-
   'tooltipText' : () =>
     <div className='param-item-desc-text'>
       The tooltip text.
@@ -548,7 +534,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Adds sorting functionality to the search results that come from this input
   </div>,
-
   'sortType' : () => 
   <div className='param-item-desc-text'>
     What kind of sorting functionality do you want for the search?
@@ -558,7 +543,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Do you want the policy number icon on the left hand side of the input?
   </div>,
-
   'policyNumberMask' : () => 
   <div className='param-item-desc-text'>
     Adds an input mask for your policy number input.
@@ -568,7 +552,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Do you want a phone icon on the left hand side of the input?
   </div>,
-
   'phoneNumberMask' : () => 
   <div className='param-item-desc-text'>
     Adds an input mask for your phone number.
@@ -578,7 +561,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Do you want a credit card icon on the left hand side of the input?
   </div>,
-
   'creditCarkMask' : () => 
   <div className='param-item-desc-text'>
     Adds an input mask for your credit card.
@@ -588,7 +570,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Do you want a money sign on the left hand side of the input?
   </div>,
-
   'currencyTypeDropdown' : () => 
   <div className='param-item-desc-text'>
     Adds a currency type select to the input, changing the money sign for this element.

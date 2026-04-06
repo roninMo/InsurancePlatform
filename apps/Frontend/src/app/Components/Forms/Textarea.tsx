@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useId, useState } from "react";
 import { TextareaEventHandlers, Icon, Button, IconTypes } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
@@ -8,28 +8,35 @@ import styles from './Textarea.module.scss';
 export type TextareaTypes = 'default' | 'box' | 'post';
 export interface TextareaProps {
   type?: TextareaTypes
-
-  id: string;
   name: string;
+
   label?: string;
-  value: string;
-  placeholder?: string;
   description?: string;
-
-  onAttachFile?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
-  metadataTags?: MetadataTagProps[] | boolean;
-  onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
-  submitButtonText?: string;
-  submitButtonDisabled?: boolean;
-
+  placeholder?: string;
+  value: string;
+  
+  // TODO: Better error and disabled themes for all variants
   error?: boolean;
   errorMessage?: string | null;
   disabled?: boolean;
   required?: boolean;
+  
+  // TODO: make the submit button optional, and only display if added
+  onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
+  submitButtonText?: string;
+  submitButtonDisabled?: boolean;
+
+  // TODO: add the tooltip component to the textarea
   tooltip?: boolean;
   tooltipText?: string;
-
-  aria?: string | null;
+  
+  // Variant specific params
+  // Default and box variants
+  // TODO: why don't we make the list areas where we add attachFile to another metadata tag list of sorts
+  // TODO: Learn how to actually handle file attachment functionality
+  onAttachFile?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
+  // Box and post variants
+  metadataTags?: MetadataTagProps[] | boolean;
 }
 
 export interface MetadataTagProps {
@@ -42,12 +49,13 @@ export interface MetadataTagProps {
 
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
-  const { type = 'default', name, value, placeholder, id, metadataTags,
+  const { type = 'default', name, value, placeholder, metadataTags,
     error = false, errorMessage, required, disabled,
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-    aria, ...props
+    ...props
   } = allProps;
+  const id = useId();
 
   return (
     <textarea 
@@ -66,9 +74,7 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
         required={required}
         disabled={disabled}
 
-        aria-describedby={aria || ''}
-        aria-invalid={error ? "true" : "false"}
-
+        // TODO: add global theme styling for the textarea variants
         className={`w-full p-0 h-24 text-base
           ${type == 'default' && 'bg-div placeholder:text-slate-500'}
           ${type == 'box'     && 'h-16'}
@@ -86,12 +92,12 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
 
 
 export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
-  const { type = 'default', name, label, description, value, placeholder, id, 
+  const { type = 'default', name, label, description, value, placeholder, 
     metadataTags, onAttachFile, tooltip = false, tooltipText,
     error = false, errorMessage, required = false, disabled = false, 
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-    aria, ...props
+    ...props
   } = allProps;
 
   const iconStyles = `size-5 cursor-pointer transition 
@@ -165,7 +171,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
         </div>
         
         {/* Pill action buttons */}
-        <MetadataTagElements type='box' metadataTags={metadataTags} id={id} />
+        <MetadataTagElements type='box' metadataTags={metadataTags} id={name} />
 
         <ButtonsAndLinks className="
           row justify-between items-center p-2
@@ -227,7 +233,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
           </div>
 
           { !showPreview && 
-            <MetadataTagElements type='post' metadataTags={metadataTags} id={id} />
+            <MetadataTagElements type='post' metadataTags={metadataTags} id={name} />
           }
         </ButtonsAndLinks>
 
@@ -367,32 +373,32 @@ export interface AttachFileProps {
 
 // Default metadata tags
 export const defaultBoxMetadataTags: MetadataTagProps[] = [
-{
-  tagLabel: 'assign', onClickTag: () => {},
-  tagIcon: 'Profile', iconStyles: '',
-},
-{
-  tagLabel: 'label', onClickTag: () => {},
-  tagIcon: 'Tag', iconStyles: '',
-},
-{
-  tagLabel: 'due date', onClickTag: () => {},
-  tagIcon: 'Calendar', iconStyles: '',
-},
+  {
+    tagLabel: 'assign', onClickTag: () => {},
+    tagIcon: 'Profile', iconStyles: '',
+  },
+  {
+    tagLabel: 'label', onClickTag: () => {},
+    tagIcon: 'Tag', iconStyles: '',
+  },
+  {
+    tagLabel: 'due date', onClickTag: () => {},
+    tagIcon: 'Calendar', iconStyles: '',
+  },
 ];
 export const defaultPostMetadataTags:MetadataTagProps[] = [
-{
-  tagIcon: 'Link', iconStyles: '',
-  onClickTag: () => {},
-},
-{
-  tagIcon: 'CodeBracket', iconStyles: '',
-  onClickTag: () => {},
-},
-{
-  tagIcon: 'AtSymbol', iconStyles: '',
-  onClickTag: () => {},
-},
+  {
+    tagIcon: 'Link', iconStyles: '',
+    onClickTag: () => {},
+  },
+  {
+    tagIcon: 'CodeBracket', iconStyles: '',
+    onClickTag: () => {},
+  },
+  {
+    tagIcon: 'AtSymbol', iconStyles: '',
+    onClickTag: () => {},
+  },
 ];
 
 // Styled Components

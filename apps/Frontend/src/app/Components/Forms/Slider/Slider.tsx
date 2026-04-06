@@ -1,29 +1,32 @@
 import styled from '@emotion/styled';
 import styles from './Slider.module.scss';
+import { useId } from 'react';
 
+export type SliderVariants = 'default';
 export interface SliderProps {
-  type?: 'default';
-  
+  type?: SliderVariants;
   name: string;
   label?: string;
   description?: string;
+  
   value: boolean;
   onChange: () => void;
-  id: string;
 
+  // TODO: Better styling for error and add disabled themes
   error?: boolean;
   errorMessage?: string | null;
-  required?: boolean;
   disabled?: boolean;
-
-  aria?: string | null;
+  required?: boolean;
+  styles?: string;
 }
 
 export const Slider = ({
-  type = 'default', name, label, description, value, onChange, id,
-  error = false, errorMessage, required = false, disabled = false,
-  aria, ...props
+  type = 'default', name, label, description, value, onChange, 
+  error = false, errorMessage, required = false, disabled = false, styles,
+  ...props
 }: SliderProps) => {
+  const id = useId();
+  // TODO: Use global themes and add themes for the slider variants
   const getSliderStyles = (): string => `size-5 mr-5 rounded-full shadow-sm ring-1 ring-slate-400 dark:ring-slate-700`;
   const getSliderTranslateStyles = (): string => `translate-x-5`; 
 
@@ -35,10 +38,11 @@ export const Slider = ({
         { error && <Description className='error-text'>{ errorMessage }</Description>}
       </div>
       
+      {/* TODO: Add custom styled variant themes */}
       <Button 
         onClick={() => onChange()} 
         {...props}
-        className={`
+        className={styles ? styles : `
           min-w-max rowStart gap-2 p-[1px] rounded-full 
           outline-init
           ${value ? 'bg-blue-600 dark:bg-blue-600  outline-blue-500 dark:outline-blue-500' 
@@ -57,9 +61,10 @@ export const Slider = ({
       <input 
         type="checkbox" 
         name={name} 
-        aria-label={aria || ''} 
+        id={`slider-${name}-${id}`}
         className="absolute hidden opacity-0" 
         checked={value}
+        required={required}
         onChange={() => {}} // Button handles the change event
       />
     </Container>

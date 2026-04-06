@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useState } from "react";
 import { RadioGroup, RadioItem } from "@Project/ReactComponents";
 
 
@@ -6,7 +6,6 @@ export const Example_DefaultRadioGroup = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const radioGroupId = useId();
   const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
@@ -25,7 +24,7 @@ export const Example_DefaultRadioGroup = ({ error, disabled }: {
     <div>
       <RadioGroup
         variant="default"
-        name={`radioGroup-${radioGroupId}`}
+        name={`radioGroup-form-name`}
         label="Default Style"
         description="The description of the radio group."
 
@@ -46,7 +45,6 @@ export const Example_ColumnRadioGroup = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const radioGroupId = useId();
   const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
@@ -66,7 +64,7 @@ export const Example_ColumnRadioGroup = ({ error, disabled }: {
     <div>
       <RadioGroup
         variant="column"
-        name={`radioGroup-${radioGroupId}`}
+        name={`radioGroup-form-name`}
         label="Column Style"
         description="The description of the radio group."
 
@@ -87,7 +85,6 @@ export const Example_ColumnInlineRadioGroup = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const radioGroupId = useId();
   const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
@@ -107,7 +104,7 @@ export const Example_ColumnInlineRadioGroup = ({ error, disabled }: {
     <div>
       <RadioGroup
         variant="columnInline"
-        name={`radioGroup-${radioGroupId}`}
+        name={`radioGroup-form-name`}
         label="ColumnInline Style"
         description="The description of the radio group."
 
@@ -128,7 +125,6 @@ export const Example_ListRadioGroup = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const radioGroupId = useId();
   const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
@@ -148,7 +144,7 @@ export const Example_ListRadioGroup = ({ error, disabled }: {
     <div>
       <RadioGroup
         variant="list"
-        name={`radioGroup-${radioGroupId}`}
+        name={`radioGroup-form-name`}
         label="List Style"
         description="The description of the radio group."
 

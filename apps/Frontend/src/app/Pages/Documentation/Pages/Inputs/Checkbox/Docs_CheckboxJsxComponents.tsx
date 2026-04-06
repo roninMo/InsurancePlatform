@@ -1,4 +1,4 @@
-import { MouseEvent, useId, useState } from "react";
+import { MouseEvent, useState } from "react";
 import { Checkbox, CheckboxItem } from "../../../../../Components/Forms/Checkbox/Checkbox";
 
 
@@ -6,7 +6,6 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const checkboxId = useId();
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -34,7 +33,7 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
   return (
     <div>
       <Checkbox 
-        name={`CheckboxComponent-${checkboxId}`}
+        name={`CheckboxComponent`}
         variant="default"
         label="Default Checkbox"
         description="The checkbox component's description."
@@ -57,7 +56,6 @@ export const Example_ListCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const checkboxId = useId();
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -85,7 +83,7 @@ export const Example_ListCheckbox = ({ error, disabled }: {
   return (
     <div>
       <Checkbox 
-        name={`CheckboxComponent-${checkboxId}`}
+        name={`CheckboxComponent`}
         variant="list"
         label="List Checkbox"
         description="The checkbox component's description."
@@ -108,7 +106,6 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const checkboxId = useId();
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -136,7 +133,7 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
   return (
     <div>
       <Checkbox 
-        name={`CheckboxComponent-${checkboxId}`}
+        name={`checkbox-form-name`}
         variant="inline"
         label="Inline Checkbox"
         description="The checkbox component's description."

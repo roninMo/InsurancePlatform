@@ -99,7 +99,7 @@ export const Docs_Select = () => {
       </Variants>
 
       <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Select Input Parameters' openByDefault>
+        <Dropdown label='Select Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 
@@ -119,7 +119,7 @@ const Variants = styled.div``;
 
 const showCaseElementStyleProps = {
   styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
+  stateStyles: "p-4 pl-8 pb-32 span-12 lg:span-8 rowStart gap-2"
 };
 
 

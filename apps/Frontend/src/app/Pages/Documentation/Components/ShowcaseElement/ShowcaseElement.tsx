@@ -30,7 +30,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
     if (activeTab != 'jsx') return;
     if (isRenderDelayDone) return;
 
-    const timeout = setTimeout(() => setIsRenderDelayDone(true), 640);
+    const timeout = setTimeout(() => setIsRenderDelayDone(true), 450);
     return () => clearTimeout(timeout);
   }, [activeTab]);
 

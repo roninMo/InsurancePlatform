@@ -64,8 +64,9 @@ export const DocumentationPageRoutes: RouteObject = {
       path: 'Content',
       element: <Docs_Content/>,
       children: [
+        { path: 'Alert',  element: <Docs_Card /> },
         { path: 'Card',  element: <Docs_Card /> },
-        { path: 'Container',  element: <Docs_Container /> },
+        { path: 'Dropdown',  element: <Docs_Container /> },
       ]
     },
 
@@ -76,7 +77,7 @@ export const DocumentationPageRoutes: RouteObject = {
       children: [
         { path: 'DragAndDrop', element: <Docs_DragAndDrop /> },
         { path: 'Modal', element: <Docs_Modal /> },
-        { path: 'Notifications', element: <Docs_Notifications /> },
+        { path: 'Tooltip', element: <Docs_Notifications /> },
       ]
     },
   ]
