@@ -35,7 +35,7 @@ export const Modal = ({
   const closeModalId = `modal-element`;
 
   const closeModal = () => {
-    console.log('modal setState function', {isModalOpen, setModalOpen});
+    // console.log('modal setState function', {isModalOpen, setModalOpen});
     setModalOpen(false);
     if (onCloseModal) onCloseModal();
   }

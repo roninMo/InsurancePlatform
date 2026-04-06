@@ -10,8 +10,6 @@ export interface DocLinkProps {
 }
 
 export const DocLink = ({ url, label }: DocLinkProps) => {
-	const linkStyles = "";
-	
   return (
     <HashLink url={url}>
       <SeeRef /> { label }

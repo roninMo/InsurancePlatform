@@ -16,6 +16,7 @@
   //------------------------------------------//
   // Text Colors                              //
   //------------------------------------------//
+  // #region Text Colors
   .input-colors   { @apply text-slate-800     dark:text-slate-200; }
   .label-colors   { @apply text-slate-800     dark:text-slate-300; }
   .header-colors  { @apply text-slate-800     dark:text-slate-100; }
@@ -37,6 +38,7 @@
       focus:underline dark:focus:underline
       hover:underline dark:hover:underline;
   }
+  // #endregion
 
 
 
@@ -44,18 +46,21 @@
   //------------------------------------------//
   // Element Text Colors                      //
   //------------------------------------------//
+  // #region Element text colors
   h1, h2, h3, h4, h5, h6  { @apply header-colors; }
   div, p, span            { @apply text-colors; }
   label                   { @apply label-colors; }
   input, select, textarea { @apply input-colors placeholder:placeholder-text }
   svg                     { @apply svg-colors; }
+  // #endregion
 
 
 
 
   //------------------------------------------//
-  // Background Colors                        //
+  // Background Element Colors                //
   //------------------------------------------//
+  // #region Background Element Colors
   html, body {
     min-height: 100vh;
     @apply bg-default;
@@ -96,6 +101,7 @@
 
   // hover states
   .bg-div-hover { @apply bg-slate-200 dark:bg-slate-800; }
+  // #endregion
 
 
 
@@ -103,6 +109,7 @@
   //------------------------------------------//
   // Outline and Border                       //
   //------------------------------------------//
+  // #region Outline and Border Styles
   // Default outline styles
   .outline-init   { @apply outline rounded-md outline-1 -outline-offset-1; }
   .outline-styles { @apply outline-default focus:outline-focus; }
@@ -127,7 +134,7 @@
   .border-warning   { @apply border-amber-500   dark:border-amber-400; }
   .border-error     { @apply border-red-400     dark:border-red-500; }
   .border-ok        { @apply border-emerald-600 dark:border-emerald-400; }
-  
+  // #endregion
 
 
 
@@ -135,6 +142,7 @@
   //------------------------------------------//
   // Icons                                    //
   //------------------------------------------//
+  // #region Icon Styles
   .svg-default-theme {
     @apply text-blue-300 dark:text-slate-400;
   }
@@ -142,6 +150,7 @@
   .svg-outline-theme {
     @apply text-blue-300 dark:text-slate-400;
   }
+  // #endregion
 
 
 
@@ -149,6 +158,7 @@
   //------------------------------------------//
   // Text Sizes                               //
   //------------------------------------------//
+  // #region Text Sizes
   /* TODO: media query fonts sm:text-sm/5 */
   label                   { @apply text-sm font-medium; }
   span                    { @apply text-xs; }
@@ -162,6 +172,7 @@
   h4                      { @apply text-[1.25rem]; }
   h5                      { @apply text-[1rem]; }
   h6                      { @apply text-sm; }
+  // #endregion
 
 
 
@@ -169,6 +180,7 @@
   //------------------------------------------//
   // Input Specific Styling                   //
   //------------------------------------------//
+  // #region Input Specific Styles
   label { @apply cursor-text; }
   input, select, textarea {
     @apply 
@@ -180,145 +192,8 @@
   textarea {
     @apply scrollbar-theme transition;
     resize: none;
-
   }
 
-
-
-
-  //------------------------------------------//
-  // Selected Themes                          //
-  //------------------------------------------//
-  /* For containers that need highlighting when selected  */
-  .selected-box { 
-    @apply 
-      bg-opacity-20 dark:bg-opacity-20
-      bg-blue-600 dark:bg-blue-500
-      outline-focus 
-  }
-
-  .warning-box {
-    @apply 
-      bg-opacity-10 dark:bg-opacity-10
-      bg-amber-500 dark:bg-amber-400
-      outline-amber-500 dark:outline-amber-400;
-  }
-
-  .ok-box {
-    @apply
-      bg-opacity-10 dark:bg-opacity-10
-      bg-emerald-500 dark:bg-emerald-400
-      outline-emerald-500 dark:outline-emerald-400;
-  }
-  
-  .error-box {
-    @apply
-      bg-opacity-30 dark:bg-opacity-10
-      bg-red-500 dark:bg-red-500
-      outline-red-500 dark:outline-red-600;
-  }
-  
-  .faded-box { 
-    @apply 
-      bg-opacity-20 dark:bg-opacity-40
-      bg-div
-      outline-default 
-  }
-  
-  .input-error {
-    @apply 
-      input-colors placeholder:error-text
-      outline-error
-  }
-
-  .input-disabled {
-    @apply 
-      disabled-text placeholder:disabled-text
-      bg-disabled
-      outline-gray-400  dark:outline-gray-600;
-  }
-
-
-
-  //------------------------------------------//
-  // Layout Themes                            //
-  //------------------------------------------//
-  .row        { @apply flex flex-row; }
-  .col        { @apply flex flex-col; }
-  .rowStart   { @apply flex flex-row justify-start; }
-  .rowBetween { @apply flex flex-row justify-between; }
-  .colStart   { @apply flex flex-col justify-start; }
-
-  .spacing    { @apply grid grid-cols-12 gap-x-4 gap-2  col-span-12; }
-  .span-12    { @apply col-span-12; }
-  .span-11    { @apply col-span-11; }
-  .span-10    { @apply col-span-10; }
-  .span-9     { @apply col-span-9; }
-  .span-8     { @apply col-span-8; }
-  .span-7     { @apply col-span-7; }
-  .span-6     { @apply col-span-6; }
-  .span-5     { @apply col-span-5; }
-  .span-4     { @apply col-span-4; }
-  .span-3     { @apply col-span-3; }
-  .span-2     { @apply col-span-2; }
-  .span-1     { @apply col-span-1; }
-
-  .text-shadow-2xs  { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.15); }
-  .text-shadow-xs   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.2); }
-  .text-shadow-sm   { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075) }
-  .text-shadow-md   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1); }
-  .text-shadow-lg   { text-shadow: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1); }
-  .text-shadow-none { text-shadow: none; }
-
-
-  //------------------------------------------//
-  // Utility                                  //
-  //------------------------------------------//
-  .transition { 
-    @apply transition-all duration-200; 
-    
-    transition-property: all, outline-color, outline-width, outline-offset;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-  }
-
-  .op-init    { @apply transition duration-300 opacity-0; }
-  .op-render  { @apply opacity-100; }
-
-  // Faded borders for creating overlays and subtle shading for background
-  .opacity-bg-0    { @apply bg-opacity-0    dark:bg-opacity-0; }
-  .opacity-bg-10   { @apply bg-opacity-10   dark:bg-opacity-10; }
-  .opacity-bg-20   { @apply bg-opacity-20   dark:bg-opacity-20; }
-  .opacity-bg-30   { @apply bg-opacity-30   dark:bg-opacity-30; }
-  .opacity-bg-40   { @apply bg-opacity-40   dark:bg-opacity-40; }
-  .opacity-bg-50   { @apply bg-opacity-50   dark:bg-opacity-50; }
-  .opacity-bg-60   { @apply bg-opacity-60   dark:bg-opacity-60; }
-  .opacity-bg-70   { @apply bg-opacity-70   dark:bg-opacity-70; }
-  .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
-  .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
-  .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
-
-  .svg-theme {
-    @apply svg-init text-colors hover:primary-text;
-  }
-
-  .svg-init {
-    @apply transition cursor-pointer;
-  }
-
-
-
-
-  //------------------------------------------//
-  // Hack for native autofill text color      //
-  //------------------------------------------//
-  // This removes native input backgrounds and lets us customize
-  .autofill-backgrounds {
-    @apply 
-      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
-      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
-    ;
-  }
 
   // Radio button styles
   .radio-button {
@@ -371,6 +246,204 @@
     ;
   }
 
+
+  // Hack for native autofill text color
+  input:-webkit-autofill, 
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.slate.800') !important;
+    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; 
+    /* The only way to beat FieldText !important is with this infinite hack */
+  }
+
+  .dark input:-webkit-autofill, 
+  .dark input:-webkit-autofill:hover, 
+  .dark input:-webkit-autofill:focus, 
+  .dark input:-webkit-autofill:active { 
+    -webkit-text-fill-color: theme('colors.slate.100') !important;
+  }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Selected Themes                          //
+  //------------------------------------------//
+  // #region Selected Themes
+  /* For containers that need highlighting when selected  */
+  .selected-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-20
+      bg-blue-600 dark:bg-blue-500
+      outline-focus 
+  }
+
+  .warning-box {
+    @apply 
+      bg-opacity-10 dark:bg-opacity-10
+      bg-amber-500 dark:bg-amber-400
+      outline-amber-500 dark:outline-amber-400;
+  }
+
+  .ok-box {
+    @apply
+      bg-opacity-10 dark:bg-opacity-10
+      bg-emerald-500 dark:bg-emerald-400
+      outline-emerald-500 dark:outline-emerald-400;
+  }
+  
+  .error-box {
+    @apply
+      bg-opacity-30 dark:bg-opacity-10
+      bg-red-500 dark:bg-red-500
+      outline-red-500 dark:outline-red-600;
+  }
+  
+  .faded-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-40
+      bg-div
+      outline-default 
+  }
+  
+  .input-error {
+    @apply 
+      input-colors placeholder:error-text
+      outline-error
+  }
+
+  .input-disabled {
+    @apply 
+      disabled-text placeholder:disabled-text
+      bg-disabled
+      outline-gray-400  dark:outline-gray-600;
+  }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Layout Themes                            //
+  //------------------------------------------//
+  // #region Layout Themes
+  .row        { @apply flex flex-row; }
+  .col        { @apply flex flex-col; }
+  .rowStart   { @apply flex flex-row justify-start; }
+  .rowBetween { @apply flex flex-row justify-between; }
+  .colStart   { @apply flex flex-col justify-start; }
+
+  .spacing    { @apply grid grid-cols-12 gap-x-4 gap-2  col-span-12; }
+  .span-12    { @apply col-span-12; }
+  .span-11    { @apply col-span-11; }
+  .span-10    { @apply col-span-10; }
+  .span-9     { @apply col-span-9; }
+  .span-8     { @apply col-span-8; }
+  .span-7     { @apply col-span-7; }
+  .span-6     { @apply col-span-6; }
+  .span-5     { @apply col-span-5; }
+  .span-4     { @apply col-span-4; }
+  .span-3     { @apply col-span-3; }
+  .span-2     { @apply col-span-2; }
+  .span-1     { @apply col-span-1; }
+
+  .text-shadow-2xs  { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.15); }
+  .text-shadow-xs   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.2); }
+  .text-shadow-sm   { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075) }
+  .text-shadow-md   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1); }
+  .text-shadow-lg   { text-shadow: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1); }
+  .text-shadow-none { text-shadow: none; }
+  
+  
+  // Unique Grid layout themes 
+  // The grid height transition hack (child div needs overflow:hidden)
+  .height-trans {
+    @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-400 {
+  @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
+} // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-opacity {
+    @apply grid;
+    transition:
+      grid-template-rows 0.3s ease,
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
+  }
+
+  // Dual Column Layout hack. Aligns all values in a specific column based on the longest child element.
+  .dual-column-3 { // recreate for number of columns what needs to use 1fr for content fills 
+    @apply grid grid-cols-[min-content_min-content_1fr];
+  }
+  
+  .height-trans-content {
+    @apply overflow-hidden;
+  }
+  .height-trans-op-content {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  
+  // The browser skips the rendering work (layout and painting) for 
+  // that element's children as long as it's not on screen or is hidden. Place this on the children of the grid layout
+  .content-auto {
+    content-visibility: auto;
+  } // Skips Rendering, Preserves State, Instant-Wake-Up when visible ex: height-trans (grid-rows-[1fr]) 
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Utility                                  //
+  //------------------------------------------//
+  // #region Utility Themes
+  .transition { 
+    @apply transition-all duration-200; 
+    
+    transition-property: all, outline-color, outline-width, outline-offset;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .op-init    { @apply transition duration-300 opacity-0; }
+  .op-render  { @apply opacity-100; }
+
+  // Faded borders for creating overlays and subtle shading for background
+  .opacity-bg-0    { @apply bg-opacity-0    dark:bg-opacity-0; }
+  .opacity-bg-10   { @apply bg-opacity-10   dark:bg-opacity-10; }
+  .opacity-bg-20   { @apply bg-opacity-20   dark:bg-opacity-20; }
+  .opacity-bg-30   { @apply bg-opacity-30   dark:bg-opacity-30; }
+  .opacity-bg-40   { @apply bg-opacity-40   dark:bg-opacity-40; }
+  .opacity-bg-50   { @apply bg-opacity-50   dark:bg-opacity-50; }
+  .opacity-bg-60   { @apply bg-opacity-60   dark:bg-opacity-60; }
+  .opacity-bg-70   { @apply bg-opacity-70   dark:bg-opacity-70; }
+  .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
+  .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
+  .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
+
+  .svg-theme {
+    @apply svg-init text-colors hover:primary-text;
+  }
+
+  .svg-init {
+    @apply transition cursor-pointer;
+  }
+
+
+  // This removes native input backgrounds and lets us customize
+  .autofill-backgrounds {
+    @apply 
+      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
+      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
+    ;
+  }
+
+
   // the scrollbar themes
   .scrollbar-none {
     &::-webkit-scrollbar {
@@ -411,27 +484,9 @@
       background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
     }
   }
+  // #endregion
 
 
-
-
-  //------------------------------------------//
-  // Hack for native autofill text color      //
-  //------------------------------------------//
-  input:-webkit-autofill, 
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
-  input:-webkit-autofill:active { 
-    -webkit-text-fill-color: theme('colors.slate.800') !important;
-    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; /* The only way to beat FieldText !important is with this infinite hack */
-  }
-
-  .dark input:-webkit-autofill, 
-  .dark input:-webkit-autofill:hover, 
-  .dark input:-webkit-autofill:focus, 
-  .dark input:-webkit-autofill:active { 
-    -webkit-text-fill-color: theme('colors.slate.100') !important;
-  }
 
 
 }
@@ -442,8 +497,31 @@
 /* Project and Component Layers  */
 @layer components {
   //------------------------------------------//
+  // Footer Page Themes                       //
+  //------------------------------------------//
+  // #region Footer Page Themes
+  .footer-link-styles {
+    @apply 
+    hover:primary-text active:link-text 
+    text-base cursor-pointer transition;
+  }
+
+  .footer-link-header {
+    @apply footer-link-styles label-colors font-medium;
+  }
+
+  .footer-link { 
+    @apply footer-link-styles text-colors;
+  }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
   // Home Page Themes                         //
   //------------------------------------------//
+  // #region Home Page Themes
   .home-bg-init {
     @apply span-12 pt-24 bg-slate-800 dark:bg-slate-800;
   }
@@ -484,29 +562,15 @@
   .tab-active {
     @apply border-blue-500 dark:border-blue-500;
   }
+  // #endregion
+
+
 
 
   //------------------------------------------//
-  // Footer Page Themes                       //
+  // Universal Components                     //
   //------------------------------------------//
-  .footer-link-styles {
-    @apply 
-    hover:primary-text active:link-text 
-    text-base cursor-pointer transition;
-  }
-
-  .footer-link-header {
-    @apply footer-link-styles label-colors font-medium;
-  }
-
-  .footer-link { 
-    @apply footer-link-styles text-colors;
-  }
-
-
-  //------------------------------------------//
-  // Components                               //
-  //------------------------------------------//
+  // #region Universal Component Themes
   .dropdown-icon {
     @apply 
       size-7 text-colors
@@ -547,9 +611,41 @@
   }
 
 
-  //------------------------------------------//
-  // Documentation Page Themes                //
-  //------------------------------------------//
+  // Hashbar
+  .hashbar {
+    @apply 
+      h-0 min-h-[100%] /* Dependent on parent height */
+      overflow-hidden overflow-y-auto scrollbar-none
+      border-l border-default
+    ;
+  }
+  
+  .hashbar-link-header {
+    @apply 
+      hashbar-link-base
+      text-base text-colors font-normal 
+    ;
+  }
+
+  .hashbar-link {
+    @apply 
+      hashbar-link-base
+      text-sm placeholder-text 
+      
+      my-[0.1rem]
+      border-l border-default
+      hover:border-l-2 hover:border-focus
+    ;
+  }
+  
+  .hashbar-link-base {
+    @apply 
+      py-[0.15rem] whitespace-nowrap
+      cursor-pointer transition duration-300 
+    ;
+  }
+
+
   // Sidebar
   .sidebar {
     @apply
@@ -587,46 +683,15 @@
   
   .sidebar-link-base:hover { @apply primary-text; }
   .sidebar-link-base:active { @apply link-text; }
+  // #endregion
 
 
-  // Hashbar
-  .hashbar {
-    @apply 
-      h-0 min-h-[100%] /* Dependent on parent height */
-      overflow-hidden overflow-y-auto scrollbar-none
-      border-l border-default
-    ;
-  }
-  
-  .hashbar-link-header {
-    @apply 
-      hashbar-link-base
-      text-base text-colors font-normal 
-    ;
-  }
-
-  .hashbar-link {
-    @apply 
-      hashbar-link-base
-      text-sm placeholder-text 
-      
-      my-[0.1rem]
-      border-l border-default
-      hover:border-l-2 hover:border-focus
-    ;
-  }
-  
-  .hashbar-link-base {
-    @apply 
-      py-[0.15rem] whitespace-nowrap
-      cursor-pointer transition duration-300 
-    ;
-  }
 
 
   //------------------------------------------//
   // Documentation Page Themes                //
   //------------------------------------------//
+  // #region Documentation Page Themes
   .showcase-element-container {
     @apply
       p-4 
@@ -647,8 +712,25 @@
       hover:selected-box
     ;
   }
-  
-  // ParamItem Css
+
+  // Showcase Element State Buttons (default, error, disabled)
+  .element-state { 
+    @apply 
+      cursor-pointer transition duration-300
+      px-2 py-1.5 outline-css rounded-full 
+      text-sm font-semibold italic 
+      placeholder-text outline-default
+      
+      hover:primary-text hover:outline-focus
+    ; 
+  }
+
+  .element-state-selected { 
+    @apply primary-text outline-focus; 
+  }
+
+
+  // ParamItem
   .param-item-table {
     @apply 
       bg-slate-200 dark:bg-slate-900
@@ -745,21 +827,7 @@
   .param-type-custom {
     @apply text-emerald-500/90 dark:text-green-500/90;
   }
-
-
-  // Showcase Element State Buttons (default, error, disabled)
-  .element-state { 
-    @apply 
-      cursor-pointer transition duration-300
-      px-2 py-1.5 outline-css rounded-full 
-      text-sm font-semibold italic 
-      placeholder-text outline-default
-      
-      hover:primary-text hover:outline-focus
-    ; 
-  }
-
-  .element-state-selected { @apply primary-text outline-focus; }
+  // #endregion
 
 
 
@@ -773,43 +841,7 @@
   //------------------------------------------//
   // Utilities                                //
   //------------------------------------------//
-  // The grid height transition hack (child div needs overflow:hidden
-  .height-trans {
-    @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
-  } // transition between grid-rows-[0fr] and [1fr] for transition
-  
-  .height-trans-400 {
-  @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
-} // transition between grid-rows-[0fr] and [1fr] for transition
-  
-  .height-trans-opacity {
-    @apply grid;
-    transition:
-      grid-template-rows 0.3s ease,
-      opacity 0.3s ease,
-      visibility 0s linear 0.3s;
-  }
-
-  // Column Layout hack. Aligns all values in a specific column based on the longest one.
-  .dual-column-3 { // recreate for number of columns what needs to use 1fr for content fills 
-    @apply grid grid-cols-[min-content_min-content_1fr];
-  }
-  
-  .height-trans-content {
-    @apply overflow-hidden;
-  }
-  .height-trans-op-content {
-    visibility: visible;
-    transition-delay: 0s;
-  }
-  
-  // The browser skips the rendering work (layout and painting) for that element's 
-  // children as long as it's not on screen or is hidden. Place this on the children of the grid layout
-  .content-auto {
-    content-visibility: auto;
-  } // Skips Rendering, Preserves State, Instant-Wake-Up when visible ex: height-trans (grid-rows-[1fr]) 
-
-
+  // #region Utility Themes
   // Theme transition class
   .disable-transitions,
   .disable-transitions *,
@@ -830,13 +862,23 @@
       group-focus-within:p-[2px]
     ;
   } // Parent needs "relative overflow-hidden"
+  // #endregion
 
+
+
+
+  //------------------------------------------//
+  // Animation Themes                         //
+  //------------------------------------------//
+  // #region Combined Light and Dark themes for animations
   .loading-text { @apply animate-skeleton-text dark:animate-skeleton-text-dark; }
   .loading-bar { @apply animate-skeleton-bar dark:animate-skeleton-bar-dark; }
   .skeleton-bg { @apply animate-skeleton-bg dark:animate-skeleton-bg-dark; }
+  // #endregion
 }
 
-/* Selectors quick ref
+
+/* Tailwind Selectors quick ref
   - children of a specific html tag '[&>p]:'
   - all descendants of a tag '[&_p]:'
   - specific classes '[&_.tooltip]:'
