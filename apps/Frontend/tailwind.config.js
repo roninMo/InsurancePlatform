@@ -18,6 +18,7 @@ module.exports = {
         'fade-in-slow': 'fade-in 0.64s ease-out forwards',
         'fade-out': 'fade-out 0.3s ease-in forwards',
 
+        'fill-bar': 'fill-bar 1.25s ease-in forwards',
         'loading-bar': 'loading-bar 1.25s ease-in-out infinite',
 
         'skeleton-bg': 'skeleton-bg 1.25s ease-in-out infinite',
@@ -36,6 +37,7 @@ module.exports = {
         'fade-in-slow': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'fade-out':     { '0%': { opacity: '1' }, '100%': { opacity: '0' } },
 
+        'fill-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
         'loading-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
         
         'skeleton-bg': {

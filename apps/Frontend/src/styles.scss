@@ -200,6 +200,7 @@
 
 
   // Input element classes
+  // #region Input component styles
   .input-base {
     @apply col-start-1 row-start-1 w-full;
   }
@@ -304,9 +305,72 @@
   .input-loading-bar {
     @apply loading-bar-css bg-primary;
   }
+  // #endregion
+  
+  // Textarea element classes
+  // #region Textarea component styles 
+  // note -  d: default, b: box, p: post
+  .ta-base { @apply w-full p-0 pt-1 h-24 text-base; }
+  .ta-d-base { @apply bg-div placeholder:text-slate-500; }
+  .ta-b-base { @apply h-16; }
+  .ta-p-base { @apply bg-default outline-css outline-styles p-2 pl-4; }
+  .ta-db-base { @apply 
+    outline-0 focus:outline-0 
+    [&::-webkit-scrollbar-corner]:bg-transparent 
+    [&::-webkit-resizer]:bg-div;
+  }
+
+  .ta-icon-base { @apply size-5 cursor-pointer transition-all; }
+  .ta-d-icon { @apply ta-icon-base svg-colors hover:text-slate-800 dark:hover:text-slate-200; }
+  .ta-b-icon { @apply ta-icon-base svg-colors; }
+  .ta-p-icon { @apply ta-icon-base placeholder-text hover:input-colors; }
+  
+  // Default variant
+  .ta-d-label {
+    @apply py-2 text-slate-800 dark:text-slate-500 font-normal;
+  }
+  
+  .ta-d-avatar {
+    @apply bg-div-light rounded-full p-1.5 mt-1; 
+  }
+
+  .ta-d-btn-links {
+    @apply 
+    w-full row justify-between align-top 
+    py-2 transition-all
+
+    border-t border-default 
+    group-focus-within:border-focus;
+  }
+
+  .ta-d-btn-links-focus {
+    @apply group-focus-within:border-focus;
+  }
+  
+  .ta-d-btn-links-error {
+    @apply border-error group-focus-within:border-focus;
+  }
+  
+
+  // Box variant
+  .ta-b-c {
+    @apply 
+      col w-full transition-all
+      bg-default outline-css rounded-lg 
+      focus-within:outline-focus
+    ;
+  }
 
 
+  // Post variant
+  .ta-p-error {
+    @apply 
+      outline-error
+      focus:outline-focus
+    ;
+  }
 
+  // #endregion
 
 
   // Radio button styles

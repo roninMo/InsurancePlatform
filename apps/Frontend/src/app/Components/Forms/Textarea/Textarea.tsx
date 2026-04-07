@@ -75,15 +75,11 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
         disabled={disabled}
 
         // TODO: add global theme styling for the textarea variants
-        className={`w-full p-0 h-24 text-base
-          ${type == 'default' && 'bg-div placeholder:text-slate-500'}
-          ${type == 'box'     && 'h-16'}
-          ${type == 'post'    && 'bg-default outline-css outline-styles p-2 pl-4'}
-          ${type != 'post' && `
-            outline-0 focus:outline-0 
-            [&::-webkit-scrollbar-corner]:bg-transparent 
-            [&::-webkit-resizer]:bg-div 
-          `}
+        className={`ta-base group
+          ${type == 'default' ? 'ta-d-base' : ''}
+          ${type == 'box' ? 'ta-b-base' : ''}
+          ${type == 'post' ? `ta-p-base ${error ? 'ta-p-error' : ''}` : ''}
+          ${type !== 'post' ? `ta-db-base` : ''}
         `}
         { ...props }
       />
@@ -99,36 +95,29 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     ...props
   } = allProps;
-
-  const iconStyles = `size-5 cursor-pointer trans 
-    ${type == 'default' && 'svg-colors hover:text-slate-800 dark:hover:text-slate-200'} 
-    ${type == 'box'     && 'svg-colors'} 
-    ${type == 'post'    && 'placeholder-text hover:input-colors'}
-  `;
+  const iconStyles = type == 'default' ? 'ta-d-icon' : type == 'box' ? 'ta-b-icon' : 'ta-p-icon'; 
 
 
+  // TODO: add a fill bar, from left to right, or from the center out on focus for the variants 
   //--------------------------------//
   // default style                  //
   //--------------------------------//
   if (type === 'default') {
     return (
       <div className="w-full flex flex-col gap-2">
-        { label && <h4 className="py-2 text-slate-800 dark:text-slate-500 font-normal">{ label }</h4> }
+        { label && 
+          <h4 className="ta-d-label">{ label }</h4> 
+        }
         <Container className="rowStart gap-2 justify-items-start items-start">
-          <Avatar className="bg-div-light rounded-full p-1.5 mt-1">
+          <Avatar className="ta-d-avatar">
             <Icon variant='Profile' styles="size-4" />  
           </Avatar>
 
-          <InputContainer className="w-full col">
-            <div className="pt-1">
-              <InputComponent { ...allProps } />
-            </div>
+          <InputContainer className="w-full col group">
+            <InputComponent { ...allProps } />
 
             {/* Icons and post button */}
-            <ButtonsAndLinks className={`
-              w-full row justify-between align-top py-2 trans
-              border-t ${error ? 'border-error' : 'border-default'} `}
-            >
+            <ButtonsAndLinks className={`ta-d-btn-links ${error ? 'ta-d-btn-links-error' : 'ta-d-btn-links-focus'}`}>
               <PrecedingInputElements className="rowStart items-center gap-4 pl-1">
                 <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles} />
                 <Icon variant='Smile'       styles={iconStyles} />
@@ -163,7 +152,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   //--------------------------------//
   else if (type == 'box') {
     return (<>
-      <Container className={`col bg-default outline-css rounded-lg w-full ${error ? 'outline-error' : 'outline-styles'}`}>
+      <Container className={`ta-b-c ${error ? 'outline-error' : 'outline-styles'}`}>
         { label && <h4 className="p-4 text-colors font-normal">{ label }</h4> }
         
         <div className="pl-4">
