@@ -75,7 +75,7 @@ const InputComponent = (allProps: TextareaProps & TextareaEventHandlers) => {
         disabled={disabled}
 
         // TODO: add global theme styling for the textarea variants
-        className={`ta-base group
+        className={`ta-base
           ${type == 'default' ? 'ta-d-base' : ''}
           ${type == 'box' ? 'ta-b-base' : ''}
           ${type == 'post' ? `ta-p-base ${error ? 'ta-p-error' : ''}` : ''}
@@ -152,21 +152,15 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   //--------------------------------//
   else if (type == 'box') {
     return (<>
-      <Container className={`ta-b-c ${error ? 'outline-error' : 'outline-styles'}`}>
-        { label && <h4 className="p-4 text-colors font-normal">{ label }</h4> }
-        
-        <div className="pl-4">
-          <InputComponent { ...allProps } />
-        </div>
+      <Container className={`ta-b-c group ${error ? 'outline-error' : 'outline-styles'}`}>
+        { label && <h4 className="ta-b-label">{ label }</h4> }
+				<InputComponent { ...allProps } />
         
         {/* Pill action buttons */}
         <MetadataTagElements type='box' metadataTags={metadataTags} id={name} />
 
-        <ButtonsAndLinks className="
-          row justify-between items-center p-2
-          border-styles border-t"
-        >
-          <div className="rowStart gap-2 *:cursor-pointer *:trans *:hover:text-slate-800 *:dark:hover:text-slate-200">
+        <ButtonsAndLinks className="ta-b-btn-links">
+          <div className="ta-b-attach-file">
             <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles + ''} />
             <p className="italic">Attach a file</p>
           </div>

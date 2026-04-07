@@ -310,9 +310,9 @@
   // Textarea element classes
   // #region Textarea component styles 
   // note -  d: default, b: box, p: post
-  .ta-base { @apply w-full p-0 pt-1 h-24 text-base; }
-  .ta-d-base { @apply bg-div placeholder:text-slate-500; }
-  .ta-b-base { @apply h-16; }
+  .ta-base { @apply w-full p-0 h-24 text-base; }
+  .ta-d-base { @apply bg-div pt-1 placeholder:text-slate-500; }
+  .ta-b-base { @apply h-16 pl-4; }
   .ta-p-base { @apply bg-default outline-css outline-styles p-2 pl-4; }
   .ta-db-base { @apply 
     outline-0 focus:outline-0 
@@ -360,6 +360,23 @@
       focus-within:outline-focus
     ;
   }
+	
+	.ta-b-label {
+		@apply p-4 text-colors font-normal;
+	}
+	
+	.ta-b-btn-links {
+		@apply 
+			p-2 row justify-between items-center 
+			border-styles border-t;
+	}
+	
+	.ta-b-attach-file {
+		@apply 
+			rowStart gap-2 
+			*:cursor-pointer *:transition-all 
+			*:hover:text-slate-800 *:dark:hover:text-slate-200;
+	}
 
 
   // Post variant
