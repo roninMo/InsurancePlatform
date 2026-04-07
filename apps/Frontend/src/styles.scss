@@ -32,7 +32,7 @@
   .primary-text     { @apply text-blue-500 dark:text-blue-500; }
   .link-text {
     @apply
-      primary-text cursor-pointer transition duration-300
+      primary-text cursor-pointer transition-all duration-300
       hover:theme-focus-2 dark:hover:theme-focus
 
       focus:underline dark:focus:underline
@@ -74,7 +74,7 @@
 
   // default background colors
   .bg-default   { @apply bg-white     dark:bg-slate-800; }
-  .bg-div       { @apply bg-slate-100 dark:bg-slate-900; }
+  .bg-div       { @apply bg-slate-200 dark:bg-slate-900; }
   .bg-div-light { @apply bg-slate-400 dark:bg-slate-700; }
   .bg-primary   { @apply bg-blue-600  dark:bg-blue-500; }
   
@@ -82,9 +82,9 @@
   .bg-disabled { @apply  bg-gray-300  dark:bg-gray-700; }
 
   // Button colors
-  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue;  }
-  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue;  }
-  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue;  }
+  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue  active:btn-primary-active;  }
+  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue  active:btn-gray-active;  }
+  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue  active:btn-gray-focus-active;  }
   .btn-text         { @apply input-colors; }
 
   .btn-outline-white  { @apply outline-slate-200 dark:outline-slate-200; }
@@ -92,15 +92,19 @@
 
   .btn-primary-colors { @apply bg-indigo-600 dark:bg-indigo-500 outline-indigo-600 dark:outline-indigo-600; }
   .btn-primary-hover { @apply bg-indigo-500 dark:bg-indigo-400; }
+  .btn-primary-active { @apply bg-indigo-600 dark:bg-indigo-500; }
   
   .btn-gray-colors { @apply bg-div-light outline-slate-400 dark:outline-slate-700; }
   .btn-gray-hover { @apply bg-slate-300 dark:bg-slate-600; }
+  .btn-gray-active { @apply bg-slate-400 dark:bg-slate-700; }
   
   .btn-gray-focus-colors { @apply bg-default outline-white dark:outline-slate-800; }
   .btn-gray-focus-hover { @apply bg-slate-200 dark:bg-slate-700; }
+  .btn-gray-focus-active { @apply bg-slate-300 dark:bg-slate-800; }
 
   // hover states
   .bg-div-hover { @apply bg-slate-200 dark:bg-slate-800; }
+
   // #endregion
 
 
@@ -186,13 +190,123 @@
     @apply 
       bg-default autofill-backgrounds
       outline-css outline-styles px-3 py-2
-      transition;
+      transition-all;
   }
 
   textarea {
-    @apply scrollbar-theme transition;
+    @apply scrollbar-theme transition-all;
     resize: none;
   }
+
+
+  // Input element classes
+  .input-base {
+    @apply col-start-1 row-start-1 w-full;
+  }
+
+  .input-error {
+    @apply error-text placeholder:error-text outline-error;
+  }
+
+  .input-disabled {
+    @apply 
+      disabled-text placeholder:disabled-text
+      bg-disabled
+      outline-gray-400  dark:outline-gray-600;
+  }
+
+  .input-label {
+    @apply label-colors;
+  }
+
+  .input-container {
+    @apply mt-2 grid grid-cols-1; // group
+  }
+
+  .input-preceding-el { @apply rowStart; }
+  .input-icon-spacing { @apply pl-9; }
+  .input-preceding-el-align {
+    @apply 
+      pointer-events-none 
+      col-start-1 row-start-1 justify-start self-center;
+  }
+  
+  .input-icon-def {
+    @apply size-4 ml-3 transition-all hover:primary-text;
+  }
+
+  .input-password-vis {
+    @apply pointer-events-auto cursor-pointer;
+  }
+
+  .input-subsequent-el { @apply 
+      grid col-start-1 row-start-1 self-center justify-end 
+      pointer-events-none 
+
+    ; 
+  }
+
+  // input currency button
+  .input-curr {
+    @apply 
+      pl-3 py-2 pr-7
+      input-base appearance-none border-focus
+    ;
+  }
+  .input-curr-focus { @apply group-focus-within:border-l-[3px]; }
+  .input-curr-error { @apply outline-error outline-css group-focus-within:outline-none; }
+
+
+  // input search sort button
+  .input-sort-btn {
+    @apply
+      flex items-center gap-x-1.5 shrink-0 
+      transition-all cursor-pointer pointer-events-auto
+      
+      rounded-r-md px-3 py-2 
+      font-semibold 
+      text-white
+      btn-primary dark:btn-gray
+      
+      border-default
+      group-focus-within:border-l-[3px]
+      group-focus-within:border-focus
+
+      outline-css
+      focus:outline-focus
+    ;
+  }
+  .input-sort-focus { @apply group-focus-within:border-l-[3px]; }
+  .input-sort-error { @apply outline-error dark:outline-error group-focus-within:outline-none; }
+
+
+  // Input tooltip
+  .input-tooltip-hover { @apply fixed top-0 left-0 z-10 ease-in; }
+  .input-tooltip-h { @apply opacity-0 *:opacity-0; }
+  .input-tooltip-v { @apply opacity-100 *:opacity-100; }
+  .input-tooltip {
+    @apply 
+      p-2 pr-4 max-w-64
+      text-xs italic shadow-lg 
+      input-tooltip-hover
+      
+      pointer-events-none transition-all
+      bg-default border rounded-md border-default;
+  }
+
+  // Input loading bar
+  .input-loading-bar-cont {
+    @apply 
+      col-start-1 row-start-1 relative 
+      overflow-hidden rounded-md pointer-events-none;
+  }
+
+  .input-loading-bar {
+    @apply loading-bar-css bg-primary;
+  }
+
+
+
 
 
   // Radio button styles
@@ -307,19 +421,6 @@
       bg-div
       outline-default 
   }
-  
-  .input-error {
-    @apply 
-      input-colors placeholder:error-text
-      outline-error
-  }
-
-  .input-disabled {
-    @apply 
-      disabled-text placeholder:disabled-text
-      bg-disabled
-      outline-gray-400  dark:outline-gray-600;
-  }
   // #endregion
 
 
@@ -402,15 +503,16 @@
   // Utility                                  //
   //------------------------------------------//
   // #region Utility Themes
-  .transition { 
-    @apply transition-all duration-200; 
+  .trans { // TODO: calling this utility function does not work as intended, use transition-all
+    // @apply transition-all duration-200; 
     
-    transition-property: all, outline-color, outline-width, outline-offset;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, outline-color, outline-width, outline-offset;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
 
-  .op-init    { @apply transition duration-300 opacity-0; }
+
+  .op-init    { @apply trans duration-300 opacity-0; }
   .op-render  { @apply opacity-100; }
 
   // Faded borders for creating overlays and subtle shading for background
@@ -431,7 +533,7 @@
   }
 
   .svg-init {
-    @apply transition cursor-pointer;
+    @apply transition-all cursor-pointer;
   }
 
 
@@ -497,13 +599,134 @@
 /* Project and Component Layers  */
 @layer components {
   //------------------------------------------//
+  // Universal Components                     //
+  //------------------------------------------//
+  // #region Universal Component Themes
+  .dropdown-icon {
+    @apply 
+      size-7 text-colors
+      cursor-pointer transition-all duration-300
+      hover:theme-focus-2 
+    ;
+  }
+
+  .dropdown-link-container {
+    @apply
+      spacing gap-1 transition-all
+      p-1 outline-css outline-styles
+    ;
+  }
+
+  .dropdown-link-icon { 
+    @apply size-4 cursor-pointer transition-all hover:theme-focus-2;
+  }
+
+  .dropdown-link-text {
+    @apply
+      cursor-pointer transition-all duration-300 
+      hover:theme-focus-2 dark:hover:theme-focus-2
+      
+      focus:underline dark:focus:underline
+      hover:underline dark:hover:underline;
+  }
+
+  .dropdown-env { 
+    @apply
+      px-[5px] py-[4px] italic font-medium 
+      bg-slate-200 dark:bg-slate-900
+      outline-css outline-default
+      transition-all duration-300 opacity-75 dark:opacity-75
+      hover:opacity-100 dark:hover:opacity-100
+      dark:hover:theme-focus-2
+    ;
+  }
+
+
+  // Hashbar
+  .hashbar {
+    @apply 
+      h-0 min-h-[100%] /* Dependent on parent height */
+      overflow-hidden overflow-y-auto scrollbar-none
+      border-l border-default
+    ;
+  }
+  
+  .hashbar-link-header {
+    @apply 
+      hashbar-link-base
+      text-base text-colors font-normal 
+    ;
+  }
+
+  .hashbar-link {
+    @apply 
+      hashbar-link-base
+      text-sm placeholder-text 
+      
+      my-[0.1rem]
+      border-l border-default
+      hover:border-l-2 hover:border-focus
+    ;
+  }
+  
+  .hashbar-link-base {
+    @apply 
+      py-[0.15rem] whitespace-nowrap
+      cursor-pointer transition-all duration-300 
+    ;
+  }
+
+
+  // Sidebar
+  .sidebar {
+    @apply
+      h-0 min-h-[100%] /* Dependent on parent height */
+      overflow-hidden overflow-y-auto scrollbar-theme-thin 
+      bg-div border-r border-default
+    ;
+  }
+  
+  .sidebar-link-header {
+    @apply 
+      sidebar-link-base
+      text-lg font-medium
+      label-colors 
+    ;
+  }
+  
+  .sidebar-link {
+    @apply
+      sidebar-link-base
+      text-base font-normal
+      text-colors
+      
+      border-l border-default
+      hover:border-l-2 hover:border-focus
+    ;
+  }
+  
+  .sidebar-link-base {
+    @apply
+      py-[0.35rem] whitespace-nowrap
+      cursor-pointer transition-all duration-300 
+    ;
+  }
+  
+  .sidebar-link-base:hover { @apply primary-text; }
+  .sidebar-link-base:active { @apply link-text; }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
   // Footer Page Themes                       //
   //------------------------------------------//
   // #region Footer Page Themes
   .footer-link-styles {
     @apply 
     hover:primary-text active:link-text 
-    text-base cursor-pointer transition;
+    text-base cursor-pointer transition-all;
   }
 
   .footer-link-header {
@@ -549,7 +772,7 @@
 
   .tab-default {
     @apply 
-      py-3 px-2 transition cursor-pointer duration-200
+      py-3 px-2 transition-all cursor-pointer duration-200
       text-xl label-colors hover:primary-text
 
       border-b-2 border-transparent 
@@ -562,127 +785,6 @@
   .tab-active {
     @apply border-blue-500 dark:border-blue-500;
   }
-  // #endregion
-
-
-
-
-  //------------------------------------------//
-  // Universal Components                     //
-  //------------------------------------------//
-  // #region Universal Component Themes
-  .dropdown-icon {
-    @apply 
-      size-7 text-colors
-      cursor-pointer transition duration-300
-      hover:theme-focus-2 
-    ;
-  }
-
-  .dropdown-link-container {
-    @apply
-      spacing gap-1 transition
-      p-1 outline-css outline-styles
-    ;
-  }
-
-  .dropdown-link-icon { 
-    @apply size-4 cursor-pointer transition hover:theme-focus-2;
-  }
-
-  .dropdown-link-text {
-    @apply
-      cursor-pointer transition duration-300 
-      hover:theme-focus-2 dark:hover:theme-focus-2
-      
-      focus:underline dark:focus:underline
-      hover:underline dark:hover:underline;
-  }
-
-  .dropdown-env { 
-    @apply
-      px-[5px] py-[4px] italic font-medium 
-      bg-slate-200 dark:bg-slate-900
-      outline-css outline-default
-      transition duration-300 opacity-75 dark:opacity-75
-      hover:opacity-100 dark:hover:opacity-100
-      dark:hover:theme-focus-2
-    ;
-  }
-
-
-  // Hashbar
-  .hashbar {
-    @apply 
-      h-0 min-h-[100%] /* Dependent on parent height */
-      overflow-hidden overflow-y-auto scrollbar-none
-      border-l border-default
-    ;
-  }
-  
-  .hashbar-link-header {
-    @apply 
-      hashbar-link-base
-      text-base text-colors font-normal 
-    ;
-  }
-
-  .hashbar-link {
-    @apply 
-      hashbar-link-base
-      text-sm placeholder-text 
-      
-      my-[0.1rem]
-      border-l border-default
-      hover:border-l-2 hover:border-focus
-    ;
-  }
-  
-  .hashbar-link-base {
-    @apply 
-      py-[0.15rem] whitespace-nowrap
-      cursor-pointer transition duration-300 
-    ;
-  }
-
-
-  // Sidebar
-  .sidebar {
-    @apply
-      h-0 min-h-[100%] /* Dependent on parent height */
-      overflow-hidden overflow-y-auto scrollbar-theme-thin 
-      bg-div border-r border-default
-    ;
-  }
-  
-  .sidebar-link-header {
-    @apply 
-      sidebar-link-base
-      text-lg font-medium
-      label-colors 
-    ;
-  }
-  
-  .sidebar-link {
-    @apply
-      sidebar-link-base
-      text-base font-normal
-      text-colors
-      
-      border-l border-default
-      hover:border-l-2 hover:border-focus
-    ;
-  }
-  
-  .sidebar-link-base {
-    @apply
-      py-[0.35rem] whitespace-nowrap
-      cursor-pointer transition duration-300 
-    ;
-  }
-  
-  .sidebar-link-base:hover { @apply primary-text; }
-  .sidebar-link-base:active { @apply link-text; }
   // #endregion
 
 
@@ -706,7 +808,7 @@
   .showcase-jsx-copy-snippet {
     @apply
       absolute z-10 top-0 right-0 
-      cursor-pointer transition
+      cursor-pointer transition-all
       
       outline-css outline-default
       hover:selected-box
@@ -716,7 +818,7 @@
   // Showcase Element State Buttons (default, error, disabled)
   .element-state { 
     @apply 
-      cursor-pointer transition duration-300
+      cursor-pointer transition-all duration-300
       px-2 py-1.5 outline-css rounded-full 
       text-sm font-semibold italic 
       placeholder-text outline-default
@@ -800,7 +902,7 @@
   // ParamType
   .param-type {
     @apply
-      py-[0.15rem] px-1.5 transition
+      py-[0.15rem] px-1.5 transition-all
       text-sm font-semibold
       
       bg-opacity-80 dark:bg-opacity-30

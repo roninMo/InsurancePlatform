@@ -82,14 +82,14 @@ export const Modal = ({
           className={`fixed top-0 left-0 min-w-full min-h-full z-40 
         row justify-center items-center 
         ${overlay ? 'bg-black bg-opacity-40 dark:bg-opacity-40' : ''} 
-        ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} transition
+        ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} trans
         ${overlayStyles}
       `}
       >
         <Container id={closeModalId} className={`
         col items-center gap-2
         outline-css outline-default bg-div 
-        transition ${isModalOpen ? 'opacity-100' : 'opacity-0'}
+        trans ${isModalOpen ? 'opacity-100' : 'opacity-0'}
         ${additionalStyles}
       `}>
 
@@ -100,7 +100,7 @@ export const Modal = ({
 
             <div onClick={() => closeModal()}>
               { closeModalButton &&
-                  <Icon variant='Close' styles={closeModalStyles ? closeModalStyles : 'size-8 lg:size-10 transition hover:text-blue-500 dark:hover:text-blue-500 cursor-pointer'} />
+                  <Icon variant='Close' styles={closeModalStyles ? closeModalStyles : 'size-8 lg:size-10 trans hover:text-blue-500 dark:hover:text-blue-500 cursor-pointer'} />
               }
             </div>
           </Header>

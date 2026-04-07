@@ -174,7 +174,8 @@ export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
     subLinks: []
   },
   {
-    sectionLink: { label: "Forms", url: "Forms" }, // TODO: Add redirects to create individual "home" page content for the quicklinks of each section
+    // TODO: Add redirects to create individual "home" page content for the quickLinks of each section
+    sectionLink: { label: "Forms", url: "Forms" }, 
     subLinks: [
       { label: 'Button', url: '/Documentation/Forms/Button' },
       { label: 'Checkbox', url: '/Documentation/Forms/Checkbox' },

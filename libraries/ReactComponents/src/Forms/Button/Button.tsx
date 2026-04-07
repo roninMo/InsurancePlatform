@@ -33,7 +33,7 @@ export const Button = ({
       disabled={disabled}
       className={` 
         inline-flex items-center 
-        shadow-md dark:shadow-none transition 
+        shadow-md dark:shadow-none trans 
         outline-css font-semibold text-nowrap m-auto
         
         ${  size == 'default' ? 'px-2.5  py-1.5' 

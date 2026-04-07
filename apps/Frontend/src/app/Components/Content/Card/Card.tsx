@@ -40,7 +40,7 @@ export const Card = ({
   const dividerStyles = `mb-2 border-b border-styles`;
 
   const getContainerStyles = (): string => {
-    let classes = `rounded-md transition p-2 `;
+    let classes = `rounded-md trans p-2 `;
     classes += border    == 'default' ? ' outline-css outline-styles ' : '';
     classes += background == 'default' ? ' bg-default ' : '';
     return classes + ` ${additionalStyles}`;

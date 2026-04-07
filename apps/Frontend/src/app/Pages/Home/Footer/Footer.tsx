@@ -14,7 +14,7 @@ export const Footer = () => {
       <FooterSection className='span-12 col justify-between pt-14'>
       <HorizontalBorder className='border-styles border-default border-t span-12 mx-10 mt-8 pb-12' />
         <div className='p-4 pb-8 pl-8 lg:pl-12'>
-          <Icon variant='CodeBracket' styles='size-8 transition text-blue-500 dark:text-blue-400 hover:primary-text' />
+          <Icon variant='CodeBracket' styles='size-8 trans text-blue-500 dark:text-blue-400 hover:primary-text' />
         </div>
 
         <FooterLinks className='row justify-between px-8 lg:px-12 p-4 

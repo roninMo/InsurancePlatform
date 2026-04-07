@@ -68,6 +68,9 @@ import { Icon_DocText } from "./Default/DocText/Icon_DocText";
 import { Icon_CircleCheck } from "./Default/CircleCheck/Icon_CircleCheck";
 import { Icon_CircleError } from "./Default/CircleError/Icon_CircleError";
 import { Icon_CirclePause } from "./Default/CirclePause/Icon_CirclePause";
+import { Icon_Eye } from "./Default/Eye/Icon_Eye";
+import { Icon_EyeSlash } from "./Default/EyeSlash/Icon_EyeSlash";
+import { Icon_CreditCard } from "./Default/CreditCard/Icon_CreditCard";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
@@ -102,6 +105,7 @@ export type DefaultIconTypes =
   'Cloud' |
   'CodeBracket' |
   'Computer' |
+  'CreditCard' |
   'DarkTheme' |
   'Database' |
   'DocText' |
@@ -109,6 +113,8 @@ export type DefaultIconTypes =
   'DropdownArrow' |
   'Envelope' |
   'Error' |
+  'Eye' |
+  'EyeSlash' |
   'InfoBox' |
   'LightTheme' |
   'Link' |
@@ -144,6 +150,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'Cloud')           return (<Icon_Cloud styles={iconStyles} />);
   if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
   if (variant == 'Computer')        return (<Icon_Computer styles={iconStyles} />);
+  if (variant == 'CreditCard')      return (<Icon_CreditCard styles={iconStyles} />);
   if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
   if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
   if (variant == 'DocText')         return (<Icon_DocText styles={iconStyles} />);
@@ -151,6 +158,8 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
   if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
   if (variant == 'Error')           return (<Icon_Error styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'Eye')             return (<Icon_Eye styles={iconStyles} />);
+  if (variant == 'EyeSlash')        return (<Icon_EyeSlash styles={iconStyles} />);
   if (variant == 'InfoBox')         return (<Icon_InfoBox styles={iconStyles} />);
   if (variant == 'Instagram')       return (<Icon_Instagram styles={iconStyles} />);
   if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);

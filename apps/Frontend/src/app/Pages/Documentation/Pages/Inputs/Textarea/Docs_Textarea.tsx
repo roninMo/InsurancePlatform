@@ -6,11 +6,11 @@ import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/
 import { ParamType } from '../../../Components/ParamType/ParamType';
 import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
-import { TextareaTypes } from '../../../../../Components/Forms/Textarea';
 
 import TextareaCodeSnippets from './Docs_TextareaJsxComponents?raw';
 import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
 import { Example_BoxTextareaInput, Example_DefaultTextareaInput, Example_PostTextareaInput } from './Docs_TextareaJsxComponents';
+import { TextareaTypes } from '../../../../../Components/Forms/Textarea/Textarea';
 
 
 export const Docs_Textarea = () => {

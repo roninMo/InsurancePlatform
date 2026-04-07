@@ -2,7 +2,6 @@ import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId } fr
 
 import { Card } from '../../../Components/Content/Card/Card';
 import { CheckboxItem, Checkbox, CheckboxProps } from '../../../Components/Forms/Checkbox/Checkbox';
-import { defaultBoxMetadataTags, defaultPostMetadataTags, MetadataTagProps, Textarea } from '../../../Components/Forms/Textarea';
 import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
 import { Slider } from '../../../Components/Forms/Slider/Slider';
 import { 
@@ -16,6 +15,7 @@ import {
   SelectItemValues, 
   TextInputTypes, 
 } from '@Project/ReactComponents';
+import { defaultBoxMetadataTags, defaultPostMetadataTags, Textarea } from '../../../Components/Forms/Textarea/Textarea';
 
 import styles from './CustomContent.module.scss';
 

@@ -156,7 +156,7 @@ const NavbarComponent = ({}: NavbarProps) => {
 
           <NavLinkContainer id={navbarLinks} className='NavLinks rowStart items-center gap-8'>
             <HomeIcon id="HomeLink" className='rowStart items-center gap-3'>
-              <HashLink url="/" styles='rowStart gap-2 p-2 transition duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
+              <HashLink url="/" styles='rowStart gap-2 p-2 trans duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
                 <Icon variant='CodeBracket' styles='size-6 text-blue-600 dark:text-indigo-400' />
               </HashLink>
               <h4 className='label-colors'>Portfolio</h4>
@@ -167,7 +167,7 @@ const NavbarComponent = ({}: NavbarProps) => {
               onMouseEnter={(e) => hoveringOverDropdown(true, e)}
               onMouseLeave={(e) => hoveringOverDropdown(false, e)}
               ref={navbarRef}
-              className='rowStart gap-0 *:p-6 *:px-4 *:transition *:text-base *:cursor-pointer'
+              className='rowStart gap-0 *:p-6 *:px-4 *:trans *:text-base *:cursor-pointer'
             >
               <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
               <HashLink label="Demos" url="/Demos" styles='bg-div hover:bg-div-hover' />
@@ -180,15 +180,15 @@ const NavbarComponent = ({}: NavbarProps) => {
 
           <Profile className='rowStart items-center gap-4'>
             <div> Account </div>
-            <div id='HomeLink' className='p-2 outline-css rounded-full transition duration-300 cursor-pointer
+            <div id='HomeLink' className='p-2 outline-css rounded-full trans duration-300 cursor-pointer
                 bg-default outline-default theme-focus' >
               <Icon variant='Profile' styles='size-6 text-slate-600 dark:text-slate-500' />
             </div>
 
             <div className='' onClick={() => setAndUpdateTheme(currentTheme === 'light' ? 'dark' : 'light')}>
               { currentTheme == 'light' ? 
-                <Icon variant='LightTheme' styles='size-10 cursor-pointer input-colors hover:text-blue-500 transition' /> : 
-                <Icon variant='DarkTheme' styles='size-10 cursor-pointer placeholder-text hover:text-blue-400 transition' />
+                <Icon variant='LightTheme' styles='size-10 cursor-pointer input-colors hover:text-blue-500 trans' /> : 
+                <Icon variant='DarkTheme' styles='size-10 cursor-pointer placeholder-text hover:text-blue-400 trans' />
               }
             </div>
           </Profile>
@@ -199,7 +199,7 @@ const NavbarComponent = ({}: NavbarProps) => {
           id={navbarDropdownId}
           onMouseEnter={(e) => hoveringOverDropdown(true, e)}
           onMouseLeave={(e) => hoveringOverDropdown(false, e)}
-          className={`absolute w-full bg-div border-styles border-y shadow-xl transition
+          className={`absolute w-full bg-div border-styles border-y shadow-xl trans
             height-trans-opacity ${showDropdown ? 'opacity-100 grid-rows-[1fr]' : 'opacity-0 grid-rows-[0fr]'}
         `}>
           <div className={`height-trans-content content-auto ${showDropdown && 'height-trans-op-content'}`}>

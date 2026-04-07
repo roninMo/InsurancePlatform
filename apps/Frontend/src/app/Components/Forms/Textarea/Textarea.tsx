@@ -100,7 +100,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
     ...props
   } = allProps;
 
-  const iconStyles = `size-5 cursor-pointer transition 
+  const iconStyles = `size-5 cursor-pointer trans 
     ${type == 'default' && 'svg-colors hover:text-slate-800 dark:hover:text-slate-200'} 
     ${type == 'box'     && 'svg-colors'} 
     ${type == 'post'    && 'placeholder-text hover:input-colors'}
@@ -126,7 +126,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
 
             {/* Icons and post button */}
             <ButtonsAndLinks className={`
-              w-full row justify-between align-top py-2 transition
+              w-full row justify-between align-top py-2 trans
               border-t ${error ? 'border-error' : 'border-default'} `}
             >
               <PrecedingInputElements className="rowStart items-center gap-4 pl-1">
@@ -177,7 +177,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
           row justify-between items-center p-2
           border-styles border-t"
         >
-          <div className="rowStart gap-2 *:cursor-pointer *:transition *:hover:text-slate-800 *:dark:hover:text-slate-200">
+          <div className="rowStart gap-2 *:cursor-pointer *:trans *:hover:text-slate-800 *:dark:hover:text-slate-200">
             <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles + ''} />
             <p className="italic">Attach a file</p>
           </div>
@@ -291,9 +291,9 @@ const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => 
 // additional action events to capture metadata during input captures. ex. Due dates, tags, etc.
 const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps) => {
   const styles = "row justify-end gap-2 p-2  *:row *:gap-2 *:p-3 *:py-2 ";
-  const buttonStyles = "*:text-colors *:bg-div-light *:opacity-bg-50 *:rounded-full *:cursor-pointer *:transition ";
-  const postIconStyles = "size-5 cursor-pointer transition placeholder-text hover:input-colors ";
-  const boxIconStyles = "size-5 cursor-pointer transition svg-colors ";
+  const buttonStyles = "*:text-colors *:bg-div-light *:opacity-bg-50 *:rounded-full *:cursor-pointer *:trans ";
+  const postIconStyles = "size-5 cursor-pointer trans placeholder-text hover:input-colors ";
+  const boxIconStyles = "size-5 cursor-pointer trans svg-colors ";
 
   //--------------------------------//
   // metadata tags                  //

@@ -21,7 +21,7 @@ export const Example_Button = ({ error, disabled }: {
         color="primary"
 
         icon="CodeBracket"
-        iconStyles="cursor-pointer transition input-colors hover:text-blue-500"
+        iconStyles="cursor-pointer trans input-colors hover:text-blue-500"
       />
     </div>
   );

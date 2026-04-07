@@ -82,7 +82,7 @@ export const Checkbox = ({
                 required={required}
                 className={`checkbox 
                   mb-auto ${variant == 'list' && 'order-1'} ${variant != 'list' && 'mr-1'}
-                  appearance-none outline-css rounded-[4px] size-5 transition-all 
+                  appearance-none outline-css rounded-[4px] size-5 trans 
                   checked:before:content-['✓'] text-center p-[1px] text-slate-100 
                   
 

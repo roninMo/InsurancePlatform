@@ -27,7 +27,6 @@ interface InputProps {
   tooltipText?: string;
 
   autocomplete?: TextInputAutoCompleteTypes;
-  aria?: string | null; // TODO: add props as optional params for passing this in
 
   // variant specific configurations
   opts?: {
@@ -40,7 +39,7 @@ export const Input = ({
   type = 'text', name, label, description, value, placeholder,
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  autocomplete, aria, opts, ...props
+  autocomplete, opts, ...props
 }: InputProps & InputEventHandlers) => {
   const id = useId();
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
@@ -95,6 +94,14 @@ export const Input = ({
   // Error handling
   const shouldDisplayError = (): boolean => error && !disabled;
 
+  // Password visibility
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const toggleShowPassword = (visible: boolean) => setShowPassword(visible);
+
+  const getType = (): TextInputTypes => {
+    if (type == 'password') return showPassword ? 'text' : 'password';
+    return type;
+  }
 
   // Tooltip logic
   const [tooltipActive, setTooltipActive] = useState<boolean>(false);
@@ -118,14 +125,15 @@ export const Input = ({
 
   return (
     <TextInput className='input'>
-      <label htmlFor={type} className=""> { label } </label>
-      <InputContainer className="mt-2 grid grid-cols-1 group">
+      <label htmlFor={type} className="input-label"> { label } </label>
+      <InputContainer className="input-container group">
         <input 
-          type={type}
+          type={getType()}
           name={name}
           value={value}
           ref={getMaskRef(type)}
           placeholder={placeholder}
+          autoComplete={autocomplete}
           id={id}
 
           onChange={(e) => onChange ? onChange(e) : null}
@@ -138,24 +146,30 @@ export const Input = ({
           required={required}
           disabled={disabled}
 
-          autoComplete={autocomplete}
-          aria-describedby={aria || autocomplete || ''}
-          aria-invalid={error ? "true" : "false"}
-
           className={`${getInputClasses(error, type, disabled)} peer`}
           { ...props }
         />
 
         {/* Elements preceding the input */}
-        <PrecedingInputElements className={`pointer-events-none col-start-1 row-start-1 justify-center self-center`}>
-          { type == 'email' && <Icon variant='Envelope' styles='size-4 ml-3' /> }
-          { type == 'policyNumber' && <Icon variant='Profile' styles='size-4 ml-3' /> }
-          {/* TODO: custom icons preceding input */}
+        <PrecedingInputElements className="input-preceding-el-align">
+          <div className='input-preceding-el'>
+            { type == 'email' && <Icon variant='Envelope' styles='input-icon-def' /> }
+            { type == 'policyNumber' && <Icon variant='Profile' styles='input-icon-def' /> }
+            { type == 'phone' && <Icon variant='Phone' styles='input-icon-def' /> }
+            { type == 'creditCard' && <Icon variant='CreditCard' styles='input-icon-def' /> }
+            { type == 'password' && 
+              <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
+                { !showPassword && <Icon variant='EyeSlash' styles='input-icon-def' /> }
+                { showPassword && <Icon variant='Eye' styles='input-icon-def' /> }
+              </div>
+            }
+            {/* TODO: custom icons preceding input */}
+          </div>
         </PrecedingInputElements>
 
 
         {/* Elements after the input */}
-        <SubsequentInputElements className={`${iconContainerStyles} ${borderSelectStyles(error)} group-focus-within:[&_button]:border-l-2 z-10`}>
+        <SubsequentInputElements className={`input-subsequent-el`}>
           <div className={`row flex-grow justify-items-end items-center`}>
             { shouldDisplayError() ?
               <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
@@ -173,18 +187,14 @@ export const Input = ({
             {/* Currency and Search */}
             { type == 'currency' ? 
               <CurrencySelectContainer className='row relative'>
-                <CurrencySelect id="currency" name="currency" aria-label="Currency" className={getDropdownClasses(error)}>
+                <CurrencySelect id="currency" name="currency" className={`input-curr ${error ? 'input-curr-error' : 'input-curr-focus'}`}>
                   <option>USD</option> <option>CAD</option> <option>EUR</option>
                 </CurrencySelect>
                 <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
               </CurrencySelectContainer>
 
             : type == 'search' ? 
-              <SortSearchButton type="button" className={`
-                flex items-center gap-x-1.5 shrink-0 
-                cursor-pointer pointer-events-auto
-                ${sortButtonStyles} ${sortBorderStyles}
-              `}>
+              <SortSearchButton type="button" className={`input-sort-btn ${error ? 'input-sort-error' : ''}`}>
                 <Icon variant='Sort' styles='size-5 text-slate-100 dark:text-slate-400' />
                 Sort
               </SortSearchButton>
@@ -193,9 +203,9 @@ export const Input = ({
           </div>
         </SubsequentInputElements>
         
-        <LoadingBar className='col-start-1 row-start-1 relative overflow-hidden rounded-md pointer-events-none'>
+        <LoadingBar className='input-loading-bar-cont'>
           <div 
-            className={`loading-bar-css bg-primary ${false ? 'animate-loading-bar opacity-75' : 'opacity-0'} `}
+            className={`input-loading-bar ${false ? 'animate-loading-bar opacity-75' : 'opacity-0'} `}
             style={{ animationDelay: `${loadBarRandDelay}ms` }}
           />
         </LoadingBar>
@@ -209,14 +219,12 @@ export const Input = ({
       }
 
       {/* Tooltip Text */}
-      {tooltip && 
-        <Tooltip 
-          style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
-          className={`${tooltipTheme_Styles} ${tooltipHoverStyles} ${tooltipCoordinates} ${tooltipActive ? tooltipVisible : tooltipHidden}`}
-        >
-          {tooltipText}
-        </Tooltip>
-      }
+      <Tooltip 
+        style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
+        className={`input-tooltip ${tooltipCoordinates} ${tooltipActive ? 'input-tooltip-v' : 'input-tooltip-h'}`}
+      >
+        {tooltipText ? tooltipText : 'Tooltip text...'}
+      </Tooltip>
 
     </TextInput>
   );
@@ -228,13 +236,6 @@ export const Input = ({
 // #region Component Styles
 // Elements 
 const TextInput = styled.div``;
-const EmailInput = styled.div``;
-const PasswordInput = styled.div``;
-const PhoneInput = styled.div``;
-const CurrencyInput = styled.div``;
-const PolicyNumberInput = styled.div``;
-const SearchInput = styled.div``;
-
 const InputContainer = styled.div``;
 const PrecedingInputElements = styled.div``;
 const SubsequentInputElements = styled.div``;
@@ -243,55 +244,22 @@ const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
 const TooltipIcon = styled.div`pointer-events: all;`;
-const iconContainerStyles = `pointer-events-none grid col-start-1 row-start-1 self-center justify-end focus-within:relative`;
-
-const sortButtonStyles = `rounded-r-md px-3 py-2 font-semibold bg-blue-500 dark:bg-slate-700 text-white`;
-const sortBorderStyles = `border-l border-default transition-all`;
-const borderSelectStyles = (error: boolean): string => 
-  `peer-focus:[&_button]:border-indigo-600 dark:peer-focus:[&_button]:border-indigo-500
-    ${error && '[&_button]:border-red-400 dark:[&_button]:border-red-500'}`;
 
 
 // Input themes and error styles
-// TODO: Default theme styles for input element text and border/outline colors
+const getDisabledThemes = (): string => ` input-disabled`;
+const getErrorThemes = (): string => ` input-error`;
 const getInputClasses = (error: boolean, type: string, disabled?: boolean): string => {
-  let classes = `col-start-1 row-start-1 block w-full`; // Keep layout styling specific to components
-
-  // Icon spacing
-  if (type == 'email' || type == 'policyNumber') classes += ` pl-9`; 
-
-  // Static themes for default/error display
+  let classes = `input-base`; 
+  if (!(type == 'search' || type == 'text' || type == 'currency')) classes += ` input-icon-spacing`; 
   if (disabled)  classes += getDisabledThemes();
   else if (error)  classes += getErrorThemes();
-  return classes;
-}
-
-const getDisabledThemes = (): string => ` input-disabled`;
-const getErrorThemes = (): string => ` error-text outline-error`;
-
-
-// for the currency selection button
-const getDropdownClasses = (error: boolean): string => {
-  let classes = `col-start-1 row-start-1 w-full appearance-none outline-css pl-3 py-2 pr-7`;
-  
-  // Static themes for default/error display
-  if (error) classes += getErrorThemes();
-  else       classes += ` outline-styles`;
   return classes;
 }
 
 
 // Tooltip Styling TODO: this needs to be fixed positioning to handle proper placement with scroll
 const Tooltip = styled.div``;
-const tooltipTheme_Styles = ` 
-  text-xs italic shadow-lg p-2 pr-4 max-w-64
-  bg-default border rounded-md border-styles
-  pointer-events-none transition-all
-`;
-
-const tooltipHoverStyles = `fixed top-0 left-0 z-10 duration-200 ease-in`;
-const tooltipHidden = `opacity-0 *:opacity-0 transition-all`;
-const tooltipVisible = `opacity-100 *:opacity-100 transition-opacity`;
 // #endregion 
 
 

@@ -104,7 +104,7 @@ const currentlySelectedStyles = `min-w-full row justify-between items-center gap
 const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg col flex-grow cursor-pointer`;
 const dropdownScrollStyles = `scrollbar-theme overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
 
-const transitionStyles = `transition-all *:transition-all duration-200 *:duration-200 ease-in *:ease-in`;
+const transitionStyles = `trans *:trans duration-200 *:duration-200 ease-in *:ease-in`;
 const visibilityStyles = `*:opacity-0 *:focus:opacity-100 [&_.currently-selected]:opacity-100`;
 const borderStyles = `outline-css shadow-lg`;
 const borderThemeStyles = `outline-styles`;

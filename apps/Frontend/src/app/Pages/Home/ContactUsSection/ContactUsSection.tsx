@@ -1,10 +1,10 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import styled from '@emotion/styled';
 import { Input, Icon } from '@Project/ReactComponents';
-import { defaultBoxMetadataTags, Textarea } from '../../../Components/Forms/Textarea';
 
 import styles from './ContactUsSection.module.scss';
 import { TechIcon } from '../../../../../../../libraries/ReactComponents/src/Common/Icons/Icon';
+import { defaultBoxMetadataTags, Textarea } from '../../../Components/Forms/Textarea/Textarea';
 
 export const ContactUsSection = () => {
   // LinkedIn, phone, and email information 
@@ -101,7 +101,7 @@ export const ContactUsSection = () => {
         <ContactOptions className='py-4 flex-1 row justify-center'>
           <div className='col gap-2 *:rowStart *:items-center *:gap-4 *:p-2'>
             <div>
-              <Icon variant='Envelope' styles='text-slate-500 dark:text-slate-300 size-6 lg:size-8 hover:theme-focus transition' />
+              <Icon variant='Envelope' styles='text-slate-500 dark:text-slate-300 size-6 lg:size-8 hover:theme-focus trans' />
               <a href={`mailto:${encodeURIComponent(myEmail)}?subject=${encodeURIComponent(defaultSubject)}&body=${encodeURIComponent(body)}`} 
                   className='text-base lg:text-lg italic placeholder-text hover:link-text'
               >
@@ -111,7 +111,7 @@ export const ContactUsSection = () => {
             </div>
 
             <div>
-              <Icon variant='Phone' styles='text-green-600 dark:text-green-500 size-6 lg:size-8 hover:theme-focus transition' />
+              <Icon variant='Phone' styles='text-green-600 dark:text-green-500 size-6 lg:size-8 hover:theme-focus trans' />
               <a href={`tel:${phoneNumber}`} 
                   className='text-base lg:text-lg italic placeholder-text hover:link-text'
               >
@@ -121,7 +121,7 @@ export const ContactUsSection = () => {
             </div>
 
             <div>
-              <Icon variant='LinkedIn' styles='text-sky-600 dark:text-sky-600 size-6 lg:size-8 hover:theme-focus transition' />
+              <Icon variant='LinkedIn' styles='text-sky-600 dark:text-sky-600 size-6 lg:size-8 hover:theme-focus trans' />
               <a href={linkedInProfileLink} 
                   className='text-base lg:text-lg italic placeholder-text hover:link-text'
               >
@@ -149,7 +149,6 @@ export const ContactUsSection = () => {
               error={errors?.firstName?.error}
               errorMessage={errors?.firstName?.message}
 
-              id="ContactUs-FirstName"
               name="ContactUs-FirstName"
             />
           </div>
@@ -167,7 +166,6 @@ export const ContactUsSection = () => {
               error={errors?.lastName?.error}
               errorMessage={errors?.lastName?.message}
 
-              id="ContactUs-LastName"
               name="ContactUs-LastName"
             />
           </div>
@@ -185,7 +183,6 @@ export const ContactUsSection = () => {
               error={errors?.email?.error}
               errorMessage={errors?.email?.message}
 
-              id="ContactUs-Email"
               name="ContactUs-Email"
             />
           </div>
@@ -203,7 +200,6 @@ export const ContactUsSection = () => {
               error={errors?.phone?.error}
               errorMessage={errors?.phone?.message}
 
-              id="ContactUs-Email"
               name="ContactUs-Email"
             />
           </div>
@@ -212,7 +208,6 @@ export const ContactUsSection = () => {
           <div className='span-12 pt-4'>
             <Textarea 
               type="box"
-              id="ContactUs-Message"
               name="ContactUs-Message"
               label="Email to schwegmank@gmail.com"
               value={message}

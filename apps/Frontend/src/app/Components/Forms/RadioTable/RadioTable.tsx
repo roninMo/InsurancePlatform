@@ -124,7 +124,7 @@ const tableItemStyles = `
   rowStart items-start gap-2 
   min-w-full p-4 px-6 
   bg-default border border-default 
-  transition [&_div]:transition duration-500 [&_div]:duration-500 
+  trans [&_div]:trans duration-500 [&_div]:duration-500 
   first:rounded-t-md last:rounded-b-md 
   [&:not(:first-child)]:-mt-[1px] 
 `;
