@@ -94,8 +94,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     ...props
-  } = allProps;
-  const iconStyles = type == 'default' ? 'ta-d-icon' : type == 'box' ? 'ta-b-icon' : 'ta-p-icon'; 
+		} = allProps;
 
 
   // TODO: add a fill bar, from left to right, or from the center out on focus for the variants 
@@ -119,8 +118,8 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
             {/* Icons and post button */}
             <ButtonsAndLinks className={`ta-d-btn-links ${error ? 'ta-d-btn-links-error' : 'ta-d-btn-links-focus'}`}>
               <PrecedingInputElements className="rowStart items-center gap-4 pl-1">
-                <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles} />
-                <Icon variant='Smile'       styles={iconStyles} />
+                <AttachFileElement onClickAttachFile={onAttachFile} iconStyles="ta-d-icon" />
+                <Icon variant='Smile'       styles="ta-d-icon" />
                 {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
               </PrecedingInputElements>
     
@@ -161,7 +160,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
 
         <ButtonsAndLinks className="ta-b-btn-links">
           <div className="ta-b-attach-file">
-            <AttachFileElement onClickAttachFile={onAttachFile} iconStyles={iconStyles + ''} />
+            <AttachFileElement onClickAttachFile={onAttachFile} iconStyles="ta-b-icon" />
             <p className="italic">Attach a file</p>
           </div>
 
@@ -195,7 +194,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
 
     return (
       <Container>
-        { label && <h4 className="py-2 text-slate-800 dark:text-slate-500 font-normal">{ label }</h4> }
+        { label && <h4 className="py-2 ta-p-label">{ label }</h4> }
 
         <ButtonsAndLinks className="row justify-between items-center py-2">
           <div className="row gap-2">
@@ -257,11 +256,7 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
 const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => {
   return (
     <> { (error || description) &&
-      <ErrorAndDescription className={`
-        ${type == 'default' ? 'pl-10'
-        : type == 'box'   ?   'p-2 pl-3'
-        :                     'pb-2' }
-      `}>
+      <ErrorAndDescription className={type == 'default' ? 'ta-error-d-c' : type == 'box' ? 'ta-error-b-c' : 'ta-error-p-c'}>
         { error && errorMessage ?
           <div className="error-text">{ errorMessage }</div>
         : <div className="text-slate-800 dark:text-slate-500">{ description }</div>
@@ -273,10 +268,6 @@ const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => 
 
 // additional action events to capture metadata during input captures. ex. Due dates, tags, etc.
 const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps) => {
-  const styles = "row justify-end gap-2 p-2  *:row *:gap-2 *:p-3 *:py-2 ";
-  const buttonStyles = "*:text-colors *:bg-div-light *:opacity-bg-50 *:rounded-full *:cursor-pointer *:trans ";
-  const postIconStyles = "size-5 cursor-pointer trans placeholder-text hover:input-colors ";
-  const boxIconStyles = "size-5 cursor-pointer trans svg-colors ";
 
   //--------------------------------//
   // metadata tags                  //
@@ -285,10 +276,10 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
 
     // Box variant
     if (type == 'box') return (
-      <PillActions className={styles + buttonStyles}>
+      <PillActions className="metadata-tag-styles">
         { metadataTags.map(({tagLabel, tagIcon, iconStyles, onClickTag }: MetadataTagProps) => 
           <div className="hover:bg-div-light" onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagLabel}`}>
-            { tagIcon && <Icon variant={tagIcon} styles={iconStyles ? iconStyles : boxIconStyles} />}
+            { tagIcon && <Icon variant={tagIcon} styles={iconStyles ? iconStyles : 'metadata-tag-icon-b'} />}
             { tagLabel }
           </div>
         )}
@@ -301,7 +292,7 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
         { metadataTags.map(({tagIcon, iconStyles, onClickTag }: MetadataTagProps) => {
           if (tagIcon) return (
             <div onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagIcon}`}>
-              <Icon variant={tagIcon} styles={iconStyles ? iconStyles : postIconStyles} /> 
+              <Icon variant={tagIcon} styles={iconStyles ? iconStyles : '-metadata-tag-icon-p'} /> 
             </div>
           )}
         )}
@@ -312,7 +303,7 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
   // solely for documentation and display purposes
   else if (typeof metadataTags === 'boolean' && metadataTags == true) {
     if (type == 'box') return (
-      <PillActions className={styles + buttonStyles}>
+      <PillActions className="metadata-tag-styles">
         <div className="hover:bg-div-light"> <Icon variant="Profile"   styles={boxIconStyles} /> Assign </div>
         <div className="hover:bg-div-light"> <Icon variant="Tag"       styles={boxIconStyles} /> Label </div>
         <div className="hover:bg-div-light"> <Icon variant="Calendar"  styles={boxIconStyles} /> Due Date </div>
