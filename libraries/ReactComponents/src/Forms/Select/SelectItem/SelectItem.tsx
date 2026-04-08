@@ -57,7 +57,7 @@ export const SelectItem = ({ item, index, onSelect, styles, currentSelectValue, 
 
 // #region Styling
 const itemStyles = `
-  row gap-2 justify-between items-center p-2 pr-4
+  rowBetween gap-2 items-center p-2 pr-4
   [&_option]:hover:text-slate-200 dark:[&_option]:hover:text-slate-200
   hover:bg-indigo-500 
   [&_svg]:hover:text-slate-200

@@ -96,17 +96,38 @@ const NavbarComponent = ({}: NavbarProps) => {
     return () => clearTimeout(timeout);
   }, [key]);
 
-  const hoveringOverDropdown = (hovering: boolean, event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+  const hoveringOverDropdown = (entering: boolean, event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     if (!isDropdownAllowed) return;
-    
-    const element: any = event?.target as HTMLElement;
-    const isWithinDropdown = element.closest(`#${navbarDropdownId}`);
-    // const isWithinLinks = element.closest(`#${navbarLinks}`);
-    // console.log('hoveringOverDropdown: ', element);
-    
-    // Since it's an element hidden behind the navbar, this is all we needed
-    if (!hovering && isWithinDropdown) setShowDropdown(false);
-    else setShowDropdown(true);
+    if (!event.target) return;
+
+    const element: any = event.target as HTMLElement;
+    const dropdown = element.closest(`#${navbarDropdownId}`);
+    const navLinks = element.closest(`#${navbarLinks}`);
+
+    // It will find these both on enter, and return the element they're within when leaving the element
+    const HoveringDropdown = !!dropdown;
+    const HoveringNavLinks = !!navLinks;
+
+    // TODO: add debugging or custom logging to only be enabled in dev.
+    if (false) { 
+      if (entering) console.log('\n');
+      console.log(`${entering ? 'entering' : 'leaving'}::elements: `, { 
+        HoveringDropdown, HoveringNavLinks, 
+        elements: {dropdown, navLinks} 
+      });
+    }
+
+    // If the dropdown isn't open, only check if they're hovering over the links
+    if (!showDropdown && HoveringNavLinks) {
+      setShowDropdown(true);
+      return;
+    }
+
+    // Otherwise, check if it's leaving the dropdown
+    else if (!entering && HoveringDropdown) {
+      setShowDropdown(false);
+      return;
+    }
   }
   // #endregion
 
@@ -156,7 +177,7 @@ const NavbarComponent = ({}: NavbarProps) => {
 
           <NavLinkContainer id={navbarLinks} className='NavLinks rowStart items-center gap-8'>
             <HomeIcon id="HomeLink" className='rowStart items-center gap-3'>
-              <HashLink url="/" styles='rowStart gap-2 p-2 trans duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
+              <HashLink url="/" styles='rowStart gap-2 p-2 transition-all duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
                 <Icon variant='CodeBracket' styles='size-6 text-blue-600 dark:text-indigo-400' />
               </HashLink>
               <h4 className='label-colors'>Portfolio</h4>
@@ -167,7 +188,7 @@ const NavbarComponent = ({}: NavbarProps) => {
               onMouseEnter={(e) => hoveringOverDropdown(true, e)}
               onMouseLeave={(e) => hoveringOverDropdown(false, e)}
               ref={navbarRef}
-              className='rowStart gap-0 *:p-6 *:px-4 *:trans *:text-base *:cursor-pointer'
+              className='links rowStart gap-0 *:p-6 *:px-4 *:transition-all *:text-base *:cursor-pointer bg-white z-30 opacity-100'
             >
               <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
               <HashLink label="Demos" url="/Demos" styles='bg-div hover:bg-div-hover' />
@@ -180,15 +201,15 @@ const NavbarComponent = ({}: NavbarProps) => {
 
           <Profile className='rowStart items-center gap-4'>
             <div> Account </div>
-            <div id='HomeLink' className='p-2 outline-css rounded-full trans duration-300 cursor-pointer
+            <div id='HomeLink' className='p-2 outline-css rounded-full transition-all duration-300 cursor-pointer
                 bg-default outline-default theme-focus' >
               <Icon variant='Profile' styles='size-6 text-slate-600 dark:text-slate-500' />
             </div>
 
             <div className='' onClick={() => setAndUpdateTheme(currentTheme === 'light' ? 'dark' : 'light')}>
               { currentTheme == 'light' ? 
-                <Icon variant='LightTheme' styles='size-10 cursor-pointer input-colors hover:text-blue-500 trans' /> : 
-                <Icon variant='DarkTheme' styles='size-10 cursor-pointer placeholder-text hover:text-blue-400 trans' />
+                <Icon variant='LightTheme' styles='size-10 cursor-pointer input-colors hover:text-blue-500 transition-all' /> : 
+                <Icon variant='DarkTheme' styles='size-10 cursor-pointer placeholder-text hover:text-blue-400 transition-all' />
               }
             </div>
           </Profile>
@@ -199,7 +220,7 @@ const NavbarComponent = ({}: NavbarProps) => {
           id={navbarDropdownId}
           onMouseEnter={(e) => hoveringOverDropdown(true, e)}
           onMouseLeave={(e) => hoveringOverDropdown(false, e)}
-          className={`absolute w-full bg-div border-styles border-y shadow-xl trans
+          className={`absolute w-full bg-div border-styles border-y shadow-xl transition-all
             height-trans-opacity ${showDropdown ? 'opacity-100 grid-rows-[1fr]' : 'opacity-0 grid-rows-[0fr]'}
         `}>
           <div className={`height-trans-content content-auto ${showDropdown && 'height-trans-op-content'}`}>

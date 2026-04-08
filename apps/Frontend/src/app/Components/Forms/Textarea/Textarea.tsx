@@ -190,7 +190,10 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
   // post style                     //
   //--------------------------------//
   else {
-    const [showPreview, setShowPreview] = useState<boolean>(false);
+    const [showPreview, setShowPreview] = useState<'write' | 'preview'>('write');
+    const togglePreview = (type: 'write' | 'preview') => {
+      setShowPreview(type);
+    }
 
     return (
       <Container>
@@ -200,34 +203,45 @@ export const Textarea = (allProps: TextareaProps & TextareaEventHandlers) => {
           <div className="row gap-2">
             <Button 
               displayText="Write" 
-              onClick={() => setShowPreview(!showPreview)} 
+              onClick={() => togglePreview('write')} 
               size="default" 
               color="none"
               additionalStyles={showPreview ? 'btn-gray-focus' : 'btn-gray'}
             />
             <Button 
               displayText="Preview" 
-              onClick={() => setShowPreview(!showPreview)} 
+              onClick={() => togglePreview('preview')} 
               size="default" 
               color="none"
               additionalStyles={showPreview ? 'btn-gray' : 'btn-gray-focus'}
             />
           </div>
 
-          { !showPreview && 
+          { showPreview == 'write' && 
             <MetadataTagElements type='post' metadataTags={metadataTags} id={name} />
           }
         </ButtonsAndLinks>
 
-        { showPreview ? 
-          <div className="p-2 pb-10 mb-1 border-b border-styles">
-            { value ? value : 'Preview content will render here.' }
+        <div className={`height-trans ${showPreview == 'preview' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+          <div className="height-trans-content ">
+          { showPreview == 'preview' && 
+            <div className="ta-p-read-c">
+              { value ? value : 'Preview content will render here.' }
+            </div>
+          }
           </div>
-        : 
+        </div>
+
+        <div className={`height-trans ${showPreview == 'write' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+          <div className="height-trans-content ">
+          { showPreview == 'write' && 
           <div className="">
-            <InputComponent { ...allProps } />
+              <InputComponent { ...allProps } />
           </div>
-        }
+          }
+          </div>
+        </div>
+
         
         <div className="row justify-between pt-1">
           <ErrAndDescElements 
@@ -259,7 +273,7 @@ const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => 
       <ErrorAndDescription className={type == 'default' ? 'ta-error-d-c' : type == 'box' ? 'ta-error-b-c' : 'ta-error-p-c'}>
         { error && errorMessage ?
           <div className="error-text">{ errorMessage }</div>
-        : <div className="text-slate-800 dark:text-slate-500">{ description }</div>
+        : <div className="text-colors dark:text-slate-500">{ description }</div>
         }
       </ErrorAndDescription>
     } </>
@@ -278,7 +292,7 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
     if (type == 'box') return (
       <PillActions className="metadata-tag-styles">
         { metadataTags.map(({tagLabel, tagIcon, iconStyles, onClickTag }: MetadataTagProps) => 
-          <div className="hover:bg-div-light" onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagLabel}`}>
+          <div className="ta-pill-actions" onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagLabel}`}>
             { tagIcon && <Icon variant={tagIcon} styles={iconStyles ? iconStyles : 'metadata-tag-icon-b'} />}
             { tagLabel }
           </div>
@@ -292,7 +306,7 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
         { metadataTags.map(({tagIcon, iconStyles, onClickTag }: MetadataTagProps) => {
           if (tagIcon) return (
             <div onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagIcon}`}>
-              <Icon variant={tagIcon} styles={iconStyles ? iconStyles : '-metadata-tag-icon-p'} /> 
+              <Icon variant={tagIcon} styles={iconStyles ? iconStyles : 'metadata-tag-icon-p'} /> 
             </div>
           )}
         )}
@@ -304,17 +318,17 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
   else if (typeof metadataTags === 'boolean' && metadataTags == true) {
     if (type == 'box') return (
       <PillActions className="metadata-tag-styles">
-        <div className="hover:bg-div-light"> <Icon variant="Profile"   styles={boxIconStyles} /> Assign </div>
-        <div className="hover:bg-div-light"> <Icon variant="Tag"       styles={boxIconStyles} /> Label </div>
-        <div className="hover:bg-div-light"> <Icon variant="Calendar"  styles={boxIconStyles} /> Due Date </div>
+        <div className="ta-pill-actions"> <Icon variant="Profile"   styles="metadata-tag-icon-b" /> Assign </div>
+        <div className="ta-pill-actions"> <Icon variant="Tag"       styles="metadata-tag-icon-b" /> Label </div>
+        <div className="ta-pill-actions"> <Icon variant="Calendar"  styles="metadata-tag-icon-b" /> Due Date </div>
       </PillActions>
     );
 
     else if (type == 'post') return (
       <div className="row gap-4">
-        <Icon variant="Link"        styles={postIconStyles} />
-        <Icon variant="CodeBracket" styles={postIconStyles} />
-        <Icon variant="AtSymbol"    styles={postIconStyles} />
+        <Icon variant="Link"        styles="metadata-tag-icon-p" />
+        <Icon variant="CodeBracket" styles="metadata-tag-icon-p" />
+        <Icon variant="AtSymbol"    styles="metadata-tag-icon-p" />
       </div>
     );
   }

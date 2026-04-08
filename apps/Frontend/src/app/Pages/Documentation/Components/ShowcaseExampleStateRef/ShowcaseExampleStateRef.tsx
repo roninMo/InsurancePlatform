@@ -26,10 +26,12 @@ export const ShowcaseExample_StateRef = ({
   });
 
   const onSelectState = (type: ElementStateTypes | string) => {
+    const currentTypeValue = elementStates?.[type as ElementStateTypes] || false;
     const nextTypeValue = !elementStates?.[type as ElementStateTypes] || false;
     const clearedState: any = Object.fromEntries(Object.entries(elementStates)
       ?.map(([type, isSelected]) => [type, false])); // { 'error': false }
 
+    if (currentTypeValue) return; // Stop if they're selecting the current state
     setElementStates((prevState: Record<ElementStateTypes, boolean>) => {
       const nextState = clearedState;
       nextState[type as ElementStateTypes] = nextTypeValue;

@@ -229,7 +229,7 @@ export const CustomContent = () => {
           />
         </div>
 
-        <div className='span-12 md:span-8 lg:span-4 p-2'>
+        <div className='span-12 md:span-8 lg:span-4 p-6 pt-2 pb-64 bg-gray-300 dark:bg-gray-900 outline-css outline-styles'>
           <Select 
             name="inputType"
             label="Input Type"
@@ -240,7 +240,6 @@ export const CustomContent = () => {
         </div>
         
       </div>
-
 
       {/* Input and Textarea */}
       <div className='spacing p-2 bg-div outline-css outline-styles'>

@@ -92,7 +92,7 @@ export const Input = ({
 
 
   // Error handling
-  const shouldDisplayError = (): boolean => error && !disabled;
+  const getError = (): boolean => (error && !disabled);
 
   // Password visibility
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -159,8 +159,8 @@ export const Input = ({
             { type == 'creditCard' && <Icon variant='CreditCard' styles='input-icon-def' /> }
             { type == 'password' && 
               <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
-                { !showPassword && <Icon variant='EyeSlash' styles='input-icon-def' /> }
-                { showPassword && <Icon variant='Eye' styles='input-icon-def' /> }
+                { showPassword && <Icon variant='EyeSlash' styles='input-icon-def' /> }
+                { !showPassword && <Icon variant='Eye' styles='input-icon-def' /> }
               </div>
             }
             {/* TODO: custom icons preceding input */}
@@ -171,7 +171,7 @@ export const Input = ({
         {/* Elements after the input */}
         <SubsequentInputElements className={`input-subsequent-el`}>
           <div className={`row flex-grow justify-items-end items-center`}>
-            { shouldDisplayError() ?
+            { getError() ?
               <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
             : 
               <TooltipIcon 
@@ -187,14 +187,14 @@ export const Input = ({
             {/* Currency and Search */}
             { type == 'currency' ? 
               <CurrencySelectContainer className='row relative'>
-                <CurrencySelect id="currency" name="currency" className={`input-curr ${error ? 'input-curr-error' : 'input-curr-focus'}`}>
+                <CurrencySelect id="currency" name="currency" className={`input-curr ${getError() ? 'input-curr-error' : ''}`}>
                   <option>USD</option> <option>CAD</option> <option>EUR</option>
                 </CurrencySelect>
                 <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
               </CurrencySelectContainer>
 
             : type == 'search' ? 
-              <SortSearchButton type="button" className={`input-sort-btn ${error ? 'input-sort-error' : ''}`}>
+              <SortSearchButton type="button" className={`input-sort-btn ${getError() ? 'input-sort-error' : ''}`}>
                 <Icon variant='Sort' styles='size-5 text-slate-100 dark:text-slate-400' />
                 Sort
               </SortSearchButton>
@@ -212,7 +212,7 @@ export const Input = ({
       </InputContainer>
 
       {/* Error / Description messages */}
-      { shouldDisplayError() && errorMessage ? 
+      { getError() && errorMessage ? 
         <p id={`${id}-error-message`} className="mt-2 ml-1 error-text"> { errorMessage } </p>
       : description && 
         <p id={`${id}-email-description`} className="mt-2 ml-1"> { description } </p>

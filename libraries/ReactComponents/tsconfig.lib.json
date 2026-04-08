@@ -8,6 +8,7 @@
       "@nx/react/typings/image.d.ts",
       "vite/client"
     ],
+    "lib": ["dom"], // document reference - Add "dom" here
     "rootDir": "src",
     "jsx": "react-jsx",
     "module": "esnext",

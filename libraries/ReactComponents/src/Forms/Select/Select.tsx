@@ -1,8 +1,8 @@
-import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction, useId } from "react";
+import { FocusEvent, MouseEvent, useEffect, useId, useState } from "react";
 
-import { Icon, IconTypes } from '../../Common/Icons/Icon';
 import { InputEventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItem, SelectItemValues } from './SelectItem/SelectItem';
+import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
 import styles from './Select.module.scss';
 import styled from '@emotion/styled';
@@ -14,6 +14,8 @@ export interface SelectProps {
   description?: string;
   value: SelectItemValues;
   values: SelectItemValues[];
+  multiSelect?: boolean;
+  // focusType: mouseLeaveCloses, onSelectCloses
   onSelect?: (selected: SelectItemValues, index: number) => void;
   placeholder?: string;
 
@@ -23,66 +25,120 @@ export interface SelectProps {
   required?: boolean;
 }
 
-
+// Custom select component for themes and advanced functionality
 export const Select = ({
-  name, label, description, value, values, onSelect, placeholder,
-  onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  error = false, errorMessage, disabled = false, required = false, ...props
+  name, label, description, value, values, multiSelect, onSelect, placeholder,
+  onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
+  error = false, errorMessage, disabled = false, required = false
 }: SelectProps & InputEventHandlers) => {
   const id = useId();
-  // TODO: option to unfocus after the user has selected a value
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const dropdownId = `select-dropdown-${name}`;
+  const selectId = `select-${name}`;
 
-  const selectPressed = (e: MouseEvent<HTMLInputElement, Element>) => {
-    // todo: change the styling to open / close when clicked, including when already open instead of focus styling
+  // Select Events
+  const itemSelected = (selected: SelectItemValues, index: number) => {
+    if (onSelect) onSelect(selected, index);
 
-    if (onClick) onClick(e);
+    console.log(`item ${index} selected: `, selected);
+    if (!multiSelect && dropdownOpen) setDropdownOpen(false);
   }
 
+  // onClick
+  const openSelect = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    if (onClick) onClick(e as any);
+    if (!dropdownOpen) setDropdownOpen(true);
+    // TODO: should tabbing through focused events open the dropdown when they tab to it or the select?
+  }
+
+  // Handles closing the dropdown
+  useEffect(() => {
+    const handleOutsideClick = (e: globalThis.MouseEvent) => {
+      const element: any = e.target as HTMLElement;
+      if (!element) {
+        if (dropdownOpen) setDropdownOpen(false);
+        return;
+      }
+
+      const dropdown = element.closest(`#${dropdownId}`);
+      const select = element.closest(`#${selectId}`);
+      const isInside = !!dropdown || !!select;
+      if (!isInside) {
+        setDropdownOpen(false);
+      }
+    }
+    
+    // When the dropdown opens
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+
+    // Removed when dropdownOpen is false or the component unmounts
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [dropdownOpen]);
+
+
+  // Error handling
+  const getError = (): boolean => (error && !disabled);
+
+
   return (
-    <Container className={`${containerStyles}`}>
-      <Label className={`block pb-2`}>
+    <Container className="select-container">
+      <Label className="select-label">
         { label }
       </Label>
 
       <StyledSelect 
-        name={name} 
-        onChange={e => onChange && onChange(e)}
-        onBlur={e => onBlur && onBlur(e)}
-        onFocus={e => onFocus && onFocus(e)}
-        onClick={e => selectPressed(e)}
-        { ...props }
-        className={`${selectStyles} ${transitionStyles} ${visibilityStyles} *:bg-default`}
+        name={name} id={selectId} 
+        value={value?.value} type="button" 
+        onFocus={(e) => onFocus && onFocus(e as any)}
+        onClick={(e) => openSelect(e)}
+        onBlur={(e) => onBlur && onBlur(e as any)}
+        className={`select-base group
+          ${disabled ? 'select-disabled' : '' } 
+          ${!disabled && dropdownOpen ? 'select-focus' : ''}
+          ${getError() ? 'select-error' : ''}
+        `}
       >
-        <CurrentlySelected className={`currently-selected ${currentlySelectedStyles} ${transitionStyles} ${borderStyles} ${getErrorThemes(error)}`}>
-          <span> { value.value ? value.label : placeholder } </span>
+        <CurrentlySelected className={`currently-selected 
+          ${disabled ? 'currently-selected-disabled' : ''}
+          ${!disabled && dropdownOpen ? 'currently-selected-focus' : ''}
+          ${getError() ? 'currently-selected-error' : ''}
+        `}>
+          <span className={`text-sm ${value?.value ? 'text-colors' : 'placeholder-text'}`}> 
+            { value.value ? value.label : placeholder } 
+          </span>
 
           <div className='row gap-1 items-center justify-end'>
             { error && <Icon variant='Error' styles='size-4 error-text' />}
-            <Icon variant='SelectArrow' styles={`size-5 rotate-0 group-focus:rotate-180 ${error && 'error-text'}`} />
+            <Icon variant='SelectArrow' styles={`select-i-arrow ${error && 'error-text'}`} />
           </div>
         </CurrentlySelected>
-
-        {/* TODO: this is affected by overflow, but it shouldn't */}
-        <DropdownItems
-          onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
-          onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
-          className={`dropdown-items ${dropdownStyles} ${!disabled ? dropdownScrollStyles : disabledStyles} ${borderStyles} ${borderThemeStyles}`}
-        >
-          {values.map((item: SelectItemValues, index: number) => 
-            <SelectItem 
-              item={item}
-              index={index}
-              onSelect={onSelect}
-              styles={transitionStyles}
-              currentSelectValue={value}
-              id={id}
-              key={`${id}-${index}-${item.value}`}
-            />
-          )}
-        </DropdownItems>
       </StyledSelect>
 
-      <Description className={`mt-2 ${error && 'error-text'}`}>
+      <DropdownItems
+        onMouseEnter={e => onMouseEnter && onMouseEnter(e as any)}
+        onMouseLeave={e => onMouseLeave && onMouseLeave(e as any)}
+        id={dropdownId} className={`select-dropdown 
+          ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
+          ${getError() ? 'select-dd-error' : ''}
+          ${!disabled ? 'select-dd-scroll' : 'select-dd-disabled'}
+        `}
+      >
+        {values.map((item: SelectItemValues, index: number) => 
+          <SelectItem 
+            item={item}
+            index={index}
+            onSelect={itemSelected} // onSelect - (selected: SelectItemValues, index: number) => void;
+            styles="transition-all *:transition-all duration-200 *:duration-200 ease-in *:ease-in"
+            currentSelectValue={value}
+            id={id}
+            key={`${id}-${index}-${item.value}`}
+          />
+        )}
+      </DropdownItems>
+
+      <Description className={`mt-2 select-desc ${getError() && 'error-text'}`}>
         { error && errorMessage ? 
           <>{ errorMessage }</>
         : description &&
@@ -94,36 +150,10 @@ export const Select = ({
 }
 
 
-
-// #region Styling
-// TODO: These should be global theme styles
-const containerStyles = `w-full`;
-const selectStyles = `min-w-full relative group overflow-hidden focus:overflow-visible cursor-default`;
-const currentlySelectedStyles = `min-w-full row justify-between items-center gap-2 p-2`;
-
-const dropdownStyles = `absolute left-0 mt-1 w-full z-10 shadow-lg col flex-grow cursor-pointer`;
-const dropdownScrollStyles = `scrollbar-theme overflow-y-scroll overflow-x-hidden scroll-smooth max-h-48`;
-
-const transitionStyles = `trans *:trans duration-200 *:duration-200 ease-in *:ease-in`;
-const visibilityStyles = `*:opacity-0 *:focus:opacity-100 [&_.currently-selected]:opacity-100`;
-const borderStyles = `outline-css shadow-lg`;
-const borderThemeStyles = `outline-styles`;
-
-const errorStyles = `error error-outline`;
-const disabledStyles = `hidden overflow-hidden opacity-0`;
-
-const getErrorThemes = (error: boolean) => {
-  if (error) return errorStyles;
-  else return borderThemeStyles;
-}
-
-
 // Component styles
 const Container = styled.div``;
 const Label = styled.label``;
 const Description = styled.p``;
 const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
-const DropdownItems = styled.div`
-`;
-// #endregion
+const DropdownItems = styled.div``;
