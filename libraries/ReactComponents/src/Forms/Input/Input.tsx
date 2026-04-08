@@ -4,7 +4,7 @@ import { InputMask, useMask } from '@react-input/mask';
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
 import { Icon } from '../../Common/Icons/Icon';
-import { InputEventHandlers } from '../../Common/Utilities/Utils';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 
 
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
@@ -40,7 +40,7 @@ export const Input = ({
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, opts, ...props
-}: InputProps & InputEventHandlers) => {
+}: InputProps & UniversalEventHandlers) => {
   const id = useId();
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
   const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This might mess with seeing loading with actual load times

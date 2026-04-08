@@ -1,22 +1,12 @@
 import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction } from "react";
 
 
-export interface InputEventHandlers {
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: FocusEvent<HTMLInputElement, Element>) => void;
-  onFocus?: (e: FocusEvent<HTMLInputElement, Element>) => void;
-  onClick?: (e: MouseEvent<HTMLInputElement, Element>) => void;
-  onMouseEnter?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
-  onMouseLeave?: (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => void;
-  // adjustValue?: (setState: Dispatch<SetStateAction<any>>) => void;
-}
-
-export interface TextareaEventHandlers {
-  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-  onBlur?: (e: FocusEvent<HTMLTextAreaElement, Element>) => void;
-  onFocus?: (e: FocusEvent<HTMLTextAreaElement, Element>) => void;
-  onClick?: (e: MouseEvent<HTMLTextAreaElement, globalThis.MouseEvent>) => void;
-  onMouseEnter?: (e: MouseEvent<HTMLTextAreaElement, globalThis.MouseEvent>) => void;
-  onMouseLeave?: (e: MouseEvent<HTMLTextAreaElement, globalThis.MouseEvent>) => void;
-  // adjustValue?: (setState: Dispatch<SetStateAction<any>>) => void;
+export interface UniversalEventHandlers<T extends HTMLElement = HTMLElement> {
+  // ChangeEvent usually specifically needs to know about value/checked
+  onChange?: (e: ChangeEvent<any>) => void; 
+  onFocus?: (e: FocusEvent<T>) => void;
+  onClick?: (e: MouseEvent<T>) => void;
+  onBlur?: (e: FocusEvent<T>) => void;
+  onMouseEnter?: (e: MouseEvent<T>) => void;
+  onMouseLeave?: (e: MouseEvent<T>) => void;
 }

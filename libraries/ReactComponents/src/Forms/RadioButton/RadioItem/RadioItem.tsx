@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { RadioItem, RadioVariant } from '../RadioGroup';
 
 import styles from './RadioItem.module.scss';
-import { InputEventHandlers } from '@Project/ReactComponents';
+import { UniversalEventHandlers } from '@Project/ReactComponents';
 
 export interface RadioItemProps {
   variant: RadioVariant;
@@ -23,7 +23,7 @@ export interface RadioItemProps {
 export const RadioGroupItem = ({ 
   checked, onSelect, value, inputName, id, variant, index, error, disabled,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
-}: RadioItemProps & InputEventHandlers) => {
+}: RadioItemProps & UniversalEventHandlers) => {
   const getContainerStyles = (): string => {
     if (variant == 'default') return defaultStyles;
     if (variant == 'list') return listStyles;
@@ -42,8 +42,8 @@ export const RadioGroupItem = ({
   return (
     <Container 
       className={`${getContainerStyles()}`} 
-      onMouseEnter={e => onMouseEnter && onMouseEnter(e as any)}
-      onMouseLeave={e => onMouseLeave && onMouseLeave(e as any)}
+      onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
+      onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
     >
       <div className={`radio-container`}>
         <Radio 
@@ -59,7 +59,7 @@ export const RadioGroupItem = ({
 
           onBlur={e => onBlur && onBlur(e)}
           onFocus={e => onFocus && onFocus(e)}
-          onClick={e => onClick && onClick(e as any)}
+          onClick={e => onClick && onClick(e)}
         />
       </div>
 

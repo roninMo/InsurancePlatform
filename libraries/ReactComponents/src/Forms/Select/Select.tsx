@@ -1,6 +1,6 @@
 import { FocusEvent, MouseEvent, useEffect, useId, useState } from "react";
 
-import { InputEventHandlers } from '../../Common/Utilities/Utils';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItem, SelectItemValues } from './SelectItem/SelectItem';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
@@ -30,7 +30,7 @@ export const Select = ({
   name, label, description, value, values, multiSelect, onSelect, placeholder,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   error = false, errorMessage, disabled = false, required = false
-}: SelectProps & InputEventHandlers) => {
+}: SelectProps & UniversalEventHandlers) => {
   const id = useId();
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const dropdownId = `select-dropdown-${name}`;
@@ -46,7 +46,7 @@ export const Select = ({
 
   // onClick
   const openSelect = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-    if (onClick) onClick(e as any);
+    if (onClick) onClick(e);
     if (!dropdownOpen) setDropdownOpen(true);
     // TODO: should tabbing through focused events open the dropdown when they tab to it or the select?
   }
@@ -91,9 +91,9 @@ export const Select = ({
       <StyledSelect 
         name={name} id={selectId} 
         value={value?.value} type="button" 
-        onFocus={(e) => onFocus && onFocus(e as any)}
+        onFocus={(e) => onFocus && onFocus(e)}
         onClick={(e) => openSelect(e)}
-        onBlur={(e) => onBlur && onBlur(e as any)}
+        onBlur={(e) => onBlur && onBlur(e)}
         className={`select-base group
           ${disabled ? 'select-disabled' : '' } 
           ${!disabled && dropdownOpen ? 'select-focus' : ''}
@@ -117,8 +117,8 @@ export const Select = ({
       </StyledSelect>
 
       <DropdownItems
-        onMouseEnter={e => onMouseEnter && onMouseEnter(e as any)}
-        onMouseLeave={e => onMouseLeave && onMouseLeave(e as any)}
+        onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
+        onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
         id={dropdownId} className={`select-dropdown 
           ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
           ${getError() ? 'select-dd-error' : ''}
