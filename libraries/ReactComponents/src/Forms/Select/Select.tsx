@@ -116,26 +116,29 @@ export const Select = ({
         </CurrentlySelected>
       </StyledSelect>
 
-      <DropdownItems
-        onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
-        onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
-        id={dropdownId} className={`select-dropdown 
-          ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
-          ${getError() ? 'select-dd-error' : ''}
-          ${!disabled ? 'select-dd-scroll' : 'select-dd-disabled'}
-        `}
-      >
-        {values.map((item: SelectItemValues, index: number) => 
-          <SelectItem 
-            item={item}
-            index={index}
-            onSelect={itemSelected} // onSelect - (selected: SelectItemValues, index: number) => void;
-            currentSelectValue={value}
-            name={name}
-            key={`${id}-${index}-${item.value}`}
-          />
-        )}
-      </DropdownItems>
+			
+	      <DropdownItems
+	        onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
+	        onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
+	        id={dropdownId} className={`select-dropdown
+	          ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
+	          ${getError() ? 'select-dd-error' : ''}
+	          ${!disabled ? 'select-dd-scroll' : 'select-dd-disabled'}
+						height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
+				`}>			
+     			<div className={`height-trans-content`}>
+		        {values.map((item: SelectItemValues, index: number) => 
+		          <SelectItem 
+		            item={item}
+		            index={index}
+		            onSelect={itemSelected} 
+		            currentSelectValue={value}
+		            name={name}
+		            key={`${id}-${index}-${item.value}`}
+		          />
+		        )}
+					</div>
+				</DropdownItems>
 
       <Description className={`mt-2 select-desc ${getError() && 'error-text'}`}>
         { error && errorMessage ? 
