@@ -85,21 +85,21 @@
   .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue  active:btn-primary-active;  }
   .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue  active:btn-gray-active;  }
   .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue  active:btn-gray-focus-active;  }
-  .btn-text         { @apply input-colors; }
+  .btn-text         { @apply text-slate-200 dark:text-slate-200; }
 
   .btn-outline-white  { @apply outline-slate-200 dark:outline-slate-200; }
   .btn-outline-blue   { @apply   outline-focus; }
 
-  .btn-primary-colors { @apply bg-indigo-600 dark:bg-indigo-500 outline-indigo-600 dark:outline-indigo-600; }
-  .btn-primary-hover { @apply bg-indigo-500 dark:bg-indigo-400; }
-  .btn-primary-active { @apply bg-indigo-600 dark:bg-indigo-500; }
+  .btn-primary-colors { @apply bg-blue-600 dark:bg-indigo-500 outline-indigo-600 dark:outline-indigo-600; }
+  .btn-primary-hover { @apply  bg-blue-500 dark:bg-indigo-400; }
+  .btn-primary-active { @apply bg-blue-700 dark:bg-indigo-600; }
   
-  .btn-gray-colors { @apply bg-div-light outline-slate-400 dark:outline-slate-700; }
-  .btn-gray-hover { @apply bg-slate-300 dark:bg-slate-600; }
+  .btn-gray-colors { @apply   bg-div-light outline-slate-400 dark:outline-slate-700; }
+  .btn-gray-hover { @apply  bg-slate-300 dark:bg-slate-600; }
   .btn-gray-active { @apply bg-slate-400 dark:bg-slate-700; }
   
-  .btn-gray-focus-colors { @apply bg-default outline-white dark:outline-slate-800; }
-  .btn-gray-focus-hover { @apply bg-slate-200 dark:bg-slate-700; }
+  .btn-gray-focus-colors { @apply   bg-default outline-white dark:outline-slate-800; }
+  .btn-gray-focus-hover { @apply  bg-slate-200 dark:bg-slate-700; }
   .btn-gray-focus-active { @apply bg-slate-300 dark:bg-slate-800; }
 
   // hover states
@@ -377,6 +377,39 @@
   .select-desc {
     @apply text-sm text-colors;
   }
+
+
+  // Select Item
+  .select-item {
+    @apply 
+      rowBetween gap-2 items-center p-2 pr-4
+      transition-all duration-200 ease-in
+
+      hover:btn-primary-colors
+    ;
+  }
+  // [&_option]:hover:text-slate-200
+
+  .select-item-active { @apply btn-primary-colors opacity-bg-80; }
+
+  .select-item-text {
+    @apply 
+      transition-all 
+      text-colors group-hover:btn-text;
+  }
+
+  .select-item-text-active {
+    @apply btn-text;
+  }
+
+  .select-item-i {
+    @apply size-4 text-colors hover:input-colors transition-all;
+  }
+
+  .select-item-i-active {
+    @apply theme-focus-2;
+  }
+
 
   // #endregion
 

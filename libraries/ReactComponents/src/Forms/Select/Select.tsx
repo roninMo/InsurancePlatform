@@ -130,9 +130,8 @@ export const Select = ({
             item={item}
             index={index}
             onSelect={itemSelected} // onSelect - (selected: SelectItemValues, index: number) => void;
-            styles="transition-all *:transition-all duration-200 *:duration-200 ease-in *:ease-in"
             currentSelectValue={value}
-            id={id}
+            name={name}
             key={`${id}-${index}-${item.value}`}
           />
         )}

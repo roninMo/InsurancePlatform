@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, MouseEvent, RefObject, useEffect, useId, useRef, useState } from 'react';
+import { MouseEvent, RefObject, useId, useRef, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
@@ -106,17 +106,17 @@ export const Input = ({
   // Tooltip logic
   const [tooltipActive, setTooltipActive] = useState<boolean>(false);
   const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
-  const tooltipMouseEnter = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
+  const tooltipMouseEnter = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     // console.log('mouse enter tooltip', {Event: e});
     setTooltipActive(true);
   }
   
-  const tooltipMouseLeave = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>) => {
+  const tooltipMouseLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     // console.log('mouse leave tooltip', {Event: e});
     setTooltipActive(false);
   }
 
-  const toolTipHover = (e: MouseEvent<HTMLInputElement, globalThis.MouseEvent>): void => {
+  const toolTipHover = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>): void => {
     const coordinates = { x: e.clientX, y: e.clientY };
     tooltipCoordinates.current = coordinates;
     // console.log(`mouseCoordinates: `, tooltipCoordinates.current); //  {x: coordinates.x, y: coordinates.y });

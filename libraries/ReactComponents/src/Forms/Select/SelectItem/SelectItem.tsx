@@ -20,35 +20,38 @@ export interface SelectItemProps {
   item: SelectItemValues;
   index: number;
   onSelect?: (selected: SelectItemValues, index: number) => void;
-  styles?: string;
   currentSelectValue: SelectItemValues;
-  id: string;
+  name: string; // "form group id"
 }
 
 
-export const SelectItem = ({ item, index, onSelect, styles, currentSelectValue, id }: SelectItemProps) => {
-  // console.log('props', { item, index, onSelect, styles, currentSelectValue, id });
+export const SelectItem = ({ item, index, onSelect, currentSelectValue, name }: SelectItemProps) => {
+  const { value, label, iconProps } = item;
+  const currentlySelected = () => value == currentSelectValue.value;
+  
   return (
     <Container 
       onClick={() => onSelect && onSelect(item, index)} 
-      className={`${itemStyles} ${styles} 
-      ${item.value == currentSelectValue.value && activeItemStyles}`}
-      id={`${id}-${item.value}`}
+      className={`select-item group ${currentlySelected() ? 'select-item-active' : ''}`}
     >
-      <LeftHandSide className={`row justify-start gap-2 items-center`}>
-        {item.iconProps && item?.iconProps.placement == 'left' && 
+      <LeftHandSide className={`rowStart gap-2 items-center`}>
+        {/* Icon (left side aligned) */}
+        {iconProps && iconProps.placement == 'left' && 
           <div className={`icon-placeholder min-h-4 min-w-5`}> 
-              <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
+            <Icon variant={iconProps.icon} styles={iconProps.styles ? iconProps.styles : ''} /> 
           </div>
         }
 
-        <option value={item.value} id={`${id}-option-${index}`}> 
-          { item.label } 
-        </option>
+        <ItemText value={value} id={`${name}-option-${index}`} 
+          className={`select-item-text ${currentlySelected() ? 'select-item-text-active' : ''}`}
+        > 
+          { label } 
+        </ItemText>
       </LeftHandSide>
 
-      {item.iconProps && item?.iconProps.placement != 'left' && // if the icon placement is on the right (handles default object args)
-        <Icon variant={item.iconProps.icon} styles={item.iconProps.styles ? item.iconProps.styles : undefined} /> 
+      {/* Icon (right side aligned) */}
+      {iconProps && iconProps.placement != 'left' && 
+        <Icon variant={iconProps.icon} styles={iconProps.styles ? iconProps.styles : ''} /> 
       }
     </Container>
   );
@@ -72,4 +75,5 @@ const activeItemStyles = `
 
 const Container = styled.span``;
 const LeftHandSide = styled.div``;
+const ItemText = styled.option``;
 // #endregion
