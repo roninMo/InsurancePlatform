@@ -74,7 +74,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
         required={required}
         disabled={disabled}
 
-        // TODO: add global theme styling for the textarea variants
+        // TODO: almost done with themes, need to add disabled / error themes
         className={`ta-base
           ${type == 'default' ? 'ta-d-base' : ''}
           ${type == 'box' ? 'ta-b-base' : ''}

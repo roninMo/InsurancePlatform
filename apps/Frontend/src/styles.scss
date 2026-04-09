@@ -580,7 +580,7 @@
   
   .select-dd-open { @apply opacity-100; }
   .select-dd-closed { @apply opacity-0 pointer-events-none; }
-  .select-dd-error { @apply outline-error error-text; }
+  .select-dd-error { @apply /*outline-error*/ error-text; }
   .select-dd-disabled { @apply hidden overflow-y-hidden opacity-0; }
 
 

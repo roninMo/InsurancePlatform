@@ -30,6 +30,11 @@ export const RadioTable = ({
   error, errorMessage, disabled, required,
 }: RadioTableProps) => {
   const id = useId();
+
+  const onSelectedRadioItem = (item: RadioItem, index: number, currentValue: RadioItem) => {
+    if (disabled) return; // This isn't handled through the input's change event
+    onSelect(item, index, currentValue);
+  }
   
   // Get functions
   const isSelected = (item: RadioItem): boolean => currentValue.value == item.value;
@@ -46,7 +51,7 @@ export const RadioTable = ({
       <Table className={`colStart mt-4 bg-default rounded-md`}>
         {radioItems.map((item: RadioItem, index: number) => 
           <RadioTableItem 
-            onClick={() => onSelect(item, index, currentValue)} 
+            onClick={() => onSelectedRadioItem(item, index, currentValue)} 
             onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
             onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
             key={`rti-${name}-${item.value}-${index}-${id}`}
