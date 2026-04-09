@@ -259,7 +259,6 @@
   }
   .input-curr-error { @apply outline-error outline-css group-focus-within:outline-none; }
 
-
   // input search sort button
   .input-sort-btn {
     @apply
@@ -281,7 +280,6 @@
   }
   .input-sort-focus { @apply group-focus-within:border-l-[3px]; }
   .input-sort-error { @apply outline-error dark:outline-error group-focus-within:outline-none; }
-
 
   // Input tooltip
   .input-tooltip-hover { @apply fixed top-0 left-0 z-10 ease-in; }
@@ -309,6 +307,29 @@
   }
   // #endregion
 
+	
+	// Button element classes
+	// #region Button component styles
+	.button-base {
+		@apply
+			m-auto inline-flex items-center 
+			cursor-pointer transition-all
+			font-semibold text-nowrap
+			shadow-md outline-css focus:outline-focus
+	}
+	
+	.btn-al-d  { @apply px-2.5 py-1.5; }
+	.btn-al-md { @apply px-3 py-2; }
+	.btn-al-lg { @apply px-3.5 py-2.5; }
+	.btn-al-xl { @apply px-5 py-3; }
+	
+	.btn-el-primary { @apply btn-primary text-white; }
+	.btn-el-gray { @apply btn-gray text-black dark:text-white; }
+	.btn-el-gray-focus { @apply btn-gray-focus text-black dark:text-white; }
+	
+	// #endregion
+	
+	
   // Checkbox element classes
   // #region Checkbox component styles
   .checkbox-c { 
@@ -347,6 +368,7 @@
   .checkbox-label { @apply label-colors; }
   .checkbox-desc { @apply text-colors; }
 
+	
   /* normal: check before:content-['✓'] */
   /* normal:x-mark before:content-['✗'] */
   /* bold:   check before:content-['✔'] */
@@ -378,16 +400,6 @@
       dark:disabled:checked:outline-slate-400
     ;
   }
-  
-  /* 
-  
-
-      disabled:checked:bg-slate-300
-      disabled:checked:outline-slate-400
-      
-      dark:disabled:checked:outline-slate-500
-      dark:disabled:checked:bg-slate-400
-  */
 
   .checkbox-error {
     @apply 
@@ -400,6 +412,7 @@
 
   // #endregion
 
+	
   // Radio element classes
   // #region Radio component styles
   .radio-group {
@@ -421,6 +434,7 @@
     ;
   }
   
+	// radio item container variants
   .radio-item-c {
     @apply cursor-pointer transition-all
     
@@ -477,6 +491,7 @@
   .radio-text-l { @apply colStart items-start gap-2; }
   // #endregion
 
+	
   // Radio element classes
   // #region Radio Table component styles
   .radio-table {
@@ -527,6 +542,7 @@
 
   // #endregion
 
+	
   // Select element classes
   // #region Select component styles
   .select-container { 
@@ -547,7 +563,7 @@
   .select-focus { @apply outline-focus; }
   .select-error { @apply outline-error; }
 
-
+	// currently selected
   .currently-selected {
     @apply 
       rowBetween items-center gap-2 p-2
@@ -560,7 +576,7 @@
     @apply outline-error; 
   }
 
-
+	// select dropdown
   .select-dropdown {
     @apply 
       w-full absolute left-0 mt-1 z-20
@@ -626,10 +642,46 @@
   .select-item-i-active {
     @apply theme-focus-2;
   }
-
-
+	
   // #endregion
 
+
+	// Slider element classes
+	.slider-btn {
+		@apply
+		min-w-max cursor-pointer transition-all
+		rowStart gap-2 p-[1px] 
+		outline-init rounded-full; 
+	}
+	
+	.slider-btn-on {
+		@apply 
+			bg-blue-600 dark:bg-blue-600 
+			outline-blue-500 dark:outline-blue-500;
+	}
+	
+	.slider-btn-off {
+		@apply 
+			bg-slate-300 dark:bg-slate-800 
+			outline-slate-300 dark:outline-slate-600;
+	}
+	
+	.slider-base {
+		@apply 
+			size-5 mr-5  
+			transition-all duration-200 ease-out
+			rounded-full shadow-sm 
+			ring-1 ring-slate-400 dark:ring-slate-700
+			bg-white dark:bg-slate-200;
+	}
+	
+	.slider-on {
+		@apply translate-x-5;
+	}
+	
+	// #region Slider component styles
+	// #endregion
+	
 
   // Textarea element classes
   // #region Textarea component styles 

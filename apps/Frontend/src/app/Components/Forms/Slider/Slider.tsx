@@ -22,7 +22,7 @@ export interface SliderProps {
 
 export const Slider = ({
   type = 'default', name, label, description, value, onChange, 
-  error = false, errorMessage, required = false, disabled = false, styles,
+  error, errorMessage, required, disabled, styles,
   ...props
 }: SliderProps) => {
   const id = useId();
@@ -33,6 +33,7 @@ export const Slider = ({
   return (
     <Container className='w-full row justify-between items-center gap-8'>
       <div className='colStart gap-1 pb-4 p-2'>
+				// TODO: Try htmlFor with the labels on the checkbox and radio group items
         { label && <Label htmlFor={name}>{ label }</Label> }
         { description && <Description>{ description }</Description> }
         { error && <Description className='error-text'>{ errorMessage }</Description>}
@@ -42,19 +43,9 @@ export const Slider = ({
       <Button 
         onClick={() => onChange()} 
         {...props}
-        className={styles ? styles : `
-          min-w-max rowStart gap-2 p-[1px] rounded-full 
-          outline-init
-          ${value ? 'bg-blue-600 dark:bg-blue-600  outline-blue-500 dark:outline-blue-500' 
-                  : 'bg-slate-300 dark:bg-slate-800 outline-slate-300 dark:outline-slate-600'}
-        `}
-      >
-        <SliderButton className={`
-          bg-white dark:bg-slate-200 transition-transform duration-200 ease-out 
-          ${getSliderStyles()} 
-          ${value && getSliderTranslateStyles()} 
-        `}/>
-        
+        className={styles ? styles : `btn-slider ${value ? 'slider-btn-on' : 'slider-btn-off'}
+			`}>
+        <SliderButton className={`slider-base ${value ? 'slider-on' : ''}`}/>
       </Button>
 
       {/* Captured input */}
@@ -64,13 +55,15 @@ export const Slider = ({
         id={`slider-${name}-${id}`}
         className="absolute hidden opacity-0" 
         checked={value}
-        required={required}
+        required={required} // TODO: add the targdt value to the onchange for a synthetic invocation 
         onChange={() => {}} // Button handles the change event
       />
     </Container>
   );
 }
 
+
+// Styled Components
 const Container = styled.div``;
 const Label = styled.label``;
 const Description = styled.p``;

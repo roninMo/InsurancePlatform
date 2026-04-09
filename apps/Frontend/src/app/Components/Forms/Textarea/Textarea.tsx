@@ -271,9 +271,9 @@ const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => 
   return (
     <> { (error || description) &&
       <ErrorAndDescription className={type == 'default' ? 'ta-error-d-c' : type == 'box' ? 'ta-error-b-c' : 'ta-error-p-c'}>
-        { error && errorMessage ?
-          <div className="error-text">{ errorMessage }</div>
-        : <div className="text-colors dark:text-slate-500">{ description }</div>
+        { error && errorMessage 
+					? <div className="error-text">{ errorMessage }</div>
+	      	: <div className="text-colors dark:text-slate-500">{ description }</div>
         }
       </ErrorAndDescription>
     } </>
