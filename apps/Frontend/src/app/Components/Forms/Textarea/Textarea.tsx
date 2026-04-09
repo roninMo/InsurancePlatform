@@ -165,15 +165,13 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
           </div>
 
           <div className="margin-auto-div-fix">
-            { !submitButtonDisabled && 
-              <Button 
-                displayText={submitButtonText ? submitButtonText : 'Create'} 
-                size="default" 
-                onClick={e => onSubmit && onSubmit(e)} 
-                disabled={disabled}
-                additionalStyles="ta-submit-btn px-3" 
-              />
-            }
+            <Button 
+              displayText={submitButtonText ? submitButtonText : 'Create'} 
+              size="default" 
+              onClick={e => onSubmit && onSubmit(e)} 
+              disabled={disabled || submitButtonDisabled}
+              additionalStyles="ta-submit-btn px-3" 
+            />
           </div>
         </ButtonsAndLinks>
       </Container>

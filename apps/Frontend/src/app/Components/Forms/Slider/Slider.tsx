@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
+import { MouseEvent, useId } from 'react';
 import styles from './Slider.module.scss';
-import { useId } from 'react';
 
 export type SliderVariants = 'default';
 export interface SliderProps {
@@ -11,7 +11,7 @@ export interface SliderProps {
   description?: string;
   
   value: boolean;
-  onChange: () => void;
+  onChange: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 
   error?: boolean;
   errorMessage?: string | null;
@@ -47,7 +47,7 @@ export const Slider = ({
       </Content>
       
       <Button 
-        onClick={() => onChange()} type='button' name={name}
+        onClick={(e) => onChange(e)}  type='button' name={name} disabled={disabled}
         className={styles ? styles : `slider-base 
           ${value ? 'slider-on' : 'slider-off'}
           ${disabled ? 'slider-disabled' : ''}

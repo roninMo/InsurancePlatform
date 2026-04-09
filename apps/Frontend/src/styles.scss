@@ -446,7 +446,9 @@
   // #region Radio Group component styles
   .radio-button {
     @apply 
-      p-[6px] mt-[2px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
+      p-[6px] mt-[2px] 
+      appearance-none rounded-lg mr-1 
+      cursor-pointer transition-all duration-200
 
       /* Adjusted border to create the selected radio circle icon */
       border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
