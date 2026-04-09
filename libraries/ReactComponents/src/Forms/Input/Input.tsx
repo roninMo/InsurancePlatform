@@ -149,7 +149,10 @@ export const Input = ({
           required={required}
           disabled={disabled}
 
-          className={`${getInputClasses(error, type, disabled)} peer`}
+          className={`input-base peer
+            ${!(type == 'search' || type == 'text' || type == 'currency') ? 'input-icon-spacing' : ''}
+            ${error && !disabled ? 'input-error' : ''}
+          `}
           { ...props }
         />
 
@@ -189,17 +192,27 @@ export const Input = ({
             {/* Currency and Search */}
             { type == 'currency' ? 
               <CurrencySelectContainer className='row relative'>
-                <CurrencySelect id="currency" name="currency" className={`input-curr ${getError() ? 'input-curr-error' : ''}`}>
-                  <option>USD</option> <option>CAD</option> <option>EUR</option>
-                </CurrencySelect>
                 <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
+                <CurrencySelect 
+                  name={`${name}-currencyType`} disabled={disabled}
+                  className={`input-curr ${getError() ? 'input-curr-error' : ''}`}
+                >
+                  <option>USD</option> 
+                  <option>CAD</option> 
+                  <option>EUR</option>
+                </CurrencySelect>
               </CurrencySelectContainer>
 
             : type == 'search' ? 
-              <SortSearchButton type="button" className={`input-sort-btn ${getError() ? 'input-sort-error' : ''}`}>
+              <SortSearchButton 
+                type="button" 
+                disabled={disabled} 
+                className={`input-sort-btn ${getError() ? 'input-sort-error' : ''}`}
+              >
                 <Icon variant='Sort' styles='size-5 text-slate-100 dark:text-slate-400' />
                 Sort
               </SortSearchButton>
+
             : <></>
             }
           </div>
@@ -233,10 +246,7 @@ export const Input = ({
 }
 
 
-
-
-// #region Component Styles
-// Elements 
+// Component Styles
 const TextInput = styled.div``;
 const InputContainer = styled.div``;
 
@@ -249,24 +259,10 @@ const LoadingBar = styled.div``;
 const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select`pointer-events: all;`;
-const TooltipIcon = styled.div`pointer-events: all;`;
 
-
-// Input themes and error styles
-const getDisabledThemes = (): string => ` input-disabled`;
-const getErrorThemes = (): string => ` input-error`;
-const getInputClasses = (error: boolean, type: string, disabled?: boolean): string => {
-  let classes = `input-base`; 
-  if (!(type == 'search' || type == 'text' || type == 'currency')) classes += ` input-icon-spacing`; 
-  if (disabled)  classes += getDisabledThemes();
-  else if (error)  classes += getErrorThemes();
-  return classes;
-}
-
-
-// Tooltip Styling TODO: this needs to be fixed positioning to handle proper placement with scroll
+// TODO: this needs to be fixed positioning to handle proper placement with scroll
 const Tooltip = styled.div``;
-// #endregion 
+const TooltipIcon = styled.div`pointer-events: all;`;
 
 
 // #region Input Type Props

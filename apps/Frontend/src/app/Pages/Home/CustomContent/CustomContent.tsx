@@ -234,7 +234,7 @@ export const CustomContent = () => {
           />
         </div>
 
-        <div className='span-12 md:span-8 lg:span-4 p-6 pt-2 pb-64 bg-gray-300 dark:bg-gray-900 outline-css outline-styles'>
+        <div className='span-12 md:span-8 lg:span-4 p-6 pt-2'>
           <Select 
             name="inputType"
             label="Input Type"
@@ -354,19 +354,6 @@ export const CustomContent = () => {
               error={taError}
               errorMessage="An error occurred."
               disabled={taDisabled}
-            />
-          </div>
-
-          <div className='span-12 rowStart gap-2'>
-            <Button 
-              displayText={!taError ? 'Enable Error' : 'Disable Error'} 
-              size='md'
-              onClick={(e: any) => toggleTaError()} 
-            />
-            <Button 
-              displayText={taDisabled ? 'Enable' : 'Disable'} 
-              size='md'
-              onClick={(e: any) => toggleTaDisabled()} 
             />
           </div>
         </div>
