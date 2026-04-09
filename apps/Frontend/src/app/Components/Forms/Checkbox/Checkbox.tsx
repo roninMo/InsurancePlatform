@@ -13,8 +13,7 @@ export interface CheckboxItem {
 }
 
 
-// TODO: the inline style should be refactored to just be a normal inline display style of checkboxes
-export type CheckboxVariant = 'default' | 'inline' | 'list';
+export type CheckboxVariant = 'default' | 'list' | 'inline';
 export interface CheckboxProps {
   variant?: CheckboxVariant;
   name: string;
@@ -35,7 +34,6 @@ export interface CheckboxProps {
 }
 
 
-/** This component should be wrapped by another to prevent unnecessary component updates with it's parent, since there's multiple state values being passed in */
 export const Checkbox = ({
   variant = 'default', name, label, description,
   items, onSelect, 
@@ -59,19 +57,19 @@ export const Checkbox = ({
         { description && <Description>{ description }</Description> }
       </HeaderContainer>
 
-      <ItemContainer className={`colStart mt-4`}>
+      <ItemContainer className={`${variant != 'inline' ? 'colStart' : 'rowStart gap-4'} mt-4`}>
         {Object.values(items).map((item: CheckboxItem, index: number) =>  
           <CheckboxContainer 
             onClick={(e) => onClickCheckbox(item, e)} 
             onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
             onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
             key={`cb-${name}-${item.value}-${index}-${id}`}
+            disabled={disabled}
             className={`group
               ${variant == 'default' ? 'checkbox-c-d' : variant == 'inline' ? 'checkbox-c-i' : 'checkbox-c-l'}
               ${getError() ? 'checkbox-c-error' : ''}
-              ${disabled ? 'checkbox-c-disabled' : ''}
           `}>
-            <ItemLabelAndCheckbox className={variant == 'list' ? 'rowStart justify-between w-full' : 'rowStart'}>
+            <ListLayout className={variant != 'list' ? 'rowStart' : 'rowBetween w-full'}>
               <StyledCheckbox 
                 value={item.value}
                 name={name} 
@@ -89,12 +87,9 @@ export const Checkbox = ({
                   { item.label }
                 </ItemLabel>
               }
-            </ItemLabelAndCheckbox>
+            </ListLayout>
 
-            <ItemLabelAndDesc className={`text-left 
-              ${variant != 'inline' ? 'colStart' : 'rowStart gap-2'} 
-              ${variant == 'list' && 'mr-8'}
-            `}>
+            <DefaultLayout className={`colStart gap-2 text-left ${variant == 'list' ? 'mr-8' : ''}`}>
               {(variant != 'list') && 
                 <ItemLabel className='checkbox-label'>
                   { item.label }
@@ -103,7 +98,7 @@ export const Checkbox = ({
               <ItemDescription className='checkbox-desc'>
                 { item.description }
               </ItemDescription>
-            </ItemLabelAndDesc>
+            </DefaultLayout>
           </CheckboxContainer>
         )}
       </ItemContainer>
@@ -123,8 +118,8 @@ const HeaderContainer = styled.div``;
 const ItemContainer = styled.div``;
 const CheckboxContainer = styled.button``;
 
-const ItemLabelAndDesc = styled.div``;
-const ItemLabelAndCheckbox = styled.div``;
+const DefaultLayout = styled.div``;
+const ListLayout = styled.div``;
 const StyledCheckbox = styled.input``;
 const Label = styled.label``;
 const Description = styled.p``;

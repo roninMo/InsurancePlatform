@@ -94,17 +94,13 @@ export const Select = ({
         onFocus={(e) => onFocus && onFocus(e)}
         onClick={(e) => openSelect(e)}
         onBlur={(e) => onBlur && onBlur(e)}
+        disabled={disabled}
         className={`select-base group
-          ${disabled ? 'select-disabled' : '' } 
           ${!disabled && dropdownOpen ? 'select-focus' : ''}
           ${getError() ? 'select-error' : ''}
         `}
       >
-        <CurrentlySelected className={`currently-selected 
-          ${disabled ? 'currently-selected-disabled' : ''}
-          ${!disabled && dropdownOpen ? 'currently-selected-focus' : ''}
-          ${getError() ? 'currently-selected-error' : ''}
-        `}>
+        <CurrentlySelected className={`currently-selected ${disabled ? 'currently-selected-disabled' : ''}`}>
           <span className={`text-sm ${value?.value ? 'text-colors' : 'placeholder-text'}`}> 
             { value.value ? value.label : placeholder } 
           </span>

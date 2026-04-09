@@ -10,6 +10,7 @@ export interface ButtonProps {
   displayText: string;
   onClick?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   disabled?: boolean;
+  type?: "submit" | "reset" | "button" | undefined;
 
   size?: ButtonSizes;
   color?: ButtonColors;
@@ -20,15 +21,14 @@ export interface ButtonProps {
 }
 
 export const Button = ({ 
-  displayText,  onClick,  disabled,  
+  displayText,  onClick,  disabled, type = 'button',
   size = 'default', color = 'primary', 
   additionalStyles, icon, iconStyles, 
 }: ButtonProps) => {
 
-  // TODO: disabled themes, and fix up the themes for this component using global styles
   return (
     <button 
-      type="button" 
+      type={type} 
       onClick={(e) => onClick ? onClick(e) : null}
       disabled={disabled}
       className={`button-base 

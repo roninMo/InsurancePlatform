@@ -15,7 +15,8 @@ export const Example_DefaultSlider = ({ error, disabled }: {
   return (
     <div>
       <Slider 
-        type="default"
+        variant="default"
+        type="button"
         
         name={`slider-form-name`}
         label="Slider Component"

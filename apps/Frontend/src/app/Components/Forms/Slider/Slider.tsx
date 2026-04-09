@@ -4,7 +4,8 @@ import { useId } from 'react';
 
 export type SliderVariants = 'default';
 export interface SliderProps {
-  type?: SliderVariants;
+  variant?: SliderVariants;
+
   name: string;
   label?: string;
   description?: string;
@@ -12,7 +13,6 @@ export interface SliderProps {
   value: boolean;
   onChange: () => void;
 
-  // TODO: Better styling for error and add disabled themes
   error?: boolean;
   errorMessage?: string | null;
   disabled?: boolean;
@@ -21,31 +21,40 @@ export interface SliderProps {
 }
 
 export const Slider = ({
-  type = 'default', name, label, description, value, onChange, 
+  variant = 'default', name, label, description, value, onChange, 
   error, errorMessage, required, disabled, styles,
   ...props
 }: SliderProps) => {
   const id = useId();
-  // TODO: Use global themes and add themes for the slider variants
-  const getSliderStyles = (): string => `size-5 mr-5 rounded-full shadow-sm ring-1 ring-slate-400 dark:ring-slate-700`;
-  const getSliderTranslateStyles = (): string => `translate-x-5`; 
 
   return (
-    <Container className='w-full row justify-between items-center gap-8'>
-      <div className='colStart gap-1 pb-4 p-2'>
-				// TODO: Try htmlFor with the labels on the checkbox and radio group items
-        { label && <Label htmlFor={name}>{ label }</Label> }
-        { description && <Description>{ description }</Description> }
-        { error && <Description className='error-text'>{ errorMessage }</Description>}
-      </div>
+    <Container className={`slider-c ${disabled ? 'slider-disabled' : error ? 'slider-error' : ''}`}>
+      <Content className='colStart gap-1 pb-4 p-2'>
+        { label && 
+          <Label className='slider-label'>
+            { label }
+          </Label>
+        }
+        { description && 
+          <Description className='slider-desc'>
+            { description }
+          </Description> 
+        }
+
+        { (error && errorMessage) && <Error className='error-text'>
+          { errorMessage }
+        </Error>}
+      </Content>
       
-      {/* TODO: Add custom styled variant themes */}
       <Button 
-        onClick={() => onChange()} 
+        onClick={() => onChange()} type='button' name={name}
+        className={styles ? styles : `slider-base 
+          ${value ? 'slider-on' : 'slider-off'}
+          ${disabled ? 'slider-disabled' : ''}
+          ${error && !disabled ? 'slider-error' : ''}`} 
         {...props}
-        className={styles ? styles : `btn-slider ${value ? 'slider-btn-on' : 'slider-btn-off'}
-			`}>
-        <SliderButton className={`slider-base ${value ? 'slider-on' : ''}`}/>
+      >
+        <SliderButton className={`slider-switch ${value ? 'slider-switch-on' : ''}`}/>
       </Button>
 
       {/* Captured input */}
@@ -55,7 +64,7 @@ export const Slider = ({
         id={`slider-${name}-${id}`}
         className="absolute hidden opacity-0" 
         checked={value}
-        required={required} // TODO: add the targdt value to the onchange for a synthetic invocation 
+        required={required} // TODO: add the target value to the onchange for a synthetic invocation 
         onChange={() => {}} // Button handles the change event
       />
     </Container>
@@ -65,7 +74,9 @@ export const Slider = ({
 
 // Styled Components
 const Container = styled.div``;
+const Content = styled.div``;
 const Label = styled.label``;
 const Description = styled.p``;
 const SliderButton = styled.div``;
 const Button = styled.button``;
+const Error = styled.p``;

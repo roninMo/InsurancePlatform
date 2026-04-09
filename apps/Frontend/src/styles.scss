@@ -199,10 +199,113 @@
   }
 
 
+	// Button element classes
+	// #region Button component styles
+	.button-base {
+		@apply
+			m-auto inline-flex items-center 
+			cursor-pointer transition-all
+			font-semibold text-nowrap
+			shadow-md outline-css 
+      focus:outline-focus;
+
+    &:disabled {
+      @apply 
+        disabled:bg-disabled outline-gray-400 dark:outline-gray-600
+        text-slate-600 dark:text-slate-500;
+    }
+	}
+	
+	.btn-al-d  { @apply px-2.5 py-1.5; }
+	.btn-al-md { @apply px-3 py-2; }
+	.btn-al-lg { @apply px-3.5 py-2.5; }
+	.btn-al-xl { @apply px-5 py-3; }
+	
+	.btn-el-primary { @apply btn-primary text-white; }
+	.btn-el-gray { @apply btn-gray text-black dark:text-white; }
+	.btn-el-gray-focus { @apply btn-gray-focus text-black dark:text-white; }
+	// #endregion
+
+
+  // Checkbox element classes
+  // #region Checkbox component styles
+  .checkbox-c { 
+    @apply pt-4 pb-6 px-1 transition-all; 
+
+    &:disabled {
+      @apply cursor-text;
+      & .checkbox-label { @apply text-colors; }
+      & .checkbox-desc { @apply disabled-text; }
+    }
+  }
+
+  .checkbox-c-d { 
+    @apply checkbox-c rowStart items-start gap-2;
+  }
+
+  .checkbox-c-i { 
+    @apply checkbox-c rowStart items-start gap-2;
+  }
+
+  .checkbox-c-l { 
+    @apply 
+      checkbox-c colStart gap-1 
+      border-b first:border-t border-default
+    ;
+  }
+
+  .checkbox-label { @apply label-colors; }
+  .checkbox-desc { @apply text-colors; }
+
+  // Checkbox
+  /* normal: check before:content-['✓'] */
+  /* normal:x-mark before:content-['✗'] */
+  /* bold:   check before:content-['✔\fe0e'] */
+  /* bold:  x-mark before:content-['✘'] */
+  .checkbox {
+    @apply
+      mb-auto appearance-none
+      outline-css rounded-[4px] size-5 transition-all 
+      text-center p-[1px] text-slate-100 
+      checked:before:content-['✔\fe0e'] checked:leading-[1.15rem]
+      disabled:checked:before:content-['–'] disabled:leading-[1rem]
+      
+      bg-default 
+      outline-slate-400 dark:outline-slate-600 
+      
+      /* checked */
+      checked:bg-blue-500       dark:checked:bg-indigo-500 
+      checked:outline-blue-400  dark:checked:outline-indigo-400 
+
+      /* disabled */
+      disabled:text-slate-400 dark:disabled:text-slate-300/90
+      disabled:bg-gray-300 dark:disabled:bg-gray-700
+      disabled:outline-gray-400 dark:disabled:outline-gray-600
+
+      /* disabled checked */
+      disabled:checked:bg-gray-300
+      disabled:checked:outline-slate-400/80
+      dark:disabled:checked:bg-gray-500
+      dark:disabled:checked:outline-slate-400
+    ;
+  }
+
+  .checkbox-c-error { @apply last:border-error; }
+  .checkbox-error {
+    @apply 
+      checked:before:content-['✘']
+      checked:leading-[1.06rem]
+      checked:bg-red-500/65 dark:checked:bg-red-600/90
+      checked:outline-red-500 dark:checked:outline-red-400
+    ;
+  }
+  // #endregion
+
+
   // Input element classes
   // #region Input component styles
   .input-base {
-    @apply col-start-1 row-start-1 w-full;
+    @apply col-start-1 row-start-1 w-full shadow-md outline-css;
   }
 
   .input-error {
@@ -228,8 +331,8 @@
   .input-icon-spacing { @apply pl-9; }
   .input-preceding-el-align {
     @apply 
-      pointer-events-none 
-      col-start-1 row-start-1 justify-start self-center;
+      col-start-1 row-start-1 justify-start self-center
+      pointer-events-none;
   }
   
   .input-icon-def {
@@ -240,11 +343,10 @@
     @apply pointer-events-auto cursor-pointer;
   }
 
-  .input-subsequent-el { @apply 
-      grid col-start-1 row-start-1 self-center justify-end 
-      pointer-events-none 
-
-    ; 
+  .input-subsequent-el { 
+    @apply 
+      grid col-start-1 row-start-1 justify-end self-center 
+      pointer-events-none;
   }
 
   // input currency button
@@ -307,114 +409,71 @@
   }
   // #endregion
 
-	
-	// Button element classes
-	// #region Button component styles
-	.button-base {
-		@apply
-			m-auto inline-flex items-center 
-			cursor-pointer transition-all
-			font-semibold text-nowrap
-			shadow-md outline-css focus:outline-focus
-	}
-	
-	.btn-al-d  { @apply px-2.5 py-1.5; }
-	.btn-al-md { @apply px-3 py-2; }
-	.btn-al-lg { @apply px-3.5 py-2.5; }
-	.btn-al-xl { @apply px-5 py-3; }
-	
-	.btn-el-primary { @apply btn-primary text-white; }
-	.btn-el-gray { @apply btn-gray text-black dark:text-white; }
-	.btn-el-gray-focus { @apply btn-gray-focus text-black dark:text-white; }
-	
-	// #endregion
-	
-	
-  // Checkbox element classes
-  // #region Checkbox component styles
-  .checkbox-c { 
-    @apply min-w-full pt-4 pb-6 px-1 transition-all; 
-  }
 
-  .checkbox-c-d { 
-    @apply checkbox-c rowStart items-start gap-2;
-  }
-
-  .checkbox-c-i { 
-    @apply checkbox-c rowStart items-start gap-2;
-  }
-
-  .checkbox-c-l { 
+  // Radio Group element classes
+  // #region Radio Group component styles
+  .radio-button {
     @apply 
-      checkbox-c colStart gap-1 
-      border-b first:border-t border-default
-    ;
-  }
+      p-[6px] mt-[2px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
 
-  .checkbox-c-error {
-    @apply 
-      last:border-error
-    ;
-  }
-  
-  .checkbox-c-disabled {
-    @apply 
-      cursor-text
-      [&_.checkbox-label]:text-colors
-      [&_.checkbox-desc]:disabled-text
-    ;
-  }
+      /* Adjusted border to create the selected radio circle icon */
+      border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
+      disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
 
-  .checkbox-label { @apply label-colors; }
-  .checkbox-desc { @apply text-colors; }
+      /******************** 
+      * Light Theme       *
+      ********************/
+      /* outer circle */
+      border-slate-300
+      disabled:border-slate-300 
 
-	
-  /* normal: check before:content-['✓'] */
-  /* normal:x-mark before:content-['✗'] */
-  /* bold:   check before:content-['✔'] */
-  /* bold:  x-mark before:content-['✘'] */
-  .checkbox {
-    @apply
-      mb-auto appearance-none
-      outline-css rounded-[4px] size-5 transition-all 
-      text-center p-[1px] text-slate-100 
-      checked:before:content-['✓'] checked:leading-[1.2rem]
-      disabled:checked:before:content-['–'] disabled:leading-[1rem]
+      /* inner circle */
+      bg-white 
+      disabled:bg-slate-300
       
-      bg-default 
-      outline-slate-400 dark:outline-slate-600 
+      /* Radio Selected Circle (Outer) */
+      checked:outline-indigo-500 
+      disabled:checked:outline-slate-400
+
+      /* Radio Selected Circle (Inner) */
+      checked:bg-white 
+      disabled:checked:bg-slate-200
+
+
+      /******************** 
+      * Dark Theme        *
+      ********************/
+      /* outer circle */
+      dark:border-slate-500
+      dark:disabled:border-slate-600 
+
+      /* inner circle */
+      dark:bg-slate-800 
+      dark:disabled:bg-slate-700
       
-      /* checked */
-      checked:bg-blue-500       dark:checked:bg-indigo-500 
-      checked:outline-blue-400  dark:checked:outline-indigo-400 
+      /* Radio Selected Circle (Outer) */
+      dark:checked:outline-indigo-500 
+      dark:disabled:checked:outline-slate-500
 
-      /* disabled */
-      disabled:text-slate-400 dark:disabled:text-slate-300/90
-      disabled:bg-gray-300 dark:disabled:bg-gray-700
-      disabled:outline-gray-400 dark:disabled:outline-gray-600
-
-      /* disabled checked */
-      disabled:checked:bg-gray-300
-      disabled:checked:outline-slate-400/80
-      dark:disabled:checked:bg-gray-500
-      dark:disabled:checked:outline-slate-400
+      /* Radio Selected Circle (Inner) */
+      dark:checked:bg-slate-100
+      dark:disabled:checked:bg-slate-400
     ;
   }
 
-  .checkbox-error {
+  .radio-button-error {
     @apply 
-      checked:before:content-['✗']
-      checked:leading-[1.1rem]
-      checked:bg-red-500/65 dark:checked:bg-red-600/90
-      checked:outline-red-500 dark:checked:outline-red-400
-    ;
+      /* Radio Selected Circle (Outer) */
+      checked:outline-red-500/90 
+      dark:checked:outline-red-500
+      dark:checked:outline-[5px]
+      dark:checked:-outline-offset-[5.5px]
+
+      /* Radio Selected Circle (Inner) */
+      checked:bg-slate-100/25
+      dark:checked:bg-slate-200
   }
 
-  // #endregion
-
-	
-  // Radio element classes
-  // #region Radio component styles
   .radio-group {
     @apply w-full colStart justify-start gap-2;
   }
@@ -436,18 +495,7 @@
   
 	// radio item container variants
   .radio-item-c {
-    @apply cursor-pointer transition-all
-    
-      /* columnInline */
-      [&_.radio-item-text]:rowStart
-      
-      /* default, list, column */
-      [&_.radio-item-text]:colStart
-      [&_.radio-item-text]:items-start
-      
-      /* list */
-      [&_.radio-item-text]:gap-2
-    ;
+    @apply cursor-pointer transition-all;
   }
 
   .radio-item-c-d {
@@ -491,8 +539,8 @@
   .radio-text-l { @apply colStart items-start gap-2; }
   // #endregion
 
-	
-  // Radio element classes
+
+  // Radio Table element classes
   // #region Radio Table component styles
   .radio-table {
     @apply m-0;
@@ -505,12 +553,11 @@
       outline outline-1 -outline-offset-1 
       outline-slate-400/0
 
-      transition-all duration-500 
-      [&_div]:transition-all [&_div]:duration-500 
+      transition-all duration-300 
 
       /* Round the edges and align the outlines */
       first:rounded-t-md last:rounded-b-md 
-      [&:not(:first-child)]:-mt-[1px] 
+      [&:not(:first-child)]:-mt-[1px]
     ;
   }
 
@@ -530,35 +577,38 @@
   }
 
   .radio-t-i-selected-error {
-    @apply radio-t-i-error z-10 error-box;
+    @apply z-10 radio-t-i-error error-box;
   }
   
   .radio-t-i-selected-disabled {
-    @apply radio-t-i-disabled z-10 disabled-box;
+    @apply z-10 radio-t-i-disabled disabled-box;
   }
 
   .radio-t-i-label { @apply label-colors; }
   .radio-t-i-desc { @apply text-colors; }
-
   // #endregion
 
-	
+
   // Select element classes
   // #region Select component styles
-  .select-container { 
-    @apply w-full relative; 
-  }
-  
-  .select-label { 
-    @apply block pb-2; 
-  }
+  .select-container {  @apply w-full relative; }
+  .select-label {  @apply block pb-2; }
 
   .select-base {
     @apply 
       min-w-full cursor-pointer transition-all
-      bg-default shadow-lg
-      outline-css outline-styles
-    ;
+      bg-default shadow-md
+      outline-css outline-styles;
+
+    &:disabled {
+      @apply bg-disabled outline-slate-400 dark:outline-slate-600;
+
+      & .currently-selected {
+        @apply 
+          disabled-text cursor-default
+        ;
+      }
+    }
   }
   .select-focus { @apply outline-focus; }
   .select-error { @apply outline-error; }
@@ -569,11 +619,6 @@
       rowBetween items-center gap-2 p-2
       transition-all ease-in duration-200
     ;
-  }
-  .currently-selected-focus { @apply outline-focus; }
-  .currently-selected-error { @apply outline-error; }
-  .currently-selected-disabled { 
-    @apply outline-error; 
   }
 
 	// select dropdown
@@ -617,71 +662,90 @@
     @apply 
       rowBetween gap-2 items-center p-2 pr-4
       transition-all duration-200 ease-in
-
       hover:btn-primary-colors
     ;
   }
-  // [&_option]:hover:text-slate-200
 
   .select-item-active { @apply btn-primary-colors opacity-bg-80; }
+  .select-item-text { @apply transition-all text-colors group-hover:btn-text; }
+  .select-item-text-active { @apply btn-text; }
 
-  .select-item-text {
-    @apply 
-      transition-all 
-      text-colors group-hover:btn-text;
-  }
-
-  .select-item-text-active {
-    @apply btn-text;
-  }
-
-  .select-item-i {
-    @apply size-4 text-colors hover:input-colors transition-all;
-  }
-
-  .select-item-i-active {
-    @apply theme-focus-2;
-  }
-	
+  .select-item-i { @apply size-4 text-colors hover:input-colors transition-all; }
+  .select-item-i-active { @apply theme-focus-2; }
   // #endregion
 
 
 	// Slider element classes
-	.slider-btn {
-		@apply
-		min-w-max cursor-pointer transition-all
-		rowStart gap-2 p-[1px] 
-		outline-init rounded-full; 
-	}
-	
-	.slider-btn-on {
-		@apply 
-			bg-blue-600 dark:bg-blue-600 
-			outline-blue-500 dark:outline-blue-500;
-	}
-	
-	.slider-btn-off {
-		@apply 
-			bg-slate-300 dark:bg-slate-800 
-			outline-slate-300 dark:outline-slate-600;
-	}
-	
-	.slider-base {
-		@apply 
-			size-5 mr-5  
-			transition-all duration-200 ease-out
-			rounded-full shadow-sm 
-			ring-1 ring-slate-400 dark:ring-slate-700
-			bg-white dark:bg-slate-200;
-	}
-	
-	.slider-on {
-		@apply translate-x-5;
-	}
-	
 	// #region Slider component styles
-	// #endregion
+  .slider-c {
+    @apply w-full row justify-between items-start gap-8;
+  }
+
+  // The slider background
+	.slider-base {
+		@apply
+      min-w-max cursor-pointer transition-all
+      rowStart gap-2 p-[1px] mt-5
+      outline-init rounded-full; 
+
+    @apply focus:outline-focus;
+    &:focus .slider-switch-on {
+      @apply ring-blue-500 dark:ring-indigo-500;
+    }
+	}
+	.slider-on {
+		@apply  
+			bg-blue-500       dark:bg-blue-600 
+			outline-blue-600  dark:outline-blue-500;
+	}
+	.slider-off {
+		@apply 
+			bg-slate-300      dark:bg-slate-800 
+			outline-slate-400 dark:outline-slate-600;
+	}
 	
+  // The slider button
+	.slider-switch-on { @apply translate-x-5; }
+	.slider-switch {
+		@apply 
+			size-5 mr-5 z-10 rounded-full shadow-sm 
+			transition-all duration-200 ease-out
+
+			ring-1 
+			bg-white dark:bg-slate-200
+      ring-slate-400 dark:ring-slate-700;
+	}
+
+  .slider-label { @apply label-colors; }
+  .slider-desc { @apply text-colors; }
+
+  // Validation styles
+  .slider-error {
+    & .slider-base {
+      @apply outline-error focus:outline-focus;
+    }
+  }
+
+  .slider-disabled {
+    & .slider-label { @apply text-colors; }
+    & .slider-desc { @apply disabled-text; }
+
+    & .slider-base {
+      @apply 
+        bg-gray-300 dark:bg-slate-600 
+        outline-gray-400 dark:outline-slate-500
+      ;
+    }
+
+    & .slider-switch {
+      @apply 
+        bg-gray-100 dark:bg-slate-400
+        ring-slate-300 dark:ring-slate-500
+      ;
+    }
+  }
+	// #endregion
+
 
   // Textarea element classes
   // #region Textarea component styles 
@@ -819,69 +883,7 @@
   // #endregion
 
 
-  // Radio button styles
-  .radio-button {
-    @apply 
-      p-[6px] mt-[2px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
-
-      /* Adjusted border to create the selected radio circle icon */
-      border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
-      disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
-      
-
-      /******************** 
-      * Light Theme       *
-      ********************/
-      /* outer circle */
-      border-slate-300
-      disabled:border-slate-300 
-
-      /* inner circle */
-      bg-white 
-      disabled:bg-slate-300
-      
-      /* Radio Selected Circle (Outer) */
-      checked:outline-indigo-500 
-      disabled:checked:outline-slate-400
-
-      /* Radio Selected Circle (Inner) */
-      checked:bg-white 
-      disabled:checked:bg-slate-200
-
-
-      /******************** 
-      * Dark Theme        *
-      ********************/
-      /* outer circle */
-      dark:border-slate-500
-      dark:disabled:border-slate-600 
-
-      /* inner circle */
-      dark:bg-slate-800 
-      dark:disabled:bg-slate-700
-      
-      /* Radio Selected Circle (Outer) */
-      dark:checked:outline-indigo-500 
-      dark:disabled:checked:outline-slate-500
-
-      /* Radio Selected Circle (Inner) */
-      dark:checked:bg-slate-100
-      dark:disabled:checked:bg-slate-400
-    ;
-  }
-
-  .radio-button-error {
-    @apply 
-      /* Radio Selected Circle (Outer) */
-      checked:outline-red-500/50 
-      dark:checked:outline-red-500/50 
-
-      /* Radio Selected Circle (Inner) */
-      checked:bg-slate-400/25
-      dark:checked:bg-slate-200/25
-  }
-
-
+  // Utility input specific classes
   // Hack for native autofill text color
   input:-webkit-autofill, 
   input:-webkit-autofill:hover, 

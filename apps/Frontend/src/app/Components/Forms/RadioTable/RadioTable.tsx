@@ -56,7 +56,7 @@ export const RadioTable = ({
             onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
             key={`rti-${name}-${item.value}-${index}-${id}`}
             className={`radio-table-i 
-              ${isSelected(item) ? 'radio-t-i-selected' : ''}
+              ${isSelected(item) ? 'radio-t-i-selected z-10' : ''}
               ${getError() && isSelected(item) ? 'radio-t-i-selected-error' : getError() ? 'radio-t-i-error' : ''} 
               ${disabled && isSelected(item) ? 'radio-t-i-selected-disabled' : disabled ? 'radio-t-i-disabled' : ''}
           `}>
