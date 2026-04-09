@@ -309,6 +309,97 @@
   }
   // #endregion
 
+  // Checkbox element classes
+  // #region Checkbox component styles
+  .checkbox-c { 
+    @apply min-w-full pt-4 pb-6 px-1 transition-all; 
+  }
+
+  .checkbox-c-d { 
+    @apply checkbox-c rowStart items-start gap-2;
+  }
+
+  .checkbox-c-i { 
+    @apply checkbox-c rowStart items-start gap-2;
+  }
+
+  .checkbox-c-l { 
+    @apply 
+      checkbox-c colStart gap-1 
+      border-b first:border-t border-default
+    ;
+  }
+
+  .checkbox-c-error {
+    @apply 
+      last:border-error
+    ;
+  }
+  
+  .checkbox-c-disabled {
+    @apply 
+      cursor-text
+      [&_.checkbox-label]:text-colors
+      [&_.checkbox-desc]:disabled-text
+    ;
+  }
+
+  .checkbox-label { @apply label-colors; }
+  .checkbox-desc { @apply text-colors; }
+
+  /* normal: check before:content-['✓'] */
+  /* normal:x-mark before:content-['✗'] */
+  /* bold:   check before:content-['✔'] */
+  /* bold:  x-mark before:content-['✘'] */
+  .checkbox {
+    @apply
+      mb-auto appearance-none
+      outline-css rounded-[4px] size-5 transition-all 
+      text-center p-[1px] text-slate-100 
+      checked:before:content-['✓'] checked:leading-[1.2rem]
+      disabled:checked:before:content-['–'] disabled:leading-[1rem]
+      
+      bg-default 
+      outline-slate-400 dark:outline-slate-600 
+      
+      /* checked */
+      checked:bg-blue-500       dark:checked:bg-indigo-500 
+      checked:outline-blue-400  dark:checked:outline-indigo-400 
+
+      /* disabled */
+      disabled:text-slate-400 dark:disabled:text-slate-300/90
+      disabled:bg-gray-300 dark:disabled:bg-gray-700
+      disabled:outline-gray-400 dark:disabled:outline-gray-600
+
+      /* disabled checked */
+      disabled:checked:bg-gray-300
+      disabled:checked:outline-slate-400/80
+      dark:disabled:checked:bg-gray-500
+      dark:disabled:checked:outline-slate-400
+    ;
+  }
+  
+  /* 
+  
+
+      disabled:checked:bg-slate-300
+      disabled:checked:outline-slate-400
+      
+      dark:disabled:checked:outline-slate-500
+      dark:disabled:checked:bg-slate-400
+  */
+
+  .checkbox-error {
+    @apply 
+      checked:before:content-['✗']
+      checked:leading-[1.1rem]
+      checked:bg-red-500/65 dark:checked:bg-red-600/90
+      checked:outline-red-500 dark:checked:outline-red-400
+    ;
+  }
+
+  // #endregion
+
   // Radio element classes
   // #region Radio component styles
   .radio-group {

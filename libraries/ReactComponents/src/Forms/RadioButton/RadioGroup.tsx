@@ -61,7 +61,7 @@ export const RadioGroup = ({
             
             inputName={name}
             variant={variant}
-            key={`radioGroupItem-${id}-${item.value}`}
+            key={`rgi-${name}-${item.value}-${index}-${id}`}
             index={index}
             
             disabled={disabled ? true : item.disabled}

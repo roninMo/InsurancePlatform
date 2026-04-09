@@ -44,15 +44,13 @@ export const Checkbox = ({
 }: CheckboxProps) => {
   const id = useId();
 
-  // TODO: create global styles for this
-  const getStyles = () => {
-    const radioContainerStyles = `min-w-full pt-4 pb-6 px-1`;
-    const listStyles = `colStart gap-1 border-b first:border-t border-default`;
-    const defaultStyles = `rowStart items-start gap-2`;
-    
-    if (variant == 'list') return `${listStyles} ${radioContainerStyles}`;
-    else return `${defaultStyles} ${radioContainerStyles}`;
+  const onClickCheckbox = (item: CheckboxItem, event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    if (disabled) return; // this isn't called from the input's change event
+    onSelect(item, event);
   }
+
+  // Error handling 
+  const getError = () => error && !disabled;
 
   return (
     <Container>
@@ -64,13 +62,16 @@ export const Checkbox = ({
       <ItemContainer className={`colStart mt-4`}>
         {Object.values(items).map((item: CheckboxItem, index: number) =>  
           <CheckboxContainer 
-            onClick={(e) => onSelect(item, e)} 
+            onClick={(e) => onClickCheckbox(item, e)} 
             onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
             onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
-            className={getStyles()} 
-            key={`${id}-radio-table-item-${index}`}
-          >
-            <div className={variant == 'list' ? 'rowStart justify-between w-full' : 'rowStart'}>
+            key={`cb-${name}-${item.value}-${index}-${id}`}
+            className={`group
+              ${variant == 'default' ? 'checkbox-c-d' : variant == 'inline' ? 'checkbox-c-i' : 'checkbox-c-l'}
+              ${getError() ? 'checkbox-c-error' : ''}
+              ${disabled ? 'checkbox-c-disabled' : ''}
+          `}>
+            <ItemLabelAndCheckbox className={variant == 'list' ? 'rowStart justify-between w-full' : 'rowStart'}>
               <StyledCheckbox 
                 value={item.value}
                 name={name} 
@@ -80,30 +81,29 @@ export const Checkbox = ({
                 id={`${id}-radio-table-item-${index}-radio`}
                 disabled={disabled || item.disabled}
                 required={required}
-                className={`checkbox 
-                  mb-auto ${variant == 'list' && 'order-1'} ${variant != 'list' && 'mr-1'}
-                  appearance-none outline-css rounded-[4px] size-5 trans 
-                  checked:before:content-['✓'] text-center p-[1px] text-slate-100 
-                  
-
-                  bg-default 
-                  outline-slate-400 dark:outline-slate-600 
-                  
-                  checked:bg-blue-500 checked:outline-blue-400 
-                  checked:dark:bg-indigo-500 checked:dark:outline-indigo-400 
-                `}
+                className={`checkbox ${variant == 'list' ? 'order-1' : 'mr-1'} ${getError() ? 'checkbox-error' : ''}`}
               />
 
-              {(variant == 'list') && <ItemLabel>{ item.label }</ItemLabel>}
-            </div>
+              { (variant == 'list') && 
+                <ItemLabel className='checkbox-label'>
+                  { item.label }
+                </ItemLabel>
+              }
+            </ItemLabelAndCheckbox>
 
-            <div className={`
-              ${variant != 'inline' ? 'colStart' : 'rowStart gap-2'} text-left
+            <ItemLabelAndDesc className={`text-left 
+              ${variant != 'inline' ? 'colStart' : 'rowStart gap-2'} 
               ${variant == 'list' && 'mr-8'}
             `}>
-              {(variant != 'list') && <ItemLabel>{ item.label }</ItemLabel>}
-              <ItemDescription>{ item.description }</ItemDescription>
-            </div>
+              {(variant != 'list') && 
+                <ItemLabel className='checkbox-label'>
+                  { item.label }
+                </ItemLabel>
+              }
+              <ItemDescription className='checkbox-desc'>
+                { item.description }
+              </ItemDescription>
+            </ItemLabelAndDesc>
           </CheckboxContainer>
         )}
       </ItemContainer>
@@ -116,27 +116,17 @@ export const Checkbox = ({
   );
 }
 
-// #region Component styles
+
+// Styled Components
 const Container = styled.div``;
 const HeaderContainer = styled.div``;
 const ItemContainer = styled.div``;
 const CheckboxContainer = styled.button``;
 
-const StyledCheckbox = styled.input`
-  input[type="checkbox"] {
-
-  }
-  
-  input[type="checkbox"]::before {
-
-  }
-
-`;
-
+const ItemLabelAndDesc = styled.div``;
+const ItemLabelAndCheckbox = styled.div``;
+const StyledCheckbox = styled.input``;
 const Label = styled.label``;
 const Description = styled.p``;
 const ItemLabel = styled.label``;
 const ItemDescription = styled.p``;
-
-
-// #endregion
