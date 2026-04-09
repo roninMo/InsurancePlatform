@@ -163,6 +163,11 @@ export const CustomContent = () => {
   const onChangeSlider = () => setSlider(!slider);
   // #endregion
 
+  const [taError, SetTaError] = useState<boolean>(false);
+  const [taDisabled, SetTaDisabled] = useState<boolean>(false);
+  const toggleTaError = () => SetTaError(!taError);
+  const toggleTaDisabled = () => SetTaDisabled(!taDisabled);
+
 
   const RadioGroupProps: RadioGroupProps = {
     variant: 'default',
@@ -316,8 +321,9 @@ export const CustomContent = () => {
               placeholder="input text..."
               submitButtonText='Post'
               { ...textareaProps }
-              error={false}
-              errorMessage="invalid input"
+              error={taError}
+              errorMessage="An error occurred."
+              disabled={taDisabled}
             />
           </div>
           
@@ -330,8 +336,9 @@ export const CustomContent = () => {
               submitButtonText='Create'
               { ...textareaProps }
               metadataTags={defaultBoxMetadataTags}
-              error={false}
-              errorMessage="invalid input"
+              error={taError}
+              errorMessage="An error occurred."
+              disabled={taDisabled}
             />
           </div>
           
@@ -344,11 +351,27 @@ export const CustomContent = () => {
               submitButtonText='Post'
               { ...textareaProps }
               metadataTags={defaultPostMetadataTags}
-              error={false}
-              errorMessage="invalid input"
+              error={taError}
+              errorMessage="An error occurred."
+              disabled={taDisabled}
+            />
+          </div>
+
+          <div className='span-12 rowStart gap-2'>
+            <Button 
+              displayText={!taError ? 'Enable Error' : 'Disable Error'} 
+              size='md'
+              onClick={(e: any) => toggleTaError()} 
+            />
+            <Button 
+              displayText={taDisabled ? 'Enable' : 'Disable'} 
+              size='md'
+              onClick={(e: any) => toggleTaDisabled()} 
             />
           </div>
         </div>
+
+          
       </div>
 
 

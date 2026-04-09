@@ -43,7 +43,7 @@ export const Button = ({
           : color == 'gray'       ? 'btn-el-gray' 
           : color == 'gray-focus' ? 'btn-el-gray-focus' 
           : '' 
-        } 
+        }
 
         ${additionalStyles}
       `}

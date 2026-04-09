@@ -125,7 +125,10 @@ export const Input = ({
 
   return (
     <TextInput className='input'>
-      <label htmlFor={type} className="input-label"> { label } </label>
+      <Label htmlFor={type} className="input-label"> 
+        { label } 
+      </Label>
+
       <InputContainer className="input-container group">
         <input 
           type={getType()}
@@ -153,17 +156,16 @@ export const Input = ({
         {/* Elements preceding the input */}
         <PrecedingInputElements className="input-preceding-el-align">
           <div className='input-preceding-el'>
-            { type == 'email' && <Icon variant='Envelope' styles='input-icon-def' /> }
+            { type == 'email' &&        <Icon variant='Envelope' styles='input-icon-def' /> }
             { type == 'policyNumber' && <Icon variant='Profile' styles='input-icon-def' /> }
-            { type == 'phone' && <Icon variant='Phone' styles='input-icon-def' /> }
-            { type == 'creditCard' && <Icon variant='CreditCard' styles='input-icon-def' /> }
+            { type == 'phone' &&        <Icon variant='Phone' styles='input-icon-def' /> }
+            { type == 'creditCard' &&   <Icon variant='CreditCard' styles='input-icon-def' /> }
             { type == 'password' && 
               <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
-                { showPassword && <Icon variant='EyeSlash' styles='input-icon-def' /> }
-                { !showPassword && <Icon variant='Eye' styles='input-icon-def' /> }
+                { showPassword  &&  <Icon variant='EyeSlash' styles='input-icon-def' /> }
+                { !showPassword &&  <Icon variant='Eye' styles='input-icon-def' /> }
               </div>
             }
-            {/* TODO: custom icons preceding input */}
           </div>
         </PrecedingInputElements>
 
@@ -176,7 +178,7 @@ export const Input = ({
             : 
               <TooltipIcon 
                 onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
-                onMouseOver={e => tooltip && toolTipHover(e)} 
+                onMouseOver={e =>  tooltip && toolTipHover(e)} 
                 onMouseLeave={e => tooltip && tooltipMouseLeave(e)} 
                 className={`cursor-pointer`}
               >
@@ -212,11 +214,11 @@ export const Input = ({
       </InputContainer>
 
       {/* Error / Description messages */}
-      { getError() && errorMessage ? 
-        <p id={`${id}-error-message`} className="mt-2 ml-1 error-text"> { errorMessage } </p>
-      : description && 
-        <p id={`${id}-email-description`} className="mt-2 ml-1"> { description } </p>
-      }
+      <ErrorAndDescription className='mt-2 ml-1'>
+        { getError() && errorMessage ? 
+        <p className="error-text">  { errorMessage } </p> : description && 
+        <p className="">            { description } </p> }
+      </ErrorAndDescription>
 
       {/* Tooltip Text */}
       <Tooltip 
@@ -237,8 +239,12 @@ export const Input = ({
 // Elements 
 const TextInput = styled.div``;
 const InputContainer = styled.div``;
+
 const PrecedingInputElements = styled.div``;
 const SubsequentInputElements = styled.div``;
+const Label = styled.label``;
+const ErrorAndDescription = styled.div``;
+
 const LoadingBar = styled.div``;
 const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;

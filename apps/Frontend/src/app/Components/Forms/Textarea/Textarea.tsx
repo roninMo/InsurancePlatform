@@ -60,7 +60,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
   return (
     <textarea 
         name={name}
-        value={!disabled ? value : placeholder}
+        value={value}
         placeholder={placeholder}
         id={id}
 
@@ -78,7 +78,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
         className={`ta-base
           ${type == 'default' ? 'ta-d-base' : ''}
           ${type == 'box' ? 'ta-b-base' : ''}
-          ${type == 'post' ? `ta-p-base ${error ? 'ta-p-error' : ''}` : ''}
+          ${type == 'post' ? `ta-p-base ${error && !disabled ? 'ta-p-error' : ''}` : ''}
           ${type !== 'post' ? `ta-db-base` : ''}
         `}
         { ...props }
@@ -116,7 +116,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
             <InputComponent { ...allProps } />
 
             {/* Icons and post button */}
-            <ButtonsAndLinks className={`ta-d-btn-links ${error ? 'ta-d-btn-links-error' : 'ta-d-btn-links-focus'}`}>
+            <ButtonsAndLinks className={`ta-d-btn-links ${error && !disabled ? 'ta-d-btn-links-error' : 'ta-d-btn-links-focus'}`}>
               <PrecedingInputElements className="rowStart items-center gap-4 pl-1">
                 <AttachFileElement onClickAttachFile={onAttachFile} iconStyles="ta-d-icon" />
                 <Icon variant='Smile'       styles="ta-d-icon" />
@@ -128,7 +128,8 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
                   <Button 
                     displayText={submitButtonText} 
                     onClick={e => onSubmit && onSubmit(e)} 
-                    additionalStyles="px-3" 
+                    disabled={disabled}
+                    additionalStyles="ta-submit-btn px-3" 
                   />
                 </SubsequentInputElements>
               }
@@ -137,10 +138,9 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         </Container>
         
         <ErrAndDescElements 
-          type={type}
-          error={error} 
-          errorMessage={errorMessage} 
-          description={description} 
+          type={type} description={description} 
+          error={error} errorMessage={errorMessage} 
+          disabled={disabled}
         />
       </div>
     );
@@ -151,7 +151,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   //--------------------------------//
   else if (type == 'box') {
     return (<>
-      <Container className={`ta-b-c group ${error ? 'outline-error' : 'outline-styles'}`}>
+      <Container className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
         { label && <h4 className="ta-b-label">{ label }</h4> }
 				<InputComponent { ...allProps } />
         
@@ -168,9 +168,10 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
             { !submitButtonDisabled && 
               <Button 
                 displayText={submitButtonText ? submitButtonText : 'Create'} 
-                onClick={e => onSubmit && onSubmit(e)} 
                 size="default" 
-                additionalStyles="px-3" 
+                onClick={e => onSubmit && onSubmit(e)} 
+                disabled={disabled}
+                additionalStyles="ta-submit-btn px-3" 
               />
             }
           </div>
@@ -178,10 +179,9 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
       </Container>
       
       <ErrAndDescElements 
-        type={type}
-        error={error} 
-        errorMessage={errorMessage} 
-        description={description} 
+        type={type} description={description} 
+        error={error} errorMessage={errorMessage} 
+        disabled={disabled}
       />
     </>);
   }
@@ -205,15 +205,13 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
               displayText="Write" 
               onClick={() => togglePreview('write')} 
               size="default" 
-              color="none"
-              additionalStyles={showPreview ? 'btn-gray-focus' : 'btn-gray'}
+              color={showPreview == 'write' ? 'gray' : 'gray-focus'}
             />
             <Button 
               displayText="Preview" 
               onClick={() => togglePreview('preview')} 
               size="default" 
-              color="none"
-              additionalStyles={showPreview ? 'btn-gray' : 'btn-gray-focus'}
+              color={showPreview == 'preview' ? 'gray' : 'gray-focus'}
             />
           </div>
 
@@ -225,7 +223,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         <div className={`height-trans ${showPreview == 'preview' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className="height-trans-content ">
           { showPreview == 'preview' && 
-            <div className="ta-p-read-c">
+            <div className="ta-p-preview-c">
               { value ? value : 'Preview content will render here.' }
             </div>
           }
@@ -245,18 +243,18 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         
         <div className="row justify-between pt-1">
           <ErrAndDescElements 
-            type={type}
-            error={error} 
-            errorMessage={errorMessage} 
-            description={description} 
+            type={type} description={description} 
+            error={error} errorMessage={errorMessage} 
+            disabled={disabled}
           />
 
           <div className="margin-auto-div-fix">
             <Button 
               displayText="Post" 
-              onClick={e => onSubmit && onSubmit(e)} 
               size="default" 
-              additionalStyles="px-3 self-start" 
+              onClick={e => onSubmit && onSubmit(e)} 
+              disabled={disabled}
+              additionalStyles="ta-submit-btn px-3 self-start" 
             />
           </div>
         </div>
@@ -267,13 +265,13 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
 
 // Universal error and description handling
-const ErrAndDescElements = ({ type, error, errorMessage, description }: any) => {
+const ErrAndDescElements = ({ type, error, errorMessage, disabled, description }: any) => {
   return (
     <> { (error || description) &&
-      <ErrorAndDescription className={type == 'default' ? 'ta-error-d-c' : type == 'box' ? 'ta-error-b-c' : 'ta-error-p-c'}>
-        { error && errorMessage 
+      <ErrorAndDescription className={type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}>
+        { (!disabled && error && errorMessage) 
 					? <div className="error-text">{ errorMessage }</div>
-	      	: <div className="text-colors dark:text-slate-500">{ description }</div>
+          : <div className={`ta-d ${disabled ? 'ta-d-disabled' : ''}`}>{ description }</div>
         }
       </ErrorAndDescription>
     } </>
