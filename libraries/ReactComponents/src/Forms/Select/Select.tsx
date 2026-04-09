@@ -117,28 +117,29 @@ export const Select = ({
       </StyledSelect>
 
 			
-	      <DropdownItems
-	        onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
-	        onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
-	        id={dropdownId} className={`select-dropdown
-	          ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
-	          ${getError() ? 'select-dd-error' : ''}
-	          ${!disabled ? 'select-dd-scroll' : 'select-dd-disabled'}
-						height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
-				`}>			
-     			<div className={`height-trans-content`}>
-		        {values.map((item: SelectItemValues, index: number) => 
-		          <SelectItem 
-		            item={item}
-		            index={index}
-		            onSelect={itemSelected} 
-		            currentSelectValue={value}
-		            name={name}
-		            key={`${id}-${index}-${item.value}`}
-		          />
-		        )}
-					</div>
-				</DropdownItems>
+      <Dropdown
+        onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
+        onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
+        id={dropdownId} className={`select-dropdown
+          ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
+          ${getError() ? 'select-dd-error' : ''}
+          ${!disabled ? 'select-dd-scroll' : 'select-dd-disabled'}
+      `}>			
+        <DropdownAnim className={`height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+          <div className={`height-trans-content`}>
+            {values.map((item: SelectItemValues, index: number) => 
+              <SelectItem 
+                item={item}
+                index={index}
+                onSelect={itemSelected} 
+                currentSelectValue={value}
+                name={name}
+                key={`${id}-${index}-${item.value}`}
+              />
+            )}
+          </div>
+        </DropdownAnim>
+      </Dropdown>
 
       <Description className={`mt-2 select-desc ${getError() && 'error-text'}`}>
         { error && errorMessage ? 
@@ -158,4 +159,5 @@ const Label = styled.label``;
 const Description = styled.p``;
 const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
-const DropdownItems = styled.div``;
+const Dropdown = styled.div``;
+const DropdownAnim = styled.div``;

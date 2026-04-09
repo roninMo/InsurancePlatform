@@ -413,8 +413,6 @@ export const CustomContent = () => {
             variant='inline' 
             name='radioTable-1'
             radioItems={favoriteFoods}
-            // error
-            // errorMessage='an error occurred'
           />
         </div>
         <div className='span-12 lg:span-6 md:span-10 p-4 pb-4'>
@@ -423,6 +421,7 @@ export const CustomContent = () => {
             variant='block' 
             name='radioTable-2'
             radioItems={favoriteFoods}
+            disabled
           />
         </div>
       </div>

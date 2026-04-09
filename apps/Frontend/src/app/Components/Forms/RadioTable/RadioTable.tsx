@@ -19,33 +19,22 @@ export interface RadioTableProps {
 
   error?: boolean;
   errorMessage?: string;
-  // TODO: we need better displays for when there are errors
   disabled?: boolean;
-  // TODO: the selection needs styles for when it's disabled
   required?: boolean;
 }
 
 
-// TODO: clean up the theme styles to be handled with global css styling
 export const RadioTable = ({
   variant = 'block', name, label, description,
-  radioItems, currentValue, onSelect, 
-  error = false, errorMessage, disabled = false, required = false,
-  onMouseEnter, onMouseLeave
+  radioItems, currentValue, onSelect,  onMouseEnter, onMouseLeave,
+  error, errorMessage, disabled, required,
 }: RadioTableProps) => {
   const id = useId();
   
-  const optionSelected = (item: RadioItem): boolean => {
-    return currentValue.value == item.value;
-  }
+  // Get functions
+  const isSelected = (item: RadioItem): boolean => currentValue.value == item.value;
+  const getError = () => error && !disabled;
 
-  const getSelectedStyles = (selected: boolean): string => {
-    let classes = outlineStyles;
-    if (selected) classes += ` ${error ? 'error-box' : 'selected-box'} z-10 `;
-    else classes += ` outline-slate-400/0`;
-
-    return classes;
-  }
 
   return (
     <Container>
@@ -60,33 +49,35 @@ export const RadioTable = ({
             onClick={() => onSelect(item, index, currentValue)} 
             onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
             onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
-            className={`${tableItemStyles} ${getSelectedStyles(optionSelected(item))}`} 
-            key={`${id}-radio-table-item-${index}`}
-          >
+            key={`rti-${name}-${item.value}-${index}-${id}`}
+            className={`radio-table-i 
+              ${isSelected(item) ? 'radio-t-i-selected' : ''}
+              ${getError() && isSelected(item) ? 'radio-t-i-selected-error' : getError() ? 'radio-t-i-error' : ''} 
+              ${disabled && isSelected(item) ? 'radio-t-i-selected-disabled' : disabled ? 'radio-t-i-disabled' : ''}
+          `}>
             <Radio 
+              type='radio' name={name} 
+              id={`rt-ii-${name}-${item.value}-${index}`}
               value={currentValue.value}
-              name={name} 
-              checked={optionSelected(item)}
-              type='radio' 
+              checked={isSelected(item)}
               onChange={() => {}} // Handled via button event
-              id={`${id}-radio-table-item-${index}-radio`}
-              className={`radio-button mt-[2px]`}
-              disabled={disabled || item.disabled}
               required={required}
+              disabled={disabled || item.disabled}
+              className={`radio-button mt-[2px] ${getError() ? 'radio-button-error' : ''}`}
             />
             
-            {/* Column Layout */}
             <div className={`colStart *:text-left`}>
-              <ItemLabel className='pb-[2px]'>{ item.label }</ItemLabel>
+              <ItemLabel className='pb-[2px] radio-t-i-label'>{ item.label }</ItemLabel>
 
-              {(item.description && variant == 'block') && 
-                <ItemDescription>{ item.description }</ItemDescription>
+              {/* Column Layout */}
+              {(variant == 'block' && item.description) && 
+                <ItemDescription className='radio-t-i-desc'>{ item.description }</ItemDescription>
               }
             </div>
             
             {/* Row Layout */}
-            {description && variant == 'inline' && 
-              <ItemDescription className={`ml-auto text-left pl-2`}>
+            {(variant == 'inline' && description) && 
+              <ItemDescription className={`ml-auto text-left pl-2 radio-t-i-desc`}>
                 { item.description }
               </ItemDescription>
             }
@@ -95,7 +86,7 @@ export const RadioTable = ({
       </Table>
 
       {/* Error text */}
-      { error && 
+      { getError() && 
         <Description className='error-text px-1 py-2'>
           { errorMessage }
         </Description>
@@ -105,7 +96,7 @@ export const RadioTable = ({
 }
 
 
-// #region Component styles
+// Styled Components
 const Container = styled.div``;
 const HeaderContainer = styled.div``;
 const Table = styled.div``;
@@ -117,17 +108,3 @@ const Description = styled.p``;
 const Radio = styled.input``
 const ItemLabel = styled.label``;
 const ItemDescription = styled.p``;
-
-
-const outlineStyles = `outline outline-1 -outline-offset-1`;
-const tableItemStyles = `
-  rowStart items-start gap-2 
-  min-w-full p-4 px-6 
-  bg-default border border-default 
-  trans [&_div]:trans duration-500 [&_div]:duration-500 
-  first:rounded-t-md last:rounded-b-md 
-  [&:not(:first-child)]:-mt-[1px] 
-`;
-
-
-// #endregion

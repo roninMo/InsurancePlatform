@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { UniversalEventHandlers } from '@Project/ReactComponents';
 import { RadioItem, RadioVariant } from '../RadioGroup';
 
+import styled from '@emotion/styled';
 import styles from './RadioItem.module.scss';
-import { UniversalEventHandlers } from '@Project/ReactComponents';
+
 
 export interface RadioItemProps {
   variant: RadioVariant;
@@ -11,64 +12,56 @@ export interface RadioItemProps {
   value: RadioItem;
   
   inputName: string;
-  id: string;
   index: number;
   
   disabled?: boolean;
   error?: boolean;
 }
 
-
-// TODO: Create a new component for the table variants, and the boxes
 export const RadioGroupItem = ({ 
-  checked, onSelect, value, inputName, id, variant, index, error, disabled,
-  onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
+  checked, onSelect, value, inputName, variant, index, error, disabled,
+  onFocus, onChange, onBlur, onClick, onMouseEnter, onMouseLeave
 }: RadioItemProps & UniversalEventHandlers) => {
-  const getContainerStyles = (): string => {
-    if (variant == 'default') return defaultStyles;
-    if (variant == 'list') return listStyles;
-    if (variant == 'column') return columnStyles;
-    if (variant == 'columnInline') return columnStyles;
-    return '';
-  }
 
-  const getItemContainerStyles = (): string => {
-    let classes = '';
-    classes += ` ${variant == 'columnInline' ? 'rowStart' : 'colStart items-start'}`;
-    if (variant != 'list') classes += ' gap-2';
-    return classes;
+  // Event handling
+  const selectedRadioItem = (item: RadioItem, index: number) => {
+    if (disabled) return; // out event doesn't prevent edits to input values when disabled
+    onSelect(value, index);
   }
 
   return (
     <Container 
-      className={`${getContainerStyles()}`} 
       onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
       onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
+      onClick={() => selectedRadioItem(value, index)}
+      className={`
+        ${variant == 'default' ? 'radio-item-c-d' : ''}
+        ${variant == 'column' ? 'radio-item-c-c' : ''}
+        ${variant == 'columnInline' ? 'radio-item-c-c' : ''}
+        ${variant == 'list' ? 'radio-item-c-l' : ''}
+      `} 
     >
-      <div className={`radio-container`}>
-        <Radio 
-          value={value.value}
-          onChange={(e) => onSelect(value, index)}
-          checked={checked}
-      
-          type="radio" 
-          disabled={disabled}
-          name={inputName} 
-          id={`radioGroupItemInput-${id}-${value.value}`}
-          className={`radio-button`} 
+      <Radio 
+        value={value.value}
+        onChange={(e) => onChange && onChange(e)}
+        checked={checked}
+    
+        type="radio" 
+        disabled={disabled}
+        name={`${inputName}-${value.value}`}
+        className={`radio-button`} 
 
-          onBlur={e => onBlur && onBlur(e)}
-          onFocus={e => onFocus && onFocus(e)}
-          onClick={e => onClick && onClick(e)}
-        />
-      </div>
+        onBlur={e => onBlur && onBlur(e)}
+        onFocus={e => onFocus && onFocus(e)}
+        onClick={e => onClick && onClick(e)}
+      />
 
-      <RadioItemContainer className={`${getItemContainerStyles()}`}>
-        <Label className="min-w-max pr-2"> { value.label } </Label>
+      <LabelAndDescription className="radio-text">
+        <Label className="min-w-max pr-2 radio-t-label"> { value.label } </Label>
         { value.description && 
-          <Description> { value.description } </Description>
+          <Description className='radio-t-desc'> { value.description } </Description>
         }
-      </RadioItemContainer>
+      </LabelAndDescription>
     </Container>
   );
 }
@@ -76,20 +69,7 @@ export const RadioGroupItem = ({
 
 // #region styling
 const Container = styled.div``;
-const RadioItemContainer = styled.div``;
 const Radio = styled.input``;
+const LabelAndDescription = styled.div``;
 const Label = styled.p``;
 const Description = styled.p``;
-
-// Component styles
-// TODO: Add these to global styles and clean up the theme of this component
-const defaultStyles = `rowStart items-start gap-2 mr-6`;
-const columnStyles = `rowStart items-start gap-2`;
-const listStyles = `
-  min-w-full row justify-between items-start gap-2 mr-6
-  [&>.radio-container]:ml-4 [&>.radio-container]:order-1
-  border-b border-styles pb-6 pt-2 w-full
-`;
-
-
-// #endregion

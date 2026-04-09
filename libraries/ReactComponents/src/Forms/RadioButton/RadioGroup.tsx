@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-
-import styles from './RadioGroup.module.scss';
-import { RadioGroupItem } from './RadioItem/RadioItem';
-import { UniversalEventHandlers } from '@Project/ReactComponents';
 import { useId } from 'react';
+import { UniversalEventHandlers } from '@Project/ReactComponents';
+import { RadioGroupItem } from './RadioItem/RadioItem';
+
+import styled from '@emotion/styled';
+import styles from './RadioGroup.module.scss';
 
 
 export type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
@@ -40,44 +40,32 @@ export const RadioGroup = ({
   const id = useId();
 
   const radioItemSelected = (item: RadioItem, index: number) => {
-    // console.log(`\nA radio item was selected: `, {item, index});
     onSelect(item, index, currentValue);
   }
 
   return (
-    <Container className={`w-full colStart justify-start gap-2 ${getErrorThemes(error, disabled)}`}>
-
-      {/* Radio Button Label w/description */}
+    <Container className={`radio-group ${disabled ? 'radio-group-disabled' : error ? 'radio-group-error' : ''} `}>
       { (label || description) && 
-        <TextContainer className={`colStart gap-1 mb-4`}>
-          { label && 
-            <Label>{ label }</Label>
-          }
-          
-          { description && 
-            <Description>{ description }</Description>
-          }
-        </TextContainer>
+        <div className={`colStart gap-1 mb-4`}>
+          { label && <Label>{ label }</Label> }
+          { description && <Description>{ description }</Description> }
+        </div>
       }
 
-      {/* Radio Items */}
-      <div className={rowStyleVariants.includes(variant) ? 'rowStart gap-1' : 'colStart *:pb-4'}>
+      <RadioItems className={rowStyleVariants.includes(variant) ? 'rowStart gap-1' : 'colStart *:pb-4'}>
         { radioItems.map((item: RadioItem, index: number) =>
           <RadioGroupItem
             checked={currentValue.value == item.value}
-            // TODO: this click event should encompass the whole radio item, at least including the label
             onSelect={(item: RadioItem, index: number) => radioItemSelected(item, index)}
             value={item}
             
             inputName={name}
-            id={`radioGroupItem-${id}-${item.value}`}
             variant={variant}
             key={`radioGroupItem-${id}-${item.value}`}
             index={index}
             
             disabled={disabled ? true : item.disabled}
             error={error}
-            // TODO: We need better visuals for when there's error
 
             onBlur={onBlur}
             onFocus={onFocus}
@@ -86,13 +74,12 @@ export const RadioGroup = ({
             onMouseLeave={onMouseLeave}
           />
         )}
-      </div>
+      </RadioItems>
 
-      {/* Error message */}
-      { error && 
-        <Description className={`pt-2`}>
+      { (error && !disabled) && 
+        <ErrorText className={`pt-2 error-text`}>
           { errorMessage }
-        </Description>
+        </ErrorText>
       }
     </Container>
   );
@@ -101,22 +88,10 @@ export const RadioGroup = ({
 
 // Styles
 const Container = styled.div``;
-const TextContainer = styled.div``;
 const Description = styled.p``;
 const Label = styled.label``;
-
-// TODO: use style css directives for handling error text themes globally
-const errorStyles = `[&>label]:error-text [&>p]:error-text`;
-const disabledStyles = `[&>label]:disabled-text [&>p]:disabled-text`;
-
-const getErrorThemes = (error: boolean, disabled: boolean): string => {
-  let classes = ``;
-  
-  if (error) classes += errorStyles;
-  else if (disabled) classes += disabledStyles;
-  return classes;
-}
-
+const RadioItems = styled.div``;
+const ErrorText = styled.div``;
 
 // Radio items layout
 const rowStyleVariants = ['default'];

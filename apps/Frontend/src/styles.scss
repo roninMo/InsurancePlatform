@@ -24,7 +24,7 @@
   .text-colors    { @apply text-slate-900     dark:text-slate-400; }
   
   .placeholder-text { @apply text-slate-400   dark:text-slate-500; }
-  .disabled-text    { @apply text-gray-500    dark:text-gray-400; }
+  .disabled-text    { @apply text-gray-500    dark:text-gray-400/70; }
   .warning-text     { @apply text-amber-600   dark:text-amber-400; }
   .error-text       { @apply text-red-700     dark:text-red-500; }
   .ok-text          { @apply text-emerald-600 dark:text-emerald-400; }
@@ -309,6 +309,132 @@
   }
   // #endregion
 
+  // Radio element classes
+  // #region Radio component styles
+  .radio-group {
+    @apply w-full colStart justify-start gap-2;
+  }
+
+  /* Most of our error/disabled tags are here, just referencing nested classes to ease handling the nested variant classes */
+  .radio-group-error {
+    @apply 
+      [&_.radio-button]:radio-button-error
+      last:[&_.radio-item-c-l]:border-error
+    ;
+  }
+  
+  .radio-group-disabled {
+    @apply 
+      [&_.radio-t-label]:text-colors
+      [&_.radio-t-desc]:disabled-text
+    ;
+  }
+  
+  .radio-item-c {
+    @apply cursor-pointer transition-all
+    
+      /* columnInline */
+      [&_.radio-item-text]:rowStart
+      
+      /* default, list, column */
+      [&_.radio-item-text]:colStart
+      [&_.radio-item-text]:items-start
+      
+      /* list */
+      [&_.radio-item-text]:gap-2
+    ;
+  }
+
+  .radio-item-c-d {
+    @apply radio-item-c
+      rowStart items-start gap-2 mr-6
+      [&_.radio-text]:radio-text-d
+    ;
+  }
+  .radio-item-c-c {
+    @apply radio-item-c
+      rowStart items-start gap-2
+      [&_.radio-text]:radio-text-c
+    ;
+  }
+  .radio-item-c-ci {
+    @apply radio-item-c-c
+      [&_.radio-text]:radio-text-ci
+    ;
+  }
+  .radio-item-c-l {
+    @apply radio-item-c
+      pb-6 pt-2 mr-6 w-full 
+      row justify-between items-start gap-2
+      border-b border-styles 
+      
+      /* Align the button to the right for lists */
+      [&_.radio-button]:ml-4 
+      [&_.radio-button]:order-1
+
+      /* radio text styles for the list variant */
+      [&_.radio-text]:radio-text-l
+    ;
+  }
+
+  .radio-text { @apply block; }
+  .radio-t-label { @apply label-colors font-semibold; }
+  .radio-t-desc { @apply text-colors; }
+  .radio-text-d { @apply colStart items-start; }
+  .radio-text-c { @apply colStart items-start; }
+  .radio-text-ci { @apply rowStart; }
+  .radio-text-l { @apply colStart items-start gap-2; }
+  // #endregion
+
+  // Radio element classes
+  // #region Radio Table component styles
+  .radio-table {
+    @apply m-0;
+  }
+
+  .radio-table-i {
+    @apply 
+      p-4 px-6 rowStart items-start gap-2 
+      bg-default border border-default 
+      outline outline-1 -outline-offset-1 
+      outline-slate-400/0
+
+      transition-all duration-500 
+      [&_div]:transition-all [&_div]:duration-500 
+
+      /* Round the edges and align the outlines */
+      first:rounded-t-md last:rounded-b-md 
+      [&:not(:first-child)]:-mt-[1px] 
+    ;
+  }
+
+  .radio-t-i-error {
+    @apply m-0;
+  }
+  
+  .radio-t-i-disabled {
+    @apply 
+      bg-disabled bg-opacity-40 dark:bg-opacity-20
+      [&_.radio-t-i-desc]:disabled-text
+    ;
+  }
+  
+  .radio-t-i-selected {
+    @apply z-10 selected-box;
+  }
+
+  .radio-t-i-selected-error {
+    @apply radio-t-i-error z-10 error-box;
+  }
+  
+  .radio-t-i-selected-disabled {
+    @apply radio-t-i-disabled z-10 disabled-box;
+  }
+
+  .radio-t-i-label { @apply label-colors; }
+  .radio-t-i-desc { @apply text-colors; }
+
+  // #endregion
 
   // Select element classes
   // #region Select component styles
@@ -601,6 +727,17 @@
     ;
   }
 
+  .radio-button-error {
+    @apply 
+      /* Radio Selected Circle (Outer) */
+      checked:outline-red-500/50 
+      dark:checked:outline-red-500/50 
+
+      /* Radio Selected Circle (Inner) */
+      checked:bg-slate-400/25
+      dark:checked:bg-slate-200/25
+  }
+
 
   // Hack for native autofill text color
   input:-webkit-autofill, 
@@ -635,6 +772,13 @@
       outline-focus 
   }
 
+  .faded-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-40
+      bg-div
+      outline-default 
+  }
+
   .warning-box {
     @apply 
       bg-opacity-10 dark:bg-opacity-10
@@ -656,11 +800,11 @@
       outline-red-500 dark:outline-red-600;
   }
   
-  .faded-box { 
+  .disabled-box { 
     @apply 
-      bg-opacity-20 dark:bg-opacity-40
-      bg-div
-      outline-default 
+      bg-opacity-20 dark:bg-opacity-20
+      bg-gray-600  dark:bg-gray-400
+      outline-blue-300 dark:outline-slate-600
   }
   // #endregion
 
