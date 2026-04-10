@@ -43,7 +43,7 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles, chil
 				<label className="param-item-base">Type</label>
 				<label className="param-item-base">Description</label>
 
-				{/* Param Items */} {/* Add variant context styles ex: type="text" */}
+				{/* Param Items */}
 				{ children ? children : (
 					<>
 						{ params?.map((item: ParamItem | 'spacing', index: number) => 
