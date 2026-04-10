@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState, ChangeEvent, FocusEvent } from "react";
-import { Input } from "@Project/ReactComponents";
+import { Input } from "../../../../../Components/Forms/Input/Input";
+// import { Input } from "@Project/ReactComponents";
 
 
 
@@ -32,8 +33,8 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."
@@ -82,8 +83,8 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."
@@ -122,8 +123,8 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."
@@ -162,8 +163,8 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."
@@ -201,8 +202,8 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."
@@ -241,8 +242,8 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."
@@ -281,8 +282,8 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."
@@ -321,8 +322,8 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         // ref={getMaskRef(type)}
         
         onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
-        onFocus={(e: FocusEvent<HTMLInputElement, Element>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip
         tooltipText="Tooltip text..."

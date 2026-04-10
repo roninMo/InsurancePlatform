@@ -6,7 +6,6 @@ import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
 import { Slider } from '../../../Components/Forms/Slider/Slider';
 import { 
   Button, 
-  Input, 
   InputProps_Email, 
   RadioGroup, 
   RadioGroupProps,
@@ -18,6 +17,7 @@ import {
 import { defaultBoxMetadataTags, defaultPostMetadataTags, Textarea } from '../../../Components/Forms/Textarea/Textarea';
 
 import styles from './CustomContent.module.scss';
+import { Input } from '../../../Components/Forms/Input/Input';
 
 
 export interface CustomContentProps {

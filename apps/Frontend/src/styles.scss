@@ -346,12 +346,17 @@
     @apply mt-2 grid grid-cols-1; // group
   }
 
-  .input-preceding-el { @apply rowStart; }
   .input-icon-spacing { @apply pl-9; }
-  .input-preceding-el-align {
+
+
+  .input-preceding-el-c {
     @apply 
-      col-start-1 row-start-1 justify-start self-center
-      pointer-events-none;
+    col-start-1 row-start-1 justify-start self-center
+    pointer-events-none;
+  }
+
+  .input-preceding-el { 
+    @apply rowStart; 
   }
   
   .input-icon-def {
@@ -362,7 +367,7 @@
     @apply pointer-events-auto cursor-pointer;
   }
 
-  .input-subsequent-el { 
+  .input-subsequent-el-c { 
     @apply 
       grid col-start-1 row-start-1 justify-end self-center 
       pointer-events-none;

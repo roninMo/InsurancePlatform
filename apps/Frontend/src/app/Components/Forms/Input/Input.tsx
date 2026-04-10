@@ -3,8 +3,7 @@ import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
-import { Icon } from '../../Common/Icons/Icon';
-import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
+import { UniversalEventHandlers, Icon } from '@Project/ReactComponents';
 
 
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
@@ -47,9 +46,7 @@ export const Input = ({
 
   const getMaskRef = (type: TextInputTypes): RefObject<HTMLInputElement> | undefined => {
     // if (type == 'phone') return phoneMaskRef;
-    // if (type == 'creditCard') return creditCardMaskRef;
-    // if (type == 'policyNumber') return policyNumberMaskRef;
-    return undefined
+    return undefined;
   }
 
   // Password visibility
@@ -102,6 +99,7 @@ export const Input = ({
           { ...props }
         />
 
+        {/* Variant specific elements before and after the input element */}
         <PrecedingElements 
           type={type}
           showPassword={showPassword}
