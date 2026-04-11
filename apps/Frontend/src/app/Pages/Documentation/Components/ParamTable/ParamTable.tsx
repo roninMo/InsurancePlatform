@@ -23,34 +23,40 @@ export interface ParamItem {
 	
 	contextParam?: boolean; // used to signify certain variants. e.g. type="email"
 	variantOption?: boolean; // parameters highlighted because they're specific to a certain variant
+	
+	children?: ParamItem[]; // nested object values - sub tables
 }
 
 export interface ParamTableProps {
 	params?: (ParamItem | 'spacing')[]; // This is reliant on that the items come in threes
-	variant?: 'default' | 'additionalParams';
+	variant?: 'default' | 'subTable';
 	additionalStyles?: string;
-	children?: ReactNode;
 }
 
 export const ParamTable = ({ params, variant = 'default', additionalStyles, children }: ParamTableProps) => {
 	const tableItemId = useId();
   return (
-		<Container className="height-trans grid-rows-[1fr]">
+		<Container className={`height-trans grid-rows-[1fr] ${variant == "subTable" ? 'param-subtable' : ''`}>
 			<Table className={`param-item-table dual-column-3 height-trans-content ${additionalStyles}`}>
 				
 				{/* Header */}
 				<label className="param-item-base">Name</label>
 				<label className="param-item-base">Type</label>
 				<label className="param-item-base">Description</label>
+				
+				{/* subtable header */}
+				<label className="param-item-base">Name</label>
+				<label className="param-item-base">Type</label>
+				<label className="param-item-base">Description</label>
+				
 
-				{/* Param Items */}
-				{ children ? children : (
-					<>
-						{ params?.map((item: ParamItem | 'spacing', index: number) => 
-							<ParamTableItem item={item} key={`paramTableItem-${tableItemId}-${index}`} />
-						)}
-						{/* todo: Additional variant params */}
-					</>
+			{/* Param Items */}
+			{ params?.map((item: ParamItem | 'spacing', index: number) => 
+				<ParamTableItem 
+					item={item} 
+					additionalStyles={additionalStyles}
+					key={`paramTableItem-${tableItemId}-${index}`} 
+				/>
 				)}
 			</Table>
 		</Container>
@@ -60,10 +66,11 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles, chil
 
 interface ParamTableItemProps {
 	item: ParamItem | 'spacing';
+	additionalStyles?: string;
 }
-export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
+export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps)  => {
 	// Create spacing between each of the params, like an empty row
-	if (typeof item == "string") {
+	if (typeof item == "string" && item == "spacing") {
 		return (
 			<>
 				<div className='param-item-spacing' />
@@ -74,7 +81,7 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 	}
 
 	// Standard logic
-	const { name, type, description, contextParam, variantOption } = item;
+	const { name, type, description, contextParam, variantOption, children } = item;
 	const ParamTypeElement = type;
 	const ParamDescriptionElement = description;
 	
@@ -95,6 +102,10 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 			<div className={`param-item-base ${variantStyles}`}>
 				{ ParamDescriptionElement ? <ParamDescriptionElement /> : null }
 			</div>
+			
+			{ (children && children.length > 0 &&
+				<ParamTable params={children} variant="subTable" additionalStyles={additionalStyles} />
+			}
 		</>
 	);
 }
