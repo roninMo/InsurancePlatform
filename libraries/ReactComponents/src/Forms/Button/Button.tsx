@@ -7,7 +7,7 @@ import styles from './Button.module.scss';
 export type ButtonSizes = 'default' | 'md' | 'lg' | 'xl' | 'none';
 export type ButtonColors = 'primary' | 'gray' | 'gray-focus' | 'none';
 export interface ButtonProps {
-  displayText: string;
+  displayText?: string;
   onClick?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   disabled?: boolean;
   type?: "submit" | "reset" | "button" | undefined;
@@ -49,8 +49,8 @@ export const Button = ({
       `}
     >
       
-      {icon && <Icon variant={icon} styles={iconStyles ? iconStyles : undefined}></Icon>}
-      {displayText}
+      {icon && <Icon variant={icon} styles={iconStyles ? iconStyles : undefined} />}
+      {displayText && displayText}
     </button>
   );
 }

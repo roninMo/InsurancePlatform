@@ -3,7 +3,7 @@ import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
-import { UniversalEventHandlers, Icon } from '@Project/ReactComponents';
+import { UniversalEventHandlers, Icon, Button } from '@Project/ReactComponents';
 
 
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
@@ -16,6 +16,7 @@ interface InputProps {
   label: string;
   description?: string;
   value: string;
+  setValue?: Dispatch<SetStateAction<string>>;
   placeholder?: string;
 
   error?: boolean;
@@ -35,7 +36,7 @@ interface InputProps {
 
 
 export const Input = ({
-  type = 'text', name, label, description, value, placeholder,
+  type = 'text', name, label, description, value, setValue, placeholder,
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, opts, ...props
@@ -57,7 +58,7 @@ export const Input = ({
   const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
 
   const getType = (): TextInputTypes => {
-    if (type == 'number') return type;
+    if (type == 'number' || type == 'currency') return 'number';
     if (type == 'password') return showPassword ? 'text' : 'password';
     return 'text';
   }
@@ -75,12 +76,11 @@ export const Input = ({
       <InputContainer className="input-container group">
         <input 
           type={getType()}
-          name={name}
-          value={value}
+          name={name} id={id}
           // ref={getMaskRef(type)} // TODO: add optional input masking
+          value={value}
           placeholder={placeholder}
           autoComplete={autocomplete}
-          id={id}
 
           onChange={(e) => onChange ? onChange(e) : null}
           onBlur={(e) => onBlur ? onBlur(e) : null}
@@ -89,12 +89,10 @@ export const Input = ({
           onMouseEnter={(e) => onMouseEnter ? onMouseEnter(e) : null}
           onMouseLeave={(e) => onMouseLeave ? onMouseLeave(e) : null}
 
-          required={required}
-          disabled={disabled}
-
+          required={required} disabled={disabled}
           className={`input-base peer
-            ${!(type == 'search' || type == 'text' || type == 'currency') ? 'input-icon-spacing' : ''}
-            ${error && !disabled ? 'input-error' : ''}
+            ${!(type == 'search' || type == 'text' || type == 'currency' || type == 'number') ? 'input-icon-spacing' : ''}
+            ${getError() ? 'input-error' : ''}
           `}
           { ...props }
         />
@@ -108,7 +106,7 @@ export const Input = ({
 
         <SubsequentElements
           type={type} name={name}
-          error={getError()} disabled={disabled}
+          setValue={setValue} error={getError()} disabled={disabled}
           tooltip={tooltip} tooltipCoords={tooltipCoordinates}
           tooltipActive={tooltipActive} setTooltipActive={setTooltipActive}
         />
@@ -124,8 +122,10 @@ export const Input = ({
       {/* Error / Description messages */}
       <ErrorAndDescription className='mt-2 ml-1'>
         { getError() && errorMessage ? 
-        <p className="error-text">  { errorMessage } </p> : description && 
-        <p className="">            { description } </p> }
+          <p className="error-text"> { errorMessage } </p> 
+        : description && 
+          <p className=""> { description } </p> 
+        }
       </ErrorAndDescription>
 
       {/* Tooltip Text */}
@@ -180,6 +180,7 @@ interface SubsequentElProps {
   type: TextInputTypes;
   disabled: boolean;
   error: boolean;
+  setValue?: Dispatch<SetStateAction<string>>;
 
   tooltip?: boolean;
   tooltipCoords: RefObject<{ x: number, y: number }>;
@@ -187,9 +188,9 @@ interface SubsequentElProps {
   setTooltipActive: Dispatch<SetStateAction<boolean>>;
 }
 export const SubsequentElements: React.FC<SubsequentElProps> = ({
-  name, type, disabled, error, 
+  name, type, disabled, error, setValue, 
   tooltip, tooltipCoords, setTooltipActive 
-}) => {  
+}) => {
   const tooltipMouseEnter = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     // console.log('mouse enter tooltip', {Event: e});
     setTooltipActive(true);
@@ -205,10 +206,21 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
     tooltipCoords.current = coordinates;
     // console.log(`mouseCoordinates: `, tooltipCoordinates.current); //  {x: coordinates.x, y: coordinates.y });
   }
+
+  const incrementValue = (add: boolean) => {
+    if (!setValue) return;
+
+    setValue(prevValue => {
+      const num = Number(prevValue); 
+      const isNumber = prevValue.trim() !== '' && Number.isFinite(num);
+      if (isNumber) return add ? `${num + 1}` : `${num - 1}`;
+      return prevValue;
+    })
+  }
   
   return (
-    <SubsequentInputElements className={`input-subsequent-el-c`}>
-      <div className={`row flex-grow justify-items-end items-center`}>
+    <SubsequentInputElements className="input-subsequent-el-c">
+      <div className="input-subsequent-el">
         {/* Error / Tooltip icon */}
         { error ?
           <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
@@ -217,23 +229,40 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
             onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
             onMouseOver={e =>  tooltip && toolTipHover(e)} 
             onMouseLeave={e => tooltip && tooltipMouseLeave(e)} 
-            className={`cursor-pointer`}
+            className=""
           >
-            <Icon variant='InfoBox' styles='mr-3 size-4' /> 
+            <Icon variant='InfoBox' styles='mr-3 size-4 cursor-pointer' /> 
           </TooltipIcon>
+        }
+
+        {/* Increment buttons */}
+        { type == 'number' && 
+          <div className={`increment-btns ${!disabled && !error ? 'increment-btns-states' : error ? 'input-btns-error' : ''}`}>
+            <Button 
+              onClick={() => incrementValue(true)}
+              icon='ChevronUp' iconStyles='input-inc-i' disabled={disabled} 
+              color='gray' additionalStyles='inc-btn-base input-inc-btn-t' 
+            />
+            <Button 
+              onClick={() => incrementValue(false)}
+              icon='ChevronDown' iconStyles='input-inc-i' disabled={disabled} 
+              color='gray' additionalStyles='inc-btn-base input-inc-btn-b' 
+            />
+          </div>
         }
 
         {/* Currency Dropdown */}
         { type == 'currency' && 
           <CurrencySelectContainer className='row relative'>
-            <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
+            <Icon variant='DropdownArrow' styles='input-curr-i' />
             <CurrencySelect 
               name={`${name}-currencyType`} disabled={disabled}
               className={`input-curr ${error ? 'input-curr-error' : ''}`}
             >
-              <option>USD</option> 
-              <option>CAD</option> 
-              <option>EUR</option>
+              <option value="USD">USD</option> 
+              <option value="CAD">CAD</option> 
+              <option value="EUR">EUR</option>
+              <option value="YEN">YEN</option>
             </CurrencySelect>
           </CurrencySelectContainer>
         }
@@ -244,7 +273,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
             type="button" disabled={disabled} 
             className={`input-sort-btn ${error ? 'input-sort-error' : ''}`}
           >
-            <Icon variant='Sort' styles='size-5 text-slate-100 dark:text-slate-400' />
+            <Icon variant='Sort' styles='input-sort-i' />
             Sort
           </SortSearchButton>
         }

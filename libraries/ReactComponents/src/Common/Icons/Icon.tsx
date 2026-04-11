@@ -71,6 +71,8 @@ import { Icon_CirclePause } from "./Default/CirclePause/Icon_CirclePause";
 import { Icon_Eye } from "./Default/Eye/Icon_Eye";
 import { Icon_EyeSlash } from "./Default/EyeSlash/Icon_EyeSlash";
 import { Icon_CreditCard } from "./Default/CreditCard/Icon_CreditCard";
+import { Icon_ChevronDown } from "./Default/ChevronDown/Icon_ChevronDown";
+import { Icon_ChevronUp } from "./Default/ChevronUp/Icon_ChevronUp";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
@@ -98,6 +100,8 @@ export type DefaultIconTypes =
   'AttachFile' |
   'Calendar' |
   'Checkbox' |
+  'ChevronDown' |
+  'ChevronUp' |
   'CircleCheck' |
   'CircleError' |
   'CirclePause' |
@@ -143,6 +147,8 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
   if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
   if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
+  if (variant == 'ChevronDown')     return (<Icon_ChevronDown styles={iconStyles} />);
+  if (variant == 'ChevronUp')       return (<Icon_ChevronUp styles={iconStyles} />);
   if (variant == 'CircleCheck')     return (<Icon_CircleCheck styles={iconStyles} />);
   if (variant == 'CircleError')     return (<Icon_CircleError styles={iconStyles} />);
   if (variant == 'CirclePause')     return (<Icon_CirclePause styles={iconStyles} />);

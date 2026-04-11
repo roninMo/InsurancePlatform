@@ -214,6 +214,17 @@
     @apply scrollbar-theme transition-all;
     resize: none;
   }
+  
+  // remove the native increment button stylings, they suck
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
 
 
 	// Button element classes
@@ -373,6 +384,67 @@
       pointer-events-none;
   }
 
+  .input-subsequent-el { 
+    @apply row flex-grow justify-items-end items-center;
+  }
+
+  .input-inc-btns-spacing {
+    @apply mr-4;
+  }
+
+  // number input increment button stylings
+  .input-inc-btn-t { @apply rounded-t-md rounded-b-none; }
+  .input-inc-btn-b { @apply rounded-b-md rounded-t-none; }
+  .inc-btn-base {
+    @apply 
+      px-2.5 py-[3px]
+    ;
+
+    /* Use directional nudges for the specific buttons: */
+    &.input-inc-btn-t:active .input-inc-i {
+      @apply -translate-y-[0.05rem];
+    }
+    &.input-inc-btn-b:active .input-inc-i {
+      @apply translate-y-[0.05rem];
+    }
+
+    /* Grow and squash the icon */
+    &:hover .input-inc-i {
+      @apply label-colors scale-125; 
+    }
+
+    &:active .input-inc-i {
+      @apply placeholder-text scale-100; 
+    }
+  }
+
+  .input-inc-i {
+    @apply size-3 text-colors transition-all;
+  }
+  
+  .increment-btns {
+    @apply 
+      col items-center pointer-events-auto transition-all;
+  }
+
+  .increment-btns-states {
+    @apply 
+      outline-css outline-transparent
+      group-focus-within:outline-focus /* Only when the parent is focused */
+      
+      group-focus-within:[&:focus-within]:outline-transparent /* increment button focus */
+    ;
+  }
+  .input-btns-error { 
+    @apply 
+      outline-css outline-error
+      group-focus-within:outline-focus /* Only when the parent is focused */
+
+      group-focus-within:[&:focus-within]:outline-transparent /* increment button focus */
+    ; 
+  }
+
+
   // input currency button
   .input-curr {
     @apply 
@@ -387,10 +459,20 @@
   }
   .input-curr-error { 
     @apply 
-      outline-error
-      focus:outline-focus
-      [&:not(:focus)]:group-focus-within:outline-none
+      outline-error /* Add an outline error when it isn't focused */
+      focus:outline-focus /* focus outline */
+      [&:not(:focus)]:group-focus-within:outline-none /* no outline when parent is focused */
     ; 
+  }
+
+  .input-curr-i {
+    @apply 
+      size-5 cursor-pointer transition-all
+      absolute top-[7px] right-[6px];
+    
+    &:focus {
+      @apply rotate-180;
+    }
   }
 
   // input search sort button
@@ -419,6 +501,11 @@
       focus:outline-focus
     ; 
   }
+  
+  .input-sort-i {
+    @apply size-5 text-slate-100 dark:text-slate-400;
+  }
+
 
   // Input tooltip
   .input-tooltip-hover { @apply fixed top-0 left-0 z-10 ease-in; }

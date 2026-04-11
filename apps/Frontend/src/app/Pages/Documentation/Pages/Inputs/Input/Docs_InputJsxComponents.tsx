@@ -50,7 +50,38 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  return (<span className="italic">Work in progress...</span>);
+  const [value, setValue] = useState<string>('0');
+  
+  const onValueUpdated = (e: any) => {
+    const newValue = e?.target?.value;
+    setValue(newValue);
+  }
+
+  return (
+    <div>
+      <Input 
+        type="number"
+        label="Number Input"
+        placeholder="Type a number..."
+        description="The number input's description."
+        name={`number-input-form-name`}
+
+        value={value}
+        setValue={setValue}
+        error={!!error}
+        disabled={disabled}
+        errorMessage={error}
+        // ref={getMaskRef(type)}
+        
+        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        
+        tooltip
+        tooltipText="Tooltip text..."
+      />
+    </div>
+  );
 }
 
 
