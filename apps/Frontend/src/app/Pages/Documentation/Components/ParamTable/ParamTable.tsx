@@ -26,7 +26,7 @@ export interface ParamItem {
 	contextParam?: boolean; // used to signify certain variants. e.g. type="email"
 	variantOption?: boolean; // parameters highlighted because they're specific to a certain variant
 	
-	children?: PTableItem[]; // nested object values - sub tables
+	nestedParams?: PTableItem[]; // nested object values - sub tables
 }
 
 export interface ParamTableProps {
@@ -78,7 +78,7 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 	}
 
 	// Standard logic
-	const { name, type, description, contextParam, variantOption, children } = item;
+	const { name, type, description, contextParam, variantOption, nestedParams } = item;
 	const ParamTypeElement = type;
 	const ParamDescriptionElement = description;
 	
@@ -102,13 +102,10 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 			</div>
 			
 
-			{ (children && children.length > 0) &&
-				<div className='col-span-full ml-4'>
-					<Dropdown label={`${name} values`}>
-						<ParamTable params={children} variant="subTable" additionalStyles={additionalStyles} />
-					</Dropdown>
-				</div>
-
+			{ (nestedParams && nestedParams.length > 0) &&
+				<Dropdown label={`${name} values`} additionalStyles='subtable-dropdown' labelStyles='dropdown-subheader' iconStyles='ml-4'>
+					<ParamTable params={nestedParams} variant="subTable" additionalStyles={additionalStyles} />
+				</Dropdown>
 			}
 		</>
 	);
@@ -120,50 +117,88 @@ const Param = styled.div``;
 const Table = styled.div``;
 
 
-// TODO: refactor this to add object's params to render subTables, and then remove the docs_input's variant params
 export const getParamsTableItems = (
-	params: string[], 
-	contextParams: ParamContext[], 
-	childParamsList: Record<string, string[]>,
-	typeElements: Record<string, React.FC>,
-	descriptionElements: Record<string, React.FC>,
+	params: string[], // retains the layout of the params
+	contextParams: ParamContext[], // adjusts the look of the table items based on variant context
+	nestedParamsList: Record<string, string[]>, // subTable data 
+	typeElements: Record<string, React.FC>, // optimized list of components to render
+	descriptionElements: Record<string, React.FC>, // optimized list of description components to render 
 ): PTableItem[] => {
+	const paramHash: Record<string, ParamItem> = {};
 	const paramItems: PTableItem[] = [];
+
+	// Add all values to the hash
+	params.forEach((listItem: string) => {
+		if (listItem == 'spacing') return;
+		paramHash[listItem] = {
+			name: listItem,
+			type: typeElements?.[listItem],
+			description: descriptionElements?.[listItem]
+		};
+	});
 	
-	params?.forEach((listItem: string) => {
+	Object.entries(nestedParamsList).forEach(([name, nestedParamNames]) => {
+		if (!nestedParamNames) return;
+
+		// Check if the object has been added to the hash
+		if (!(name in paramHash)) {
+			paramHash[name] = {
+				name,
+				type: typeElements?.[name],
+				description: descriptionElements?.[name]
+			};
+		} 
+
+		// Add it's values to the hash
+		nestedParamNames.forEach((paramName: string) => {
+			if (paramName in paramHash) return;
+			paramHash[paramName] = {
+				name: paramName,
+				type: typeElements?.[paramName],
+				description: descriptionElements?.[paramName]
+			}
+		});
+	});
+	// console.log(`\nget paramTable items hash`, paramHash);
+
+
+	// Retrieve the base parameters for the component
+	params.forEach((listItem: string) => {
 		if (listItem == 'spacing') {
 			paramItems.push(listItem);
 			return;
 		}
 
+		// Retrieve the item from the hash, and add it's context and nested values
 		const paramName: string = listItem;
-		let item: ParamItem;
+		let item: ParamItem = paramHash[paramName];
+		// console.log(`\nRetrieved ${paramName} from the hash`, item);
+
+		// Add the context values
 		const context: ParamContext | undefined = getOverwriteParam(paramName, contextParams);
-		const name: string = paramName;
+		addParamContext(item, context);
+		// if (context) console.log(`Added ${paramName}'s context values: `, item);
 		
-		// check if this is an object with nested values, then try to find the items
-		const children: PTableItem[] = [];
-		if (childParamsList[paramName] && childParamsList[paramName].length > 0) {
-			const objectParamNameHash: Record<string, boolean> = {}; 
-			// params.forEach((listItem) => {});
-			// TODO: refactor this whole function to just be used from a hash
-			// TODO: then use the hash on the fly to retrieve nested object values for params with children
-			// Just use two loops, since the param item's aren't built yet. On the second loop create the nested object data
+		// Retrieve the nested values for this param, if it has any
+		const nestedParams: PTableItem[] = [];
+		if (paramName in nestedParamsList) {
+			nestedParamsList[paramName].forEach((nestedParam: string) => {
+				if (!(nestedParam in paramHash)) return;
 
+				let nestedItem: ParamItem = paramHash[nestedParam];
+				const context: ParamContext | undefined = getOverwriteParam(nestedParam, contextParams);
+				addParamContext(nestedItem, context);
+				nestedParams.push(nestedItem);
+			});
 
+			item.nestedParams = nestedParams;
+			// console.log(`Added ${paramName}'s nested params: `, nestedParams);
 		}
-
-		item = { 
-			name: context?.overwrite ? context.name : paramName, 
-			type: typeElements[name], 
-			description: descriptionElements[name],
-			contextParam: context?.contextParam,
-			variantOption: context?.variantOption,
-		};
 
 		paramItems.push(item);
 	});
 
+	// console.log(`finished list of paramItems: `, paramItems);
 	return paramItems;
 }
 
@@ -171,4 +206,11 @@ const getOverwriteParam = (name: string, params: ParamContext[]): ParamContext |
 	let param: ParamContext | undefined;
 	params?.forEach((val: ParamContext) => (name == val.name || name == val.overwrite) ? param = val : null);
 	return param;
+}
+
+const addParamContext = (item: ParamItem, context?: ParamContext) => {
+	if (!item || !context) return;
+	if (context.overwrite) item.name = context.name; 
+	item.contextParam = context.contextParam;
+	item.variantOption = context.variantOption;
 }

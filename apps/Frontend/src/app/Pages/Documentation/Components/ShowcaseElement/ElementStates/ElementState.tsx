@@ -2,7 +2,7 @@ import { Icon } from '@Project/ReactComponents';
 import styles from './ElementState.module.scss';
 
 
-export type ElementStateTypes = 'default' | 'error' | 'disabled';
+export type ElementStateTypes = 'default' | 'error' | 'disabled' | 'errorAndDisabled';
 export interface ElementStateProps {
   type: ElementStateTypes | string;
   isSelected?: boolean;
@@ -18,7 +18,7 @@ export const ElementState = ({ type, isSelected = false, onClick }: ElementState
       {/* TODO: Make the bubble element states one element with no padding, and arrows on either side to transition between each */}
       {/* <Icon 
         variant={type == 'error' ? 'CircleError' : type == 'disabled' ? 'CirclePause' : 'CircleCheck'}
-        styles="svg-default-theme size-4 mr-1" 
+        styles="icon-default-color size-4 mr-1" 
       /> */}
       
       { type }

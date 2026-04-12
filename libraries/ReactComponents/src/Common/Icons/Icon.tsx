@@ -76,7 +76,6 @@ import { Icon_ChevronUp } from "./Default/ChevronUp/Icon_ChevronUp";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
-const defaultIconStyles = `size-5 justify-center self-center`;
 
 // Used in the svg element classes
 export interface IconAttributes {
@@ -137,16 +136,16 @@ export type DefaultIconTypes =
 ;
 
 export const Icon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
-  const defaultErrorStyles = defaultIconStyles + ` text-red-500 dark:text-red-400`;
-  const defaultOkayStyles = defaultIconStyles + ` text-emerald-500 dark:text-emerald-400`;
+  const iconStyles = styles ? styles : 'icon-default-theme';
+  const defaultErrorStyles = styles ? styles : 'icon-error-color';
+  const defaultOkayStyles = styles ? styles : 'icon-ok-color';
   
   
   // Default icons
   if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
   if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
   if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
-  if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
+  if (variant == 'Checkbox')        return (<Icon_Checkbox styles={defaultOkayStyles} />);
   if (variant == 'ChevronDown')     return (<Icon_ChevronDown styles={iconStyles} />);
   if (variant == 'ChevronUp')       return (<Icon_ChevronUp styles={iconStyles} />);
   if (variant == 'CircleCheck')     return (<Icon_CircleCheck styles={iconStyles} />);
@@ -163,7 +162,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'DemandJump')      return (<Icon_Demandjump styles={iconStyles} />);
   if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
   if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
-  if (variant == 'Error')           return (<Icon_Error styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'Error')           return (<Icon_Error styles={defaultErrorStyles} />);
   if (variant == 'Eye')             return (<Icon_Eye styles={iconStyles} />);
   if (variant == 'EyeSlash')        return (<Icon_EyeSlash styles={iconStyles} />);
   if (variant == 'InfoBox')         return (<Icon_InfoBox styles={iconStyles} />);
@@ -179,7 +178,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'Sort')            return (<Icon_Sort styles={iconStyles} />);
   if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
   if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
-  if (variant == 'Trash')           return (<Icon_Trash styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'Trash')           return (<Icon_Trash styles={defaultErrorStyles} />);
   if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
 
   // Social Media Icons
@@ -213,7 +212,7 @@ export type MediaIconTypes =
 ;
 
 export const MediaIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
+  const iconStyles = styles ? styles : 'icon-default-theme';
   let Icon: JSX.Element | undefined = undefined;
 
 
@@ -255,7 +254,7 @@ export type TechIconTypes =
 ;
 
 export const TechIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
+  const iconStyles = styles ? styles : 'icon-default-theme';
   let Icon: JSX.Element | undefined = undefined;
 
   // Automation
@@ -300,7 +299,7 @@ export const TechIcon = ({ variant, styles = ''}: IconProps) => {
 
 export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo';
 export const CompanyIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
+  const iconStyles = styles ? styles : 'icon-default-theme';
   let Icon: JSX.Element | undefined = undefined;
 
   if (variant == 'LibertyLogo')              Icon = (<Icon_LibertyLogo styles={iconStyles} />);

@@ -294,6 +294,7 @@ const variantParamsList: Record<TextInputTypes, string[]> = {
   'currency':     [], // ['showMoneySign', 'currencyTypeDropdown'],
 }
 
+// All variant params are stashed in here
 const childParamsList: Record<string, string[]> = {
   'opts': [
     'incrementButtons', 'showEmailIcon', 'visibilityIcon',
@@ -438,7 +439,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'tooltip': () => <ParamType type='boolean' />,
   'tooltipText': () => <ParamType type='string' />,
   'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' />,
-  'opts': () => <ParamType type='any' />,
+  'opts': () => <ParamType type='InputVariantOpts' />,
 
   // Variant params
   'incrementButtons': () => <ParamType type='boolean' />,

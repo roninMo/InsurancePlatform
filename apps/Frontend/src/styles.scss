@@ -164,13 +164,16 @@
   // Icons                                    //
   //------------------------------------------//
   // #region Icon Styles
-  .svg-default-theme {
+  .icon-default-theme {
+    @apply size-5 justify-center self-center;
+  }
+
+  .icon-default-color {
     @apply text-blue-300 dark:text-slate-400;
   }
-  
-  .svg-outline-theme {
-    @apply text-blue-300 dark:text-slate-400;
-  }
+
+  .icon-error-color { @apply text-red-500 dark:text-red-400; }
+  .icon-ok-color { @apply text-emerald-500 dark:text-emerald-400; }
   // #endregion
 
 
@@ -1317,7 +1320,7 @@
   // #region Universal Component Themes
   .dropdown-icon {
     @apply 
-      size-7 text-colors
+      size-7 text-colors mt-1
       cursor-pointer transition-all duration-300
       hover:theme-focus-2 
     ;
@@ -1328,6 +1331,14 @@
       spacing gap-1 transition-all
       p-1 outline-css outline-styles
     ;
+  }
+
+  .dropdown-header {
+    @apply text-xl lg:text-2xl header-colors font-medium cursor-pointer;
+  }
+
+  .dropdown-subheader {
+    @apply text-lg lg:text-xl label-colors font-medium cursor-pointer;
   }
 
   .dropdown-link-icon { 
@@ -1543,6 +1554,17 @@
 
   .element-state-selected { 
     @apply primary-text outline-focus; 
+  }
+
+
+  // SubTables
+  .subtable-dropdown {
+    @apply 
+      col-span-full p-4
+
+      outline-css outline-styles
+
+    ;
   }
 
 

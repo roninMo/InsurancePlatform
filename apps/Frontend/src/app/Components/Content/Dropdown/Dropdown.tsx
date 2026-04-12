@@ -53,8 +53,8 @@ export const Dropdown = ({
   return (
     <div className={styles ? styles : `col gap-2 w-full animate-fade-in ${additionalStyles}`}>
       <Header className="w-full rowStart items-center gap-1 " onClick={() => toggleDropdown()}>
-        <Icon variant={icon ? icon : 'DropdownArrow'} styles={iconStyles ? iconStyles : defaultIconStyles} />
-        <p className={labelStyles ? labelStyles : 'text-xl lg:text-2xl header-colors font-medium cursor-pointer'}>
+        <Icon variant={icon ? icon : 'DropdownArrow'} styles={`${defaultIconStyles} ${iconStyles}`} />
+        <p className={labelStyles ? labelStyles : 'dropdown-header'}>
           { label }
         </p>
       </Header>

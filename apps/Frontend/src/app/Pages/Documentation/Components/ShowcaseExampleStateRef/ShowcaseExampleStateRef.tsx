@@ -21,7 +21,7 @@ export const ShowcaseExample_StateRef = ({
 }: ShowcaseExampleStateRefProps) => {
   const id = useId();
   const [elementStates, setElementStates] = useState<Record<ElementStateTypes, boolean>>({
-    'default': (!error && !disabled), 'error': !!error, 'disabled': disabled,
+    'default': (!error && !disabled), 'error': !!error, 'disabled': disabled, 'errorAndDisabled': (!!error && disabled),
     ...elementStateTypes?.map((stateType: ElementStateTypes) => ({[stateType]: false}))
   });
 
@@ -51,6 +51,11 @@ export const ShowcaseExample_StateRef = ({
     
     else if (type == 'disabled') {
       if (error) setError('');
+      if (!disabled) setDisabled(true);
+    }
+
+    else if (type == 'errorAndDisabled') {
+      if (!error) setError('An error occurred.');
       if (!disabled) setDisabled(true);
     }
   }

@@ -318,33 +318,33 @@ const TooltipIcon = styled.div`pointer-events: all;`;
 // TODO: update the docs input examples to include these variant options
 export interface InputVariantOpts {
     /* Number  */
-    incrementButtons: boolean;
+    incrementButtons?: boolean;
     
     /* Email */
-    showEmailIcon: boolean;
+    showEmailIcon?: boolean;
 
     /* Password */
-    visibilityIcon: boolean;
+    visibilityIcon?: boolean;
 
     /* Search */
-    sortButton: boolean;
-    sortType: boolean;
+    sortButton?: boolean;
+    sortType?: boolean;
     
     /* Policy Number */
-    showPolicyNumberIcon: boolean;
-    policyNumberMask: boolean;
+    showPolicyNumberIcon?: boolean;
+    policyNumberMask?: boolean;
 
     /* Phone Number */
-    showPhoneIcon: boolean;
-    phoneNumberMask: boolean;
+    showPhoneIcon?: boolean;
+    phoneNumberMask?: boolean;
 
     /* Credit Card */
-    showCreditCardIcon: boolean;
-    creditCarkMask: boolean;
+    showCreditCardIcon?: boolean;
+    creditCarkMask?: boolean;
 
     /* Currency */
-    showMoneySign: boolean;
-    currencyTypeDropdown: boolean;
+    showMoneySign?: boolean;
+    currencyTypeDropdown?: boolean;
 }
 
 const DefaultInputVariantOpts: InputVariantOpts = {

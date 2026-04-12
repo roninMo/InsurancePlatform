@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from 'react'
 import { getParamsTableItems, ParamTable, ParamTableProps } from '../ParamTable/ParamTable';
 import { ParamType } from '../ParamType/ParamType';
 
