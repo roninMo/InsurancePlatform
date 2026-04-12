@@ -12,10 +12,14 @@ export interface DocLinkProps {
 export const DocLink = ({ url, label }: DocLinkProps) => {
   return (
     <HashLink url={url}>
-      <SeeRef /> { label }
+      <span className='doc-link doc-link-text keyword'>
+        <SeeRef className='doc-link-see'> @See </SeeRef> 
+        <span className='doc-link-text'> { label } </span>
+      </span>
     </HashLink> 
   ); 
 } 
 
-const SeeRef = styled.span``;
 
+// Styled Components
+const SeeRef = styled.span``;

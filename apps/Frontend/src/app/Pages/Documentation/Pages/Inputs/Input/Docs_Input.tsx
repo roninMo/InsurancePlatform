@@ -21,6 +21,8 @@ import {
   Example_SearchInput,
   Example_TextInput,
 } from './Docs_InputJsxComponents';
+import { Keyword } from '../../../Components/Keyword/Keyword';
+import { DocLink } from '../../../Components/DocLink/DocLink';
 
 
 export const Docs_Input = () => {
@@ -42,6 +44,7 @@ export const Docs_Input = () => {
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
+  // TODO: update the jsx code to use variant params
   const paramTableItems = useMemo(() => {
     const baseParamList: string[] = defaultParams || [];
     const contextParams: ParamContext[] = paramContextsList[currentTab]; 
@@ -100,11 +103,26 @@ export const Docs_Input = () => {
 
       <div className='span-12' id="showcase-element">
         <p className='p-2 showcase-text'>
-          The input component is designed with functionality and customization 
-          to fit your needs for the varying form types. It comes with tooltips, 
-          loading bars for server side autosaving, event hooks, error handling, and input masking. 
+          The <Keyword>Input</Keyword> component is designed with functionality and customization 
+          to fit your needs for the varying form types. It comes with <Keyword>tooltips</Keyword>, 
+          <Keyword>loading bars</Keyword> for server side autosaving, event hooks, error handling, and <Keyword>input masking</Keyword>. 
           Each type has varying icons and functionality so you know whether the input is for 
-          text, email, phone, policy number, credit, currency, or search.
+          <Keyword>text</Keyword>, 
+          <Keyword>email</Keyword>, 
+          <Keyword>phone</Keyword>, 
+          <Keyword>policy</Keyword>, 
+          <Keyword>number</Keyword>, 
+          <Keyword>credit</Keyword>, 
+          <Keyword>currency</Keyword>, or 
+          <Keyword>search</Keyword>.
+        </p>
+      </div>
+      
+      <div className='span-12' id="showcase-element">
+        <p className='p-2 showcase-text'>
+          For a more interactive input component with additional buttons and customization, use &nbsp;.
+          It allows you to add metadata tags with click events to allow you to create specific state from the input for your needs.
+          <DocLink label='Textarea' url='/Documentation/Forms/Textarea' />
         </p>
       </div>
 

@@ -141,6 +141,7 @@
   }
 
   .outline-default  { @apply outline-blue-300   dark:outline-slate-700; }
+  .outline-light    { @apply outline-blue-200   dark:outline-slate-600; }
   .outline-focus    { @apply outline-blue-500   dark:outline-indigo-500; }
   .outline-warning  { @apply outline-amber-600  dark:outline-amber-400; }
   .outline-error    { @apply outline-red-500    dark:outline-red-600; }
@@ -196,6 +197,130 @@
   h4                      { @apply text-[1.25rem]; }
   h5                      { @apply text-[1rem]; }
   h6                      { @apply text-sm; }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Selected Themes                          //
+  //------------------------------------------//
+  // #region Selected Themes
+  /* For containers that need highlighting when selected  */
+  .selected-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-20
+      bg-blue-600 dark:bg-blue-500
+      outline-focus 
+  }
+
+  .faded-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-40
+      bg-div
+      outline-default 
+  }
+
+  .warning-box {
+    @apply 
+      bg-opacity-10 dark:bg-opacity-10
+      bg-amber-500 dark:bg-amber-400
+      outline-amber-500 dark:outline-amber-400;
+  }
+
+  .ok-box {
+    @apply
+      bg-opacity-10 dark:bg-opacity-10
+      bg-emerald-500 dark:bg-emerald-400
+      outline-emerald-500 dark:outline-emerald-400;
+  }
+  
+  .error-box {
+    @apply
+      bg-opacity-30 dark:bg-opacity-10
+      bg-red-500 dark:bg-red-500
+      outline-red-500 dark:outline-red-600;
+  }
+  
+  .disabled-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-20
+      bg-gray-600  dark:bg-gray-400
+      outline-blue-300 dark:outline-slate-600
+  }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Layout Themes                            //
+  //------------------------------------------//
+  // #region Layout Themes
+  .row        { @apply flex flex-row; }
+  .col        { @apply flex flex-col; }
+  .rowStart   { @apply flex flex-row justify-start; }
+  .rowBetween { @apply flex flex-row justify-between; }
+  .colStart   { @apply flex flex-col justify-start; }
+
+  .spacing    { @apply grid grid-cols-12 gap-x-4 gap-2  col-span-12; }
+  .span-12    { @apply col-span-12; }
+  .span-11    { @apply col-span-11; }
+  .span-10    { @apply col-span-10; }
+  .span-9     { @apply col-span-9; }
+  .span-8     { @apply col-span-8; }
+  .span-7     { @apply col-span-7; }
+  .span-6     { @apply col-span-6; }
+  .span-5     { @apply col-span-5; }
+  .span-4     { @apply col-span-4; }
+  .span-3     { @apply col-span-3; }
+  .span-2     { @apply col-span-2; }
+  .span-1     { @apply col-span-1; }
+
+  .text-shadow-2xs  { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.15); }
+  .text-shadow-xs   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.2); }
+  .text-shadow-sm   { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075) }
+  .text-shadow-md   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1); }
+  .text-shadow-lg   { text-shadow: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1); }
+  .text-shadow-none { text-shadow: none; }
+  
+  
+  // Unique Grid layout themes 
+  // The grid height transition hack (child div needs overflow:hidden)
+  .height-trans {
+    @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-400 {
+  @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
+} // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-opacity {
+    @apply grid;
+    transition:
+      grid-template-rows 0.3s ease,
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
+  }
+
+  // Dual Column Layout hack. Aligns all values in a specific column based on the longest child element.
+  .dual-column-3 { // recreate for number of columns what needs to use 1fr for content fills 
+    @apply grid grid-cols-[min-content_min-content_1fr];
+  }
+  
+  .height-trans-content {
+    @apply overflow-hidden;
+  }
+  .height-trans-op-content {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  
+  // The browser skips the rendering work (layout and painting) for 
+  // that element's children as long as it's not on screen or is hidden. Place this on the children of the grid layout
+  .content-auto {
+    content-visibility: auto;
+  } // Skips Rendering, Preserves State, Instant-Wake-Up when visible ex: height-trans (grid-rows-[1fr]) 
   // #endregion
 
 
@@ -1064,130 +1189,6 @@
 
 
   //------------------------------------------//
-  // Selected Themes                          //
-  //------------------------------------------//
-  // #region Selected Themes
-  /* For containers that need highlighting when selected  */
-  .selected-box { 
-    @apply 
-      bg-opacity-20 dark:bg-opacity-20
-      bg-blue-600 dark:bg-blue-500
-      outline-focus 
-  }
-
-  .faded-box { 
-    @apply 
-      bg-opacity-20 dark:bg-opacity-40
-      bg-div
-      outline-default 
-  }
-
-  .warning-box {
-    @apply 
-      bg-opacity-10 dark:bg-opacity-10
-      bg-amber-500 dark:bg-amber-400
-      outline-amber-500 dark:outline-amber-400;
-  }
-
-  .ok-box {
-    @apply
-      bg-opacity-10 dark:bg-opacity-10
-      bg-emerald-500 dark:bg-emerald-400
-      outline-emerald-500 dark:outline-emerald-400;
-  }
-  
-  .error-box {
-    @apply
-      bg-opacity-30 dark:bg-opacity-10
-      bg-red-500 dark:bg-red-500
-      outline-red-500 dark:outline-red-600;
-  }
-  
-  .disabled-box { 
-    @apply 
-      bg-opacity-20 dark:bg-opacity-20
-      bg-gray-600  dark:bg-gray-400
-      outline-blue-300 dark:outline-slate-600
-  }
-  // #endregion
-
-
-
-
-  //------------------------------------------//
-  // Layout Themes                            //
-  //------------------------------------------//
-  // #region Layout Themes
-  .row        { @apply flex flex-row; }
-  .col        { @apply flex flex-col; }
-  .rowStart   { @apply flex flex-row justify-start; }
-  .rowBetween { @apply flex flex-row justify-between; }
-  .colStart   { @apply flex flex-col justify-start; }
-
-  .spacing    { @apply grid grid-cols-12 gap-x-4 gap-2  col-span-12; }
-  .span-12    { @apply col-span-12; }
-  .span-11    { @apply col-span-11; }
-  .span-10    { @apply col-span-10; }
-  .span-9     { @apply col-span-9; }
-  .span-8     { @apply col-span-8; }
-  .span-7     { @apply col-span-7; }
-  .span-6     { @apply col-span-6; }
-  .span-5     { @apply col-span-5; }
-  .span-4     { @apply col-span-4; }
-  .span-3     { @apply col-span-3; }
-  .span-2     { @apply col-span-2; }
-  .span-1     { @apply col-span-1; }
-
-  .text-shadow-2xs  { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.15); }
-  .text-shadow-xs   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.2); }
-  .text-shadow-sm   { text-shadow: 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075) }
-  .text-shadow-md   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1); }
-  .text-shadow-lg   { text-shadow: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1); }
-  .text-shadow-none { text-shadow: none; }
-  
-  
-  // Unique Grid layout themes 
-  // The grid height transition hack (child div needs overflow:hidden)
-  .height-trans {
-    @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
-  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
-  
-  .height-trans-400 {
-  @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
-} // transition between grid-rows-[0fr] and [1fr] for smooth transitions
-  
-  .height-trans-opacity {
-    @apply grid;
-    transition:
-      grid-template-rows 0.3s ease,
-      opacity 0.3s ease,
-      visibility 0s linear 0.3s;
-  }
-
-  // Dual Column Layout hack. Aligns all values in a specific column based on the longest child element.
-  .dual-column-3 { // recreate for number of columns what needs to use 1fr for content fills 
-    @apply grid grid-cols-[min-content_min-content_1fr];
-  }
-  
-  .height-trans-content {
-    @apply overflow-hidden;
-  }
-  .height-trans-op-content {
-    visibility: visible;
-    transition-delay: 0s;
-  }
-  
-  // The browser skips the rendering work (layout and painting) for 
-  // that element's children as long as it's not on screen or is hidden. Place this on the children of the grid layout
-  .content-auto {
-    content-visibility: auto;
-  } // Skips Rendering, Preserves State, Instant-Wake-Up when visible ex: height-trans (grid-rows-[1fr]) 
-  // #endregion
-
-
-
-
-  //------------------------------------------//
   // Utility                                  //
   //------------------------------------------//
   // #region Utility Themes
@@ -1303,8 +1304,6 @@
     }
   }
   // #endregion
-
-
 
 
 }
@@ -1665,6 +1664,51 @@
   .param-type-custom {
     @apply text-emerald-500/90 dark:text-green-500/90;
   }
+
+
+  // Keyword
+  .keyword {
+    @apply 
+      px-[6px] py-[2px] ml-[4px] mr-[2px] 
+      bg-div-light 
+      outline-css outline-light rounded-none
+      transition-all hover:theme-focus-2;
+  }
+  
+  .keyword-text {
+    @apply text-sm font-semibold label-colors;
+  }
+
+  // SeeRef
+  .see-ref {
+    @apply block;
+  }
+
+  // DocLink
+  .doc-link {
+    @apply py-[4px] pl-[2px];
+
+    & .doc-link-see, .doc-link-text {
+      @apply text-sm transition-all;
+    }
+
+    & .doc-link-see {
+      @apply label-colors font-semibold;
+    }
+
+    & .doc-link-text {
+      @apply text-colors font-semibold;
+    }
+
+    &:hover {
+      & .doc-link-see, .doc-link-text {
+        @apply primary-text;
+      }
+    }
+  }
+
+  .doc-link-see { @apply inline; }
+  .doc-link-text { @apply inline; }
   // #endregion
 
 

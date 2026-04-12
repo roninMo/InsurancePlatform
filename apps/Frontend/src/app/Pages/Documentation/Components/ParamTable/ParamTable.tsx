@@ -5,22 +5,11 @@ import styles from './ParamTable.module.scss';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
 import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
 
-/* Param Table	
-	Grid layout or two column layout
-		- Header with Name, type, and description
-		- each param should have these values passed in with additional options
-			- custom options for variants with required values to change styles
-			- add contextual highlighting for these values (ex. type=email highlighted green)
-			- another theme for additional options specific to variant specific params
-		- slightly different param table for additional params on each variant
-		- Either collapse the original table by default for variant with additional dropdown for variant param table below
-*/
-
 
 export type PTableItem = ParamItem | 'spacing';
 export interface ParamItem {
 	name: string;
-	type: React.FC; // we're using ParamType
+	type: React.FC; // we're using <ParamType>
 	description: React.FC;
 	
 	contextParam?: boolean; // used to signify certain variants. e.g. type="email"
@@ -103,7 +92,7 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 			
 
 			{ (nestedParams && nestedParams.length > 0) &&
-				<Dropdown label={`${name} values`} additionalStyles='subtable-dropdown' labelStyles='dropdown-subheader' iconStyles='ml-4'>
+				<Dropdown label={`${name} values`} openByDefault additionalStyles='subtable-dropdown' labelStyles='dropdown-subheader' iconStyles='ml-4'>
 					<ParamTable params={nestedParams} variant="subTable" additionalStyles={additionalStyles} />
 				</Dropdown>
 			}
