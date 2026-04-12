@@ -36,14 +36,14 @@ export const Docs_Select = () => {
   const paramTableItems = useMemo(() => {
     const baseParamList: string[] = defaultParams || [];
     const contextParams: ParamContext[] = paramContextsList[currentTab]; 
-    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, paramTypeElements, paramDescriptionElements);
+    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, {}, paramTypeElements, paramDescriptionElements);
     
     // Variant specific params
     const variantParams: string[] = variantParamsList[currentTab] || [];
     const variantContextParams = paramContextsList[currentTab];
     if (variantParams?.length > 0) {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
-      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, paramTypeElements, paramDescriptionElements);
+      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
 

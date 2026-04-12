@@ -45,14 +45,14 @@ export const Docs_Input = () => {
   const paramTableItems = useMemo(() => {
     const baseParamList: string[] = defaultParams || [];
     const contextParams: ParamContext[] = paramContextsList[currentTab]; 
-    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, paramTypeElements, paramDescriptionElements);
+    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, childParamsList, paramTypeElements, paramDescriptionElements);
     
     // Variant specific params
     const variantParams: string[] = variantParamsList[currentTab] || [];
     const variantContextParams = paramContextsList[currentTab];
     if (variantParams?.length > 0) {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
-      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, paramTypeElements, paramDescriptionElements);
+      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
 
@@ -284,15 +284,26 @@ const defaultParams: string[] = [
 
 const variantParamsList: Record<TextInputTypes, string[]> = {
   'text': [],
-  'number':       ['incrementButtons'],
-  'email':        ['showEmailIcon'],
-  'password':     ['passwordVisibility'],
-  'search':       ['sortButton', 'sortType'],
-  'policyNumber': ['showPolicyNumberIcon', 'policyNumberMask'],
-  'phone':        ['showPhoneIcon', 'phoneNumberMask'],
-  'creditCard':   ['showCreditCardIcon', 'creditCarkMask'],
-  'currency':     ['showMoneySign', 'currencyTypeDropdown'],
+  'number':       [], // ['incrementButtons'],
+  'email':        [], // ['showEmailIcon'],
+  'password':     [], // ['visibilityIcon'],
+  'search':       [], // ['sortButton', 'sortType'],
+  'policyNumber': [], // ['showPolicyNumberIcon', 'policyNumberMask'],
+  'phone':        [], // ['showPhoneIcon', 'phoneNumberMask'],
+  'creditCard':   [], // ['showCreditCardIcon', 'creditCarkMask'],
+  'currency':     [], // ['showMoneySign', 'currencyTypeDropdown'],
 }
+
+const childParamsList: Record<string, string[]> = {
+  'opts': [
+    'incrementButtons', 'showEmailIcon', 'visibilityIcon',
+    'sortButton', 'sortType',
+    'showPolicyNumberIcon', 'policyNumberMask',
+    'showPhoneIcon', 'phoneNumberMask',
+    'showCreditCardIcon', 'creditCarkMask',
+    'showMoneySign', 'currencyTypeDropdown',
+  ]
+};
 
 
 const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
@@ -325,7 +336,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'passwordVisibility', 
+    { name: 'visibilityIcon', 
       contextParam: false,
       variantOption: true,
     },
@@ -432,7 +443,7 @@ const paramTypeElements: Record<string, React.FC> = {
   // Variant params
   'incrementButtons': () => <ParamType type='boolean' />,
   'showEmailIcon': () => <ParamType type='boolean' />,
-  'passwordVisibility': () => <ParamType type='boolean' />,
+  'visibilityIcon': () => <ParamType type='boolean' />,
 
   'sortButton': () => <ParamType type='boolean' />,
   'sortType': () => <ParamType type='InputSortType' />,
@@ -525,7 +536,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     Do you want an email icon on the left hand side of the input?
   </div>,
 
-  'passwordVisibility' : () => 
+  'visibilityIcon' : () => 
   <div className='param-item-desc-text'>
     Whether to add the toggle password visibility icon to the input element.
   </div>,

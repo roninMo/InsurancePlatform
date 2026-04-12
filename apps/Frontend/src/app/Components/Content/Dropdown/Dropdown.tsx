@@ -16,6 +16,7 @@ export interface DropdownProps {
   icon?: IconTypes;
   iconStyles?: string;
 
+  // optional state tracking
   openByDefault?: boolean;
   hasBeenOpened?: boolean;
   setHasBeenOpened?: Dispatch<SetStateAction<boolean>>;

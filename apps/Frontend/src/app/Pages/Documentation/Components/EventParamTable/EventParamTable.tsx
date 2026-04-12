@@ -10,7 +10,7 @@ import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
 export const EventParamTable = ({ variant = 'default', additionalStyles }: ParamTableProps) => {
   const typeParamTableItems = useMemo(() => {
     const variantParams: string[] = defaultParams || [];
-    return getParamsTableItems(variantParams, [], paramTypeElements, paramDescriptionElements);
+    return getParamsTableItems(variantParams, [], {}, paramTypeElements, paramDescriptionElements);
   }, []);
 
   return (

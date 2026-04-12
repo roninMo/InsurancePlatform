@@ -9,7 +9,7 @@ import { UniversalEventHandlers, Icon, Button } from '@Project/ReactComponents';
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
 export type TextInputAutoCompleteTypes = "email"  | "tel" | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
 
-interface InputProps {
+export interface InputProps {
   type?: TextInputTypes
   
   name: string;
@@ -29,17 +29,14 @@ interface InputProps {
   autocomplete?: TextInputAutoCompleteTypes;
 
   // variant specific configurations
-  opts?: {
-
-  };
+  opts?: InputVariantOpts;
 }
-
 
 export const Input = ({
   type = 'text', name, label, description, value, setValue, placeholder,
   error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  autocomplete, opts, ...props
+  autocomplete, opts = DefaultInputVariantOpts, ...props
 }: InputProps & UniversalEventHandlers) => {
   const id = useId();
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
@@ -102,6 +99,7 @@ export const Input = ({
           type={type}
           showPassword={showPassword}
           setShowPassword={setShowPassword}
+          opts={opts}
         />
 
         <SubsequentElements
@@ -141,20 +139,24 @@ export const Input = ({
 }
 
 
-// Variant elements
+
+//------------------------------------------//
+// Preceding Variant Elements               //
+//------------------------------------------//
 interface PrecedingElProps {
   type: TextInputTypes;
   showPassword: boolean;
   setShowPassword: Dispatch<SetStateAction<boolean>>;
+  opts: InputVariantOpts;
 }
-export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPassword, setShowPassword }) => {
+export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPassword, setShowPassword, opts }) => {
   const toggleShowPassword = (visible: boolean) => setShowPassword(visible);
-  const VariantIcon: React.FC | undefined = PrecedingIcons[type] || undefined;
+  const VariantIcon: React.FC<InputVariantOpts> | undefined = PrecedingIcons[type] || undefined;
   
   return (
     <div className="input-preceding-el-c">
       <div className='input-preceding-el'>
-        {VariantIcon && <VariantIcon />}
+        {VariantIcon && <VariantIcon {...opts} />}
 
         { type == 'password' && 
           <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
@@ -167,14 +169,24 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPasswo
   );
 }
 
-const PrecedingIcons: Partial<Record<TextInputTypes, React.FC>> = {
-  'email':          () => <Icon variant='Envelope'    styles='input-icon-def' />,
-  'policyNumber':   () => <Icon variant='Profile'     styles='input-icon-def' />,
-  'phone':          () => <Icon variant='Phone'       styles='input-icon-def' />,
-  'creditCard':     () => <Icon variant='CreditCard'  styles='input-icon-def' />,
+const PrecedingIcons: Partial<Record<TextInputTypes, React.FC<InputVariantOpts>>> = {
+  'email': (opts) => opts.showEmailIcon 
+  ? <Icon variant='Envelope'    styles='input-icon-def' /> : undefined,
+
+  'policyNumber': (opts) => opts.showPolicyNumberIcon 
+  ? <Icon variant='Profile'     styles='input-icon-def' /> : undefined,
+
+  'phone': (opts) => opts.showPhoneIcon 
+  ? <Icon variant='Phone'       styles='input-icon-def' /> : undefined,
+
+  'creditCard': (opts) => opts.showCreditCardIcon 
+  ? <Icon variant='CreditCard'  styles='input-icon-def' /> : undefined,
 };
 
 
+//------------------------------------------//
+// Subsequent Variant Elements              //
+//------------------------------------------//
 interface SubsequentElProps {
   name: string;
   type: TextInputTypes;
@@ -283,6 +295,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
   );
 }
 
+
 // Component Styles
 const TextInput = styled.div``;
 const InputContainer = styled.div``;
@@ -294,12 +307,61 @@ const ErrorAndDescription = styled.div``;
 const LoadingBar = styled.div``;
 const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
-const CurrencySelect = styled.select`pointer-events: all;`;
+const CurrencySelect = styled.select`pointer-events: all;`; // TODO: remove these, they should be done through css themes
 
-// TODO: this needs to be fixed positioning to handle proper placement with scroll
+// TODO: try making an element at the app level that we key into with params for performance and less overhead
+// With nested documentation and code specific elements passed into the tooltip
 const Tooltip = styled.div``;
 const TooltipIcon = styled.div`pointer-events: all;`;
 
+
+// TODO: update the docs input examples to include these variant options
+export interface InputVariantOpts {
+    /* Number  */
+    incrementButtons: boolean;
+    
+    /* Email */
+    showEmailIcon: boolean;
+
+    /* Password */
+    visibilityIcon: boolean;
+
+    /* Search */
+    sortButton: boolean;
+    sortType: boolean;
+    
+    /* Policy Number */
+    showPolicyNumberIcon: boolean;
+    policyNumberMask: boolean;
+
+    /* Phone Number */
+    showPhoneIcon: boolean;
+    phoneNumberMask: boolean;
+
+    /* Credit Card */
+    showCreditCardIcon: boolean;
+    creditCarkMask: boolean;
+
+    /* Currency */
+    showMoneySign: boolean;
+    currencyTypeDropdown: boolean;
+}
+
+const DefaultInputVariantOpts: InputVariantOpts = {
+    incrementButtons: true,
+    showEmailIcon: true,
+    visibilityIcon: true,
+    sortButton: true,
+    sortType: true,
+    showPolicyNumberIcon: true,
+    policyNumberMask: true,
+    showPhoneIcon: true,
+    phoneNumberMask: true,
+    showCreditCardIcon: true,
+    creditCarkMask: true,
+    showMoneySign: true,
+    currencyTypeDropdown: true,
+}
 
 // #region Input Type Props
 type InputPropsPartial = Partial<InputProps> & { type: TextInputTypes } & any;
