@@ -8,7 +8,7 @@ import { EventParamTable } from '../../../Components/EventParamTable/EventParamT
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 
 import TextareaCodeSnippets from './Docs_TextareaJsxComponents?raw';
-import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { Example_BoxTextareaInput, Example_DefaultTextareaInput, Example_PostTextareaInput } from './Docs_TextareaJsxComponents';
 import { TextareaTypes } from '../../../../../Components/Forms/Textarea/Textarea';
 
@@ -94,7 +94,7 @@ export const Docs_Textarea = () => {
       <Variants className='span-12 py-2'>
         {/* Text Input */}
         { currentTab == 'default' && 
-          <ShowcaseElement jsx={getComponentSourceCode(TextareaCodeSnippets, "Example_DefaultTextareaInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(TextareaCodeSnippets, "Example_DefaultTextareaInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             {/* TODO: Add additional state ref buttons for what you can optionally 
               add with each variant on the textarea. Submit, metadata tags, emojis, etc. */}
             <ShowcaseExample_StateRef 
@@ -108,7 +108,7 @@ export const Docs_Textarea = () => {
         }
         
         { currentTab == 'box' && 
-          <ShowcaseElement jsx={getComponentSourceCode(TextareaCodeSnippets, "Example_BoxTextareaInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(TextareaCodeSnippets, "Example_BoxTextareaInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             {/* TODO: Add additional state ref buttons for what you can optionally 
               add with each variant on the textarea. Submit, metadata tags, emojis, etc. */}
             <ShowcaseExample_StateRef 
@@ -122,7 +122,7 @@ export const Docs_Textarea = () => {
         }
         
         { currentTab == 'post' && 
-          <ShowcaseElement jsx={getComponentSourceCode(TextareaCodeSnippets, "Example_PostTextareaInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(TextareaCodeSnippets, "Example_PostTextareaInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             {/* TODO: Add additional state ref buttons for what you can optionally 
               add with each variant on the textarea. Submit, metadata tags, emojis, etc. */}
             <ShowcaseExample_StateRef 

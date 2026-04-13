@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { RouterProvider, ScrollRestoration, useLocation } from 'react-router-dom';
 import { router } from './routes';
 
@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 import { UserTokenInformation } from '@Project/Classes';
 import { jwtDecode } from 'jwt-decode';
+import { TooltipProvider } from './Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
 
 
 const AppSpacing = styled.div``;
@@ -70,13 +71,19 @@ export function App() {
   };
 
 
+  // Universal Tooltip
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+
+
 
   return (
     <AppSpacing className="bg-default">
       <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
         
         {/* Application */}
-        <RouterProvider router={router} />
+        <TooltipProvider>
+          <RouterProvider router={router} />
+        </TooltipProvider>
 
         {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
         {/* TODO: Add a sidebar for displaying and debugging save state, that captures both saved and retrieved information that's sent to the backend when autosaved during submissions and during retrieval */}

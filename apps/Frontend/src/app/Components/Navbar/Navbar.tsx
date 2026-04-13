@@ -12,12 +12,6 @@ export interface NavbarProps {}
 const NavbarComponent = ({}: NavbarProps) => {
   const navigate = useNavigate();
 
-  // Handles the current theme that's rendered from the page via user preference and localStorage
-  const [currentTheme, setCurrentTheme] = useState<string>(() => {
-    return localStorage.getItem('theme') || 
-          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  });
-
   //------------------------------------------------------------------------------------//
   // React Router Hash Link ScrollRestoration Logic when navigate is used with an id    //
   //------------------------------------------------------------------------------------//
@@ -136,15 +130,16 @@ const NavbarComponent = ({}: NavbarProps) => {
   // Theme                                          //
   //------------------------------------------------//
   // #region Theme Logic
+  // Handles the current theme that's rendered from the page via user preference and localStorage
+  const [currentTheme, setCurrentTheme] = useState<string>(() => {
+    return localStorage.getItem('theme') || 
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
+  
   // Initialize the Theme and display settings
   useLayoutEffect(() => {
-    if (!currentTheme) {
-      const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      localStorage.setItem('theme', userPreferenceTheme);
-      setAndUpdateTheme(userPreferenceTheme)
-    }
-
-  }, [currentTheme]);
+    updateTheme(currentTheme);
+  }, []);
 
   const updateTheme = (newTheme: string) => {
     localStorage.setItem('theme', newTheme);

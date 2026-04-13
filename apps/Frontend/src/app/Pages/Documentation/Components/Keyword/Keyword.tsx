@@ -22,11 +22,11 @@ export const Keyword = ({ tooltip, link, onClick, children, styles, textStyles }
 				{ children }
 			</b>
 			{/* TODO: use the universal tooltip component we're adding  */}
-			{ tooltip && 
+			{/* { tooltip && 
 				<Tooltip alignment={tooltip?.alignment} additionalStyles={tooltip?.additionalStyles}>
 					<div>Tooltip text!</div>
 				</Tooltip>
-			}
+			} */}
 		</HashLink>
 	);
 

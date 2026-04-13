@@ -7,7 +7,7 @@ import { ParamType } from "../../../Components/ParamType/ParamType";
 import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
 
 import ButtonCodeSnippets from './Docs_ButtonJsxComponents?raw';
-import { getComponentSourceCode } from "../../../../../Components/Utils/GetComponentSourceCode";
+import { getSourceCode } from "../../../../../Components/Utils/GetSourceCode";
 import { Example_Button } from "./Docs_ButtonJsxComponents";
 
 
@@ -82,7 +82,7 @@ export const Docs_Button = () => {
       {/* Variants */}
       <Variants className='span-12 py-2'>
         { currentTab == 'Default' && 
-          <ShowcaseElement jsx={getComponentSourceCode(ButtonCodeSnippets, "Example_Button")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(ButtonCodeSnippets, "Example_Button")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={buttonError} setError={setButtonError}
               disabled={buttonDisabled} setDisabled={setButtonDisabled}

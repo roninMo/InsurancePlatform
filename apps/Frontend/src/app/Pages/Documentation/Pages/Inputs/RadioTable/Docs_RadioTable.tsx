@@ -7,7 +7,7 @@ import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { ParamType } from '../../../Components/ParamType/ParamType';
 
 import RadioTableCodeSnippets from './Docs_RadioTableJsxComponents?raw';
-import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { 
   Example_InlineRadioTable, 
   Example_BlockRadioTable 
@@ -91,7 +91,7 @@ export const Docs_RadioTable = () => {
       {/* Variants */}
       <Variants className='span-12 py-2'>
         { currentTab == 'inline' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioTableCodeSnippets, "Example_InlineRadioTable")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(RadioTableCodeSnippets, "Example_InlineRadioTable")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={inlineError} setError={setInlineError}
               disabled={inlineDisabled} setDisabled={setInlineDisabled}
@@ -103,7 +103,7 @@ export const Docs_RadioTable = () => {
         }
 
         { currentTab == 'block' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioTableCodeSnippets, "Example_BlockRadioTable")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(RadioTableCodeSnippets, "Example_BlockRadioTable")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={blockError} setError={setBlockError}
               disabled={blockDisabled} setDisabled={setBlockDisabled}

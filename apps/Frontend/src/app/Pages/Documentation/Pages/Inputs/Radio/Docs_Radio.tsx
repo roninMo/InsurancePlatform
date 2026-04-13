@@ -7,7 +7,7 @@ import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { ParamType } from '../../../Components/ParamType/ParamType';
 
 import RadioCodeSnippets from './Docs_RadioJsxComponents?raw';
-import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { 
   Example_ColumnInlineRadioGroup, 
   Example_ColumnRadioGroup, 
@@ -98,7 +98,7 @@ export const Docs_Radio = () => {
       {/* Variants */}
       <Variants className='span-12 py-2'>
         { currentTab == 'default' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioCodeSnippets, "Example_DefaultRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(RadioCodeSnippets, "Example_DefaultRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={defaultError} setError={setDefaultError}
               disabled={defaultDisabled} setDisabled={setDefaultDisabled}
@@ -110,7 +110,7 @@ export const Docs_Radio = () => {
         }
 
         { currentTab == 'column' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioCodeSnippets, "Example_ColumnRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(RadioCodeSnippets, "Example_ColumnRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={columnError} setError={setColumnError}
               disabled={columnDisabled} setDisabled={setColumnDisabled}
@@ -122,7 +122,7 @@ export const Docs_Radio = () => {
         }
 
         { currentTab == 'columnInline' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioCodeSnippets, "Example_ColumnInlineRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(RadioCodeSnippets, "Example_ColumnInlineRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={columnInlineError} setError={setColumnInlineError}
               disabled={columnInlineDisabled} setDisabled={setColumnInlineDisabled}
@@ -134,7 +134,7 @@ export const Docs_Radio = () => {
         }
         
         { currentTab == 'list' && 
-          <ShowcaseElement jsx={getComponentSourceCode(RadioCodeSnippets, "Example_ListRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(RadioCodeSnippets, "Example_ListRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={listError} setError={setListError}
               disabled={listDisabled} setDisabled={setListDisabled}

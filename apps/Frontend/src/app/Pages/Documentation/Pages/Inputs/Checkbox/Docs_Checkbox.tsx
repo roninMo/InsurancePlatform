@@ -8,7 +8,7 @@ import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { ParamType } from '../../../Components/ParamType/ParamType';
 
 import CheckboxCodeSnippets from './Docs_CheckboxJsxComponents?raw';
-import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { 
   Example_DefaultCheckbox,
   Example_ListCheckbox,
@@ -95,7 +95,7 @@ export const Docs_Checkbox = () => {
       {/* Variants */}
       <Variants className='span-12 py-2'>
         { currentTab == 'default' && 
-          <ShowcaseElement jsx={getComponentSourceCode(CheckboxCodeSnippets, "Example_DefaultCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_DefaultCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={defaultError} setError={setDefaultError}
               disabled={defaultDisabled} setDisabled={setDefaultDisabled}
@@ -107,7 +107,7 @@ export const Docs_Checkbox = () => {
         }
 
         { currentTab == 'list' && 
-          <ShowcaseElement jsx={getComponentSourceCode(CheckboxCodeSnippets, "Example_ListCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_ListCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={listError} setError={setListError}
               disabled={listDisabled} setDisabled={setListDisabled}
@@ -119,7 +119,7 @@ export const Docs_Checkbox = () => {
         }
 
         { currentTab == 'inline' && 
-          <ShowcaseElement jsx={getComponentSourceCode(CheckboxCodeSnippets, "Example_InlineCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_InlineCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={inlineError} setError={setInlineError}
               disabled={inlineDisabled} setDisabled={setInlineDisabled}

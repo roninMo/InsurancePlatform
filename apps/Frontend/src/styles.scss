@@ -1437,6 +1437,20 @@
   
   .sidebar-link-base:hover { @apply primary-text; }
   .sidebar-link-base:active { @apply link-text; }
+
+
+  // Tooltip
+  .tooltip {
+    @apply
+      p-2 px-3 col gap-2 fixed top-0 left-0 
+      z-50 pointer-events-none
+
+      label-colors
+      bg-default shadow-xl
+      outline-css outline-default 
+      animate-fade-in transition-colors
+    ;
+  }
   // #endregion
 
 
@@ -1697,7 +1711,7 @@
     }
 
     & .doc-link-text {
-      @apply text-colors font-semibold;
+      @apply primary-text font-semibold;
     }
 
     &:hover {
@@ -1744,6 +1758,12 @@
       group-focus-within:p-[2px]
     ;
   } // Parent needs "relative overflow-hidden"
+
+  // Give the webpage a default dark mode to prevent refresh flashes
+  html.dark {
+    background-color: #1e293b; /* Your exact Tailwind dark:bg color */
+    color-scheme: dark;
+  }
   // #endregion
 
 

@@ -7,7 +7,7 @@ import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { ParamType } from '../../../Components/ParamType/ParamType';
 
 import SelectCodeSnippets from './Docs_SelectJsxComponents?raw';
-import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { Example_SelectInput } from './Docs_SelectJsxComponents';
 
 
@@ -86,7 +86,7 @@ export const Docs_Select = () => {
       {/* Variants */}
       <Variants className='span-12 py-2'>
         { currentTab == 'Default' && 
-          <ShowcaseElement jsx={getComponentSourceCode(SelectCodeSnippets, "Example_SelectInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(SelectCodeSnippets, "Example_SelectInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={error} setError={setError}
               disabled={disabled} setDisabled={setDisabled}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
@@ -8,7 +8,7 @@ import { EventParamTable } from '../../../Components/EventParamTable/EventParamT
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { TextInputTypes } from '@Project/ReactComponents';
 
-import { getComponentSourceCode } from '../../../../../Components/Utils/GetComponentSourceCode';
+import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import InputCodeSnippets from './Docs_InputJsxComponents?raw';
 import { 
   Example_CreditCardInput,
@@ -23,6 +23,8 @@ import {
 } from './Docs_InputJsxComponents';
 import { Keyword } from '../../../Components/Keyword/Keyword';
 import { DocLink } from '../../../Components/DocLink/DocLink';
+import { TooltipContext } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+import { getTooltipCoords } from '../../../../../Components/Utils/Tooltip/Tooltip';
 
 
 export const Docs_Input = () => {
@@ -95,9 +97,12 @@ export const Docs_Input = () => {
   const [currencyDisabled, setCurrencyDisabled] = useState<boolean>(false);
   // #endregion
 
+  const { show, hide } = useContext(TooltipContext);
+  
+
   return (
     <Container className='spacing'>
-      <h3 className="span-12 p-2">
+      <h3 className="span-12 p-2" onMouseEnter={(e) => getTooltipCoords(e, show, {})} onMouseLeave={hide}>
         Input Component
       </h3>
 
@@ -140,7 +145,7 @@ export const Docs_Input = () => {
       <Variants className='span-12 py-2'>
         {/* Currency */}
         { currentTab == 'currency' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_CurrencyInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_CurrencyInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={currencyError} setError={setCurrencyError}
               disabled={currencyDisabled} setDisabled={setCurrencyDisabled}
@@ -153,7 +158,7 @@ export const Docs_Input = () => {
 
         {/* Credit Card */}
         { currentTab == 'creditCard' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_CreditCardInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_CreditCardInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={creditError} setError={setCreditError}
               disabled={creditDisabled} setDisabled={setCreditDisabled}
@@ -166,7 +171,7 @@ export const Docs_Input = () => {
         
         {/* Phone Number */}
         { currentTab == 'phone' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_PhoneInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_PhoneInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={phoneError} setError={setPhoneError}
               disabled={phoneDisabled} setDisabled={setPhoneDisabled}
@@ -179,7 +184,7 @@ export const Docs_Input = () => {
         
         {/* Policy Number */}
         { currentTab == 'policyNumber' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_PolicyNumberInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_PolicyNumberInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={policyError} setError={setPolicyError}
               disabled={policyDisabled} setDisabled={setPolicyDisabled}
@@ -192,7 +197,7 @@ export const Docs_Input = () => {
 
         {/* Search */}
         { currentTab == 'search' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_SearchInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_SearchInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={searchError} setError={setSearchError}
               disabled={searchDisabled} setDisabled={setSearchDisabled}
@@ -205,7 +210,7 @@ export const Docs_Input = () => {
         
         {/* Password */}
         { currentTab == 'password' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_PasswordInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_PasswordInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={passwordError} setError={setPasswordError}
               disabled={passwordDisabled} setDisabled={setPasswordDisabled}
@@ -218,7 +223,7 @@ export const Docs_Input = () => {
         
         {/* Email */}
         { currentTab == 'email' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_EmailInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_EmailInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={emailError} setError={setEmailError}
               disabled={emailDisabled} setDisabled={setEmailDisabled}
@@ -231,7 +236,7 @@ export const Docs_Input = () => {
         
         {/* Number */}
         { currentTab == 'number' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_NumberInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_NumberInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={numberError} setError={setNumberError}
               disabled={numberDisabled} setDisabled={setNumberDisabled}
@@ -244,7 +249,7 @@ export const Docs_Input = () => {
         
         {/* Text Input */}
         { currentTab == 'text' && 
-          <ShowcaseElement jsx={getComponentSourceCode(InputCodeSnippets, "Example_TextInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_TextInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={textError} setError={setTextError}
               disabled={textDisabled} setDisabled={setTextDisabled}

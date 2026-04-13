@@ -7,7 +7,7 @@ import { ParamType } from "../../../Components/ParamType/ParamType";
 import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
 
 import SliderCodeSnippets from './Docs_SliderJsxComponent?raw';
-import { getComponentSourceCode } from "../../../../../Components/Utils/GetComponentSourceCode";
+import { getSourceCode } from "../../../../../Components/Utils/GetSourceCode";
 import { Example_DefaultSlider } from "./Docs_SliderJsxComponent";
 
 
@@ -82,7 +82,7 @@ export const Docs_Slider = () => {
       {/* Variants */}
       <Variants className='span-12 py-2'>
         { currentTab == 'Default' && 
-          <ShowcaseElement jsx={getComponentSourceCode(SliderCodeSnippets, "Example_DefaultSlider")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(SliderCodeSnippets, "Example_DefaultSlider")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={sliderError} setError={setSliderError}
               disabled={sliderDisabled} setDisabled={setSliderDisabled}
