@@ -58,12 +58,21 @@ export const Docs_Input = () => {
     if (variantParams?.length > 0) {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements);
+      // call getParamsTableItems once [...base, 'spacing', ...variants]
       params.push(...spacing, ...variantParamItems);
     }
 
     return params;
   }, [currentTab]);
 
+
+  /*
+
+It isn't a problem, those values are memoized, and on update
+
+One thing to note about this layout. It's a grid 3 column layout for the param name, type, and description. So it's almost unorthodox on how it's built. But with my styling selectors it turned out pretty neat for properly creating a table with just grid and div layouts.
+
+  */
 
   //--------------------------------//
   // Input State Management         //
@@ -98,7 +107,7 @@ export const Docs_Input = () => {
   // #endregion
 
   const { show, hide } = useContext(TooltipContext);
-  
+
 
   return (
     <Container className='spacing'>

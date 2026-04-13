@@ -92,9 +92,13 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 			
 
 			{ (nestedParams && nestedParams.length > 0) &&
-				<Dropdown label={`${name} values`} openByDefault additionalStyles='subtable-dropdown' labelStyles='dropdown-subheader' iconStyles='ml-4'>
-					<ParamTable params={nestedParams} variant="subTable" additionalStyles={additionalStyles} />
-				</Dropdown>
+				<>
+					<div className="keep-grid-flow" />
+					<div className="keep-grid-flow" />
+					<Dropdown label={`${name} values`} openByDefault additionalStyles='subtable-dropdown' labelStyles='dropdown-subheader' iconStyles='ml-4'>
+						<ParamTable params={nestedParams} variant="subTable" additionalStyles={additionalStyles} />
+					</Dropdown>
+				</>
 			}
 		</>
 	);
@@ -113,8 +117,10 @@ export const getParamsTableItems = (
 	typeElements: Record<string, React.FC>, // optimized list of components to render
 	descriptionElements: Record<string, React.FC>, // optimized list of description components to render 
 ): PTableItem[] => {
+	// TODO: try refactoring this to do the 'build' and the 'hash' in a single pass 
 	const paramHash: Record<string, ParamItem> = {};
 	const paramItems: PTableItem[] = [];
+	const contextMap = new Map(contextParams?.map(cp => [cp.overwrite || cp.name, cp]));
 
 	// Add all values to the hash
 	params.forEach((listItem: string) => {
@@ -160,11 +166,11 @@ export const getParamsTableItems = (
 
 		// Retrieve the item from the hash, and add it's context and nested values
 		const paramName: string = listItem;
-		let item: ParamItem = paramHash[paramName];
+		let item: ParamItem = { ...paramHash[paramName] }; // don't let this mutate our original static references
 		// console.log(`\nRetrieved ${paramName} from the hash`, item);
 
 		// Add the context values
-		const context: ParamContext | undefined = getOverwriteParam(paramName, contextParams);
+		const context: ParamContext | undefined = contextMap.get(paramName);
 		addParamContext(item, context);
 		// if (context) console.log(`Added ${paramName}'s context values: `, item);
 		
@@ -174,8 +180,8 @@ export const getParamsTableItems = (
 			nestedParamsList[paramName].forEach((nestedParam: string) => {
 				if (!(nestedParam in paramHash)) return;
 
-				let nestedItem: ParamItem = paramHash[nestedParam];
-				const context: ParamContext | undefined = getOverwriteParam(nestedParam, contextParams);
+				let nestedItem: ParamItem = { ...paramHash[nestedParam] };
+				const context: ParamContext | undefined = contextMap.get(nestedParam);
 				addParamContext(nestedItem, context);
 				nestedParams.push(nestedItem);
 			});
@@ -189,12 +195,6 @@ export const getParamsTableItems = (
 
 	// console.log(`finished list of paramItems: `, paramItems);
 	return paramItems;
-}
-
-const getOverwriteParam = (name: string, params: ParamContext[]): ParamContext | undefined => {
-	let param: ParamContext | undefined;
-	params?.forEach((val: ParamContext) => (name == val.name || name == val.overwrite) ? param = val : null);
-	return param;
 }
 
 const addParamContext = (item: ParamItem, context?: ParamContext) => {

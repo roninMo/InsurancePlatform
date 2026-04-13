@@ -1646,6 +1646,10 @@
   .param-item-variant-opt {
     @apply ok-box dark:bg-opacity-[7.5%];
   }
+  
+  .keep-grid-flow {
+    @apply h-0 w-0 m-0 p-0;
+  }
 
 
   // ParamType
