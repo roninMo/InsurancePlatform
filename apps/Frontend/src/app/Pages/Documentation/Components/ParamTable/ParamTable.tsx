@@ -19,7 +19,7 @@ export interface ParamItem {
 }
 
 export interface ParamTableProps {
-	params?: PTableItem[]; // This is reliant on that the items come in threes
+	params?: PTableItem[]; // This is reliant on that the html items come in threes
 	variant?: 'default' | 'subTable';
 	additionalStyles?: string;
 }
@@ -82,7 +82,6 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 			<div className={`param-item-base ${variantStyles}`}>
 				<div className={`param-item-name ${contextStyles}`}>{ name }</div>
 			</div>
-			{/* TODO: check that the param elements here are not redundant, those elements also have param-item-base */}
 			<div className={`param-item-base ${variantStyles}`}> 
 				{ ParamTypeElement ? <ParamTypeElement /> : null }
 			</div>
