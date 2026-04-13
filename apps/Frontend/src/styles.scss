@@ -38,6 +38,10 @@
       focus:underline dark:focus:underline
       hover:underline dark:hover:underline;
   }
+
+  .text-bg-dark-colors {
+    @apply text-white dark:text-slate-300;
+  }
   // #endregion
 
 
@@ -72,6 +76,13 @@
   .theme-focus    { @apply hover:brightness-150  active:brightness-90; }
   .theme-focus-1  { @apply hover:brightness-110  active:brightness-90; }
   .theme-focus-2  { @apply hover:brightness-125  active:brightness-90; }
+
+  .theme-f {
+    @apply 
+      hover:brightness-90     dark:hover:brightness-125
+      active:brightness-110   dark:active:brightness-90
+    ;
+  }
 
 
   // default background colors
@@ -1584,12 +1595,12 @@
   // ParamItem
   .param-item-table {
     @apply 
-      bg-slate-200 dark:bg-slate-900
+      bg-slate-100 dark:bg-slate-900
       bg-opacity-70
       outline-css outline-styles
     
       /* Quick selector for first three (this is not necessary, but we're using a weird grid layout) */
-      [&>*:nth-child(-n+3)]:bg-slate-300
+      [&>*:nth-child(-n+3)]:bg-slate-300/75
       [&>*:nth-child(-n+3)]:bg-opacity-90
       
       [&>*:nth-child(-n+3)]:dark:bg-slate-800
@@ -1600,7 +1611,8 @@
   .param-item-base {
     @apply 
       p-3 rowStart items-center
-      border-t border-r border-default
+      border-t border-r border-slate-400/75 dark:border-slate-700
+      shadow-sm
       
       /* Table border rounding */
       [&:nth-child(1)]:rounded-tl-md /* top left corner */
@@ -1615,11 +1627,11 @@
       py-0.5 px-1.5 
       text-blue-500 dark:text-blue-500
       
-      bg-opacity-10 dark:bg-opacity-20
-      bg-blue-600 dark:bg-blue-500
+      bg-opacity-40 dark:bg-opacity-20
+      bg-gray-300/75 dark:bg-blue-500
       
-      // outline-init rounded-none
-      // outline-blue-500/50   dark:outline-indigo-500/50
+      outline-css rounded-none
+      outline-slate-300 dark:outline-slate-700/50
     ; 
   }
 
@@ -1655,32 +1667,35 @@
   // ParamType
   .param-type {
     @apply
-      py-[0.15rem] px-1.5 transition-all
+      py-[0.15rem] px-1.5 
       text-sm font-semibold
       
-      bg-opacity-80 dark:bg-opacity-30
-      bg-gray-300 dark:bg-gray-600
+      bg-opacity-100 dark:bg-opacity-30
+      bg-gray-300/75 dark:bg-gray-600
+
+      outline-css rounded-none
+      outline-slate-300 dark:outline-slate-700/50
     ;
   }
 
   .param-type-string {
-    @apply text-purple-600/90 dark:text-purple-500/90;
+    @apply text-purple-500 dark:text-purple-500/90;
   }
   
   .param-type-number {
-    @apply text-blue-500 dark:text-blue-500;
+    @apply text-blue-600 dark:text-blue-500;
   }
   
   .param-type-boolean {
-    @apply text-rose-600/90 dark:text-red-600/90;
+    @apply text-rose-700/80 dark:text-red-600/90;
   }
   
   .param-type-function {
-    @apply text-sky-400/90 dark:text-sky-400/90;
+    @apply text-sky-600/60 dark:text-sky-400/90;
   }
 
   .param-type-custom {
-    @apply text-emerald-500/90 dark:text-green-500/90;
+    @apply text-emerald-700/60 dark:text-green-500/90;
   }
 
 
@@ -1688,9 +1703,12 @@
   .keyword {
     @apply 
       px-[6px] py-[2px] ml-[4px] mr-[2px] 
-      bg-div-light 
-      outline-css outline-light rounded-none
-      transition-all hover:theme-focus-2;
+      outline-css rounded-none 
+      
+      bg-slate-300/75 dark:bg-slate-700 
+      outline-slate-400 dark:outline-slate-600 
+      
+      transition-all duration-200 hover:theme-f;
   }
   
   .keyword-text {
