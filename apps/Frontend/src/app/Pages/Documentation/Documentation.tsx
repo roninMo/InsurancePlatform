@@ -33,6 +33,8 @@ export const Documentation = () => {
     - Fix the styles, add themes to the global styles for reference
     - Refactor things for efficiency, and make it more neat and organized
     - Finish any of the uncompleted logic that we haven't added yet but left notes on building
+		
+		- only use bottom border on the paramTable
 
   */
 
@@ -42,58 +44,6 @@ export const Documentation = () => {
       - Introduction: list of boxes categorizing each subroot section 
       - each subroot/ should have QuickList to display their components
       - Inputs, content, utils component showcases
-
-
-
-		- Components		
-			- QuickList (Intro pages for selecting a component) - div that hovers with box and scale on hover
-				- containing div should be placed behind it with z order and a background, not selectable
-				- the content or artificial image thats just a default render of each component
-				- wrap these in hashLinks for navigation of the docs
-		
-      - ShowcaseElement
-        - Tab Element (Array of title and elements ) to nav between the element and the jsx
-        - Jsx Tab: react-syntax-highlighter to render jsx content
-        - Component Tab: untangle the state so we can display different versions while showing proper construction of it
-        - action bubbles for different states (default, error, disabled)
-
-      - ParamTable
-        - grid container for even spacing
-        - divided into Name, type, and description, with hovers on the types for the default values, and perhaps other context scenarios?
-        - pass in name as a string, type as an element for color coding, and description as a react node to add highlighting and docLinks
-        - a class that can be to specific params to change colors/background for an additional params table on component variants params (for specific types)
-
-      - ParamType
-        - quick element for theme styling, pass in the type
-
-      - DocLink
-        - subclass the hashLink for theme styles
-
-      - Keyword
-        - Custom <b> tag for highlighted text with background for keywords
-
-
-
-		- Route Layout
-      - Introduction
-      - Inputs
-        - /
-          - /inputs
-          - /textarea
-          - /radio
-          - /select
-          - /slider
-          - /radioTable
-          - /the rest
-          - same for the other routes
-
-
-		- Page Layouts
-      - Doc Nav Sidebar (all pages)
-      - Space for notifications
-      - Content Section (Current route)
-			- Right side hash link sidebar
-			- Footer
       
 	*/
 
