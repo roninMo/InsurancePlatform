@@ -1454,7 +1454,7 @@
   // Tooltip
   .tooltip {
     @apply
-      fixed top-0 left-0 max-h-64
+      fixed top-0 left-0 max-h-64 min-w-[65vw]
       overflow-x-hidden scrollbar-theme
       z-50 pointer-events-none
 

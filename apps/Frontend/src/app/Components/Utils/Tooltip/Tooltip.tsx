@@ -34,15 +34,13 @@ export interface TooltipBase {
 export const Tooltip = (props: TooltipProps) => {
   const [shouldRender, setShouldRender] = useState<boolean>(false);
   const { showTooltip, additionalStyles } = props;
-  const [isVisible, setIsVisible] = useState<boolean>(false); // transitions don't work otherwise
+  const [isVisible, setIsVisible] = useState<boolean>(false); // transitions don't work otherwise + transform gpu rendering
   useEffect(() => { setIsVisible(!!showTooltip) }, [showTooltip]); 
 
   // Wait until react has done it's initial paint of the application
   useEffect(() => {
     // We should also wait until their computer's cpu is ready 
-    const handle = window.requestIdleCallback(() => {
-      setShouldRender(true); 
-    });
+    const handle = window.requestIdleCallback(() => setShouldRender(true) );
     return () => window.cancelIdleCallback(handle);
   }, []);
 
@@ -88,11 +86,27 @@ export const Tooltip = (props: TooltipProps) => {
         return;
       }
 
+      // Adjust the location based on how close the tooltip is to the edge of the screen
+      // const { top, left, bottom, right } = element; 
+      const width = tooltipRef.current?.offsetWidth;
+      const height = tooltipRef.current?.offsetHeight;
+
+      // create clamps for the width and the height placements
+      // have the interp move it to those locations using the target location
+      // use width + height + offsets and the mouse location to check if it's within the bounds of the window
+
       // Interpolate the tooltip location
-      tooltipLoc.current = interpV2(tooltipLoc.current, mouse.current, 0.25);
-      if (tooltipRef.current) tooltipRef.current.style.transform = 
-        `translate(${tooltipLoc.current.x + 12}px, ${tooltipLoc.current.y + 16}px)`;
-      frameId = requestAnimationFrame(animate); // loop
+      const tooltipLocation = tooltipLoc.current;
+      const mouseLocation = mouse.current;
+      tooltipLoc.current = interpV2(tooltipLocation, mouseLocation, 0.25);
+      if (tooltipRef.current) {
+        tooltipRef.current.style.transform = 
+          `translate(${tooltipLocation.x + 12}px, ${tooltipLocation.y + 16}px)`;
+      }
+
+
+      // Loop the animation
+      frameId = requestAnimationFrame(animate);
     };
 
     // Events and animation
@@ -120,7 +134,7 @@ export const Tooltip = (props: TooltipProps) => {
   // Tooltip Scroll Functionality           //
   //----------------------------------------//
   useEffect(() => {
-  if (!isVisible || !tooltipRef.current) return;
+  if (!showTooltip || !tooltipRef.current) return;
 
   const handleGlobalWheel = (e: WheelEvent) => {
     const tooltip = tooltipRef.current;
@@ -150,7 +164,8 @@ export const Tooltip = (props: TooltipProps) => {
 
   window.addEventListener('wheel', handleGlobalWheel, { passive: false });
   return () => window.removeEventListener('wheel', handleGlobalWheel);
-}, [isVisible]);
+}, [showTooltip]);
+
 
 
 
@@ -158,17 +173,35 @@ export const Tooltip = (props: TooltipProps) => {
   // Code Variant Render delay              //
   //----------------------------------------//
   const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
+  const { code, showLineNumbers, type } = props as CodeTooltipProps;
 
   // Quick Render delay for jsx code and to enable the scrollbar (to allow other transition css to work via overflow)
   useEffect(() => {
     // Reset the render delay for the next time the tooltip is opened
-    if (!showTooltip && isRenderDelayDone) setIsRenderDelayDone(false);
+    if (!isVisible) {
+      if (isRenderDelayDone) setIsRenderDelayDone(false);
+      return;
+    }
     
     // Add a delay before allowing the component to render
-    if (isRenderDelayDone) return;
-    const timeout = setTimeout(() => setIsRenderDelayDone(true), 300);
+    const timeout = setTimeout(() => {
+      if (isVisible) setIsRenderDelayDone(true);
+      else setIsRenderDelayDone(false);
+    }, 300);
+      
     return () => clearTimeout(timeout);
-  }, [showTooltip]);
+  }, [isVisible]);
+
+
+  // We want this content to be rendered once the page has loaded
+  const MemoizedCodeSnippet = useMemo(() => {
+    if (!shouldRender) return null;
+    return (
+      <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
+        <CodeBlock language='tsx' code={code} showLineNumbers={showLineNumbers} />
+      </div>
+    );
+  }, [shouldRender, code]);
 
 
 
@@ -181,12 +214,8 @@ export const Tooltip = (props: TooltipProps) => {
   
   
   // Union types suck, and nested useStates in wrapped components are breaking transition rerenders
-  const allProps = props as TextTooltipProps & CodeTooltipProps & CustomTooltipProps;
-  const { 
-    text, // TextTooltipProps
-    code, showLineNumbers, type, // CodeTooltipProps
-    children // CustomTooltipProps
-  } = allProps;
+  const { children } = props as CustomTooltipProps;
+  const { text } = props as TextTooltipProps;
   const NestedComponents: React.FC = children;
   
   // variants
@@ -218,7 +247,7 @@ export const Tooltip = (props: TooltipProps) => {
                 }
               </label>
               <Suspense>
-                <MemoizedCodeSnippet jsx={code} showLineNumbers={showLineNumbers} />
+                { MemoizedCodeSnippet }
               </Suspense>
             </AnimContent>
           </OpenAnimation>
@@ -249,7 +278,7 @@ const CodeVariant = styled.div``;
 
 
 // Memoized Suspense CodeBlock Renderer for react-syntax-highlighter
-const MemoizedCodeSnippet = ({ jsx, showLineNumbers = false }: { jsx: string, showLineNumbers?: boolean }) => {
+const OldMemoizedCodeSnippet = ({ jsx, showLineNumbers = false }: { jsx: string, showLineNumbers?: boolean }) => {
   // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
   const memoizedSnippet = useMemo(() => (
     <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
@@ -259,3 +288,15 @@ const MemoizedCodeSnippet = ({ jsx, showLineNumbers = false }: { jsx: string, sh
 
   return memoizedSnippet;
 }
+
+
+// Pass into a memo because the import takes a while
+const CodeSnippet = ({ jsx, showLineNumbers = false }: { jsx: string, showLineNumbers?: boolean }) => {
+  // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
+  return (
+    <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
+      <CodeBlock language='tsx' code={jsx} showLineNumbers={showLineNumbers} />
+    </div>
+  );
+}
+

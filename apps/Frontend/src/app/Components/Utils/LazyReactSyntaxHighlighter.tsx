@@ -12,7 +12,7 @@ SyntaxHighlighter.registerLanguage('tsx', tsx);
 // SyntaxHighlighter.registerLanguage('json', json);
 
 const LazySyntaxHighlighter = (props: SyntaxHighlighterProps | any) => (
-  <SyntaxHighlighter {...props} style={oneDark} />
+  <SyntaxHighlighter {...props} style={{...oneDark}} />
 );
 
 

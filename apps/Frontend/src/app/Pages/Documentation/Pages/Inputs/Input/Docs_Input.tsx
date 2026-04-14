@@ -462,7 +462,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'tooltip': () => <ParamType type='boolean' tooltip={{ code: dParArg('tooltip', 'tooltip', 'var') }} />,
   'tooltipText': () => <ParamType type='string' tooltip={{ code: dParArg('tooltip text', 'Tooltip text...') }} />,
   'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' tooltip={{ code: Code_TextInputAutoCompleteTypes, type: 'type' }} />,
-  'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOps, type: 'interface' }} />,
+  'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOpts, type: 'interface' }} />,
 
   // Variant params
   'incrementButtons': () => <ParamType type='boolean' />,
@@ -489,7 +489,7 @@ const paramTypeElements: Record<string, React.FC> = {
 import SourceInputSnippets from '../../../../../Components/Forms/Input/Input?raw';
 const Code_TextInputTypes = getSourceCode(SourceInputSnippets, 'TextInputTypes', 'type');
 const Code_TextInputAutoCompleteTypes = getSourceCode(SourceInputSnippets, 'TextInputAutoCompleteTypes', 'type');
-const Code_InputVariantOps = getSourceCode(SourceInputSnippets, 'InputVariantOps', 'interface');
+const Code_InputVariantOpts = getSourceCode(SourceInputSnippets, 'InputVariantOpts', 'interface');
 
 
 const paramDescriptionElements: Record<string, React.FC> = {
