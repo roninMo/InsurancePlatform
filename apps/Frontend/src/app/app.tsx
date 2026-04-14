@@ -114,7 +114,8 @@ export function App() {
             A way to create fake databases. Creating individual tables, their values, and relations
               - Created data gets sent to the backend for constructing mock databases dynamically. Attach
                   databases to each account, and retrieve values from the backend when logging in.
-                  The data is transient, but the table structures can be cached in localStorage
+                  The data is transient, but the table structures can be cached in localStorage.
+                  Handle themed values for specific contextual data to return from types for interactive data
           
             Popovers
             - Sidebar (Tables of the current database)
@@ -154,6 +155,24 @@ export function App() {
         {/* Login page should accept dummy data, or a universal user for quick access */}
         {/* An additional settings page to determine whether to use mock data for the insurance page, or a backend */}
         {/* Backends for handling data, and try out clustering */}
+
+
+        {/* 
+          For the devlog,
+            - vite map function to opt components into logging their render times
+            - create a state with a component hierarchy to display what devlogs are being captured
+              - dev popover that displays the hierarchy of pages -> components -> nested unique component's being logged
+              - additional option to change the hierarchy to components, that targets all logs from a component used anywhere
+              - Allow the devs to toggle what's being logged in the console, and a list of what's captured
+                - from render times and other react specific diagnostics
+                - to specific logs added to each component
+
+          There should also be a way to capture and display state updates
+            - check with redux tools, and see if there's anything additional we need
+              - either added logic similar to it with additional data
+              - input specific state, especially when we get to trying out autosaving form data
+        
+        */}
 
       </LoginContext.Provider>
     </AppSpacing>

@@ -21,7 +21,10 @@ export const ShowcaseExample_StateRef = ({
 }: ShowcaseExampleStateRefProps) => {
   const id = useId();
   const [elementStates, setElementStates] = useState<Record<ElementStateTypes, boolean>>({
-    'default': (!error && !disabled), 'error': !!error, 'disabled': disabled, 'errorAndDisabled': (!!error && disabled),
+    'default': (!error && !disabled), // capture previous states from parent
+    'error': (!!error && !disabled), 
+    'disabled': (disabled && !error), 
+    'errorAndDisabled': (!!error && disabled),
     ...elementStateTypes?.map((stateType: ElementStateTypes) => ({[stateType]: false}))
   });
 

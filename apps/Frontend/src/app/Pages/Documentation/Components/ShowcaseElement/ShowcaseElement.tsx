@@ -70,14 +70,14 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
         <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
           <div className={`height-trans-content content-auto`}>
             {activeTab == 'jsx' && 
-            <Suspense>
-              <MemoizedCodeSnippet jsx={jsx} onCopyCodeSnippet={copyCodeSnippet} />
-            </Suspense>
+              <Suspense>
+                <MemoizedCodeSnippet jsx={jsx} onCopyCodeSnippet={copyCodeSnippet} />
+              </Suspense>
             }
           </div>
         </Jsx>
 
-        <PreRenderContent className={`height-trans ${displayContent('jsx', activeTab, !isRenderDelayDone)}`}>
+        <PreJsxRenderedContent className={`height-trans ${displayContent('jsx', activeTab, !isRenderDelayDone)}`}>
           <div className={`height-trans-content content-auto`}>
             <p className='p-4 italic loading-text'>Loading code...</p>
             {/* TODO: Add skeleton loading components
@@ -86,7 +86,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
               </div>  
             */}
           </div>
-        </PreRenderContent>
+        </PreJsxRenderedContent>
           
       </Content>
 
@@ -121,7 +121,7 @@ const Content = styled.div``;
 const RenderedComponent = styled.div``;
 const Jsx = styled.div``;
 const JsxCopySnippet = styled.div``;
-const PreRenderContent = styled.div``;
+const PreJsxRenderedContent = styled.div``;
 
 // Conditional Styles
 const isTabActive = (tab: showcaseTabType, activeTab: showcaseTabType): string => 

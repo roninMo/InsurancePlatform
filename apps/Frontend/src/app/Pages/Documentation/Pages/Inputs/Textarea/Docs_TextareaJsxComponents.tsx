@@ -19,7 +19,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
     // Logic for handling form submission...
   };
   
-  const onAttachFile = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+  const onAttachFile = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
     // Additional logic for handling file attachments
   };
 
@@ -73,8 +73,9 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
     // Logic for handling form submission...
   };
   
-  const onAttachFile = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+  const onAttachFile = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
     // Additional logic for handling file attachments
+    console.log('attach file function', e);
   };
   
   return (

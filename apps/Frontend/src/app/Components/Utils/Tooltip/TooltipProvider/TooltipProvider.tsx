@@ -1,39 +1,49 @@
-import { createContext, useState } from "react";
-import { Tooltip } from "../Tooltip";
+import { createContext, useMemo, useState } from "react";
+import { Tooltip, TooltipServiceProps } from "../Tooltip";
+
 
 
 // Tooltip Context 
-export const TooltipContext = createContext({
-  show: (rect: DOMRect, payload: any) => {},
-  hide: () => {},
-});
+export const TooltipService = createContext<TooltipActions>({show: (c) => {}, hide: () => {}, });
+interface TooltipActions {
+  show: (config?: TooltipServiceProps) => void;
+  hide: () => void;
+}
 
-// TooltipContext.tsx
+
+// Tooltip Provider
 export const TooltipProvider = ({ children }: { children: React.ReactNode }) => {
-  const [data, setData] = useState<any>({});
-  const [coords, setCoords] = useState<DOMRect | null>(null);
-  
-  const show = (rect: DOMRect, payload: any) => { 
-    setCoords(rect); 
-    setData(payload); 
-  };
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [tooltipProps, setTooltipProps] = useState<any>({});
+
+  const actions = useMemo<TooltipActions>(() => ({
+    show: (config: any) => {
+      setIsVisible(true);
+      setTooltipProps(config);
+    },
+    hide: () => {
+      setIsVisible(false);
+      setTooltipProps(undefined);
+    },
+  }), []);
 
 
   // Now, only components inside THIS provider re-render when state changes
   return (
-    <TooltipContext.Provider value={{ show, hide: () => setCoords(null) }}>
+    <TooltipService.Provider value={actions}>
       {children}
-      {coords && <Tooltip coords={coords} opts={data} />}
-    </TooltipContext.Provider>
+      <Tooltip { ...tooltipProps } showTooltip={isVisible} />
+    </TooltipService.Provider>
   );
 };
+
 
 /* 
   Usage:
   
     - const { show, hide } = useContext(TooltipContext);
 
-    - onMouseEnter={(e) => show(e.currentTarget.getBoundingClientRect(), { text, code, type: 'code' })}
+    - onMouseEnter={(e) => show({ text: 'Tooltip Text' })}
     - onMouseLeave={hide}
   
 */

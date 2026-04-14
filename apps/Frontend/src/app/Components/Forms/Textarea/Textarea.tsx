@@ -34,7 +34,7 @@ export interface TextareaProps {
   // Default and box variants
   // TODO: why don't we make the list areas where we add attachFile to another metadata tag list of sorts
   // TODO: Learn how to actually handle file attachment functionality
-  onAttachFile?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
+  onAttachFile?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
   // Box and post variants
   metadataTags?: MetadataTagProps[] | boolean;
 }
@@ -49,7 +49,7 @@ export interface MetadataTagProps {
 
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
-  const { type = 'default', name, value, placeholder, metadataTags,
+  const { type = 'default', name, value, placeholder, metadataTags, onAttachFile, 
     error = false, errorMessage, required, disabled,
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
@@ -93,7 +93,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
     error = false, errorMessage, required = false, disabled = false, 
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-    ...props
+    // ...props
 		} = allProps;
 
 

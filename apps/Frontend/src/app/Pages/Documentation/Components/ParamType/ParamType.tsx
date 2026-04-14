@@ -1,3 +1,7 @@
+import { MouseEvent, useContext } from 'react';
+import { TooltipProps, TooltipType } from '../../../../Components/Utils/Tooltip/Tooltip';
+import { TooltipService } from '../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+
 import styled from '@emotion/styled';
 import styles from './ParamType.module.scss';
 
@@ -6,14 +10,20 @@ export type ParamTypes = "number" | "string" | "boolean" | "function" | "any" /*
 export interface ParamTypeProps {
 	type: ParamTypes;
 	isArray?: boolean;
+
+	tooltip?: TooltipProps;
 }
 
-export const ParamType = ({ type, isArray }: ParamTypeProps) => {
+export const ParamType = ({ type, isArray, tooltip }: ParamTypeProps) => {
+	const { show, hide } = useContext(TooltipService);
+
   return (
-		<Container className={`param-type ${getTypeStyles(type)}`}>
+		<Container 
+			onMouseEnter={(e) => show(tooltip)} 
+			onMouseLeave={(e) => hide()} 
+			className={`param-type ${getTypeStyles(type)}`}
+		>
 			{ type }{ isArray ? "[]" : "" }
-			{/* TODO: add a tooltip popup that shows the default value (or this normally, except on custom types to account for potential extra spacing) */}
-			{/* Modal for custom objects to show it's data, if the popup isn't fancy */}
 		</Container>
   );
 }
@@ -31,3 +41,14 @@ const getTypeStyles = (type: ParamTypes) => {
 	return 'param-type-custom';
 	return 'text-slate-900 dark:text-slate-400';
 }
+
+// Create a code snippet of the default definition of a prop for an element.
+export const dParArg = (
+  param: string, 
+  value: string, 
+  type: 'str' | 'var' = 'str'
+): string => {
+  if (type == 'str') return `${param}="${value}"`;
+  if (type == 'var') return `${param}={${value}}`;
+  return '';
+};

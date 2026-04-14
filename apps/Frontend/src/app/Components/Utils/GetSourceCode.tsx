@@ -28,6 +28,8 @@ export const getSourceCode = (
   }
 
   const match = fileImportSource.match(pattern);
+
+  // console.log (`retrieving code for ${name}: `, match);
   return match ? match[0].trim() : "Component source not found.";
 };
 

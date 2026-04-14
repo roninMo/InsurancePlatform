@@ -10,3 +10,18 @@ export interface UniversalEventHandlers<T extends HTMLElement = HTMLElement> {
   onMouseEnter?: (e: MouseEvent<T>) => void;
   onMouseLeave?: (e: MouseEvent<T>) => void;
 }
+
+export const interpFloat = (current: number, target: number, factor: number): number => {
+  return current += (target - current) * factor;
+}
+
+interface Vector2D {
+  x: number;
+  y: number;
+}
+export const interpV2 = (current: Vector2D, target: Vector2D, factor: number): Vector2D & any => {
+  let lerp = current;
+  lerp.x += (target.x - current.x) * factor;
+  lerp.y += (target.y - current.y) * factor;
+  return lerp;
+}

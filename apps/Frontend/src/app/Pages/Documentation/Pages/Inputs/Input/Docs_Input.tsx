@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
 import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/ParamTable/ParamTable';
-import { ParamType } from '../../../Components/ParamType/ParamType';
+import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { TextInputTypes } from '@Project/ReactComponents';
@@ -23,8 +23,7 @@ import {
 } from './Docs_InputJsxComponents';
 import { Keyword } from '../../../Components/Keyword/Keyword';
 import { DocLink } from '../../../Components/DocLink/DocLink';
-import { TooltipContext } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
-import { getTooltipCoords } from '../../../../../Components/Utils/Tooltip/Tooltip';
+import { TooltipService } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
 
 
 export const Docs_Input = () => {
@@ -66,14 +65,6 @@ export const Docs_Input = () => {
   }, [currentTab]);
 
 
-  /*
-
-It isn't a problem, those values are memoized, and on update
-
-One thing to note about this layout. It's a grid 3 column layout for the param name, type, and description. So it's almost unorthodox on how it's built. But with my styling selectors it turned out pretty neat for properly creating a table with just grid and div layouts.
-
-  */
-
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
@@ -106,12 +97,12 @@ One thing to note about this layout. It's a grid 3 column layout for the param n
   const [currencyDisabled, setCurrencyDisabled] = useState<boolean>(false);
   // #endregion
 
-  const { show, hide } = useContext(TooltipContext);
+  const { show, hide } = useContext(TooltipService);
 
 
   return (
     <Container className='spacing'>
-      <h3 className="span-12 p-2" onMouseEnter={(e) => getTooltipCoords(e, show, {})} onMouseLeave={hide}>
+      <h3 className="span-12 p-2" onMouseEnter={(e) => show({ code: getSourceCode(InputCodeSnippets, "Example_CurrencyInput"), type: "component" })} onMouseLeave={hide}>
         Input Component
       </h3>
 
@@ -458,20 +449,20 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
   // Default params
-  'type': () => <ParamType type='TextInputTypes' />,
-  'name': () => <ParamType type='string' />,
-  'label': () => <ParamType type='string' />,
-  'description': () => <ParamType type='string' />,
-  'value': () => <ParamType type='string' />,
-  'placeholder': () => <ParamType type='string' />,
-  'error': () => <ParamType type='boolean' />,
-  'errorMessage': () => <ParamType type='string' />,
-  'disabled': () => <ParamType type='boolean' />,
-  'required': () => <ParamType type='boolean' />,
-  'tooltip': () => <ParamType type='boolean' />,
-  'tooltipText': () => <ParamType type='string' />,
-  'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' />,
-  'opts': () => <ParamType type='InputVariantOpts' />,
+  'type': () => <ParamType type='TextInputTypes' tooltip={{ code: Code_TextInputTypes, type: 'type' }} />,
+  'name': () => <ParamType type='string' tooltip={{ code: dParArg('name', 'input-form-ref') }} />,
+  'label': () => <ParamType type='string' tooltip={{ code: dParArg('label', 'Input Label') }}  />,
+  'description': () => <ParamType type='string' tooltip={{ code: dParArg('description', 'The description of the input.') }} />,
+  'value': () => <ParamType type='string' tooltip={{ code: dParArg('value', 'inputValue', 'var') }} />,
+  'placeholder': () => <ParamType type='string' tooltip={{ code: dParArg('placeholder', 'placeholder text...') }} />,
+  'error': () => <ParamType type='boolean' tooltip={{ code: dParArg('error', 'error', 'var') }} />,
+  'errorMessage': () => <ParamType type='string' tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'disabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
+  'tooltip': () => <ParamType type='boolean' tooltip={{ code: dParArg('tooltip', 'tooltip', 'var') }} />,
+  'tooltipText': () => <ParamType type='string' tooltip={{ code: dParArg('tooltip text', 'Tooltip text...') }} />,
+  'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' tooltip={{ code: Code_TextInputAutoCompleteTypes, type: 'type' }} />,
+  'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOps, type: 'interface' }} />,
 
   // Variant params
   'incrementButtons': () => <ParamType type='boolean' />,
@@ -493,6 +484,13 @@ const paramTypeElements: Record<string, React.FC> = {
   'showMoneySign': () => <ParamType type='boolean' />,
   'currencyTypeDropdown': () => <ParamType type='boolean' />,
 };
+
+// codeblocks - TextInputTypes, TextInputAutoCompleteTypes, InputVariantOps
+import SourceInputSnippets from '../../../../../Components/Forms/Input/Input?raw';
+const Code_TextInputTypes = getSourceCode(SourceInputSnippets, 'TextInputTypes', 'type');
+const Code_TextInputAutoCompleteTypes = getSourceCode(SourceInputSnippets, 'TextInputAutoCompleteTypes', 'type');
+const Code_InputVariantOps = getSourceCode(SourceInputSnippets, 'InputVariantOps', 'interface');
+
 
 const paramDescriptionElements: Record<string, React.FC> = {
   // Default params

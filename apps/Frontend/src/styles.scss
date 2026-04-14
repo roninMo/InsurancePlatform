@@ -77,12 +77,9 @@
   .theme-focus-1  { @apply hover:brightness-110  active:brightness-90; }
   .theme-focus-2  { @apply hover:brightness-125  active:brightness-90; }
 
-  .theme-f {
-    @apply 
-      hover:brightness-90     dark:hover:brightness-125
-      active:brightness-110   dark:active:brightness-90
-    ;
-  }
+  .theme-fa { @apply theme-f theme-a; }
+  .theme-f { @apply hover:brightness-90     dark:hover:brightness-125; }
+  .theme-a { @apply active:brightness-110   dark:active:brightness-90; }
 
 
   // default background colors
@@ -303,8 +300,12 @@
   } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
   
   .height-trans-400 {
-  @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
-} // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+    @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-500 {
+    @apply grid transition-[grid-template-rows] duration-[500ms] ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
   
   .height-trans-opacity {
     @apply grid;
@@ -1453,14 +1454,39 @@
   // Tooltip
   .tooltip {
     @apply
-      p-2 px-3 col gap-2 fixed top-0 left-0 
+      fixed top-0 left-0 max-h-64
+      overflow-x-hidden scrollbar-theme
       z-50 pointer-events-none
 
-      label-colors
       bg-default shadow-xl
       outline-css outline-default 
-      animate-fade-in transition-colors
+      transition-colors duration-200
+      will-change-transform
     ;
+  }
+  
+  // Hidden / Visible
+  .tooltip-h { @apply opacity-0; }
+  .tooltip-v { @apply animate-fade-in; }
+  
+  // Used to allow height trans to work before adding scrollable content
+  .tooltip-scroll-none { @apply overflow-y-hidden; }
+  .tooltip-scroll-auto { @apply overflow-y-auto; }
+
+  .tooltip-t {
+    @apply p-2 px-3;
+  }
+
+  .tooltip-js {
+    @apply p-2 pr-0;
+  }
+
+  .tooltip-c {
+    @apply tooltip-t;
+  }
+
+  .tooltip-content {
+    @apply col gap-2;
   }
   // #endregion
 
@@ -1703,12 +1729,13 @@
   .keyword {
     @apply 
       px-[6px] py-[2px] ml-[4px] mr-[2px] 
+      transition-all duration-200
       outline-css rounded-none 
       
-      bg-slate-300/75 dark:bg-slate-700 
+      backdrop-brightness-90
+      dark:backdrop-brightness-150
       outline-slate-400 dark:outline-slate-600 
-      
-      transition-all duration-200 hover:theme-f;
+      hover:theme-f;
   }
   
   .keyword-text {
