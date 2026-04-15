@@ -15,6 +15,23 @@ import styles from './MockDatabase.module.scss';
 			- relational or isolated set how many are made with a random factor
 			
 			
+		- Redux implementation
+	- id maps of the table item data
+	- databases and auto generated content specifically saved for the user
+	- ability to save custom/user entered data to the backend for tables
+	- selectors for tables and their relational data based on user table relation selection
+	- reducers for handling database and table creation and configuration
+	- saved data mutations for config edits
+	- updated table structure and db edits should be dynamic
+		- updating individual params should only retrieve that information from backend
+		- user table data should be stored in localStorage for persistance (safe and performant)
+		- users should have all db's stored in redux for quick access. 
+			- only retrieve what's selected, and cache when switching dbs and tables
+		- when user reopens the page, retrieve localStorage data and 
+		- then check backend for updates / custom data
+		
+		
+			
 	Page data layout
 		- mock app
 			- databases
