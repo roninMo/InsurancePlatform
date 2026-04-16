@@ -1654,7 +1654,7 @@
     @apply 
       p-3 rowStart items-center
       border-t border-slate-400/75 dark:border-slate-700
-      shadow-sm
+      shadow-sm dark:shadow-md
       
       /* Table border rounding */
       [&:nth-child(1)]:rounded-tl-md /* top left corner */

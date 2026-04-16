@@ -103,6 +103,7 @@ export const Tooltip = (props: TooltipProps) => {
       let tooltipLoc = { ...tooltipLocation.current };
       let targetLoc = { ...mouseLoc };
 
+      const spacingOffset = 16; // used specifically for window bounds
       const offsetX = 12;
       const offsetY = 16;
       let shouldPlaceBelow = true;
@@ -124,7 +125,7 @@ export const Tooltip = (props: TooltipProps) => {
       shouldPlaceBelow = (mouseLoc.y + offsetY + height) < windowHeight;
       
       // The tooltip should stay on screen when the mouse approaches the edges
-      targetLoc.x = Math.min( (mouseLoc.x + offsetX), (windowWidth - (width + offsetX)) );
+      targetLoc.x = Math.min( (mouseLoc.x + offsetX), (windowWidth - (width + offsetX + spacingOffset)) );
 
       // If it should be placed above the mouse, subtract by the tooltip height and invert the offset
       targetLoc.y = mouseLoc.y + offsetY;
