@@ -129,8 +129,10 @@ export const Docs_Input = () => {
           For a more interactive input component with additional buttons and customization, use &nbsp;.
           It allows you to add metadata tags with click events to allow you to create specific state from the input for your needs.
           
-          <span onMouseLeave={hide}
+          <span 
             onMouseEnter={() => show({ code: getSourceCode(TextareaCodeSnippets, "Example_BoxTextareaInput"), type: "component" })} 
+            onClick={hide}
+            onMouseLeave={hide}
           >
             <DocLink label='Textarea' url='/Documentation/Forms/Textarea' />
           </span>

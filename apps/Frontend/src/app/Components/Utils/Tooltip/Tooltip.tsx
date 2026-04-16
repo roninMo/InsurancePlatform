@@ -69,6 +69,8 @@ export const Tooltip = (props: TooltipProps) => {
     document.addEventListener('mousemove', captureMouseMove);
 
 
+
+
     //----------------------------------//
     // The Animation Loop               //
     //----------------------------------//
@@ -83,7 +85,8 @@ export const Tooltip = (props: TooltipProps) => {
         frameId = requestAnimationFrame(animate);
         return;
       }
-      
+
+
       //----------------------------------------------------//
       // Scroll Logic @see handleGlobalWheel () for usage   //
       //----------------------------------------------------//
