@@ -10,6 +10,7 @@ import { TextInputTypes } from '@Project/ReactComponents';
 
 import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import InputCodeSnippets from './Docs_InputJsxComponents?raw';
+import TextareaCodeSnippets from '../Textarea/Docs_TextareaJsxComponents?raw';
 import { 
   Example_CreditCardInput,
   Example_CurrencyInput,
@@ -102,7 +103,7 @@ export const Docs_Input = () => {
 
   return (
     <Container className='spacing'>
-      <h3 className="span-12 p-2" onMouseEnter={(e) => show({ code: getSourceCode(InputCodeSnippets, "Example_CurrencyInput"), type: "component" })} onMouseLeave={hide}>
+      <h3 className="span-12 p-2">
         Input Component
       </h3>
 
@@ -127,7 +128,12 @@ export const Docs_Input = () => {
         <p className='p-2 showcase-text'>
           For a more interactive input component with additional buttons and customization, use &nbsp;.
           It allows you to add metadata tags with click events to allow you to create specific state from the input for your needs.
-          <DocLink label='Textarea' url='/Documentation/Forms/Textarea' />
+          
+          <span onMouseLeave={hide}
+            onMouseEnter={() => show({ code: getSourceCode(TextareaCodeSnippets, "Example_BoxTextareaInput"), type: "component" })} 
+          >
+            <DocLink label='Textarea' url='/Documentation/Forms/Textarea' />
+          </span>
         </p>
       </div>
 

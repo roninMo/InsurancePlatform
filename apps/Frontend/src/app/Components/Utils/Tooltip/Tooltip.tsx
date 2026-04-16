@@ -254,7 +254,10 @@ export const Tooltip = (props: TooltipProps) => {
           language='tsx' 
           code={code} 
           showLineNumbers={showLineNumbers} 
-          customStyle={{ paddingBottom: '1rem' }}
+          customStyle={{ 
+            paddingBottom: '1rem', 
+            paddingRight: type == 'component' || type == 'interface' ? '6rem' : '0'
+          }}
         />
       </div>
     );
@@ -280,7 +283,10 @@ export const Tooltip = (props: TooltipProps) => {
   if ('text' in props) variant = 'text';
   else if ('code' in props) variant = 'code';
   else if ('children' in props) variant = 'custom';
-  
+
+
+  // render
+  if (variant == 'none') return <></>;
   return (
     <div 
       ref={tooltipRef} 
