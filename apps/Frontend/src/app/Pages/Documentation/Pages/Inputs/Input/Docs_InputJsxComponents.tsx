@@ -77,6 +77,9 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          incrementButtons: true
+        }}
       />
     </div>
   );
@@ -116,6 +119,9 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          showEmailIcon: true
+        }}
       />
     </div>
   );
@@ -155,6 +161,9 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          visibilityIcon: true
+        }}
       />
     </div>
   );
@@ -194,6 +203,10 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          sortButton: true,
+          sortType: 'alphabetical',
+        }}
       />
     </div>
   );
@@ -232,6 +245,10 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          showPolicyNumberIcon: true,
+          policyNumberMask: true,
+        }}
       />
     </div>
   );
@@ -271,6 +288,10 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          showPhoneIcon: true,
+          phoneNumberMask: true,
+        }}
       />
     </div>
   );
@@ -310,6 +331,10 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          showCreditCardIcon: true,
+          creditCarkMask: true,
+        }}
       />
     </div>
   );
@@ -349,6 +374,10 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
         tooltip={{ text: "Tooltip text..." }}
+        opts={{
+          showMoneySign: true,
+          currencyTypeDropdown: true,
+        }}
       />
     </div>
   );

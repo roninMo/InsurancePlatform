@@ -50,6 +50,7 @@ export const Tooltip = (props: TooltipProps) => {
   //----------------------------------------//
   // Tooltip transform logic                //
   //----------------------------------------//
+  // #region Transform Logic
   const tooltipRef = useRef<HTMLDivElement>(null); // tooltip component
   const mouse = useRef({ x: 0, y: 0 }); // target location
   const prevMouseLocation = useRef({ x: 0, y: 0 }); // prevent asynchronous errors @see captureMouseMove () & @see animate ()
@@ -177,6 +178,7 @@ export const Tooltip = (props: TooltipProps) => {
       targetScroll.current = 0;
     };
   }, [showTooltip]);
+  // #endregion
 
 
 
@@ -184,6 +186,7 @@ export const Tooltip = (props: TooltipProps) => {
   //----------------------------------------//
   // Tooltip Scroll Functionality           //
   //----------------------------------------//
+  // #region Scroll Functionality
   useEffect(() => {
   if (!showTooltip || !tooltipRef.current) return;
 
@@ -221,6 +224,7 @@ export const Tooltip = (props: TooltipProps) => {
   window.addEventListener('wheel', handleGlobalWheel, { passive: false });
   return () => window.removeEventListener('wheel', handleGlobalWheel);
 }, [showTooltip]);
+  // #endregion
 
 
 
@@ -228,6 +232,7 @@ export const Tooltip = (props: TooltipProps) => {
   //----------------------------------------//
   // Code Variant Render delay              //
   //----------------------------------------//
+  // #region Variant Render Delay
   const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
   const { code, showLineNumbers, type = 'example' } = props as CodeTooltipProps;
 
@@ -260,12 +265,13 @@ export const Tooltip = (props: TooltipProps) => {
           showLineNumbers={showLineNumbers} 
           customStyle={{ 
             paddingBottom: '1rem', 
-            paddingRight: type == 'component' || type == 'interface' ? '6rem' : '0'
+            paddingRight: type == 'component' || type == 'interface' ? '6rem' : '1rem'
           }}
         />
       </div>
     );
   }, [shouldRender, code]);
+  // #endregion
 
 
 
@@ -273,6 +279,7 @@ export const Tooltip = (props: TooltipProps) => {
   //----------------------------------------//
   // Copy code on hover                     //
   //----------------------------------------//
+  // #region Copy Code Snippet Animation
   const copiedSnippetRef = useRef<HTMLDivElement>(null);
   const copyShortcutRef = useRef<HTMLDivElement>(null);
 
@@ -306,6 +313,9 @@ export const Tooltip = (props: TooltipProps) => {
     window.addEventListener('copy', copyCodeSnippet);
     return () => window.removeEventListener('copy', copyCodeSnippet);
   }, [showTooltip]);
+  // #endregion
+
+
 
 
   //----------------------------------------//

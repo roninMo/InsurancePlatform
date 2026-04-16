@@ -46,7 +46,6 @@ export const Docs_Input = () => {
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
-  // TODO: update the jsx code to use variant params
   const paramTableItems = useMemo(() => {
     const baseParamList: string[] = defaultParams || [];
     const contextParams: ParamContext[] = paramContextsList[currentTab]; 
@@ -478,7 +477,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'visibilityIcon': () => <ParamType type='boolean' />,
 
   'sortButton': () => <ParamType type='boolean' />,
-  'sortType': () => <ParamType type='InputSortType' />,
+  'sortType': () => <ParamType type='SearchSortType' tooltip={{ code: Code_SearchSortType, type: 'type' }} />,
   
   'showPolicyNumberIcon': () => <ParamType type='boolean' />,
   'policyNumberMask': () => <ParamType type='RefObject' />,
@@ -498,6 +497,7 @@ import SourceInputSnippets from '../../../../../Components/Forms/Input/Input?raw
 const Code_TextInputTypes = getSourceCode(SourceInputSnippets, 'TextInputTypes', 'type');
 const Code_TextInputAutoCompleteTypes = getSourceCode(SourceInputSnippets, 'TextInputAutoCompleteTypes', 'type');
 const Code_InputVariantOpts = getSourceCode(SourceInputSnippets, 'InputVariantOpts', 'interface');
+const Code_SearchSortType = getSourceCode(SourceInputSnippets, 'SearchSortType', 'type');
 
 
 const paramDescriptionElements: Record<string, React.FC> = {

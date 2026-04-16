@@ -277,7 +277,6 @@ const CurrencySelect = styled.select``;
 
 
 // TODO: update the docs input examples to include these variant options
-// TODO: and add the tooltip 
 export interface InputVariantOpts {
     /* Number  */
     incrementButtons?: boolean;
@@ -290,7 +289,7 @@ export interface InputVariantOpts {
 
     /* Search */
     sortButton?: boolean;
-    sortType?: boolean;
+    sortType?: SearchSortType;
     
     /* Policy Number */
     showPolicyNumberIcon?: boolean;
@@ -309,12 +308,14 @@ export interface InputVariantOpts {
     currencyTypeDropdown?: boolean;
 }
 
+export type SearchSortType = 'alphabetical' | 'numerical' | ((a: any, b: any) => void);
+
 const DefaultInputVariantOpts: InputVariantOpts = {
     incrementButtons: true,
     showEmailIcon: true,
     visibilityIcon: true,
     sortButton: true,
-    sortType: true,
+    sortType: 'alphabetical',
     showPolicyNumberIcon: true,
     policyNumberMask: true,
     showPhoneIcon: true,
