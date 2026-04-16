@@ -3,7 +3,7 @@ import { CodeBlock } from '../../../Pages/Documentation/Documentation';
 
 import styles from './Tooltip.module.scss';
 import styled from '@emotion/styled';
-import { interpFloat, interpV2 } from '@Project/ReactComponents';
+import { Icon, interpFloat, interpV2 } from '@Project/ReactComponents';
 
 
 // Tooltip variants 
@@ -273,7 +273,8 @@ export const Tooltip = (props: TooltipProps) => {
   //----------------------------------------//
   // Copy code on hover                     //
   //----------------------------------------//
-  const copySnippetRef = useRef<HTMLDivElement>(null);
+  const copiedSnippetRef = useRef<HTMLDivElement>(null);
+  const copyShortcutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!('code' in props)) return;
@@ -287,16 +288,19 @@ export const Tooltip = (props: TooltipProps) => {
     }
     
     const restartCopiedAnimation = () => {
-      const copyNotification = copySnippetRef.current;
-      if (!copyNotification) return;
+      const copyShortcutEl = copyShortcutRef.current;
+      const copiedNotification = copiedSnippetRef.current;
+      if (!copiedNotification || !copyShortcutEl) return;
 
-			//add a copy code messsage Ctrl + C thats in the sane location of the notification via flex and another keyframe for this
-      copyNotification.classList.remove('animate-fade-pulse');
+      // hide the shortcut and notify the user it was copied to clipboard
+      copyShortcutEl.classList.remove('animate-fade-pulse-i');
+      copiedNotification.classList.remove('animate-fade-pulse');
       
       // Force reflow: This tells the browser to recalculate styles immediately
-      void copyNotification.offsetWidth; 
+      void copiedNotification.offsetWidth; 
       
-      copyNotification.classList.add('animate-fade-pulse');
+      copyShortcutEl.classList.add('animate-fade-pulse-i');
+      copiedNotification.classList.add('animate-fade-pulse');
     };
 
     window.addEventListener('copy', copyCodeSnippet);
@@ -349,8 +353,15 @@ export const Tooltip = (props: TooltipProps) => {
                   }
                 </label>
 
-                <div ref={copySnippetRef} className='tooltip-copied-notification'>
-                  Copied to clipboard
+                <div className='grid grid-cols-1 justify-items-start items-center'>
+                  <div ref={copyShortcutRef} className='row-start-1 col-start-1 tooltip-copy-text'>
+                    Ctrl + /
+                  </div>
+
+                  <div ref={copiedSnippetRef} className='row-start-1 col-start-1 tooltip-copied-notification'>
+                    Copied to clipboard
+                    <Icon variant='Checkbox' styles='tooltip-copied-icon' />
+                  </div>
                 </div>
               </div>
               <Suspense>

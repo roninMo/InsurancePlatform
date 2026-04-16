@@ -137,8 +137,8 @@ export type DefaultIconTypes =
 
 export const Icon = ({ variant, styles = ''}: IconProps) => {
   const iconStyles = styles ? styles : 'icon-default-theme';
-  const defaultErrorStyles = styles ? styles : 'icon-error-color';
-  const defaultOkayStyles = styles ? styles : 'icon-ok-color';
+  const defaultErrorStyles = styles ? styles : 'icon-default-theme icon-error-color';
+  const defaultOkayStyles = styles ? styles : 'icon-default-theme icon-ok-color';
   
   
   // Default icons

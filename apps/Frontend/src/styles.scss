@@ -1497,12 +1497,28 @@
     @apply col gap-2;
   }
 
+  .tooltip-copy-base {
+    @apply
+      px-2 py-1.5
+      text-xs italic
+      outline-css;
+  }
+
+  .tooltip-copy-text {
+    @apply tooltip-copy-base
+      pr-3 outline-default
+      placeholder-text font-semibold;
+  }
+
   .tooltip-copied-notification {
-    @apply 
-      px-2 py-1.5 opacity-0
-      ok-box outline-css 
-      ok-text text-xs italic
-    ;
+    @apply tooltip-copy-base
+      rowStart inline-flex gap-1
+      opacity-0
+      ok-box ok-text;
+  }
+
+  .tooltip-copied-icon {
+    @apply size-4 icon-ok-color mt-[1px];
   }
   // #endregion
 

@@ -17,7 +17,8 @@ module.exports = {
         'fade-in': 'fade-in 0.4s ease-out forwards',
         'fade-in-slow': 'fade-in 0.64s ease-out forwards',
         'fade-out': 'fade-out 0.3s ease-in forwards',
-        'fade-pulse': 'fade-pulse 1.25s ease-out',
+        'fade-pulse':   'fade-pulse   1.7s ease-out',
+        'fade-pulse-i': 'fade-pulse-i 1.7s ease-out',
 
         'fill-bar': 'fill-bar 1.25s ease-in forwards',
         'loading-bar': 'loading-bar 1.25s ease-in-out infinite',
@@ -41,9 +42,20 @@ module.exports = {
         // Displays element for a second and then fades out.
         'fade-pulse':   {
           '0%':   { opacity: '0' },
-          '20%':  { opacity: '1' },
+          '10%':  { opacity: '0' },
+          '35%':  { opacity: '1' },
+
           '75%':  { opacity: '1' },
+          '90%':  { opacity: '0' },
           '100%': { opacity: '0' },
+        },
+
+        // Hides an element and then shows it again. Use with fade-pulse
+        'fade-pulse-i': {
+          '0%':   { opacity: '1' },
+          '5%':   { opacity: '0' },
+          '90%':  { opacity: '0' },
+          '100%': { opacity: '1' },
         },
 
         'fill-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
