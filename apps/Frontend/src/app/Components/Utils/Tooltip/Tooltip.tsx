@@ -50,78 +50,125 @@ export const Tooltip = (props: TooltipProps) => {
   //----------------------------------------//
   // Tooltip transform logic                //
   //----------------------------------------//
-  const tooltipRef = useRef<HTMLDivElement>(null); // update outside of react's render updates
-  const currentScroll = useRef(0);
+  const tooltipRef = useRef<HTMLDivElement>(null); // tooltip component
+  const mouse = useRef({ x: 0, y: 0 }); // target location
+  const prevMouseLocation = useRef({ x: 0, y: 0 }); // prevent asynchronous errors @see captureMouseMove () & @see animate ()
+  const tooltipLocation = useRef({ x: 0, y: 0 }); // interpolated position
+  const initialMove = useRef(true); // whether it's the first frame move
+  
+  // Scroll functionality 
+  const currentScroll = useRef(0); 
   const targetScroll = useRef(0);
-  const mouse = useRef({ x: 0, y: 0 }); // Target
-  const tooltipLoc = useRef({ x: 0, y: 0 }); // Interpolated position
-  const initialMove = useRef(true);
 
   useEffect(() => {
-    if (!showTooltip) return;
-
     // Retrieve the mouse location and set the initial render location of the tooltip
     const captureMouseMove = (e: MouseEvent) => {
       mouse.current = { x: e.clientX, y: e.clientY };
-
-      if (initialMove.current && tooltipRef.current) {
-        tooltipLoc.current = { x: mouse.current.x, y: mouse.current.y };
-        initialMove.current = false;
-      }
     };
+    
+    document.addEventListener('mousemove', captureMouseMove);
 
-    // The Animation Loop
+
+    //----------------------------------//
+    // The Animation Loop               //
+    //----------------------------------//
+    if (!showTooltip) return;
+    
     let frameId: number;
     const animate = () => {
-      // Scroll logic
-      currentScroll.current = interpFloat(currentScroll.current, targetScroll.current, 0.05);
-      if (tooltipRef.current) { // Adjust the scroll location using the scrollTop (how much we've scrolled)
-        tooltipRef.current.scrollTop = currentScroll.current;
+      const mouseLoc = { ...mouse.current };
+      const prevMouseLoc = { ...prevMouseLocation.current };
+      const tooltip = tooltipRef.current;
+      if (!tooltip) {
+        frameId = requestAnimationFrame(animate);
+        return;
       }
+      
+      //----------------------------------------------------//
+      // Scroll Logic @see handleGlobalWheel () for usage   //
+      //----------------------------------------------------//
+      // currentScroll.current += (targetScroll.current - currentScroll.current) * 0.01;
+      const currentScroll = tooltip.scrollTop;
+      const nonLinearFactor = 0.0025 + ( (Math.abs(currentScroll - targetScroll.current) / 2000) ); // faster the more you scroll 
+      const smoothedScroll = interpFloat(currentScroll, targetScroll.current, nonLinearFactor);
+      tooltip.scrollTop = smoothedScroll; 
 
-      // Interpolation logic
-      // skip first frame interpolation
-      if (initialMove.current || (mouse.current.x === 0 && mouse.current.y === 0)) {
+
+      //----------------------------------------------------//
+      // Interpolation logic                                //
+      //----------------------------------------------------//
+      let tooltipLoc = { ...tooltipLocation.current };
+      let targetLoc = { ...mouseLoc };
+
+      const offsetX = 12;
+      const offsetY = 16;
+      let shouldPlaceBelow = true;
+      const interpSpeed = 0.1;
+
+      // if we're already at the target location
+      if (Math.abs(tooltipLoc.x - targetLoc.x) < 0.1 && Math.abs(tooltipLoc.y - targetLoc.y) < 0.1) {
         frameId = requestAnimationFrame(animate);
         return;
       }
 
       // Adjust the location based on how close the tooltip is to the edge of the screen
-      // const { top, left, bottom, right } = element; 
-      const width = tooltipRef.current?.offsetWidth;
-      const height = tooltipRef.current?.offsetHeight;
+      const width = tooltip.offsetWidth;
+      const height = tooltip.offsetHeight;
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
 
-      // create clamps for the width and the height placements
-      // have the interp move it to those locations using the target location
-      // use width + height + offsets and the mouse location to check if it's within the bounds of the window
+      // The vertical check needs to determine whether to be above or below the mouse
+      shouldPlaceBelow = (mouseLoc.y + offsetY + height) < windowHeight;
+      
+      // The tooltip should stay on screen when the mouse approaches the edges
+      targetLoc.x = Math.min( (mouseLoc.x + offsetX), (windowWidth - (width + offsetX)) );
 
-      // Interpolate the tooltip location
-      const tooltipLocation = tooltipLoc.current;
-      const mouseLocation = mouse.current;
-      tooltipLoc.current = interpV2(tooltipLocation, mouseLocation, 0.25);
-      if (tooltipRef.current) {
-        tooltipRef.current.style.transform = 
-          `translate(${tooltipLocation.x + 12}px, ${tooltipLocation.y + 16}px)`;
+      // If it should be placed above the mouse, subtract by the tooltip height and invert the offset
+      targetLoc.y = mouseLoc.y + offsetY;
+      if (!shouldPlaceBelow) targetLoc.y = mouseLoc.y - height - offsetY;
+
+
+      //----------------------------------------------------//
+      // Animation logic                                    //
+      //----------------------------------------------------//
+      // first frame (direct move)
+      if (initialMove.current) {
+        tooltipLoc = { ...targetLoc };
+        initialMove.current = false;
+        frameId = requestAnimationFrame(animate);
       }
 
+      // Smoothly interp to the target location
+      else {
+        tooltipLoc = interpV2(tooltipLoc, { 
+          x: targetLoc.x, 
+          y: targetLoc.y 
+        }, interpSpeed);
+      }
 
+      // Tooltip animation update
+      tooltip.style.transform = `translate(calc(${tooltipLoc.x}px), calc(${tooltipLoc.y}px))`;
+      tooltipLocation.current = tooltipLoc; // Capture the ref's value from this calculation
+      prevMouseLocation.current = { ...mouseLoc };
+      
       // Loop the animation
       frameId = requestAnimationFrame(animate);
     };
 
-    // Events and animation
-    // Add the events and animations for the tooltip
-    document.addEventListener('mousemove', captureMouseMove);
+    // Initial frame call
     frameId = requestAnimationFrame(animate);
 
+
+    //----------------------------------//
+    // Cleanup                          //
+    //----------------------------------//
     return () => {
       document.removeEventListener('mousemove', captureMouseMove);
       cancelAnimationFrame(frameId);
       initialMove.current = true;
       
       // Reset the tooltip state
-      tooltipLoc.current = { x: 0, y: 0 };
-      mouse.current = { x: 0, y: 0 };
+      tooltipLocation.current = { x: 0, y: 0 };
       currentScroll.current = 0;
       targetScroll.current = 0;
     };
@@ -136,6 +183,7 @@ export const Tooltip = (props: TooltipProps) => {
   useEffect(() => {
   if (!showTooltip || !tooltipRef.current) return;
 
+  // If the tooltip is visible, override native scroll to add tooltip scroll @see animate () for usage
   const handleGlobalWheel = (e: WheelEvent) => {
     const tooltip = tooltipRef.current;
     if (!tooltip) return;
@@ -151,13 +199,17 @@ export const Tooltip = (props: TooltipProps) => {
       // scrollHeight (the dimensions of the content, including what the overflow hides)
       // clientHeight (the dimensions of the overflow element, not the page location)
 
-      const scrollAmount = e.deltaY / 1.5;
+      const scrollAmount = e.deltaY / 2; // scrolls are in linear increments of 100, we;re using this value additively
       if (!(scrollAmount > 0 && isAtBottom) && !(scrollAmount < 0 && isAtTop)) {
         e.preventDefault(); // Stop page scroll while tooltip is scrolling
         
         // Add to our target, clamped between 0 and max scroll
         const maxScroll = tooltip.scrollHeight - tooltip.clientHeight;
-        targetScroll.current = Math.max(0, Math.min(maxScroll, targetScroll.current + scrollAmount));
+        const scrollBoundOffset = 25; // accounts for custom scrollbar styles
+        targetScroll.current = Math.max(
+          0 - scrollBoundOffset,
+          Math.min(maxScroll + scrollBoundOffset, ( targetScroll.current + scrollAmount ))
+        );
       }
     }
   };
@@ -173,7 +225,7 @@ export const Tooltip = (props: TooltipProps) => {
   // Code Variant Render delay              //
   //----------------------------------------//
   const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
-  const { code, showLineNumbers, type } = props as CodeTooltipProps;
+  const { code, showLineNumbers, type = 'example' } = props as CodeTooltipProps;
 
   // Quick Render delay for jsx code and to enable the scrollbar (to allow other transition css to work via overflow)
   useEffect(() => {
@@ -198,7 +250,12 @@ export const Tooltip = (props: TooltipProps) => {
     if (!shouldRender) return null;
     return (
       <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
-        <CodeBlock language='tsx' code={code} showLineNumbers={showLineNumbers} />
+        <CodeBlock 
+          language='tsx' 
+          code={code} 
+          showLineNumbers={showLineNumbers} 
+          customStyle={{ paddingBottom: '1rem' }}
+        />
       </div>
     );
   }, [shouldRender, code]);
@@ -235,7 +292,7 @@ export const Tooltip = (props: TooltipProps) => {
       `}
     >
       { variant == 'code' ? 
-        <CodeVariant className='col'>
+        <CodeVariant className={`col ${type == 'type' || type == 'example' ? 'tooltip-c-type' : 'tooltip-c-class'}`}>
 
           {/* Keeps transitions while using suspense and a lazy import */}
           <OpenAnimation className={`height-trans-500 ${isRenderDelayDone ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
@@ -275,28 +332,3 @@ export const Tooltip = (props: TooltipProps) => {
 const OpenAnimation = styled.div``;
 const AnimContent = styled.div``;
 const CodeVariant = styled.div``;
-
-
-// Memoized Suspense CodeBlock Renderer for react-syntax-highlighter
-const OldMemoizedCodeSnippet = ({ jsx, showLineNumbers = false }: { jsx: string, showLineNumbers?: boolean }) => {
-  // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
-  const memoizedSnippet = useMemo(() => (
-    <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
-      <CodeBlock language='tsx' code={jsx} showLineNumbers={showLineNumbers} />
-    </div>
-  ), [jsx]);
-
-  return memoizedSnippet;
-}
-
-
-// Pass into a memo because the import takes a while
-const CodeSnippet = ({ jsx, showLineNumbers = false }: { jsx: string, showLineNumbers?: boolean }) => {
-  // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
-  return (
-    <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
-      <CodeBlock language='tsx' code={jsx} showLineNumbers={showLineNumbers} />
-    </div>
-  );
-}
-

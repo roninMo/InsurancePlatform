@@ -1454,7 +1454,7 @@
   // Tooltip
   .tooltip {
     @apply
-      fixed top-0 left-0 max-h-64 min-w-[65vw]
+      fixed top-0 left-0 max-h-64 pr-40
       overflow-x-hidden scrollbar-theme
       z-50 pointer-events-none
 
@@ -1483,6 +1483,14 @@
 
   .tooltip-c {
     @apply tooltip-t;
+  }
+
+  .tooltip-c-vars { @apply mr-2; }
+  .tooltip-c-class {
+    @apply tooltip-c-vars min-w-[45vw];
+  }
+  .tooltip-c-type {
+    @apply tooltip-c-vars min-w-[20rem];
   }
 
   .tooltip-content {
