@@ -39,6 +39,7 @@ export const Card = ({
   const titleStyles = `text-base`;
   const dividerStyles = `mb-2 border-b border-styles`;
 
+	// TODO: The styles and themes need to be added globally and themed
   const getContainerStyles = (): string => {
     let classes = `rounded-md trans p-2 `;
     classes += border    == 'default' ? ' outline-css outline-styles ' : '';

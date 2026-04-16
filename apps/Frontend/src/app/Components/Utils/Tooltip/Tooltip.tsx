@@ -203,7 +203,7 @@ export const Tooltip = (props: TooltipProps) => {
       // scrollHeight (the dimensions of the content, including what the overflow hides)
       // clientHeight (the dimensions of the overflow element, not the page location)
 
-      const scrollAmount = e.deltaY / 2; // scrolls are in linear increments of 100, we;re using this value additively
+      const scrollAmount = e.deltaY / 2; // scrolls are in linear increments of 100, we're using this value additively
       if (!(scrollAmount > 0 && isAtBottom) && !(scrollAmount < 0 && isAtTop)) {
         e.preventDefault(); // Stop page scroll while tooltip is scrolling
         
@@ -290,6 +290,7 @@ export const Tooltip = (props: TooltipProps) => {
       const copyNotification = copySnippetRef.current;
       if (!copyNotification) return;
 
+			//add a copy code messsage Ctrl + C thats in the sane location of the notification via flex and another keyframe for this
       copyNotification.classList.remove('animate-fade-pulse');
       
       // Force reflow: This tells the browser to recalculate styles immediately

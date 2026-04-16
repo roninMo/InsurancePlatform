@@ -11,9 +11,14 @@ SyntaxHighlighter.registerLanguage('tsx', tsx);
 // SyntaxHighlighter.registerLanguage('typescript', typescript);
 // SyntaxHighlighter.registerLanguage('json', json);
 
-const LazySyntaxHighlighter = (props: SyntaxHighlighterProps | any) => (
-  <SyntaxHighlighter {...props} style={{...oneDark}} />
-);
+const LazySyntaxHighlighter = (props: SyntaxHighlighterProps | any) => {
+	const pageTheme = localStorage.getItem('theme') || "light";
+	const theme = pageTheme == "dark" ? oneDark : oneDark; // TODO: we need a light theme
+	
+	return (
+  	<SyntaxHighlighter {...props} style={{...oneDark}} />
+	);
+}
 
 
 export default LazySyntaxHighlighter;
