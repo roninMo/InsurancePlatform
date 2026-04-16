@@ -1,7 +1,24 @@
 
 
 
-// From a stringified file import using vite, retrieves the exported components for documentation jsx examples.
+/**
+ * Retrieves the exported components for documentation jsx examples
+ * from a stringified file import using vite. This function is used in combination with 'react-syntax-highlighter'
+ * so we don't have to create redundant code.
+ * 
+ * @param fileImportSource - The vite import ref; ex. "import CodeSnippets from './CodeSnippetsFile?raw';"
+ * @param name - the name of the class we're looking for
+ * @param type - Whether we're searching for a component () =>, type, or interface.
+ * @returns The raw stringified snippet of your code.
+ * 
+ * @example
+ * ```typescript
+ * import CodeSnippets from './CodeSnippetsFile?raw';
+ * 
+ * const textInputSnippet = getSourceCode(InputCodeSnippets, "Example_TextInput");
+ * console.log('source code: ', textInputSnippet);
+ * ```
+ */
 export const getSourceCode = (
   fileImportSource: string, // Import needs a '?raw' suffix to convert to string, ex: './Jsx.tsx?raw';
   name: string, // The name of the component, type, or interface you want returned as a string
@@ -32,9 +49,3 @@ export const getSourceCode = (
   // console.log (`retrieving code for ${name}: `, match);
   return match ? match[0].trim() : "Component source not found.";
 };
-
-
-// Example Usage:
-// import JsxExampleFile from 'Content/Examples/Jsx.tsx';
-// const textInputSource = getComponentSource(AllExamplesSource, 'JsxExample_TextInput');
-// const emailInputSource = getComponentSource(AllExamplesSource, 'JsxExample_EmailInput');

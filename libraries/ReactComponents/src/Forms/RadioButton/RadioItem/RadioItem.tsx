@@ -3,37 +3,36 @@ import { RadioItem, RadioVariant } from '../RadioGroup';
 
 import styled from '@emotion/styled';
 import styles from './RadioItem.module.scss';
+import { ChangeEvent, memo } from 'react';
 
 
 export interface RadioItemProps {
   variant: RadioVariant;
-  checked: boolean;
-  onSelect: (item: RadioItem, index: number) => void;
-  value: RadioItem;
-  
   inputName: string;
-  index: number;
-  
-  disabled?: boolean;
+
+  value: RadioItem;
+  checked: boolean;
+  onSelect: (item: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;
+
   error?: boolean;
+  disabled?: boolean;
 }
 
-export const RadioGroupItem = ({ 
-  checked, onSelect, value, inputName, variant, index, error, disabled,
+export const RadioGroupItem = memo(({ 
+  checked, onSelect, value, inputName, variant, error, disabled,
   onFocus, onChange, onBlur, onClick, onMouseEnter, onMouseLeave
 }: RadioItemProps & UniversalEventHandlers) => {
 
   // Event handling
-  const selectedRadioItem = (item: RadioItem, index: number) => {
-    if (disabled) return; // out event doesn't prevent edits to input values when disabled
-    onSelect(value, index);
+  const selectedRadioItem = (item: RadioItem, e: ChangeEvent<HTMLInputElement>) => {
+    if (onChange) onChange(e);
+    onSelect(item, e);
   }
 
   return (
-    <Container 
+    <label 
       onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
       onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
-      onClick={() => selectedRadioItem(value, index)}
       className={`
         ${variant == 'default' ? 'radio-item-c-d' : ''}
         ${variant == 'column' ? 'radio-item-c-c' : ''}
@@ -42,15 +41,16 @@ export const RadioGroupItem = ({
       `} 
     >
       <Radio 
-        value={value.value}
-        onChange={(e) => onChange && onChange(e)}
-        checked={checked}
-    
         type="radio" 
-        disabled={disabled}
-        name={`${inputName}-${value.value}`}
+        id={`${inputName}-${value.value}`}
+        name={inputName}
         className={`radio-button`} 
-
+        
+        value={value.value}
+        checked={checked}
+        disabled={disabled}
+        
+        onChange={(e) => selectedRadioItem(value, e)}
         onBlur={e => onBlur && onBlur(e)}
         onFocus={e => onFocus && onFocus(e)}
         onClick={e => onClick && onClick(e)}
@@ -62,14 +62,13 @@ export const RadioGroupItem = ({
           <Description className='radio-t-desc'> { value.description } </Description>
         }
       </LabelAndDescription>
-    </Container>
+    </label>
   );
-}
+});
 
 
-// #region styling
-const Container = styled.div``;
+// Styled Components
 const Radio = styled.input``;
 const LabelAndDescription = styled.div``;
-const Label = styled.p``;
+const Label = styled.span``;
 const Description = styled.p``;

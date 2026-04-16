@@ -1,21 +1,24 @@
-import { MouseEvent, useId } from 'react';
+import { ChangeEvent, memo, MouseEvent, useCallback, useId, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { RadioItem } from '@Project/ReactComponents';
 import styles from './RadioTable.module.scss';
 
 
+export type RadioTableVariant = 'inline' | 'block';
 export interface RadioTableProps {
-  variant?: 'inline' | 'block';
+  variant?: RadioTableVariant;
   name: string;
   label?: string;
   description?: string;
 
   radioItems: RadioItem[];
   currentValue: RadioItem;
-  onSelect: (item: RadioItem, index: number, currentValue: RadioItem) => void;
-  onMouseEnter?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
-  onMouseLeave?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
+  onSelect: (item: RadioItem, currentValue: RadioItem, e?: ChangeEvent<HTMLInputElement>) => void;
+  
+  // These need to be wrapped in a useCallback for memoization to work
+  onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+  onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 
   error?: boolean;
   errorMessage?: string;
@@ -29,16 +32,17 @@ export const RadioTable = ({
   radioItems, currentValue, onSelect,  onMouseEnter, onMouseLeave,
   error, errorMessage, disabled, required,
 }: RadioTableProps) => {
-  const id = useId();
+  const currentValRef = useRef(currentValue); // Prevent rerenders on memoized child
+  currentValRef.current = currentValue; 
 
-  const onSelectedRadioItem = (item: RadioItem, index: number, currentValue: RadioItem) => {
-    if (disabled) return; // This isn't handled through the input's change event
-    onSelect(item, index, currentValue);
-  }
+  const onSelectedRadioItem = useCallback((item: RadioItem, e: ChangeEvent<HTMLInputElement>) => {
+    onSelect(item, currentValRef.current, e);
+    // console.log(`RadioTable::onSelectRadioItem: `, { item, currentValue: currentValRef.current });
+  }, [onSelect]);
   
   // Get functions
   const isSelected = (item: RadioItem): boolean => currentValue.value == item.value;
-  const getError = () => error && !disabled;
+  const getError = (): boolean => !!error && !disabled;
 
 
   return (
@@ -49,67 +53,98 @@ export const RadioTable = ({
       </HeaderContainer>
 
       <Table className={`colStart mt-4 bg-default rounded-md`}>
-        {radioItems.map((item: RadioItem, index: number) => 
+        {radioItems.map((item: RadioItem) => 
           <RadioTableItem 
-            onClick={() => onSelectedRadioItem(item, index, currentValue)} 
-            onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
-            onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
-            key={`rti-${name}-${item.value}-${index}-${id}`}
-            className={`radio-table-i 
-              ${isSelected(item) ? 'radio-t-i-selected z-10' : ''}
-              ${getError() && isSelected(item) ? 'radio-t-i-selected-error' : getError() ? 'radio-t-i-error' : ''} 
-              ${disabled && isSelected(item) ? 'radio-t-i-selected-disabled' : disabled ? 'radio-t-i-disabled' : ''}
-          `}>
-            <Radio 
-              type='radio' name={name} 
-              id={`rt-ii-${name}-${item.value}-${index}`}
-              value={currentValue.value}
-              checked={isSelected(item)}
-              onChange={() => {}} // Handled via button event
-              required={required}
-              disabled={disabled || item.disabled}
-              className={`radio-button mt-[2px] ${getError() ? 'radio-button-error' : ''}`}
-            />
-            
-            <div className={`colStart *:text-left`}>
-              <ItemLabel className='pb-[2px] radio-t-i-label'>{ item.label }</ItemLabel>
+            variant={variant} name={name}
+            key={`rti-${name}-${item.value}`}
 
-              {/* Column Layout */}
-              {(variant == 'block' && item.description) && 
-                <ItemDescription className='radio-t-i-desc'>{ item.description }</ItemDescription>
-              }
-            </div>
-            
-            {/* Row Layout */}
-            {(variant == 'inline' && description) && 
-              <ItemDescription className={`ml-auto text-left pl-2 radio-t-i-desc`}>
-                { item.description }
-              </ItemDescription>
-            }
-          </RadioTableItem>
+            item={item} radioSelect={onSelectedRadioItem}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+
+            isSelected={isSelected(item)}
+            error={getError()}
+            disabled={disabled}
+            required={required}
+          />
         )}
       </Table>
 
-      {/* Error text */}
-      { getError() && 
-        <Description className='error-text px-1 py-2'>
-          { errorMessage }
-        </Description>
-      }
+      {/* Error Text */}
+      <ErrorText className={`px-1 py-2 height-trans ${getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className={`error-text height-trans-content`}>
+          { errorMessage ? errorMessage : '' } &nbsp;
+        </div>
+      </ErrorText>
     </Container>
   );
 }
+
+
+interface RadioTableItemProps {
+  variant: RadioTableVariant;
+  name: string;
+  item: RadioItem;
+  radioSelect: (item: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;
+  onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+  onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+
+  isSelected: boolean;
+  error: boolean;
+  required?: boolean;
+  disabled?: boolean;
+}
+const RadioTableItem = memo(({
+  variant, name, item, radioSelect, onMouseEnter, onMouseLeave, 
+  isSelected, error, required, disabled
+}: RadioTableItemProps) => (
+  <label 
+    onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
+    onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
+    className={`radio-table-i 
+      ${isSelected ? 'radio-t-i-selected z-10' : ''}
+      ${error && isSelected    ? 'radio-t-i-selected-error' :     error    ? 'radio-t-i-error' : ''} 
+      ${disabled && isSelected ? 'radio-t-i-selected-disabled' :  disabled ? 'radio-t-i-disabled' : ''}
+  `}>
+    <Radio 
+      type='radio' name={name} 
+      id={`${name}-${item.value}`}
+      
+      value={item.value} checked={isSelected}
+      onChange={(e) => radioSelect(item, e)}
+      required={required}
+      disabled={disabled || item.disabled}
+      className={`radio-button mt-[2px] ${error ? 'radio-button-error' : ''}`}
+    />
+    
+    <div className={`colStart *:text-left`}>
+      <ItemLabel className='pb-[2px] radio-t-i-label'>{ item.label }</ItemLabel>
+
+      {/* Column Layout */}
+      {(variant == 'block' && item.description) && 
+        <ItemDescription className='radio-t-i-desc'>{ item.description }</ItemDescription>
+      }
+    </div>
+    
+    {/* Row Layout */}
+    {(variant == 'inline' && item.description) && 
+      <ItemDescription className={`ml-auto text-left pl-2 radio-t-i-desc`}>
+        { item.description }
+      </ItemDescription>
+    }
+  </label>
+));
 
 
 // Styled Components
 const Container = styled.div``;
 const HeaderContainer = styled.div``;
 const Table = styled.div``;
-const RadioTableItem = styled.button``;
 
 const Label = styled.label``;
 const Description = styled.p``;
+const ErrorText = styled.p``;
 
 const Radio = styled.input``
-const ItemLabel = styled.label``;
+const ItemLabel = styled.span``;
 const ItemDescription = styled.p``;

@@ -1,6 +1,11 @@
 import { ChangeEvent, Dispatch, FocusEvent, MouseEvent, SetStateAction } from "react";
 
 
+/** 
+ * Important! Our components are memoized. Using these will cause 
+ * re-renders on every update for lists like (radios and checkboxes) 
+ * unless you wrap them in useCallback. 
+ */
 export interface UniversalEventHandlers<T extends HTMLElement = HTMLElement> {
   // ChangeEvent usually specifically needs to know about value/checked
   onChange?: (e: ChangeEvent<any>) => void; 

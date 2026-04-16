@@ -19,9 +19,9 @@ export const Example_InlineRadioTable = ({ error, disabled }: {
     };
   }));
 
-  const onSelectRadioItem = (selected: RadioItem, index: number, currentValue: RadioItem) => {
+  const onSelectRadioItem = (selected: RadioItem, currentValue: RadioItem) => {
     setSelectedItem(selected);
-    console.log(`user selected: `, {selected, index, currentValue});
+    console.log(`user selected: `, {selected, currentValue});
   }
 
   return (
@@ -61,9 +61,9 @@ export const Example_BlockRadioTable = ({ error, disabled }: {
     };
   }));
 
-  const onSelectRadioItem = (selected: RadioItem, index: number, currentValue: RadioItem) => {
+  const onSelectRadioItem = (selected: RadioItem, currentValue: RadioItem) => {
     setSelectedItem(selected);
-    console.log(`user selected: `, {selected, index, currentValue});
+    console.log(`user selected: `, {selected, currentValue});
   }
 
   return (

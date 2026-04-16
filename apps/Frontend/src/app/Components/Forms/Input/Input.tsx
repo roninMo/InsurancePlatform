@@ -1,9 +1,11 @@
-import { Dispatch, MouseEvent, RefObject, SetStateAction, useId, useRef, useState } from 'react';
+import { Dispatch, MouseEvent, RefObject, SetStateAction, useContext, useId, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
 import { UniversalEventHandlers, Icon, Button } from '@Project/ReactComponents';
+import { TooltipProps } from '../../Utils/Tooltip/Tooltip';
+import { TooltipService } from '../../Utils/Tooltip/TooltipProvider/TooltipProvider';
 
 
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
@@ -23,8 +25,7 @@ export interface InputProps {
   errorMessage?: string | null;
   disabled?: boolean;
   required?: boolean;
-  tooltip?: boolean;
-  tooltipText?: string;
+  tooltip?: TooltipProps;
 
   autocomplete?: TextInputAutoCompleteTypes;
 
@@ -34,14 +35,14 @@ export interface InputProps {
 
 export const Input = ({
   type = 'text', name, label, description, value, setValue, placeholder,
-  error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
+  error = false, errorMessage, required = false, disabled = false, tooltip,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, opts = DefaultInputVariantOpts, ...props
 }: InputProps & UniversalEventHandlers) => {
-  const id = useId();
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
-  const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This might mess with seeing loading with actual load times
+  const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This could mess with seeing loading with actual load times
 
+  // TODO: when we use rhf, find a mask that works well with controlled components, or create our own
   const getMaskRef = (type: TextInputTypes): RefObject<HTMLInputElement> | undefined => {
     // if (type == 'phone') return phoneMaskRef;
     return undefined;
@@ -49,10 +50,6 @@ export const Input = ({
 
   // Password visibility
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  // Tooltip logic
-  const [tooltipActive, setTooltipActive] = useState<boolean>(false);
-  const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
 
   const getType = (): TextInputTypes => {
     if (type == 'number' || type == 'currency') return 'number';
@@ -73,22 +70,23 @@ export const Input = ({
       <InputContainer className="input-container group">
         <input 
           type={getType()}
-          name={name} id={id}
+          name={name} id={`${name}-${type}`}
           // ref={getMaskRef(type)} // TODO: add optional input masking
           value={value}
           placeholder={placeholder}
           autoComplete={autocomplete}
+          required={required} 
+          disabled={disabled}
 
-          onChange={(e) => onChange ? onChange(e) : null}
-          onBlur={(e) => onBlur ? onBlur(e) : null}
-          onFocus={(e) => onFocus ? onFocus(e) : null}
-          onClick={(e) => onClick ? onClick(e) : null}
-          onMouseEnter={(e) => onMouseEnter ? onMouseEnter(e) : null}
-          onMouseLeave={(e) => onMouseLeave ? onMouseLeave(e) : null}
+          onChange={(e) => onChange && onChange(e)}
+          onBlur={  (e) => onBlur && onBlur(e)}
+          onFocus={ (e) => onFocus && onFocus(e)}
+          onClick={ (e) => onClick && onClick(e)}
+          onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
+          onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
 
-          required={required} disabled={disabled}
           className={`input-base peer
-            ${!(type == 'search' || type == 'text' || type == 'currency' || type == 'number') ? 'input-icon-spacing' : ''}
+            ${!inputTypesWithoutIcons.includes(type) ? 'input-icon-spacing' : ''}
             ${getError() ? 'input-error' : ''}
           `}
           { ...props }
@@ -104,9 +102,10 @@ export const Input = ({
 
         <SubsequentElements
           type={type} name={name}
-          setValue={setValue} error={getError()} disabled={disabled}
-          tooltip={tooltip} tooltipCoords={tooltipCoordinates}
-          tooltipActive={tooltipActive} setTooltipActive={setTooltipActive}
+          setValue={setValue} 
+          disabled={disabled}
+          error={getError()} 
+          tooltip={tooltip}
         />
         
         <LoadingBar className='input-loading-bar-cont'>
@@ -118,22 +117,11 @@ export const Input = ({
       </InputContainer>
 
       {/* Error / Description messages */}
-      <ErrorAndDescription className='mt-2 ml-1'>
-        { getError() && errorMessage ? 
-          <p className="error-text"> { errorMessage } </p> 
-        : description && 
-          <p className=""> { description } </p> 
-        }
-      </ErrorAndDescription>
-
-      {/* Tooltip Text */}
-      <Tooltip 
-        style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
-        className={`input-tooltip ${tooltipCoordinates} ${tooltipActive ? 'input-tooltip-v' : 'input-tooltip-h'}`}
-      >
-        {tooltipText ? tooltipText : 'Tooltip text...'}
-      </Tooltip>
-
+      <ErrorAndDesc className={`mt-2 ml-1 height-trans ${description || getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <p className={`height-trans-content ${(getError() && errorMessage) ? 'error-text' : 'text-colors'}`}>
+          { (getError() && errorMessage) ? errorMessage : description } &nbsp;
+        </p>
+      </ErrorAndDesc>
     </TextInput>
   );
 }
@@ -154,7 +142,7 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPasswo
   const VariantIcon: React.FC<InputVariantOpts> | undefined = PrecedingIcons[type] || undefined;
   
   return (
-    <div className="input-preceding-el-c">
+    <VariantIcons className="input-preceding-el-c">
       <div className='input-preceding-el'>
         {VariantIcon && <VariantIcon {...opts} />}
 
@@ -165,10 +153,11 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPasswo
           </div>
         }
       </div>
-    </div>
+    </VariantIcons>
   );
 }
 
+const inputTypesWithoutIcons = ['search', 'text', 'currency', 'number'];
 const PrecedingIcons: Partial<Record<TextInputTypes, React.FC<InputVariantOpts>>> = {
   'email': (opts) => opts.showEmailIcon 
   ? <Icon variant='Envelope'    styles='input-icon-def' /> : undefined,
@@ -193,31 +182,12 @@ interface SubsequentElProps {
   disabled: boolean;
   error: boolean;
   setValue?: Dispatch<SetStateAction<string>>;
-
-  tooltip?: boolean;
-  tooltipCoords: RefObject<{ x: number, y: number }>;
-  tooltipActive: boolean;
-  setTooltipActive: Dispatch<SetStateAction<boolean>>;
+  tooltip?: TooltipProps;
 }
 export const SubsequentElements: React.FC<SubsequentElProps> = ({
-  name, type, disabled, error, setValue, 
-  tooltip, tooltipCoords, setTooltipActive 
+  name, type, disabled, error, setValue, tooltip,
 }) => {
-  const tooltipMouseEnter = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    // console.log('mouse enter tooltip', {Event: e});
-    setTooltipActive(true);
-  }
-  
-  const tooltipMouseLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    // console.log('mouse leave tooltip', {Event: e});
-    setTooltipActive(false);
-  }
-
-  const toolTipHover = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>): void => {
-    const coordinates = { x: e.clientX, y: e.clientY };
-    tooltipCoords.current = coordinates;
-    // console.log(`mouseCoordinates: `, tooltipCoordinates.current); //  {x: coordinates.x, y: coordinates.y });
-  }
+  const { show, hide } = useContext(TooltipService);
 
   const incrementValue = (add: boolean) => {
     if (!setValue) return;
@@ -231,23 +201,19 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
   }
   
   return (
-    <SubsequentInputElements className="input-subsequent-el-c">
+    <div className="input-subsequent-el-c">
       <div className="input-subsequent-el">
-        {/* Error / Tooltip icon */}
-        { error ?
-          <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
-        : 
-          <TooltipIcon 
-            onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
-            onMouseOver={e =>  tooltip && toolTipHover(e)} 
-            onMouseLeave={e => tooltip && tooltipMouseLeave(e)} 
-            className=""
-          >
-            <Icon variant='InfoBox' styles='mr-3 size-4 cursor-pointer' /> 
-          </TooltipIcon>
-        }
 
-        {/* Increment buttons */}
+        {/* Error / Tooltip icon */}
+        <ErrorAndTooltipIcon className="input-tooltip-icon"
+          onMouseEnter={() => tooltip && show(tooltip)} 
+          onMouseLeave={() => tooltip && hide()} 
+        >
+          { error ? <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
+          :         <Icon variant='InfoBox' styles='mr-3 size-4 cursor-pointer' /> }
+        </ErrorAndTooltipIcon>
+
+        {/* Increment buttons - type="number" */}
         { type == 'number' && 
           <div className={`increment-btns ${!disabled && !error ? 'increment-btns-states' : error ? 'input-btns-error' : ''}`}>
             <Button 
@@ -263,7 +229,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
           </div>
         }
 
-        {/* Currency Dropdown */}
+        {/* Currency Dropdown - type="currency" */}
         { type == 'currency' && 
           <CurrencySelectContainer className='row relative'>
             <Icon variant='DropdownArrow' styles='input-curr-i' />
@@ -279,7 +245,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
           </CurrencySelectContainer>
         }
 
-        {/* Search Sort Button */}
+        {/* Search Sort Button - type="search" */}
         { type == 'search' &&
           <SortSearchButton 
             type="button" disabled={disabled} 
@@ -291,31 +257,27 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
         }
 
       </div>
-    </SubsequentInputElements>
+    </div>
   );
 }
 
 
 // Component Styles
+const Label = styled.label``;
 const TextInput = styled.div``;
 const InputContainer = styled.div``;
+const ErrorAndDesc = styled.div``;
 
-const SubsequentInputElements = styled.div``;
-const Label = styled.label``;
-const ErrorAndDescription = styled.div``;
-
+const VariantIcons = styled.div``;
+const ErrorAndTooltipIcon = styled.div``;
 const LoadingBar = styled.div``;
 const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
-const CurrencySelect = styled.select`pointer-events: all;`; // TODO: remove these, they should be done through css themes
-
-// TODO: try making an element at the app level that we key into with params for performance and less overhead
-// With nested documentation and code specific elements passed into the tooltip
-const Tooltip = styled.div``;
-const TooltipIcon = styled.div`pointer-events: all;`;
+const CurrencySelect = styled.select``;
 
 
 // TODO: update the docs input examples to include these variant options
+// TODO: and add the tooltip 
 export interface InputVariantOpts {
     /* Number  */
     incrementButtons?: boolean;

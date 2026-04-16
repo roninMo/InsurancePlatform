@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Checkbox, CheckboxItem } from "../../../../../Components/Forms/Checkbox/Checkbox";
 
 
@@ -23,11 +23,17 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
     },
   });
 
-  const onCheckedItem = (item: CheckboxItem, event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+  const onCheckedItem = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
     // Record mapping using the internal value as a key
-    setCheckboxItems(prevValue => ({ 
-      ...prevValue, [item.value]: {...item, checked: !item.checked} 
-    }));
+    setCheckboxItems((prevValue) => {
+      const newValue = { 
+        ...prevValue, 
+        [item.value]: {...item, checked: !item.checked} 
+      };
+      
+      console.log('checked values: ', newValue);
+      return newValue;
+    });
   }
 
   return (
@@ -52,6 +58,7 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
   );
 }
 
+
 export const Example_ListCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
@@ -73,11 +80,17 @@ export const Example_ListCheckbox = ({ error, disabled }: {
     },
   });
 
-  const onCheckedItem = (item: CheckboxItem, event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+  const onCheckedItem = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
     // Record mapping using the internal value as a key
-    setCheckboxItems(prevValue => ({ 
-      ...prevValue, [item.value]: {...item, checked: !item.checked} 
-    }));
+    setCheckboxItems((prevValue) => {
+      const newValue = { 
+        ...prevValue, 
+        [item.value]: {...item, checked: !item.checked} 
+      };
+      
+      console.log('checked values: ', newValue);
+      return newValue;
+    });
   }
 
   return (
@@ -102,6 +115,7 @@ export const Example_ListCheckbox = ({ error, disabled }: {
   );
 }
 
+
 export const Example_InlineCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
@@ -123,11 +137,17 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
     },
   });
 
-  const onCheckedItem = (item: CheckboxItem, event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+  const onCheckedItem = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
     // Record mapping using the internal value as a key
-    setCheckboxItems(prevValue => ({ 
-      ...prevValue, [item.value]: {...item, checked: !item.checked} 
-    }));
+    setCheckboxItems((prevValue) => {
+      const newValue = { 
+        ...prevValue, 
+        [item.value]: {...item, checked: !item.checked} 
+      };
+      
+      console.log('checked values: ', newValue);
+      return newValue;
+    });
   }
 
   return (

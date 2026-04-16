@@ -79,7 +79,7 @@ export const Select = ({
 
 
   // Error handling
-  const getError = (): boolean => (error && !disabled);
+  const getError = (): boolean => !!error && !disabled;
 
 
   return (
@@ -137,13 +137,11 @@ export const Select = ({
         </DropdownAnim>
       </Dropdown>
 
-      <Description className={`mt-2 select-desc ${getError() && 'error-text'}`}>
-        { error && errorMessage ? 
-          <>{ errorMessage }</>
-        : description &&
-          <>{ description }</>
-        }
-      </Description>
+      <ErrorAndDescription className={`pl-1 mt-2 height-trans ${description || (error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <p className={`height-trans-content text-sm ${getError() ? 'error-text' : 'text-colors'}`}>
+          { getError() ? errorMessage : description } &nbsp;
+        </p>
+      </ErrorAndDescription>
     </Container>
   );
 }
@@ -152,8 +150,8 @@ export const Select = ({
 // Component styles
 const Container = styled.div``;
 const Label = styled.label``;
-const Description = styled.p``;
 const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
 const Dropdown = styled.div``;
 const DropdownAnim = styled.div``;
+const ErrorAndDescription = styled.div``;

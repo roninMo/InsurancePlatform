@@ -396,7 +396,7 @@
   // Checkbox element classes
   // #region Checkbox component styles
   .checkbox-c { 
-    @apply pt-4 pb-6 px-1 transition-all; 
+    @apply pt-4 pb-6 px-1 transition-all font-normal; 
 
     &:disabled {
       @apply cursor-text;
@@ -420,7 +420,7 @@
     ;
   }
 
-  .checkbox-label { @apply label-colors; }
+  .checkbox-label { @apply label-colors font-semibold; }
   .checkbox-desc { @apply text-colors; }
 
   // Checkbox
@@ -430,7 +430,7 @@
   /* bold:  x-mark before:content-['✘'] */
   .checkbox {
     @apply
-      mb-auto appearance-none
+      mb-auto appearance-none cursor-pointer
       outline-css rounded-[4px] size-5 transition-all 
       text-center p-[1px] text-slate-100 
       checked:before:content-['✔\fe0e'] checked:leading-[1.15rem]
@@ -591,6 +591,7 @@
       pl-3 py-2 pr-7
       appearance-none /* remove select's native styles */
       input-base  /* this isn't necessary unless spacing or to add a shadow */ 
+      pointer-events-auto cursor-pointer
       
       border-focus /* do these only when focused on the parent */
       enabled:[&:not(:focus)]:group-focus-within:border-l-[3px]
@@ -648,17 +649,8 @@
 
 
   // Input tooltip
-  .input-tooltip-hover { @apply fixed top-0 left-0 z-10 ease-in; }
-  .input-tooltip-h { @apply opacity-0 *:opacity-0; }
-  .input-tooltip-v { @apply opacity-100 *:opacity-100; }
-  .input-tooltip {
-    @apply 
-      p-2 pr-4 max-w-64
-      text-xs italic shadow-lg 
-      input-tooltip-hover
-      
-      pointer-events-none transition-all
-      bg-default border rounded-md border-default;
+  .input-tooltip-icon {
+    @apply pointer-events-auto;
   }
 
   // Input loading bar
@@ -761,7 +753,7 @@
   
 	// radio item container variants
   .radio-item-c {
-    @apply cursor-pointer transition-all;
+    @apply cursor-pointer transition-all font-normal;
   }
 
   .radio-item-c-d {
@@ -797,7 +789,7 @@
   }
 
   .radio-text { @apply block; }
-  .radio-t-label { @apply label-colors font-semibold; }
+  .radio-t-label { @apply label-colors text-sm font-semibold; }
   .radio-t-desc { @apply text-colors; }
   .radio-text-d { @apply colStart items-start; }
   .radio-text-c { @apply colStart items-start; }
@@ -817,7 +809,7 @@
       p-4 px-6 rowStart items-start gap-2 
       bg-default border border-default 
       outline outline-1 -outline-offset-1 
-      outline-slate-400/0
+      outline-slate-400/0 font-normal
 
       transition-all duration-300 
 
@@ -850,7 +842,7 @@
     @apply z-10 radio-t-i-disabled disabled-box;
   }
 
-  .radio-t-i-label { @apply label-colors; }
+  .radio-t-i-label { @apply label-colors text-sm font-semibold; }
   .radio-t-i-desc { @apply text-colors; }
   // #endregion
 
@@ -1115,10 +1107,9 @@
   .ta-p-icon { @apply ta-icon-base placeholder-text hover:input-colors; }
 	
   // Error and Description container
-	.ta-d-c { @apply block; }
-	.ta-d-d-c { @apply ta-d-c pl-10; }
-	.ta-d-b-c { @apply ta-d-c p-2 pl-3; }
-	.ta-d-p-c { @apply ta-d-c pb-2; }
+	.ta-d-d-c { @apply pl-10; }
+	.ta-d-b-c { @apply p-2 pl-1; }
+	.ta-d-p-c { @apply pb-2 pl-1; }
 
   .ta-d { @apply text-colors dark:text-slate-500; }
   .ta-d-disabled { @apply disabled-text }

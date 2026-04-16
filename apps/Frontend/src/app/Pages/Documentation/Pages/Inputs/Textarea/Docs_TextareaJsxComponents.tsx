@@ -30,7 +30,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         name="textarea-form-name"
         
         label="Default style"
-        description="the description of the textarea."
+        description="The description of the textarea."
         placeholder="input text..."
         value={value}
         onChange={(e) => onValueUpdated(e)}
@@ -85,7 +85,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         name="textarea-form-name"
         
         label="Box style"
-        description="the description of the textarea."
+        description="The description of the textarea."
         placeholder="input text..."
         value={value}
         onChange={(e) => onValueUpdated(e)}

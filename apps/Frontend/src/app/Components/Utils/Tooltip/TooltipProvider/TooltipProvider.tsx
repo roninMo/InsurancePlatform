@@ -3,15 +3,15 @@ import { Tooltip, TooltipServiceProps } from "../Tooltip";
 
 
 
-// Tooltip Context 
+// Tooltip Context - pass in props to show() to render your own dynamic content @see tooltip.tsx
 export const TooltipService = createContext<TooltipActions>({show: (c) => {}, hide: () => {}, });
-interface TooltipActions {
+interface TooltipActions { // These are stable refs, calling them won't cause rerenders
   show: (config?: TooltipServiceProps) => void;
   hide: () => void;
 }
 
 
-// Tooltip Provider
+// Tooltip Provider. Wrapped around the router to create a performant tooltip for any component to use efficiently without rerenders
 export const TooltipProvider = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [tooltipProps, setTooltipProps] = useState<any>({});

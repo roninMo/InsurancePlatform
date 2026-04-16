@@ -265,14 +265,14 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 // Universal error and description handling
 const ErrAndDescElements = ({ type, error, errorMessage, disabled, description }: any) => {
   return (
-    <> { (error || description) &&
-      <ErrorAndDescription className={type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}>
-        { (!disabled && error && errorMessage) 
-					? <div className="error-text">{ errorMessage }</div>
-          : <div className={`ta-d ${disabled ? 'ta-d-disabled' : ''}`}>{ description }</div>
-        }
-      </ErrorAndDescription>
-    } </>
+    <ErrorAndDescription className={`
+      ${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}
+      height-trans ${description || (error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
+    `}>
+      <p className={`height-trans-content text-sm ${(!disabled && error && errorMessage) ? 'error-text' : 'text-colors'}`}>
+        { (!disabled && error && errorMessage) ? errorMessage : description } &nbsp;
+      </p>
+    </ErrorAndDescription>
   );
 }
 

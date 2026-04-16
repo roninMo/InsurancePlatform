@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { ChangeEvent, useCallback, useId, useRef } from 'react';
 import { UniversalEventHandlers } from '@Project/ReactComponents';
 import { RadioGroupItem } from './RadioItem/RadioItem';
 
@@ -15,7 +15,7 @@ export interface RadioGroupProps {
 
   radioItems: RadioItem[];
   currentValue: RadioItem;
-  onSelect: (item: RadioItem, index: number, currentValue: RadioItem) => void;
+  onSelect: (item: RadioItem, currentValue: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;
 
   error?: boolean;
   errorMessage?: string;
@@ -37,14 +37,22 @@ export const RadioGroup = ({
   error = false, errorMessage, disabled = false, required = false,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
 }: UniversalEventHandlers & RadioGroupProps) => {
-  const id = useId();
+  const currentValRef = useRef(currentValue); // Prevent rerenders on memoized child
+  currentValRef.current = currentValue; 
+  
+  const radioItemSelected = useCallback((item: RadioItem, e: ChangeEvent<HTMLInputElement>) => {
+    onSelect(item, currentValRef.current, e);
+  }, [onSelect]);
 
-  const radioItemSelected = (item: RadioItem, index: number) => {
-    onSelect(item, index, currentValue);
-  }
+  // Get functions
+  const getError = (): boolean => !!error && !disabled;
 
   return (
-    <Container className={`radio-group ${disabled ? 'radio-group-disabled' : error ? 'radio-group-error' : ''} `}>
+    <Container className={`radio-group 
+      ${disabled ? 'radio-group-disabled' : ''}
+      ${getError() ? 'radio-group-error' : ''} 
+    `}>
+      {/* Label and Description */}
       { (label || description) && 
         <div className={`colStart gap-1 mb-4`}>
           { label && <Label>{ label }</Label> }
@@ -53,16 +61,15 @@ export const RadioGroup = ({
       }
 
       <RadioItems className={rowStyleVariants.includes(variant) ? 'rowStart gap-1' : 'colStart *:pb-4'}>
-        { radioItems.map((item: RadioItem, index: number) =>
+        { radioItems.map((item: RadioItem) =>
           <RadioGroupItem
-            checked={currentValue.value == item.value}
-            onSelect={(item: RadioItem, index: number) => radioItemSelected(item, index)}
-            value={item}
-            
-            inputName={name}
             variant={variant}
-            key={`rgi-${name}-${item.value}-${index}-${id}`}
-            index={index}
+            inputName={name}
+            key={`rgi-${name}-${item.value}`}
+            
+            value={item}
+            checked={currentValue.value == item.value}
+            onSelect={radioItemSelected}
             
             disabled={disabled ? true : item.disabled}
             error={error}
@@ -76,11 +83,11 @@ export const RadioGroup = ({
         )}
       </RadioItems>
 
-      { (error && !disabled) && 
-        <ErrorText className={`pt-2 error-text`}>
-          { errorMessage }
-        </ErrorText>
-      }
+      <ErrorText className={`pt-2 height-trans ${getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className={`error-text height-trans-content`}>
+          { errorMessage ? errorMessage : '' } &nbsp;
+        </div>
+      </ErrorText>
     </Container>
   );
 }

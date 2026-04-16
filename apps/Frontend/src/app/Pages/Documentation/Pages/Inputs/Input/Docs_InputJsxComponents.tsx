@@ -36,8 +36,7 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -77,8 +76,7 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -117,8 +115,7 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -157,8 +154,7 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -197,8 +193,7 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -236,8 +231,7 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -276,8 +270,7 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -316,8 +309,7 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );
@@ -356,8 +348,7 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip
-        tooltipText="Tooltip text..."
+        tooltip={{ text: "Tooltip text..." }}
       />
     </div>
   );

@@ -136,7 +136,7 @@ export const CustomContent = () => {
   const [favoriteFood, setFavoriteFood] = useState<RadioItem>({ value: '', label: ''});
   const [radioItemError, setRadioItemError] = useState<boolean>(false);
   const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
-  const selectedFavoriteFood = (selected: RadioItem, index: number, currentValue: RadioItem) => {
+  const selectedFavoriteFood = (selected: RadioItem, currentValue: RadioItem) => {
     setFavoriteFood(selected);
     // console.log(`radioButton: `, {selected, index, currentValue});
   }
@@ -151,7 +151,7 @@ export const CustomContent = () => {
   });
   const [checkedError, setCheckedError] = useState<boolean>();
   const [checkedErrorMessage, setCheckedErrorMessage] = useState<string>();
-  const checkedFavoriteFood = (item: CheckboxItem, event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+  const checkedFavoriteFood = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
     // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
     setCheckedFoods({ ...checkedFoods, [item.value]: {...item, checked: !item.checked} });
   }
