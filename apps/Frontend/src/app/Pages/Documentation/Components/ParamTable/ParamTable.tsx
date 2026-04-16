@@ -32,8 +32,8 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles }: Pa
 				
 				{/* Header */}
 				<label className="param-item-base">Name</label>
-				<label className="param-item-base">Type</label>
-				<label className="param-item-base">Description</label>
+				<label className="param-item-type">Type</label>
+				<label className="param-item-desc">Description</label>
 				
 
 			{/* Param Items */}
@@ -82,10 +82,10 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 			<div className={`param-item-base ${variantStyles}`}>
 				<div className={`param-item-name ${contextStyles}`}>{ name }</div>
 			</div>
-			<div className={`param-item-base ${variantStyles}`}> 
+			<div className={`param-item-type ${variantStyles}`}> 
 				{ ParamTypeElement ? <ParamTypeElement /> : null }
 			</div>
-			<div className={`param-item-base ${variantStyles}`}>
+			<div className={`param-item-desc ${variantStyles}`}>
 				{ ParamDescriptionElement ? <ParamDescriptionElement /> : null }
 			</div>
 			

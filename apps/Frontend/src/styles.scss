@@ -1654,7 +1654,7 @@
     @apply 
       p-3 rowStart items-center
       border-t border-slate-400/75 dark:border-slate-700
-      shadow-sm
+      shadow-sm dark:shadow-md
       
       /* Table border rounding */
       [&:nth-child(1)]:rounded-tl-md /* top left corner */
@@ -1678,7 +1678,7 @@
   }
 
   .param-item-type { 
-    @apply param-item-base; 
+    @apply param-item-base px-4; 
   }
 
   .param-item-desc { 
@@ -1709,7 +1709,7 @@
   // ParamType
   .param-type {
     @apply
-      py-[0.15rem] px-1.5 mx-4
+      py-[0.15rem] px-1.5
       text-sm font-semibold
       
       bg-opacity-100 dark:bg-opacity-30
