@@ -25,6 +25,7 @@ export const Button = ({
   size = 'default', color = 'primary', 
   additionalStyles, icon, iconStyles, 
 }: ButtonProps) => {
+  console.log('button color: ', color);
 
   return (
     <button 

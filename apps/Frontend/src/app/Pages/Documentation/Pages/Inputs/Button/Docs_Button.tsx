@@ -8,17 +8,21 @@ import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
 
 import ButtonCodeSnippets from './Docs_ButtonJsxComponents?raw';
 import { getSourceCode } from "../../../../../Components/Utils/GetSourceCode";
-import { Example_Button } from "./Docs_ButtonJsxComponents";
-
-
+import { 
+  Example_CustomButton, 
+  Example_GrayButton, 
+  Example_GrayFocusButton, 
+  Example_PrimaryButton
+} from "./Docs_ButtonJsxComponents";
 
 
 export const Docs_Button = () => {
   //--------------------------------//
   // Tab Functionality              //
   //--------------------------------//
-  const [currentTab, setCurrentTab] = useState<string>('Default');
-  const tabs: string[] = ['Default'];
+  const [currentTab, setCurrentTab] = useState<string>('Primary');
+  const tabs: string[] = ['Primary', 'Gray', 'GrayFocus', 'Custom'];
+  const tabLabels: string[] = ['Primary', 'Gray', 'Gray-Focus', 'Custom'];
 
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
@@ -74,21 +78,57 @@ export const Docs_Button = () => {
         { tabs.map((tab: string, index: number) => 
           <div onClick={() => onClickTab(tab)} className={tabStyles(tab)} key={`showcase-input-tab-${tab}-${index}`} >
             {/* { tab && tab.charAt(0) ? tab.charAt(0).toUpperCase() + tab.slice(1) : ''} */}
-            { tabs[index] }
+            { tabLabels[index] }
           </div>
         )}
       </Tabs>
       
       {/* Variants */}
       <Variants className='span-12 py-2'>
-        { currentTab == 'Default' && 
-          <ShowcaseElement jsx={getSourceCode(ButtonCodeSnippets, "Example_Button")} styles="spacing gap-0 opacity-0 animate-fade-in">
+        { currentTab == 'Primary' && 
+          <ShowcaseElement jsx={getSourceCode(ButtonCodeSnippets, "Example_PrimaryButton")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={buttonError} setError={setButtonError}
               disabled={buttonDisabled} setDisabled={setButtonDisabled}
               elementStateTypes={[]} { ...showCaseElementStyleProps } 
             >
-              <Example_Button error={buttonError} disabled={buttonDisabled} />
+              <Example_PrimaryButton error={buttonError} disabled={buttonDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        { currentTab == 'Gray' && 
+          <ShowcaseElement jsx={getSourceCode(ButtonCodeSnippets, "Example_GrayButton")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={buttonError} setError={setButtonError}
+              disabled={buttonDisabled} setDisabled={setButtonDisabled}
+              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+            >
+              <Example_GrayButton error={buttonError} disabled={buttonDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        { currentTab == 'GrayFocus' && 
+          <ShowcaseElement jsx={getSourceCode(ButtonCodeSnippets, "Example_GrayFocusButton")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={buttonError} setError={setButtonError}
+              disabled={buttonDisabled} setDisabled={setButtonDisabled}
+              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+            >
+              <Example_GrayFocusButton error={buttonError} disabled={buttonDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        { currentTab == 'Custom' && 
+          <ShowcaseElement jsx={getSourceCode(ButtonCodeSnippets, "Example_CustomButton")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={buttonError} setError={setButtonError}
+              disabled={buttonDisabled} setDisabled={setButtonDisabled}
+              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+            >
+              <Example_CustomButton error={buttonError} disabled={buttonDisabled} />
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }

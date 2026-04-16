@@ -390,6 +390,22 @@
 	.btn-el-primary { @apply btn-primary text-white; }
 	.btn-el-gray { @apply btn-gray text-slate-600 dark:text-slate-200; }
 	.btn-el-gray-focus { @apply btn-gray-focus text-slate-600 dark:text-slate-200; }
+  .btn-rainbow {
+    background: linear-gradient(
+      to right, 
+      #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000
+    );
+
+    text-shadow: 
+    -1px -1px 0 rgba(0,0,0,0.4),  
+     1px -1px 0 rgba(0,0,0,0.4),
+    -1px  1px 0 rgba(0,0,0,0.4),
+     1px  1px 0 rgba(0,0,0,0.4),
+     0px  0px 4px rgba(0,0,0,0.4); /* Adds a soft outer glow for extra depth */;
+
+    background-size: 200% 100%;
+    cursor: pointer;
+  }
 	// #endregion
 
 

@@ -20,9 +20,13 @@ module.exports = {
         'fade-pulse':   'fade-pulse   1.7s ease-out',
         'fade-pulse-i': 'fade-pulse-i 1.7s ease-out',
 
+        // Loading animations for inputs
         'fill-bar': 'fill-bar 1.25s ease-in forwards',
         'loading-bar': 'loading-bar 1.25s ease-in-out infinite',
 
+        'rainbow': 'rainbow 3s linear infinite',
+
+        // Skeleton loaders
         'skeleton-bg': 'skeleton-bg 1.25s ease-in-out infinite',
         'skeleton-bg-dark': 'skeleton-bg-dark 1.25s ease-in-out infinite',
 
@@ -58,9 +62,17 @@ module.exports = {
           '100%': { opacity: '1' },
         },
 
+        // Loading animations for inputs
         'fill-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
         'loading-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
-        
+
+
+        'rainbow': {
+          '0%': { 'background-position':   '0% 0%' },
+          '100%': { 'background-position': '-200% 0%' },
+        },
+
+        // Skeleton loaders
         'skeleton-bg': {
           '0%, 100%': { background: '#1e293b' }, // slate-800 (darker)
           '50%': { background: '#94a3b8' },      // slate-400 (lighter)
