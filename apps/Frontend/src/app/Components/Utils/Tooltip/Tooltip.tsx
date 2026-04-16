@@ -270,6 +270,39 @@ export const Tooltip = (props: TooltipProps) => {
 
 
   //----------------------------------------//
+  // Copy code on hover                     //
+  //----------------------------------------//
+  const copySnippetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!('code' in props)) return;
+    const copyCodeSnippet = async () => {
+      try {
+        await navigator.clipboard.writeText(code || '');
+        restartCopiedAnimation();
+      } catch (err) {
+        console.error('Tooltip failed to copy: ', err);
+      }
+    }
+    
+    const restartCopiedAnimation = () => {
+      const copyNotification = copySnippetRef.current;
+      if (!copyNotification) return;
+
+      copyNotification.classList.remove('animate-fade-pulse');
+      
+      // Force reflow: This tells the browser to recalculate styles immediately
+      void copyNotification.offsetWidth; 
+      
+      copyNotification.classList.add('animate-fade-pulse');
+    };
+
+    window.addEventListener('copy', copyCodeSnippet);
+    return () => window.removeEventListener('copy', copyCodeSnippet);
+  }, [showTooltip]);
+
+
+  //----------------------------------------//
   // Tooltip variants                       //
   //----------------------------------------//
   // Delay render until the page is loaded
@@ -306,12 +339,18 @@ export const Tooltip = (props: TooltipProps) => {
           {/* Keeps transitions while using suspense and a lazy import */}
           <OpenAnimation className={`height-trans-500 ${isRenderDelayDone ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
             <AnimContent className='height-trans-content content-auto col gap-2'>
-              <label className='p-2'>
-                {type == 'component' || type == 'interface' || type == 'type' 
-                  ? 'Code' 
-                  : 'Example'
-                }
-              </label>
+              <div className='rowStart items-center gap-4'>
+                <label className='p-2'>
+                  {type == 'component' || type == 'interface' || type == 'type' 
+                    ? 'Code' 
+                    : 'Example'
+                  }
+                </label>
+
+                <div ref={copySnippetRef} className='tooltip-copied-notification'>
+                  Copied to clipboard
+                </div>
+              </div>
               <Suspense>
                 { MemoizedCodeSnippet }
               </Suspense>

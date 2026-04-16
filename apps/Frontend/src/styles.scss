@@ -1496,6 +1496,14 @@
   .tooltip-content {
     @apply col gap-2;
   }
+
+  .tooltip-copied-notification {
+    @apply 
+      px-2 py-1.5 opacity-0
+      ok-box outline-css 
+      ok-text text-xs italic
+    ;
+  }
   // #endregion
 
 

@@ -17,6 +17,7 @@ module.exports = {
         'fade-in': 'fade-in 0.4s ease-out forwards',
         'fade-in-slow': 'fade-in 0.64s ease-out forwards',
         'fade-out': 'fade-out 0.3s ease-in forwards',
+        'fade-pulse': 'fade-pulse 1.25s ease-out',
 
         'fill-bar': 'fill-bar 1.25s ease-in forwards',
         'loading-bar': 'loading-bar 1.25s ease-in-out infinite',
@@ -36,6 +37,14 @@ module.exports = {
         'fade-in':      { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'fade-in-slow': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'fade-out':     { '0%': { opacity: '1' }, '100%': { opacity: '0' } },
+
+        // Displays element for a second and then fades out.
+        'fade-pulse':   {
+          '0%':   { opacity: '0' },
+          '20%':  { opacity: '1' },
+          '75%':  { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
 
         'fill-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
         'loading-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
