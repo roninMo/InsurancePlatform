@@ -25,9 +25,6 @@ export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSynt
 
 export const Documentation = () => {
   /* TODO: From where we left off
-
-  - Finish and try out DocLinks and Keywords in the descriptions
-  - We need a tooltip util component to add to other components that lets you add a string, elements, or jsx code render within it
   
   - Finally, go through each component and refactor to make them very organized and themed
     - Fix the styles, add themes to the global styles for reference
