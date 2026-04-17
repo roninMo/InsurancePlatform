@@ -937,12 +937,16 @@
       rowBetween gap-2 items-center p-2 pr-4
       transition-all duration-200 ease-in
       hover:btn-primary-colors
+      border-b border-default border-opacity-30 dark:border-opacity-20
+
+      active:select-item-active;
     ;
   }
+  .select-item-selected { @apply select-item btn-primary-colors opacity-bg-80; }
+  .select-item-active { @apply btn-primary-colors brightness-75; }
 
-  .select-item-active { @apply btn-primary-colors opacity-bg-80; }
   .select-item-text { @apply transition-all text-colors group-hover:btn-text; }
-  .select-item-text-active { @apply btn-text; }
+  .select-item-text-selected { @apply transition-all btn-text; }
 
   .select-item-i { @apply size-4 text-colors hover:input-colors transition-all; }
   .select-item-i-active { @apply theme-focus-2; }
@@ -1020,6 +1024,8 @@
         outline-gray-400 dark:outline-slate-500
         pointer-events-none
       ;
+
+      // This stops the 'has-[:checked]' from winning
       background-image: none;
     }
 

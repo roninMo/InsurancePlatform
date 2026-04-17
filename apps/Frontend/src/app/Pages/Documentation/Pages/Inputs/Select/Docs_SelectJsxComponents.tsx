@@ -1,5 +1,6 @@
 import { Select, SelectItemValues } from "@Project/ReactComponents";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
 
 
 export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: {
@@ -22,6 +23,9 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
     // console.log('select: new value: ', {currentIcon, index, selectIcons});
   }
 
+  // universal tooltip provider
+  const tooltipContext = useContext(TooltipService);
+
   return (
     <div>
       <Select 
@@ -38,6 +42,8 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
         errorMessage={error}
         disabled={disabled}
         required
+
+        tooltip={{ context: tooltipContext, content: { text: "Tooltip text..." }}}
       />
     </div>
   );
@@ -56,3 +62,14 @@ const selectIcons: SelectItemValues[] = [
   { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort", placement: 'left' }},
   { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
 ];
+
+
+// TODO: these are here because we can't access the app's actual refs until the tooltip code is moved to the library.
+interface TooltipActions { // These are stable refs, calling them won't cause rerenders
+  show: (config?: TooltipServiceProps) => void;
+  hide: () => void;
+}
+type TooltipServiceProps = TextTooltipProps | CodeTooltipProps | CustomTooltipProps;
+type TextTooltipProps = '';
+type CodeTooltipProps = '';
+type CustomTooltipProps = '';

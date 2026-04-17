@@ -36,14 +36,14 @@ export const Docs_Select = () => {
   const paramTableItems = useMemo(() => {
     const baseParamList: string[] = defaultParams || [];
     const contextParams: ParamContext[] = paramContextsList[currentTab]; 
-    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, {}, paramTypeElements, paramDescriptionElements);
+    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, childParamsList, paramTypeElements, paramDescriptionElements);
     
     // Variant specific params
     const variantParams: string[] = variantParamsList[currentTab] || [];
     const variantContextParams = paramContextsList[currentTab];
     if (variantParams?.length > 0) {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
-      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
+      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
 
@@ -130,13 +130,19 @@ const showCaseElementStyleProps = {
 const defaultParams: string[] = [ 
   'name', 'label', 'description',
   'spacing', 'value', 'values', 'onSelect', 'placeholder',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required',
+  'spacing', 'error', 'errorMessage', 'disabled', 'required', 'tooltip'
 ];
 
 
 const variantParamsList: Record<string, string[]> = {
   'none': [],
 }
+
+const childParamsList: Record<string, string[]> = {
+  'tooltip': [
+    'context', 'content',
+  ]
+};
 
 
 const paramContextsList: Record<string, ParamContext[]> = {
@@ -173,7 +179,16 @@ const paramTypeElements: Record<string, React.FC> = {
   'errorMessage': () => <ParamType type="string" />,
   'disabled': () => <ParamType type="boolean" />,
   'required': () => <ParamType type="boolean" />,
+
+  'tooltip': () => <ParamType type="TooltipBundle" />,
+  'context': () => <ParamType type="TooltipActions" tooltip={{ code: Code_TooltipActions, type: 'type' }} />,
+  'content': () => <ParamType type="TooltipServiceProps" tooltip={{ code: Code_TooltipService, type: 'type' }} />,
 };
+
+// codeblocks - TextInputTypes, TextInputAutoCompleteTypes, InputVariantOps
+import TooltipSnippets from './Docs_SelectJsxComponents?raw';
+const Code_TooltipActions = getSourceCode(TooltipSnippets, 'TooltipActions', 'interface');
+const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipServiceProps', 'type');
 
 const paramDescriptionElements: Record<string, React.FC> = {
   'name': () => 
@@ -221,5 +236,18 @@ const paramDescriptionElements: Record<string, React.FC> = {
   'required': () =>
     <div className='param-item-desc-text'>
       Whether the select component is required.
+    </div>,
+    
+  'tooltip' : () =>
+    <div className='param-item-desc-text'>
+      Should this component have a tooltip?
+    </div>,
+  'context': () =>
+    <div className='param-item-desc-text'>
+      A reference to the tooltip context for rendering the tooltip on this component.
+    </div>,
+  'content': () =>
+    <div className='param-item-desc-text'>
+      The props to pass to the tooltip to render it's content.
     </div>,
 };

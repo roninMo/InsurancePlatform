@@ -1,4 +1,4 @@
-import { FocusEvent, MouseEvent, useEffect, useId, useState } from "react";
+import { MouseEvent, useEffect, useId, useRef, useState } from "react";
 
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItem, SelectItemValues } from './SelectItem/SelectItem';
@@ -23,14 +23,21 @@ export interface SelectProps {
   errorMessage?: string;
   disabled?: boolean;
   required?: boolean;
+  
+  // TODO: TooltipProps; <- library / app import conflict, fix this later
+  tooltip?: {
+    context?: { show: (config?: any) => void; hide: () => void; };
+    content?: any; 
+  }
 }
 
 // Custom select component for themes and advanced functionality
 export const Select = ({
   name, label, description, value, values, multiSelect, onSelect, placeholder,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  error = false, errorMessage, disabled = false, required = false
+  error = false, errorMessage, disabled = false, required = false, tooltip
 }: SelectProps & UniversalEventHandlers) => {
+  const { show, hide } = tooltip?.context || {};
   const id = useId();
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const dropdownId = `select-dropdown-${name}`;
@@ -44,14 +51,21 @@ export const Select = ({
     if (!multiSelect && dropdownOpen) setDropdownOpen(false);
   }
 
-  // onClick
+  // Error Handling
+  const getError = (): boolean => !!error && !disabled;
+
+
+  //------------------------------------//
+  // Open / Close Logic                 //
+  //------------------------------------//
+  // onClick event
   const openSelect = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     if (onClick) onClick(e);
     if (!dropdownOpen) setDropdownOpen(true);
-    // TODO: should tabbing through focused events open the dropdown when they tab to it or the select?
   }
 
-  // Handles closing the dropdown
+
+  // Mousedown event that handles closing the dropdown
   useEffect(() => {
     const handleOutsideClick = (e: globalThis.MouseEvent) => {
       const element: any = e.target as HTMLElement;
@@ -78,8 +92,21 @@ export const Select = ({
   }, [dropdownOpen]);
 
 
-  // Error handling
-  const getError = (): boolean => !!error && !disabled;
+  // Open the dropdown when the user tabs to it
+  const selectElementRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const selectElement = selectElementRef.current;
+    if (!selectElement) return;
+
+    // tabbed / keyboard nav to focus the element
+    const checkIfTabbed = (event: globalThis.FocusEvent) => {
+      const target = event.target as HTMLElement;
+      if (target.matches(':focus-visible')) setDropdownOpen(true);
+    }
+
+    selectElement.addEventListener('focus', checkIfTabbed);
+    return () => selectElement.removeEventListener('focus', checkIfTabbed);
+});
 
 
   return (
@@ -91,6 +118,8 @@ export const Select = ({
       <StyledSelect 
         name={name} id={selectId} 
         value={value?.value} type="button" 
+        
+        ref={selectElementRef}
         onFocus={(e) => onFocus && onFocus(e)}
         onClick={(e) => openSelect(e)}
         onBlur={(e) => onBlur && onBlur(e)}
@@ -100,15 +129,20 @@ export const Select = ({
           ${getError() ? 'select-error' : ''}
         `}
       >
-        <CurrentlySelected className={`currently-selected ${disabled ? 'currently-selected-disabled' : ''}`}>
+        <CurrentlySelected className={`currently-selected`}>
           <span className={`text-sm ${value?.value ? 'text-colors' : 'placeholder-text'}`}> 
             { value.value ? value.label : placeholder } 
           </span>
 
-          <div className='row gap-1 items-center justify-end'>
-            { error && <Icon variant='Error' styles='size-4 error-text' />}
-            <Icon variant='SelectArrow' styles={`select-i-arrow ${error && 'error-text'}`} />
-          </div>
+          <TooltipIcons
+            onMouseEnter={() => show?.(tooltip?.content)}
+            onMouseLeave={() => hide?.()} 
+            className={`row gap-1 items-center justify-end`
+          }>
+            { getError() ? <Icon variant='Error' styles='size-4 error-text' />
+            :                        <Icon variant='InfoBox' styles='size-4 cursor-pointer' /> }
+            <Icon variant='SelectArrow' styles={`select-i-arrow ${getError() ? 'error-text' : ''}`} />
+          </TooltipIcons>
         </CurrentlySelected>
       </StyledSelect>
 
@@ -137,7 +171,7 @@ export const Select = ({
         </DropdownAnim>
       </Dropdown>
 
-      <ErrorAndDescription className={`pl-1 mt-2 height-trans ${description || (error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+      <ErrorAndDescription className={`pl-1 mt-2 height-trans ${description || getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <p className={`height-trans-content text-sm ${getError() ? 'error-text' : 'text-colors'}`}>
           { getError() ? errorMessage : description } &nbsp;
         </p>
@@ -154,4 +188,5 @@ const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
 const Dropdown = styled.div``;
 const DropdownAnim = styled.div``;
+const TooltipIcons = styled.div``;
 const ErrorAndDescription = styled.div``;

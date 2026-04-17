@@ -31,19 +31,21 @@ export const SelectItem = ({ item, index, onSelect, currentSelectValue, name }: 
   
   return (
     <Container 
+      id={`${name}-${value}`}
       onClick={() => onSelect && onSelect(item, index)} 
-      className={`select-item group ${currentlySelected() ? 'select-item-active' : ''}`}
+      className={`group ${currentlySelected() ? 'select-item-selected' : 'select-item'}`}
     >
       <LeftHandSide className={`rowStart gap-2 items-center`}>
-        {/* Icon (left side aligned) */}
         {iconProps && iconProps.placement == 'left' && 
           <div className={`icon-placeholder min-h-4 min-w-5`}> 
             <Icon variant={iconProps.icon} styles={iconProps.styles ? iconProps.styles : ''} /> 
           </div>
         }
 
-        <ItemText value={value} id={`${name}-option-${index}`} 
-          className={`select-item-text ${currentlySelected() ? 'select-item-text-active' : ''}`}
+        <ItemText 
+          id={`${name}-option-${value}`} 
+          value={value} 
+          className={`${currentlySelected() ? 'select-item-text-selected' : 'select-item-text'}`}
         > 
           { label } 
         </ItemText>
@@ -58,22 +60,7 @@ export const SelectItem = ({ item, index, onSelect, currentSelectValue, name }: 
 }
 
 
-// #region Styling
-const itemStyles = `
-  rowBetween gap-2 items-center p-2 pr-4
-  [&_option]:hover:text-slate-200 dark:[&_option]:hover:text-slate-200
-  hover:bg-indigo-500 
-  [&_svg]:hover:text-slate-200
-`;
-const activeItemStyles = `
-  bg-indigo-400 dark:bg-indigo-400 
-  [&_option]:text-slate-300
-  [&_svg]:text-slate-300
-`;
-
-// todo: try faded with borders bg-opacity
-
+// Styled Components
 const Container = styled.span``;
 const LeftHandSide = styled.div``;
 const ItemText = styled.option``;
-// #endregion
