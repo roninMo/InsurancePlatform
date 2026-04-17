@@ -71,10 +71,10 @@ export const RadioTable = ({
       </Table>
 
       {/* Error Text */}
-      <ErrorText className={`px-1 py-2 height-trans ${getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <div className={`error-text height-trans-content`}>
+      <ErrorText className={`px-1 pt-3 height-trans ${getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <p className={`error-text height-trans-content`}>
           { errorMessage ? errorMessage : '' } &nbsp;
-        </div>
+        </p>
       </ErrorText>
     </Container>
   );
@@ -143,7 +143,7 @@ const Table = styled.div``;
 
 const Label = styled.label``;
 const Description = styled.p``;
-const ErrorText = styled.p``;
+const ErrorText = styled.div``;
 
 const Radio = styled.input``
 const ItemLabel = styled.span``;

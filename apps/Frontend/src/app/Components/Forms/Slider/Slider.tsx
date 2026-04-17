@@ -41,9 +41,11 @@ export const Slider = ({
           </Description> 
         }
 
-        { (error && errorMessage) && <Error className='error-text'>
-          { errorMessage }
-        </Error>}
+        <ErrorText className={`height-trans ${(error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+          <p className={`pt-1 error-text height-trans-content`}>
+            { errorMessage ? errorMessage : '' } &nbsp;
+          </p>
+        </ErrorText>
       </Content>
       
       <Button 
@@ -79,4 +81,4 @@ const Label = styled.label``;
 const Description = styled.p``;
 const SliderButton = styled.div``;
 const Button = styled.button``;
-const Error = styled.p``;
+const ErrorText = styled.div``;
