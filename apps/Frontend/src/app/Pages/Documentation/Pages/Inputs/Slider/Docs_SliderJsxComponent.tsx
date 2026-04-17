@@ -9,18 +9,20 @@ export const Example_DefaultSlider = ({ error, disabled }: {
   const [sliderValue, setSliderValue] = useState<boolean>(false);
   
   const onChangeSlider = () => {
-    setSliderValue((prevState: boolean) => !prevState);
+    setSliderValue((prevState: boolean) => {
+      // console.log('slider value: ', !prevState);
+      return !prevState;
+    });
   }
 
   return (
     <div>
       <Slider 
         variant="default"
-        type="button"
-        
         name={`slider-form-name`}
         label="Slider Component"
         description="The description of the slider."
+        
         value={sliderValue}
         onChange={() => onChangeSlider()}
 

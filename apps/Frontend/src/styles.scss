@@ -958,13 +958,23 @@
   // The slider background
 	.slider-base {
 		@apply
-      min-w-max cursor-pointer transition-all
-      rowStart gap-2 p-[1px] mt-5
+      cursor-pointer transition-all
+      min-w-max 
+      rowStart p-[1px] mt-5
       outline-init rounded-full; 
 
-    @apply focus:outline-focus;
-    &:focus .slider-switch-on {
+    @apply has-[:not(:checked)]:slider-off;
+    @apply has-[:checked]:slider-on;
+
+    // focus state for default slider state
+    @apply focus-within:outline-focus;
+
+    &:focus-within .slider-switch {
       @apply ring-blue-500 dark:ring-indigo-500;
+    }
+    
+    .slider-input:checked + .slider-switch {
+      @apply translate-x-5;
     }
 	}
 	.slider-on {
@@ -979,24 +989,24 @@
 	}
 	
   // The slider button
-	.slider-switch-on { @apply translate-x-5; }
 	.slider-switch {
-		@apply 
-			size-5 mr-5 z-10 rounded-full shadow-sm 
-			transition-all duration-200 ease-out
-
-			ring-1 
-			bg-white dark:bg-slate-200
-      ring-slate-400 dark:ring-slate-700;
+    @apply 
+    size-5 mr-5 z-10 rounded-full shadow-sm 
+    transition-all duration-200 ease-out
+    
+    ring-1 
+    bg-white dark:bg-slate-200
+    ring-slate-400 dark:ring-slate-700;
 	}
 
+  .slider-input { @apply sr-only; }
   .slider-label { @apply label-colors; }
   .slider-desc { @apply text-colors; }
 
   // Validation styles
   .slider-error {
     & .slider-base {
-      @apply outline-error focus:outline-focus;
+      @apply outline-error focus-within:outline-focus;
     }
   }
 
@@ -1008,7 +1018,9 @@
       @apply 
         bg-gray-300 dark:bg-slate-600 
         outline-gray-400 dark:outline-slate-500
+        pointer-events-none
       ;
+      background-image: none;
     }
 
     & .slider-switch {
