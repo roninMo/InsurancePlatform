@@ -31,6 +31,53 @@ import styles from './MockDatabase.module.scss';
 		- then check backend for updates / custom data
 		
 		
+Table Param types
+	- id (normal / guid)
+		- primary key
+		- required
+		- increments
+		
+	- string
+		- limit
+		- required
+		
+	- number
+		- limit
+		- required
+		
+Context options 
+	- header value (title displayed for each item in the rendered list)
+	- keyword (used to know how to autofill)
+		- tabs: user, pop culture, typography
+		
+		- user information
+			- names (first and last)
+			- phone numbers
+			- birth dates
+			- socials
+			- emails, linkedin, social accounts
+			- generic usernames, passwords
+			- age 
+			- gender
+			- street address, city, state, zip, country
+			- credit card, exp date, ccv
+			
+		- pop culture references
+			- books, authors, comics
+			- movies, tv shows, directors, actors
+			- games, consoles
+			- misic, albums, artists
+			- sports teams
+			
+		- typography
+			- lorem ipsum sentences, paragraphs, words
+			- titles
+			- dates
+			- numbers 0-10, 0-100, etc
+			- currencies 0-10, 0-100, etc
+			
+		
+		
 			
 	Page data layout
 		- mock app
