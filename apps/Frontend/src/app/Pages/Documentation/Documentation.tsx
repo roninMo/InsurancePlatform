@@ -27,20 +27,18 @@ export const Documentation = () => {
   /* TODO: From where we left off
   
   - Finally, go through each component and refactor to make them very organized and themed
-    - Fix the styles, add themes to the global styles for reference
-    - Refactor things for efficiency, and make it more neat and organized
+	- Add react hook forms soon alongside the option to add state to the value for custom scenarios
     - Finish any of the uncompleted logic that we haven't added yet but left notes on building
+
+	- Add the rest of the content and pages of the documentation
+		- Check up with the layout of the content and util components while you add them
+	- add the introduction pages and quicklinks for them
 		
-		- only use bottom border on the paramTable
-
-  */
-
-
-	/* 
-    - Documentation pages
-      - Introduction: list of boxes categorizing each subroot section 
-      - each subroot/ should have QuickList to display their components
-      - Inputs, content, utils component showcases
+		
+  - Documentation pages
+    - Introduction: list of boxes categorizing each subroot section 
+    - each subroot/ should have QuickList to display their components
+    - Inputs, content, utils component showcases
       
 	*/
 
@@ -74,16 +72,16 @@ export const Documentation = () => {
           </StickyContainer>
           
           
-          <NotificationContainer className="w-full py-2">
-            <div className="p-2 rowStart gap-2 selected-box outline-css outline-focus">
+          <Content className="w-full py-2">
+            <NotificationContainer	className="p-2 rowStart gap-2 selected-box outline-css outline-focus">
               <Icon variant="InfoBox" styles="size-5 primary-text" />
               Notification
-            </div>
+            </NotificationContainer>
             
             <PageContent className="py-4">
               <Outlet />
             </PageContent>
-          </NotificationContainer>
+          </Container>
 
           <StickyContainer className='hidden 2xl:flex items-start pt-2 min-w-[20%] 2xl:min-w-[15%]'>
             <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
