@@ -260,6 +260,13 @@ const paramTypeElements: Record<string, React.FC> = {
   'metadataTags': () => <ParamType type='function' />,
 };
 
+//update the textarea and then add the default params
+// type
+// onSubmit
+// tooltip
+// onAttachFile
+// metadatatags
+
 const paramDescriptionElements: Record<string, React.FC> = {
   // Default params
   'type' : () =>

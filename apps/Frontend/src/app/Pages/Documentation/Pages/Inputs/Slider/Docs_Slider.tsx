@@ -172,6 +172,9 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type="boolean" />,
 };
 
+// onChange
+// add default params to these
+
 const paramDescriptionElements: Record<string, React.FC> = {
   'type': () => 
     <div className='param-item-desc-text'>

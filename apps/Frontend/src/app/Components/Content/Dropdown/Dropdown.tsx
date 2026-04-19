@@ -8,6 +8,7 @@ export interface DropdownProps {
   label: string;
 
   // Dropdown
+  openByDefault?: boolean;
   styles?: string;
   additionalStyles?: string;
 
@@ -17,7 +18,6 @@ export interface DropdownProps {
   iconStyles?: string;
 
   // optional state tracking
-  openByDefault?: boolean;
   hasBeenOpened?: boolean;
   setHasBeenOpened?: Dispatch<SetStateAction<boolean>>;
 

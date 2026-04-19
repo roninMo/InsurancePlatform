@@ -88,7 +88,50 @@ Context options
 			- pass in table and relational tables rendered
 			- table items (map of id to items)
 			- item order hash (map of id to sort order)
+			- while they create the db, calculate the relational contexts for context options
+				- notifications for if the current updates to the db require them to fill in the proper autofill data options for each table
 			
+				
+	- Components
+		- siderbar (selected tables)
+		- tob bar
+		- content page
+		- bottom popover (select / new table)
+		
+		- create db page (content)
+			- dbConfigComp
+			- create table comp
+				- paramListComp
+					- addParamComp
+				- paramOptionsSection
+					- paramConfigComp
+					- paramContextComp
+		- information page
+			- db stats, table stats, values stats
+		- values page
+			- TableItem (quick display, move/depete, dropdown -> table item values)
+			- edit value comp (modal on edit selection)
+		- edit page
+			- edit table components ^
+			
+			
+	- Backend routes
+		- add mockDb
+		- update mockDb should be done in batches (possible just edit Table) with context data for how to migrate table data if there's any custom data
+		- delete mockDb
+		
+		- add Table
+		- edit Table
+		- delete Table
+		- update Table
+		
+		- add Table Param
+		- edit Table Param
+		- delete Table Param
+		- update Table Param
+		
+		- if changes end up affecting the values, pass back updates tables
+	
 		
 
 */

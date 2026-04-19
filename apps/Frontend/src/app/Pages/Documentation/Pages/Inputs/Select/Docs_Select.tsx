@@ -185,6 +185,8 @@ const paramTypeElements: Record<string, React.FC> = {
   'content': () => <ParamType type="TooltipServiceProps" tooltip={{ code: Code_TooltipService, type: 'type' }} />,
 };
 
+// add default values for these
+
 // codeblocks - TextInputTypes, TextInputAutoCompleteTypes, InputVariantOps
 import TooltipSnippets from './Docs_SelectJsxComponents?raw';
 const Code_TooltipActions = getSourceCode(TooltipSnippets, 'TooltipActions', 'interface');

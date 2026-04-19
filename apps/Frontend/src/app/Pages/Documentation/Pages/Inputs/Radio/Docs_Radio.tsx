@@ -224,6 +224,11 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type="boolean" />,
 };
 
+// update to remove the old params that we're no longer using and add any new params we created
+// variant
+// radioItem, currentVal
+// onSelect
+
 const paramDescriptionElements: Record<string, React.FC> = {
   'variant': () => 
     <div className='param-item-desc-text'>

@@ -196,6 +196,10 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type="boolean" />,
 };
 
+// variant
+// radioItem, current value
+// onselect
+
 const paramDescriptionElements: Record<string, React.FC> = {
   'variant': () => 
     <div className='param-item-desc-text'>

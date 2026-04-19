@@ -27,7 +27,6 @@ export interface CheckboxProps {
   onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 
-  // Add better error and disabled styles
   error?: boolean;
   errorMessage?: string;
   disabled?: boolean;

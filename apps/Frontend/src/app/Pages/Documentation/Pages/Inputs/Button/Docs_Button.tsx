@@ -207,6 +207,10 @@ const paramTypeElements: Record<string, React.FC> = {
   'iconStyles': () => <ParamType type="string" />,
 };
 
+// make a function ref to pass
+// size and color tooltip code refs
+
+
 const paramDescriptionElements: Record<string, React.FC> = {
   'displayText': () =>
     <div className='param-item-desc-text'>

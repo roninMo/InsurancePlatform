@@ -194,7 +194,7 @@ const paramContextsList: Record<string, ParamContext[]> = {
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
   'variant': () => <ParamType type="CheckboxVariant" />,
-  'id': () => <ParamType type="string" />,
+  'id': () => <ParamType type="string" />, // remove
   'name': () => <ParamType type="string" />,
   'label': () => <ParamType type="string" />,
   'description': () => <ParamType type="string" />,
@@ -209,6 +209,11 @@ const paramTypeElements: Record<string, React.FC> = {
   'disabled': () => <ParamType type="boolean" />,
   'required': () => <ParamType type="boolean" />,
 };
+
+// variant
+// items
+// onselect
+
 
 const paramDescriptionElements: Record<string, React.FC> = {
   'variant': () =>
