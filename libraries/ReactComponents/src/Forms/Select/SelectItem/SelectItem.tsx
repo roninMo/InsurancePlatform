@@ -2,12 +2,14 @@ import styled from '@emotion/styled';
 import { Icon, IconTypes } from '../../../Common/Icons/Icon';
 
 import styles from './SelectItem.module.scss';
+import { RefObject } from 'react';
 
 
 export interface SelectItem {
   value: string;
   label: string;
   iconProps?: SelectItemIconConfig;
+  selected?: boolean; // used with multiselect
 }
 
 export interface SelectItemIconConfig {
@@ -21,13 +23,19 @@ export interface SelectItemProps {
   index: number;
   onSelect?: (selected: SelectItem, index: number) => void;
   currentSelectValue: SelectItem;
+  multiSelect?: boolean;
+  selectedValues?: RefObject<Record<string, boolean>>; // specific to multiSelect
   name: string; // "form group id"
 }
 
 
-export const SelectItemComponent = ({ item, index, onSelect, currentSelectValue, name }: SelectItemProps) => {
+export const SelectItemComponent = ({ item, index, onSelect, currentSelectValue, multiSelect, selectedValues, name }: SelectItemProps) => {
   const { value, label, iconProps } = item;
-  const currentlySelected = () => value == currentSelectValue.value;
+
+  const currentlySelected = () => {
+    if (multiSelect && selectedValues?.current) return selectedValues.current[value];
+    return value == currentSelectValue.value;
+  };
   
   return (
     <Container 

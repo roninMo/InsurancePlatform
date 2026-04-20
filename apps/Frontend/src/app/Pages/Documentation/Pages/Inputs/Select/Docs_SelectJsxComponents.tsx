@@ -37,6 +37,7 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
         value={selectedValue}
         values={projectIcons}
         onSelect={onSelectValue}
+        multiSelect
 
         error={!!error}
         errorMessage={error}
@@ -44,6 +45,12 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
         required
 
         tooltip={{ context: tooltipContext, content: { text: "Tooltip text..." }}}
+        opts={{
+          // TODO: add state refs for these values, and another variant in the docs for multiSelect
+          // closeDropdownOnLeave: true,
+          // keepDropdownOpenOnSelect: true, 
+          // preventOpenOnTabFocus: true,
+        }}
       />
     </div>
   );

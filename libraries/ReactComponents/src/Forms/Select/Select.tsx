@@ -33,27 +33,29 @@ export interface SelectProps {
 
   // TODO: additional variant options to keep the dropdown open when they select a value
   // TODO: both for multiselect, and optionally on/off for both
+  opts?: {
+    // when they hover outside of the element, close the dropdown.
+    closeDropdownOnLeave?: boolean;
+
+    // for both normal or multiselect. undefined is ignored
+    keepDropdownOpenOnSelect?: boolean;
+    
+    // by default, we open the dropdown if the user tabs to it
+    preventOpenOnTabFocus?: boolean;
+  }
 }
 
 // Custom select component for themes and advanced functionality
 export const Select = ({
   name, label, description, value, values, multiSelect, onSelect, placeholder,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  error = false, errorMessage, disabled = false, required = false, tooltip
+  error = false, errorMessage, disabled = false, required = false, tooltip, opts
 }: SelectProps & UniversalEventHandlers) => {
-  const { show, hide } = tooltip?.context || {};
-  const id = useId();
+  const { show, hide } = tooltip?.context || {};  
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const dropdownId = `select-dropdown-${name}`;
-  const selectId = `select-${name}`;
-
-  // Select Events
-  const itemSelected = (selected: SelectItem, index: number) => {
-    if (onSelect) onSelect(selected, index);
-
-    console.log(`item ${index} selected: `, selected);
-    if (!multiSelect && dropdownOpen) setDropdownOpen(false);
-  }
+  const selectedValues = useRef<Record<string, boolean>>(Object.fromEntries(values.map(item => [value.value, false])));
+  const dropdownId = `${name}-slct-dropdown`;
+  const selectId = `${name}-slct`;
 
   // Error Handling
   const getError = (): boolean => !!error && !disabled;
@@ -62,14 +64,44 @@ export const Select = ({
   //------------------------------------//
   // Open / Close Logic                 //
   //------------------------------------//
-  // onClick event
-  const openSelect = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+  const selectElementRef = useRef<HTMLButtonElement>(null);
+  const dropdownElementRef = useRef<HTMLDivElement>(null);
+
+  // Open the dropdown if they have clicked the select element
+  const onClickSelect = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     if (onClick) onClick(e);
     if (!dropdownOpen) setDropdownOpen(true);
   }
+  
+  // Handles logic when the dropdown is selected
+  const onDropdownItemSelected = (selected: SelectItem, index: number) => {
+    // capture whether the value has been selected here and toggle it
+    if (multiSelect) {
+      selectedValues.current[selected.value] = !selectedValues.current[selected.value];
+    }
 
+    if (onSelect) onSelect(selected, index); // actual logic
+    handleDropdownToggle();
+    console.log(`item ${index} selected: `, selected);
+  }
 
-  // Mousedown event that handles closing the dropdown
+  const handleDropdownToggle = () => {
+    const keepDropdownOpen = opts?.keepDropdownOpenOnSelect;
+
+    // Default behavior
+    if (keepDropdownOpen === undefined) {
+      if (!multiSelect && dropdownOpen) setDropdownOpen(false);
+      // otherwise multiSelect variants have it stay left open
+    }
+
+    else {
+      // If the user wants the dropdown to stay open on select, do so
+      if (keepDropdownOpen === true) return;
+      else if (dropdownOpen) setDropdownOpen(false); 
+    }
+  }
+
+  // Default: Checks if clicked outside the dropdown via mousedown event on whether to close the dropdown
   useEffect(() => {
     const handleOutsideClick = (e: globalThis.MouseEvent) => {
       const element: any = e.target as HTMLElement;
@@ -96,11 +128,64 @@ export const Select = ({
   }, [dropdownOpen]);
 
 
+  // for opts?.closeDropdownOnLeave: Closes the dropdown when hovers outside of it 
+  useEffect(() => {
+    const select = selectElementRef.current;
+    const dropdown = dropdownElementRef.current;
+    
+    // If the dropdown is closed or this option isn't enabled don't add the event
+    if (!dropdownOpen || !opts?.closeDropdownOnLeave) {
+      return;
+    }
+
+    // error prevention
+    if (!select || !dropdown) {
+      return;
+    }
+
+    // Handle closing the dropdown when leaving the select
+    const handleMouseOver = (e: globalThis.MouseEvent) => {
+      // The element is missing or the dropdown could be closed, just let the native behavior handle potential edge cases
+      if (!select || !dropdown) {
+        document.removeEventListener('mouseover', handleMouseOver);
+        return;
+      }
+
+      // Check if we're hovering the element
+      const element = e.target as HTMLElement;
+      const isWithinSelect = element.closest(`#${selectId}`);
+      const isWithinDropdown = element.closest(`#${dropdownId}`);
+      if (isWithinSelect || isWithinDropdown) return;
+      // else console.log(`${name}: mouse hovering select(${isWithinSelect}, dropdown(${isWithinDropdown}))`);
+
+      // check if the mouse is inbetween the select and the dropdown (margin edge case)
+      const selectRect = select.getBoundingClientRect();
+      const dropdownRect = dropdown.getBoundingClientRect();
+
+      // Create a virtual "bounding box" that spans from the top of the select 
+      // to the bottom of the dropdown and covers their width.
+      const compBounds = (
+        e.clientX >= Math.min(selectRect.left, dropdownRect.left) &&
+        e.clientX <= Math.max(selectRect.right, dropdownRect.right) &&
+        e.clientY >= Math.min(selectRect.top, dropdownRect.top) &&
+        e.clientY <= Math.max(selectRect.bottom, dropdownRect.bottom)
+      );
+
+      // console.log(`${name}: mouse isInsideBounds(${compBounds})`);
+      if (!compBounds) {
+        setDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener('mouseover', handleMouseOver);
+    return () => document.removeEventListener('mouseover', handleMouseOver);
+  }, [dropdownOpen, opts?.closeDropdownOnLeave]);
+
+
   // Open the dropdown when the user tabs to it
-  const selectElementRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const selectElement = selectElementRef.current;
-    if (!selectElement) return;
+    if (opts?.preventOpenOnTabFocus || !selectElement) return;
 
     // tabbed / keyboard nav to focus the element
     const checkIfTabbed = (event: globalThis.FocusEvent) => {
@@ -112,6 +197,15 @@ export const Select = ({
     return () => selectElement.removeEventListener('focus', checkIfTabbed);
 });
 
+  const getSelectDisplay = () => {
+    const defaultValue = value?.value ? value.label : placeholder;
+    if (multiSelect) {
+      if (values?.filter((item: SelectItem) => item.selected).length == 1) return defaultValue;
+      return placeholder;
+    }
+
+    return defaultValue;
+  }
 
   return (
     <Container className="select-container">
@@ -125,7 +219,7 @@ export const Select = ({
         
         ref={selectElementRef}
         onFocus={(e) => onFocus && onFocus(e)}
-        onClick={(e) => openSelect(e)}
+        onClick={(e) => onClickSelect(e)}
         onBlur={(e) => onBlur && onBlur(e)}
         disabled={disabled}
         className={`select-base group
@@ -135,7 +229,7 @@ export const Select = ({
       >
         <CurrentlySelected className={`currently-selected`}>
           <span className={`text-sm ${value?.value ? 'text-colors' : 'placeholder-text'}`}> 
-            { value.value ? value.label : placeholder } 
+            { getSelectDisplay() } 
           </span>
 
           <TooltipIcons
@@ -154,6 +248,7 @@ export const Select = ({
       <Dropdown
         onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
         onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
+        ref={dropdownElementRef}
         id={dropdownId} className={`select-dropdown
           ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
           ${getError() ? 'select-dd-error' : ''}
@@ -165,10 +260,12 @@ export const Select = ({
               <SelectItemComponent 
                 item={item}
                 index={index}
-                onSelect={itemSelected} 
+                onSelect={onDropdownItemSelected} 
                 currentSelectValue={value}
+                multiSelect={multiSelect}
+                selectedValues={selectedValues}
                 name={name}
-                key={`${id}-${index}-${item.value}`}
+                key={`${name}-${item.value}`}
               />
             )}
           </div>
