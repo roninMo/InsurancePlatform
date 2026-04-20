@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useId, useRef, useState } from "react";
 
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
-import { SelectItem, SelectItemValues } from './SelectItem/SelectItem';
+import { SelectItemComponent, SelectItem } from './SelectItem/SelectItem';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
 import styles from './Select.module.scss';
@@ -12,11 +12,12 @@ export interface SelectProps {
   name: string;
   label: string;
   description?: string;
-  value: SelectItemValues;
-  values: SelectItemValues[];
-  multiSelect?: boolean;
+
+  value: SelectItem;
+  values: SelectItem[];
+  multiSelect?: boolean; // TODO: create the multiselect
   // focusType: mouseLeaveCloses, onSelectCloses
-  onSelect?: (selected: SelectItemValues, index: number) => void;
+  onSelect?: (selected: SelectItem, index: number) => void;
   placeholder?: string;
 
   error?: boolean;
@@ -29,6 +30,9 @@ export interface SelectProps {
     context?: { show: (config?: any) => void; hide: () => void; };
     content?: any; 
   }
+
+  // TODO: additional variant options to keep the dropdown open when they select a value
+  // TODO: both for multiselect, and optionally on/off for both
 }
 
 // Custom select component for themes and advanced functionality
@@ -44,7 +48,7 @@ export const Select = ({
   const selectId = `select-${name}`;
 
   // Select Events
-  const itemSelected = (selected: SelectItemValues, index: number) => {
+  const itemSelected = (selected: SelectItem, index: number) => {
     if (onSelect) onSelect(selected, index);
 
     console.log(`item ${index} selected: `, selected);
@@ -157,8 +161,8 @@ export const Select = ({
       `}>			
         <DropdownAnim className={`height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className={`height-trans-content`}>
-            {values.map((item: SelectItemValues, index: number) => 
-              <SelectItem 
+            {values.map((item: SelectItem, index: number) => 
+              <SelectItemComponent 
                 item={item}
                 index={index}
                 onSelect={itemSelected} 

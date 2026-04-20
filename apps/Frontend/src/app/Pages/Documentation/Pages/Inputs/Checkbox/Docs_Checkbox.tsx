@@ -1,13 +1,21 @@
 
-import { useState, useMemo } from 'react';
-import styled from '@emotion/styled';
+import { useState, useMemo, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+import { TooltipService } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
+import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
-import { ParamType } from '../../../Components/ParamType/ParamType';
+
+import { DocLink } from '../../../Components/DocLink/DocLink';
+import { HashLink } from '../../../../../Components/Utils/HashLink/HashLink';
+import { Kw } from '../../../Components/Keyword/Keyword';
+import styled from '@emotion/styled';
 
 import CheckboxCodeSnippets from './Docs_CheckboxJsxComponents?raw';
+import RadioGroupSnippets from '../Radio/Docs_RadioJsxComponents?raw';
+import RadioTableSnippets from '../RadioTable/Docs_RadioTableJsxComponents?raw';
 import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { 
   Example_DefaultCheckbox,
@@ -57,6 +65,7 @@ export const Docs_Checkbox = () => {
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
+  const { show, hide } = useContext(TooltipService);
   const [defaultError, setDefaultError] = useState<string>('');
   const [defaultDisabled, setDefaultDisabled] = useState<boolean>(false);
   
@@ -74,11 +83,41 @@ export const Docs_Checkbox = () => {
         Checkbox Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
-          A functional checkbox component with multiple styled variants for different use cases. 
-          The functionality handles everything, you just need to pass it the state, 
-          and a function to handle when the user toggles one of the checkboxes.
+          A styled checkbox input with <Kw>themed</Kw> styles for every form state. 
+          Easily customizable with multiple events you can use alongside 
+          <HashLink url='https://react-hook-form.com/' opts={{ type: 'page' }}>
+          &nbsp; <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span> &nbsp;
+          </HashLink>
+          or your own state hooks.
+
+          The variants are <Kw>default</Kw>, <Kw>list</Kw>, and <Kw>inline</Kw>.
+
+        </p>
+      </div>
+
+      <div className='span-12'>
+        <p className='p-2 showcase-text'>
+          If you're looking for an input that only allows selecting a single value, try&nbsp;
+          <span 
+            onClick={hide} onMouseLeave={hide}
+            onMouseEnter={() => show({ 
+              code: getSourceCode(RadioTableSnippets, "Example_BlockRadioTable"), 
+              type: "component" 
+            })} 
+          >
+            <DocLink label='RadioTable' url='/Documentation/Forms/RadioTable' />
+          </span>, or&nbsp;
+          <span 
+            onClick={hide} onMouseLeave={hide}
+            onMouseEnter={() => show({ 
+              code: getSourceCode(RadioGroupSnippets, "Example_ListRadioGroup"), 
+              type: "component" 
+            })} 
+          >
+            <DocLink label='RadioGroup' url='/Documentation/Forms/Radio' />
+          </span>.
         </p>
       </div>
 
@@ -161,7 +200,7 @@ const showCaseElementStyleProps = {
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'variant', 'id', 'name', 'label', 'description',
+  'variant', 'name', 'label', 'description',
 
   'spacing', 'items', 'onSelect', 'onMouseEnter', 'onMouseLeave',
   'spacing', 'error', 'errorMessage', 'disabled', 'required',
@@ -193,26 +232,29 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'variant': () => <ParamType type="CheckboxVariant" />,
-  'id': () => <ParamType type="string" />, // remove
-  'name': () => <ParamType type="string" />,
-  'label': () => <ParamType type="string" />,
-  'description': () => <ParamType type="string" />,
+  'variant': () => <ParamType type="CheckboxVariant" tooltip={{ code: Code_Variant, type: 'type' }} />,
+  'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'checkbox-form-name') }} />,
+  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Checkbox label') }} />,
+  'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the checkbox.') }} />,
 
-  'items': () => <ParamType type="CheckboxItems" isArray />,
-  'onSelect': () => <ParamType type="function" />,
-  'onMouseEnter': () => <ParamType type="ParamItem" />,
-  'onMouseLeave': () => <ParamType type="ParamItem" />,
+  'items': () => <ParamType type="CheckboxItems" isArray tooltip={{ code: Code_ChckbxItem, type: 'interface' }}/>,
+  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_OnSelect, type: 'type' }} />,
+  'onMouseEnter': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseEnter, type: 'type' }} />,
+  'onMouseLeave': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseLeave, type: 'type' }} />,
 
-  'error': () => <ParamType type="boolean" />,
-  'errorMessage': () => <ParamType type="string" />,
-  'disabled': () => <ParamType type="boolean" />,
-  'required': () => <ParamType type="boolean" />,
+  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var'), }} />,
+  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
 
-// variant
-// items
-// onselect
+// TODO: when imported to the library, use actual refs
+import SourceChckbxSnippets from '../../../../../Components/Forms/Checkbox/Checkbox?raw';
+const Code_Variant = getSourceCode(SourceChckbxSnippets, 'CheckboxVariant', 'type');
+const Code_ChckbxItem = getSourceCode(SourceChckbxSnippets, 'CheckboxItem', 'interface');
+const Code_OnSelect = 'onSelect: (checked: CheckboxItem, event: ChangeEvent<HTMLElement>) => void;';
+const Code_MouseEnter = 'onMouseEnter: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
+const Code_MouseLeave = 'onMouseLeave: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
 
 
 const paramDescriptionElements: Record<string, React.FC> = {

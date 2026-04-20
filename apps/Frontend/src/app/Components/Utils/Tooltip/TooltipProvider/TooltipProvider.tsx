@@ -1,11 +1,11 @@
 import { createContext, useMemo, useState } from "react";
-import { Tooltip, TooltipServiceProps } from "../Tooltip";
+import { Tooltip, TooltipProps, TooltipServiceProps } from "../Tooltip";
 
 
 
 // Tooltip Context - pass in props to show() to render your own dynamic content @see tooltip.tsx
 export const TooltipService = createContext<TooltipActions>({show: (c) => {}, hide: () => {}, });
-interface TooltipActions { // These are stable refs, calling them won't cause rerenders
+export interface TooltipActions { // These are stable refs, calling them won't cause rerenders
   show: (config?: TooltipServiceProps) => void;
   hide: () => void;
 }
@@ -47,3 +47,10 @@ export const TooltipProvider = ({ children }: { children: React.ReactNode }) => 
     - onMouseLeave={hide}
   
 */
+
+
+// Component prop reference
+export interface TooltipBundle {
+  context?: TooltipActions;
+  content?: TooltipProps;
+}

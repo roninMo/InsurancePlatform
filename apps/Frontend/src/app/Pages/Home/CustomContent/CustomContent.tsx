@@ -11,7 +11,7 @@ import {
   RadioGroupProps,
   RadioItem, 
   Select, 
-  SelectItemValues, 
+  SelectItem, 
   TextInputTypes, 
 } from '@Project/ReactComponents';
 import { defaultBoxMetadataTags, defaultPostMetadataTags, Textarea } from '../../../Components/Forms/Textarea/Textarea';
@@ -34,10 +34,10 @@ export const CustomContent = () => {
   const [inputErrorMessage, SetInputErrorMessage] = useState<string>();
 
   const inputTypeId = useId();
-  const [inputType, setInputType] = useState<SelectItemValues>({ value: 'search', label: 'Select an input type...'});
+  const [inputType, setInputType] = useState<SelectItem>({ value: 'search', label: 'Select an input type...'});
   const types: TextInputTypes[] = ['text', 'email', 'password', 'phone', 'creditCard', 'currency', 'policyNumber', 'search'];
-  const inputTypes: SelectItemValues[] = types.map(type => ({ value: type, label: type }));
-  const inputTypeChanged = (selected: SelectItemValues, index: number) => {
+  const inputTypes: SelectItem[] = types.map(type => ({ value: type, label: type }));
+  const inputTypeChanged = (selected: SelectItem, index: number) => {
     setInput("");
     SetInputError(false);
     SetInputErrorMessage("");
@@ -64,7 +64,7 @@ export const CustomContent = () => {
 
   // SelectIcons
   const selectIconId = useId();
-  const selectIcons: SelectItemValues[] = [
+  const selectIcons: SelectItem[] = [
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
     { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
     { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
@@ -80,10 +80,10 @@ export const CustomContent = () => {
     { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
     { value: 'trash', label: "Trash", iconProps:                  { icon: "Trash", placement: 'left' }},
   ];
-  const [currentIcon, setCurrentIcon] = useState<SelectItemValues>({ value: '', label: ''});
+  const [currentIcon, setCurrentIcon] = useState<SelectItem>({ value: '', label: ''});
   const [selectIconError, setSelectIconError] = useState<boolean>(false);
   const [selectIconErrorMessage, setSelectIconErrorMessage] = useState<string>();
-  const selectIconChanged = (selected: SelectItemValues, index: number) => {
+  const selectIconChanged = (selected: SelectItem, index: number) => {
     setCurrentIcon(selected);
     // console.log('select: new value: ', {currentIcon, index, selectIcons});
   }

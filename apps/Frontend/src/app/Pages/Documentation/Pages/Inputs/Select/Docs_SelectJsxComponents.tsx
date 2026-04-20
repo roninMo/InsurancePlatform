@@ -1,4 +1,4 @@
-import { Select, SelectItemValues } from "@Project/ReactComponents";
+import { Select, SelectItem } from "@Project/ReactComponents";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
 
@@ -9,8 +9,8 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [selectedValue, setSelectedValue] = useState<SelectItemValues>({ value: '', label: '' });
-  const [projectIcons, setProjectIcons] = useState<SelectItemValues[]>([
+  const [selectedValue, setSelectedValue] = useState<SelectItem>({ value: '', label: '' });
+  const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
     { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
     { value: 'error', label: "Error", iconProps:                  { icon: "Error", placement: 'left' }},
@@ -18,7 +18,7 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
     ...selectIcons
   ]);
   
-  const onSelectValue = (selected: SelectItemValues, index: number) => {
+  const onSelectValue = (selected: SelectItem, index: number) => {
     setSelectedValue(selected);
     // console.log('select: new value: ', {currentIcon, index, selectIcons});
   }
@@ -50,7 +50,7 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
 }
 
 
-const selectIcons: SelectItemValues[] = [
+const selectIcons: SelectItem[] = [
   { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
   { value: 'dropdownArrow', label: "Dropdown Arrow", iconProps: { icon: "DropdownArrow", placement: 'left' }},
   { value: 'envelope', label: "Envelope", iconProps:            { icon: "Envelope", placement: 'left' }},
@@ -62,14 +62,3 @@ const selectIcons: SelectItemValues[] = [
   { value: 'sort', label: "Sort", iconProps:                    { icon: "Sort", placement: 'left' }},
   { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
 ];
-
-
-// TODO: these are here because we can't access the app's actual refs until the tooltip code is moved to the library.
-interface TooltipActions { // These are stable refs, calling them won't cause rerenders
-  show: (config?: TooltipServiceProps) => void;
-  hide: () => void;
-}
-type TooltipServiceProps = TextTooltipProps | CodeTooltipProps | CustomTooltipProps;
-type TextTooltipProps = '';
-type CodeTooltipProps = '';
-type CustomTooltipProps = '';

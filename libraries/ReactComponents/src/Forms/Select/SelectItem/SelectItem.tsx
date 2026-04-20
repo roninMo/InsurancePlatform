@@ -4,7 +4,7 @@ import { Icon, IconTypes } from '../../../Common/Icons/Icon';
 import styles from './SelectItem.module.scss';
 
 
-export interface SelectItemValues {
+export interface SelectItem {
   value: string;
   label: string;
   iconProps?: SelectItemIconConfig;
@@ -17,15 +17,15 @@ export interface SelectItemIconConfig {
 }
 
 export interface SelectItemProps {
-  item: SelectItemValues;
+  item: SelectItem;
   index: number;
-  onSelect?: (selected: SelectItemValues, index: number) => void;
-  currentSelectValue: SelectItemValues;
+  onSelect?: (selected: SelectItem, index: number) => void;
+  currentSelectValue: SelectItem;
   name: string; // "form group id"
 }
 
 
-export const SelectItem = ({ item, index, onSelect, currentSelectValue, name }: SelectItemProps) => {
+export const SelectItemComponent = ({ item, index, onSelect, currentSelectValue, name }: SelectItemProps) => {
   const { value, label, iconProps } = item;
   const currentlySelected = () => value == currentSelectValue.value;
   

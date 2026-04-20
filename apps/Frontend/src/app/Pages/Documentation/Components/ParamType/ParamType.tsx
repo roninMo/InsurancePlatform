@@ -23,7 +23,7 @@ export const ParamType = ({ type, isArray, tooltip }: ParamTypeProps) => {
 			onMouseLeave={(e) => hide()} 
 			className={`param-type ${getTypeStyles(type)}`}
 		>
-			{ type }{ isArray ? "[]" : "" }
+			{ type }<span className='text-sm text-colors font-semibold'>{ isArray ? "[]" : "" }</span>
 		</Container>
   );
 }
@@ -46,7 +46,7 @@ const getTypeStyles = (type: ParamTypes) => {
 export const dParArg = (
   param: string, 
   value: string, 
-  type: 'str' | 'var' = 'str'
+  type: 'str' | 'var' = 'str' // str: param="value", var: param={value}
 ): string => {
   if (type == 'str') return `${param}="${value}"`;
   if (type == 'var') return `${param}={${value}}`;

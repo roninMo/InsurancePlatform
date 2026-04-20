@@ -4,7 +4,7 @@ import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseEleme
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
-import { ParamType } from '../../../Components/ParamType/ParamType';
+import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 
 import SelectCodeSnippets from './Docs_SelectJsxComponents?raw';
 import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
@@ -65,11 +65,9 @@ export const Docs_Select = () => {
         Button Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
-          A functional radio table much like the radio group, just with nicer styles. 
-          Comes with error handling and theme styling, you just need to pass it the state, 
-          and a function to handle when the user selects one of the radio items.
+          Add content here
         </p>
       </div>
 
@@ -129,7 +127,7 @@ const showCaseElementStyleProps = {
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
   'name', 'label', 'description',
-  'spacing', 'value', 'values', 'onSelect', 'placeholder',
+  'spacing', 'value', 'values', 'multiSelect', 'onSelect', 'placeholder',
   'spacing', 'error', 'errorMessage', 'disabled', 'required', 'tooltip'
 ];
 
@@ -166,31 +164,33 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'name': () => <ParamType type="string" />,
-  'label': () => <ParamType type="string" />,
-  'description': () => <ParamType type="string" />,
+  'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'select-form-name') }} />,
+  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Select Label') }} />,
+  'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'the description of the Select component.') }} />,
 
-  'value': () => <ParamType type="SelectItemValues" />,
-  'values': () => <ParamType type="SelectItemValues" isArray />,
-  'onSelect': () => <ParamType type="function" />,
-  'placeholder': () => <ParamType type="string" />,
+  'value': () => <ParamType type="SelectItem" tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
+  'values': () => <ParamType type="SelectItem" isArray tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
+  'multiSelect': () => <ParamType type="boolean" tooltip={{ code: dParArg('multiSelect', 'multiSelect', 'var') }} />,
+  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_onSelect, type: 'type' }} />,
+  'placeholder': () => <ParamType type="string" tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
 
-  'error': () => <ParamType type="boolean" />,
-  'errorMessage': () => <ParamType type="string" />,
-  'disabled': () => <ParamType type="boolean" />,
-  'required': () => <ParamType type="boolean" />,
+  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
+  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 
-  'tooltip': () => <ParamType type="TooltipBundle" />,
-  'context': () => <ParamType type="TooltipActions" tooltip={{ code: Code_TooltipActions, type: 'type' }} />,
-  'content': () => <ParamType type="TooltipServiceProps" tooltip={{ code: Code_TooltipService, type: 'type' }} />,
+  'tooltip': () => <ParamType type="TooltipBundle" tooltip={{ code: Code_TooltipBundle, type: 'interface' }} />,
+  'context': () => <ParamType type="TooltipActions" tooltip={{ code: Code_TooltipActions, type: 'interface' }} />,
+  'content': () => <ParamType type="TooltipServiceProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
 };
 
-// add default values for these
+import SourceSelectSnippets from '../LibraryImportCodeRefFix?raw';
+const Code_SelectItem = getSourceCode(SourceSelectSnippets, 'SelectItem', 'interface');
+const Code_TooltipBundle = getSourceCode(SourceSelectSnippets, 'TooltipBundle', 'interface');
+const Code_TooltipActions = getSourceCode(SourceSelectSnippets, 'TooltipActions', 'interface');
+const Code_TooltipService = getSourceCode(SourceSelectSnippets, 'TooltipServiceProps', 'type');
+const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';
 
-// codeblocks - TextInputTypes, TextInputAutoCompleteTypes, InputVariantOps
-import TooltipSnippets from './Docs_SelectJsxComponents?raw';
-const Code_TooltipActions = getSourceCode(TooltipSnippets, 'TooltipActions', 'interface');
-const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipServiceProps', 'type');
 
 const paramDescriptionElements: Record<string, React.FC> = {
   'name': () => 
@@ -213,6 +213,10 @@ const paramDescriptionElements: Record<string, React.FC> = {
   'values': () => 
     <div className='param-item-desc-text'>
       A list of values used to construct the items that appear in the dropdown.
+    </div>,
+  'multiSelect': () => 
+    <div className='param-item-desc-text'>
+      Whether the user is allowed to select multiple values.
     </div>,
   'onSelect': () => 
     <div className='param-item-desc-text'>

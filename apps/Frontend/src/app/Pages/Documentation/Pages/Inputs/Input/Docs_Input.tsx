@@ -1,12 +1,17 @@
 import { useContext, useMemo, useState } from 'react';
-import styled from '@emotion/styled';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+import { TooltipService } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+
 import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
-import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
+import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
+
+import { Kw } from '../../../Components/Keyword/Keyword';
+import { DocLink } from '../../../Components/DocLink/DocLink';
 import { TextInputTypes } from '@Project/ReactComponents';
+import styled from '@emotion/styled';
 
 import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import InputCodeSnippets from './Docs_InputJsxComponents?raw';
@@ -22,9 +27,6 @@ import {
   Example_SearchInput,
   Example_TextInput,
 } from './Docs_InputJsxComponents';
-import { Keyword } from '../../../Components/Keyword/Keyword';
-import { DocLink } from '../../../Components/DocLink/DocLink';
-import { TooltipService } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
 
 
 export const Docs_Input = () => {
@@ -106,28 +108,21 @@ export const Docs_Input = () => {
         Input Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
-          The <Keyword>Input</Keyword> component is designed with functionality and customization 
-          to fit your needs for the varying form types. It comes with <Keyword>tooltips</Keyword>, 
-          <Keyword>loading bars</Keyword> for server side autosaving, event hooks, error handling, and <Keyword>input masking</Keyword>. 
+          The <Kw>Input</Kw> component is designed with functionality and customization 
+          to fit your needs for the varying form types. It comes with <Kw>tooltips</Kw>, 
+          <Kw>loading bars</Kw> for server side autosaving, event hooks, error handling, and <Kw>input masking</Kw>. 
           Each type has varying icons and functionality so you know whether the input is for 
-          <Keyword>text</Keyword>, 
-          <Keyword>email</Keyword>, 
-          <Keyword>phone</Keyword>, 
-          <Keyword>policy</Keyword>, 
-          <Keyword>number</Keyword>, 
-          <Keyword>credit</Keyword>, 
-          <Keyword>currency</Keyword>, or 
-          <Keyword>search</Keyword>.
+          
+          <Kw>text</Kw>, <Kw>email</Kw>, <Kw>phone</Kw>, <Kw>policy</Kw>, <Kw>number</Kw>, 
+          <Kw>credit</Kw>, <Kw>currency</Kw>, or <Kw>search</Kw>.
         </p>
       </div>
       
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
-          For a more interactive input component with additional buttons and customization, use &nbsp;.
-          It allows you to add metadata tags with click events to allow you to create specific state from the input for your needs.
-          
+          For a more interactive input component with additional buttons and customization, use &nbsp;
           <span 
             onMouseEnter={() => show({ code: getSourceCode(TextareaCodeSnippets, "Example_BoxTextareaInput"), type: "component" })} 
             onClick={hide}
@@ -135,6 +130,10 @@ export const Docs_Input = () => {
           >
             <DocLink label='Textarea' url='/Documentation/Forms/Textarea' />
           </span>
+          
+          . It allows you to add metadata tags with click events to allow you to 
+          create specific state from the input for your needs.
+          
         </p>
       </div>
 

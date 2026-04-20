@@ -1,12 +1,17 @@
-import { useState, useMemo } from "react";
-import styled from "@emotion/styled";
+import { MouseEvent, useState, useMemo, useContext } from "react";
 import { ShowcaseElement, ParamContext } from "../../../Components/ShowcaseElement/ShowcaseElement";
 import { ShowcaseExample_StateRef } from "../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef";
+import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
+
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
-import { ParamType } from "../../../Components/ParamType/ParamType";
+import { dParArg, ParamType } from "../../../Components/ParamType/ParamType";
 import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
+import { DocLink } from "../../../Components/DocLink/DocLink";
+import { Kw } from "../../../Components/Keyword/Keyword";
+import styled from "@emotion/styled";
 
 import ButtonCodeSnippets from './Docs_ButtonJsxComponents?raw';
+import SliderCodeSnippets from '../Slider/Docs_SliderJsxComponent?raw';
 import { getSourceCode } from "../../../../../Components/Utils/GetSourceCode";
 import { 
   Example_CustomButton, 
@@ -56,6 +61,7 @@ export const Docs_Button = () => {
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
+  const { show, hide } = useContext(TooltipService);
   const [buttonError, setButtonError] = useState<string>('');
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
@@ -67,9 +73,24 @@ export const Docs_Button = () => {
         Button Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
           A themed functional button component for this project. With built in functionality for events and styling.
+          It has multiple <Kw>theme</Kw> using the <Kw>color</Kw> property 
+          that you can use out of the box for theme specific styles. The variants are
+          <Kw>primary</Kw>, <Kw>gray</Kw>, <Kw>gray-focus</Kw>, or <Kw>none</Kw>.
+          
+          If you just want a toggle for certain form values, try &nbsp;
+          <span 
+            onClick={hide} onMouseLeave={hide}
+            onMouseEnter={() => show({ 
+              code: getSourceCode(SliderCodeSnippets, "Example_DefaultSlider"), 
+              type: "component" 
+            })} 
+          >
+            <DocLink label='Slider' url='/Documentation/Forms/Slider' />
+          </span>
+          . It's relatively the same, and has theme specific styles.
         </p>
       </div>
 
@@ -195,20 +216,25 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'displayText': () => <ParamType type="string" />, 
-  'onClick': () => <ParamType type="function" />,
-  'disabled': () => <ParamType type="boolean" />,
+  'displayText': () => <ParamType type="string" tooltip={{ code: dParArg('displayText', 'Click me') }} />, 
+  'onClick': () => <ParamType type="function" tooltip={{ code: Code_onClickBtn, type: 'type' }} />,
+  'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }}/>,
 
-  'size': () => <ParamType type="ButtonSizes" />,
-  'color': () => <ParamType type="ButtonColors" />,
-  'additionalStyles': () => <ParamType type="string" />,
+  'size': () => <ParamType type="ButtonSizes" tooltip={{ code: Code_ButtonSzs, type: 'type' }}  />,
+  'color': () => <ParamType type="ButtonColors" tooltip={{ code: Code_ButtonClrs, type: 'type' }} />,
+  'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionalStyles', 'class-name') }} />,
 
-  'icon': () => <ParamType type="IconTypes" />,
-  'iconStyles': () => <ParamType type="string" />,
+  'icon': () => <ParamType type="IconTypes" tooltip={{ code: dParArg('icon', 'iconName') }} />,
+  'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'icon-class') }} />,
 };
 
-// make a function ref to pass
-// size and color tooltip code refs
+// TODO: when imported to the library, use actual refs
+type ButtonSizes = 'default' | 'md' | 'lg' | 'xl' | 'none';
+type ButtonColors = 'primary' | 'gray' | 'gray-focus' | 'none';
+import SourceBtnSnippets from './Docs_Button?raw';
+const Code_onClickBtn = 'onClick: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;';
+const Code_ButtonSzs = getSourceCode(SourceBtnSnippets, 'ButtonSizes', 'type');
+const Code_ButtonClrs = getSourceCode(SourceBtnSnippets, 'ButtonColors', 'type');
 
 
 const paramDescriptionElements: Record<string, React.FC> = {

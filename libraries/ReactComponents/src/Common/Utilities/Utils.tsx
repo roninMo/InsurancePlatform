@@ -33,7 +33,7 @@ export interface UniversalEventHandlers<T extends HTMLElement = HTMLElement> {
  * Useful for smoothly transitioning with styles.
  */
 export const interpFloat = (current: number, target: number, factor: number = 0.2): number => {
-  if (Math.abs(target - current) < 0.01) return current;
+  if (Math.abs(target - current) < 0.5) return current;
   return current += (target - current) * Math.min(Math.max(factor, 0.001), .99);
 }
 

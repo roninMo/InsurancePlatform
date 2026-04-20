@@ -61,7 +61,7 @@ export const Docs_Slider = () => {
         Slider Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
           A themed functional slider component for this project. 
           It's a styled button with a hidden input wired to it to link the value to a form component if needed. 

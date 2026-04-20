@@ -85,7 +85,7 @@
   // default background colors
   .bg-default   { @apply bg-white     dark:bg-slate-800; }
   .bg-div       { @apply bg-slate-100 dark:bg-slate-900; }
-  .bg-div-light { @apply bg-slate-400 dark:bg-slate-700; }
+  .bg-div-light { @apply bg-slate-200 dark:bg-slate-700; }
   .bg-primary   { @apply bg-blue-600  dark:bg-blue-500; }
   
   // hover states
@@ -111,16 +111,16 @@
   .btn-outline-white  { @apply outline-slate-200 dark:outline-slate-200; }
   .btn-outline-blue   { @apply   outline-focus; }
 
-  .btn-primary-colors { @apply bg-blue-600 dark:bg-indigo-500 outline-indigo-600 dark:outline-indigo-600; }
-  .btn-primary-hover { @apply  bg-blue-500 dark:bg-indigo-400; }
+  .btn-primary-colors { @apply bg-blue-600 dark:bg-indigo-500 outline-blue-500 dark:outline-indigo-600; }
+  .btn-primary-hover { @apply  bg-blue-500 dark:bg-indigo-400 outline-blue-600 dark:outline-indigo-300/25; }
   .btn-primary-active { @apply bg-blue-700 dark:bg-indigo-600; }
   
-  .btn-gray-colors { @apply bg-slate-200 dark:bg-slate-700 outline-slate-300 dark:outline-slate-700; }
-  .btn-gray-hover { @apply  bg-slate-300 dark:bg-slate-600; }
+  .btn-gray-colors { @apply bg-slate-200 dark:bg-slate-700 outline-slate-300 dark:outline-slate-600/50; }
+  .btn-gray-hover { @apply  bg-slate-300 dark:bg-slate-600 outline-slate-400/50 dark:outline-slate-500/50; }
   .btn-gray-active { @apply bg-slate-400 dark:bg-slate-700; }
   
-  .btn-gray-focus-colors { @apply bg-white     dark:bg-slate-800 outline-slate-300 dark:outline-slate-800; }
-  .btn-gray-focus-hover { @apply  bg-slate-200 dark:bg-slate-700; }
+  .btn-gray-focus-colors { @apply bg-white     dark:bg-slate-800 outline-slate-300 dark:outline-slate-700/50; }
+  .btn-gray-focus-hover { @apply  bg-slate-200 dark:bg-slate-700 outline-slate-300/75 dark:outline-slate-600/50; }
   .btn-gray-focus-active { @apply bg-slate-300 dark:bg-slate-800; }
 
   // disabled state classes
@@ -1486,8 +1486,17 @@
       bg-default shadow-xl
       outline-css outline-default 
       transition-colors duration-200
-      will-change-transform
+      // This causes blurriness because the gpu often resorts to bilinear filtering
+      // (which can cause blurriness) when it is or is left in the waiting state
+      // -will-change-transform
     ;
+
+    // Focus on accurate sharp 2d rasterization
+    backface-visibility: hidden;
+
+    // This forces the browser to treat the tooltip as a hardware-accelerated layer, 
+    // which can make the movement smoother while it's interpolating.
+    transform: translateZ(0); // - use with rounded translate numbers
   }
   
   // Hidden / Visible
@@ -1785,14 +1794,18 @@
   // Keyword
   .keyword {
     @apply 
+      inline
       px-[6px] py-[2px] ml-[4px] mr-[2px] 
       transition-all duration-200
       outline-css rounded-none 
       
-      backdrop-brightness-90
-      dark:backdrop-brightness-150
+      bg-div-light
       outline-slate-400 dark:outline-slate-600 
       hover:theme-f;
+
+    /* ensure the pseudo element respects line breaks */
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
   
   .keyword-text {

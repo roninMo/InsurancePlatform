@@ -8,8 +8,12 @@ import { TooltipProps } from '../../Utils/Tooltip/Tooltip';
 import { TooltipService } from '../../Utils/Tooltip/TooltipProvider/TooltipProvider';
 
 
-export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
-export type TextInputAutoCompleteTypes = "email"  | "tel" | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
+export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' 
+                          |  'policyNumber' | 'phone' | 'creditCard' | 'currency';
+
+export type TextInputAutoCompleteTypes = 
+  | "name" | "given-name" | "family-name" | "email" | "password" | "tel" 
+  | "street-address" | "address-level2"| "address-level1" | "postal-code" | "country-name";
 
 export interface InputProps {
   type?: TextInputTypes

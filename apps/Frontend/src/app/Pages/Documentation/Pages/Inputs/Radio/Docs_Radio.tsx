@@ -1,12 +1,18 @@
-import { useState, useMemo } from 'react';
-import styled from '@emotion/styled';
+import { useState, useMemo, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
+
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
+import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
-import { ParamType } from '../../../Components/ParamType/ParamType';
+
+import { Kw } from "../../../Components/Keyword/Keyword";
+import { DocLink } from "../../../Components/DocLink/DocLink";
+import styled from '@emotion/styled';
 
 import RadioCodeSnippets from './Docs_RadioJsxComponents?raw';
+import RadioTableSnippets from '../RadioTable/Docs_RadioTableJsxComponents?raw';
 import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { 
   Example_ColumnInlineRadioGroup, 
@@ -57,6 +63,7 @@ export const Docs_Radio = () => {
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
+  const { show, hide } = useContext(TooltipService);
   const [defaultError, setDefaultError] = useState<string>('');
   const [defaultDisabled, setDefaultDisabled] = useState<boolean>(false);
   
@@ -77,11 +84,29 @@ export const Docs_Radio = () => {
         Radio Group Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
-          A functional radio group component with multiple styled variants for different use cases. 
-          Comes with error handling and theme styling, you just need to pass it the state, 
-          and a function to handle when the user selects one of the radio items.
+          A customizable radio group with multiple styles to fit your needs, and form state and theme styling for 
+          a nice look and feel to it. 
+
+          You can use your own hooks for handling state or <Kw>react hook forms</Kw>, with built validation you can add on the fly.
+          The different variants are <Kw>default</Kw>, <Kw>column</Kw>, <Kw>columnInline</Kw>, and <Kw>list</Kw>.
+        </p>
+      </div>
+      
+      <div className='span-12'>
+        <p className='p-2 showcase-text'>
+          If you prefer more of a box / list style layout with smoother transitions and better visual indications
+          for selections, the other version of the radio group is&nbsp;
+          <span 
+            onClick={hide} onMouseLeave={hide}
+            onMouseEnter={() => show({ 
+              code: getSourceCode(RadioTableSnippets, "Example_BlockRadioTable"), 
+              type: "component" 
+            })} 
+          >
+            <DocLink label='RadioTable' url='/Documentation/Forms/RadioTable' />
+          </span>.
         </p>
       </div>
 
@@ -209,25 +234,35 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'variant': () => <ParamType type="RadioVariant" />,
-  'name': () => <ParamType type="string" />,
-  'label': () => <ParamType type="string" />,
-  'description': () => <ParamType type="string" />,
+  'variant': () => <ParamType type="RadioVariant" tooltip={{ code: Code_RadioVariant, type: 'type' }} />,
+  'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'radio-form-name') }} />,
+  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Radio Group Label') }} />,
+  'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the radio group.') }} />,
 
-  'radioItems': () => <ParamType type="RadioItem" isArray />,
-  'currentValue': () => <ParamType type="RadioItem" />,
-  'onSelect': () => <ParamType type="function" />,
+  'radioItems': () => <ParamType type="RadioItem" isArray tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
+  'currentValue': () => <ParamType type="RadioItem" tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
+  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_onSelect, type: 'type' }} />,
 
-  'error': () => <ParamType type="boolean" />,
-  'errorMessage': () => <ParamType type="string" />,
-  'disabled': () => <ParamType type="boolean" />,
-  'required': () => <ParamType type="boolean" />,
+  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
+  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'errorMessage', 'var') }} />,
+  'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
 
-// update to remove the old params that we're no longer using and add any new params we created
-// variant
-// radioItem, currentVal
-// onSelect
+
+// TODO: when imported to the library, use actual refs
+interface RadioItem {
+  value: string;
+  label: string;
+  description?: string;
+  disabled?: boolean;
+}
+type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
+import SourceRadioSnippets from './Docs_Radio?raw';
+const Code_onSelect = 'onSelect: (item: RadioItem, currentValue: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;';
+const Code_RadioVariant = getSourceCode(SourceRadioSnippets, 'RadioVariant', 'type');
+const Code_RadioItem = getSourceCode(SourceRadioSnippets, 'RadioItem', 'interface');
+
 
 const paramDescriptionElements: Record<string, React.FC> = {
   'variant': () => 

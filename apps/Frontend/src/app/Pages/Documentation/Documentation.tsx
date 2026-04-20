@@ -26,20 +26,27 @@ export const CodeBlock = lazy(() => import('../../Components/Utils/LazyReactSynt
 export const Documentation = () => {
   /* TODO: From where we left off
   
-  - Finally, go through each component and refactor to make them very organized and themed
-	- Add react hook forms soon alongside the option to add state to the value for custom scenarios
-    - Finish any of the uncompleted logic that we haven't added yet but left notes on building
+  x Finally, go through each component and refactor to make them very organized and themed
+    x currently on Select, just about finished all form components. 
+    - finish the select components multi select functionality
+    - finish the textareas variant options
+  - Finish the documentation pages
+    - Forms
+    - Content
+    - Utils
+  - This entails the docs content, component themes, variants, and options
+	- add the introduction pages and quickLinks for the docs sections and introduction
+  - fix up the CustomContent page to use the proper props
 
-	- Add the rest of the content and pages of the documentation
-		- Check up with the layout of the content and util components while you add them
-	- add the introduction pages and quicklinks for them
-		
-		
+
   - Documentation pages
     - Introduction: list of boxes categorizing each subroot section 
     - each subroot/ should have QuickList to display their components
     - Inputs, content, utils component showcases
-      
+  
+	- Add react hook forms soon alongside the option to add state to the value for custom scenarios
+    - this changes all inputs, add custom opts for using useState to track value instead.
+
 	*/
 
 
@@ -59,8 +66,8 @@ export const Documentation = () => {
       <Container className="spacing pt-10">
         
         {/* Page Content*/}
-        <ContentAndSidebar className="span-12 rowStart gap-4">
-          <StickyContainer className='flex items-start min-h-[80vh]'>
+        <ContentAndSidebars className="span-12 rowStart gap-4">
+          <StickySidebar className='flex items-start min-h-[80vh]'>
             <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
               <Sidebar 
                 sidebarOpen={sidebarOpen}
@@ -69,7 +76,7 @@ export const Documentation = () => {
                 LinkSections={DocumentationPage_SidebarLinks}
               />
             </div>
-          </StickyContainer>
+          </StickySidebar>
           
           
           <Content className="w-full py-2">
@@ -81,14 +88,14 @@ export const Documentation = () => {
             <PageContent className="py-4">
               <Outlet />
             </PageContent>
-          </Container>
+          </Content>
 
-          <StickyContainer className='hidden 2xl:flex items-start pt-2 min-w-[20%] 2xl:min-w-[15%]'>
+          <StickySidebar className='hidden 2xl:flex items-start pt-2 min-w-[20%] 2xl:min-w-[15%]'>
             <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
               <Hashbar />
             </div>
-          </StickyContainer>
-        </ContentAndSidebar>
+          </StickySidebar>
+        </ContentAndSidebars>
         
       </Container>
       
@@ -105,8 +112,9 @@ export const Documentation = () => {
 
 // Styled Components
 const Container = styled.div``;
-const ContentAndSidebar = styled.div``;
-const StickyContainer = styled.div``;
+const ContentAndSidebars = styled.div``;
+const Content = styled.div``;
+const StickySidebar = styled.div``;
 const NotificationContainer = styled.div``;
 const PageContent = styled.div``;
 

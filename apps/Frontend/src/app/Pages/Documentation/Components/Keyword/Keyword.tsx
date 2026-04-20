@@ -14,7 +14,7 @@ interface KeywordProps {
 	textStyles?: string;
 }
 
-export const Keyword = ({ tooltip, link, onClick, children, styles, textStyles }: KeywordProps) => {
+export const Kw = ({ tooltip, link, onClick, children, styles, textStyles }: KeywordProps) => {
 	
 	if (link) return (
 		<HashLink label={link.label} url={link.url} opts={link.opts}>

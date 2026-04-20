@@ -1,12 +1,18 @@
-import { useState, useMemo } from 'react';
-import styled from '@emotion/styled';
+import { useState, useMemo, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
+import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
-import { ParamType } from '../../../Components/ParamType/ParamType';
+
+import { TooltipService } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+import { Kw } from '../../../Components/Keyword/Keyword';
+import { DocLink } from '../../../Components/DocLink/DocLink';
+import styled from '@emotion/styled';
 
 import RadioTableCodeSnippets from './Docs_RadioTableJsxComponents?raw';
+import RadioGroupSnippets from '../Radio/Docs_RadioJsxComponents?raw';
 import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { 
   Example_InlineRadioTable, 
@@ -56,6 +62,7 @@ export const Docs_RadioTable = () => {
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
+  const { show, hide } = useContext(TooltipService);
   const [inlineError, setInlineError] = useState<string>('');
   const [inlineDisabled, setInlineDisabled] = useState<boolean>(false);
   
@@ -70,11 +77,36 @@ export const Docs_RadioTable = () => {
         Button Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
           A functional radio table much like the radio group, just with nicer styles. 
           Comes with error handling and theme styling, you just need to pass it the state, 
           and a function to handle when the user selects one of the radio items.
+        </p>
+      </div>
+
+      <div className='span-12'>
+        <p className='p-2 showcase-text'>
+          A customizable radio group with multiple styles to fit your needs, and form state and theme styling for 
+          a nice look and feel to it. 
+
+          You can use your own hooks for handling state or <Kw>react hook forms</Kw>, with built validation you can add on the fly.
+          The different variants are <Kw>default</Kw>, <Kw>column</Kw>, <Kw>columnInline</Kw>, and <Kw>list</Kw>.
+        </p>
+      </div>
+      
+      <div className='span-12'>
+        <p className='p-2 showcase-text'>
+          If you prefer more of a traditional style layout with a decent layout and nicely themed styles, try&nbsp;
+          <span 
+            onClick={hide} onMouseLeave={hide}
+            onMouseEnter={() => show({ 
+              code: getSourceCode(RadioGroupSnippets, "Example_ListRadioGroup"), 
+              type: "component" 
+            })} 
+          >
+            <DocLink label='RadioGroup' url='/Documentation/Forms/Radio' />
+          </span>.
         </p>
       </div>
 
@@ -179,22 +211,38 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'variant': () => <ParamType type="RadioVariant" />,
-  'name': () => <ParamType type="string" />,
-  'label': () => <ParamType type="string" />,
-  'description': () => <ParamType type="string" />,
+  'variant': () => <ParamType type="RadioVariant" tooltip={{ code: Code_RadioVariant, type: 'type' }} />,
+  'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'radio-form-name') }} />,
+  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Radio Table Label') }} />,
+  'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the radio table.') }} />,
 
-  'radioItems': () => <ParamType type="RadioItem" isArray />,
-  'currentValue': () => <ParamType type="RadioItem" />,
-  'onSelect': () => <ParamType type="function" />,
-  'onMouseEnter': () => <ParamType type="function" />,
-  'onMouseLeave': () => <ParamType type="function" />,
+  'radioItems': () => <ParamType type="RadioItem" isArray tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
+  'currentValue': () => <ParamType type="RadioItem" tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
+  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_onSelect, type: 'type' }} />,
+  'onMouseEnter': () => <ParamType type="function" tooltip={{ code: Code_onMouseEnter, type: 'type' }} />,
+  'onMouseLeave': () => <ParamType type="function" tooltip={{ code: Code_onMouseLeave, type: 'type' }} />,
 
-  'error': () => <ParamType type="boolean" />,
-  'errorMessage': () => <ParamType type="string" />,
-  'disabled': () => <ParamType type="boolean" />,
-  'required': () => <ParamType type="boolean" />,
+  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
+  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'errorMessage', 'var') }} />,
+  'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
+
+
+// TODO: when imported to the library, use actual refs
+interface RadioItem {
+  value: string;
+  label: string;
+  description?: string;
+  disabled?: boolean;
+}
+type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
+import SourceRadioSnippets from './Docs_RadioTable?raw';
+const Code_onSelect = 'onSelect: (item: RadioItem, currentValue: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;';
+const Code_onMouseEnter = 'onMouseEnter: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
+const Code_onMouseLeave = 'onMouseLeave: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
+const Code_RadioVariant = getSourceCode(SourceRadioSnippets, 'RadioVariant', 'type');
+const Code_RadioItem = getSourceCode(SourceRadioSnippets, 'RadioItem', 'interface');
 
 // variant
 // radioItem, current value

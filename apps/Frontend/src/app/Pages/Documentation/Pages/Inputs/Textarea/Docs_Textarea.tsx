@@ -70,7 +70,7 @@ export const Docs_Textarea = () => {
         Input Component
       </h3>
 
-      <div className='span-12' id="showcase-element">
+      <div className='span-12'>
         <p className='p-2 showcase-text'>
           The input component is designed with functionality and customization 
           to fit your needs for the varying form types. It comes with tooltips, 
