@@ -29,6 +29,9 @@ import styles from './MockDatabase.module.scss';
 			- only retrieve what's selected, and cache when switching dbs and tables
 		- when user reopens the page, retrieve localStorage data and 
 		- then check backend for updates / custom data
+	- option to export db creation schema for different databases/orms
+		- mysql/nosql, raw and orm - postgres, sequelize, prism, mongo, apolloGraphql, .net? orleans?
+		- for complex versions like orleans, create multiple files for grain logic
 		
 		
 Table Param types
@@ -131,6 +134,8 @@ Context options
 		- update Table Param
 		
 		- if changes end up affecting the values, pass back updates tables
+		
+	
 	
 		
 
