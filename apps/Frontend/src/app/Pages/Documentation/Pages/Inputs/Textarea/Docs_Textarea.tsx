@@ -100,7 +100,7 @@ export const Docs_Textarea = () => {
             <ShowcaseExample_StateRef 
               error={defaultError} setError={setDefaultError}
               disabled={defaultDisabled} setDisabled={setDefaultDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_DefaultTextareaInput error={defaultError} disabled={defaultDisabled} />
             </ShowcaseExample_StateRef>
@@ -114,7 +114,7 @@ export const Docs_Textarea = () => {
             <ShowcaseExample_StateRef 
               error={boxError} setError={setBoxError}
               disabled={boxDisabled} setDisabled={setBoxDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_BoxTextareaInput error={boxError} disabled={boxDisabled} />
             </ShowcaseExample_StateRef>
@@ -128,7 +128,7 @@ export const Docs_Textarea = () => {
             <ShowcaseExample_StateRef 
               error={postError} setError={setPostError}
               disabled={postDisabled} setDisabled={setPostDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_PostTextareaInput error={postError} disabled={postDisabled} />
             </ShowcaseExample_StateRef>
@@ -164,11 +164,6 @@ export const Docs_Textarea = () => {
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Variants = styled.div``;
-
-const showCaseElementStyleProps = {
-  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
-};
 
 
 //---------------------------------------------//

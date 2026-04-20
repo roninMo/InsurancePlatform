@@ -88,7 +88,7 @@ export const Docs_Select = () => {
             <ShowcaseExample_StateRef 
               error={error} setError={setError}
               disabled={disabled} setDisabled={setDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} additionalStateStyles='pb-32'
             >
               <Example_SelectInput error={error} disabled={disabled} />
             </ShowcaseExample_StateRef>
@@ -114,11 +114,6 @@ export const Docs_Select = () => {
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Variants = styled.div``;
-
-const showCaseElementStyleProps = {
-  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 pb-32 span-12 lg:span-8 rowStart gap-2"
-};
 
 
 //---------------------------------------------//

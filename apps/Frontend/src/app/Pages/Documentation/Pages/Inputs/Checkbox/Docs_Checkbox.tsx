@@ -138,7 +138,7 @@ export const Docs_Checkbox = () => {
             <ShowcaseExample_StateRef 
               error={defaultError} setError={setDefaultError}
               disabled={defaultDisabled} setDisabled={setDefaultDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_DefaultCheckbox error={defaultError} disabled={defaultDisabled} />
             </ShowcaseExample_StateRef>
@@ -150,7 +150,7 @@ export const Docs_Checkbox = () => {
             <ShowcaseExample_StateRef 
               error={listError} setError={setListError}
               disabled={listDisabled} setDisabled={setListDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_ListCheckbox error={listError} disabled={listDisabled} />
             </ShowcaseExample_StateRef>
@@ -162,7 +162,7 @@ export const Docs_Checkbox = () => {
             <ShowcaseExample_StateRef 
               error={inlineError} setError={setInlineError}
               disabled={inlineDisabled} setDisabled={setInlineDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_InlineCheckbox error={inlineError} disabled={inlineDisabled} />
             </ShowcaseExample_StateRef>
@@ -188,11 +188,6 @@ export const Docs_Checkbox = () => {
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Variants = styled.div``;
-
-const showCaseElementStyleProps = {
-  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
-};
 
 
 //---------------------------------------------//

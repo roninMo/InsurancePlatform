@@ -86,7 +86,7 @@ export const Docs_Slider = () => {
             <ShowcaseExample_StateRef 
               error={sliderError} setError={setSliderError}
               disabled={sliderDisabled} setDisabled={setSliderDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <div className="rowStart">
                 <Example_DefaultSlider error={sliderError} disabled={sliderDisabled} />
@@ -114,11 +114,6 @@ export const Docs_Slider = () => {
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Variants = styled.div``;
-
-const showCaseElementStyleProps = {
-  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
-};
 
 
 //---------------------------------------------//

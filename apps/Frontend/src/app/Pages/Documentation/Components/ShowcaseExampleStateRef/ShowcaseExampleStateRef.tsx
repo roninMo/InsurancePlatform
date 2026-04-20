@@ -10,14 +10,14 @@ interface ShowcaseExampleStateRefProps {
   disabled: boolean;
   setDisabled: Dispatch<SetStateAction<boolean>>;
   elementStateTypes?: ElementStateTypes[];
-  styles: string;
-  stateStyles: string;
+  additionalStyles?: string;
+  additionalStateStyles?: string;
   children: ReactNode;
 }
 
 export const ShowcaseExample_StateRef = ({ 
   error, setError, disabled, setDisabled, 
-  elementStateTypes, styles, stateStyles, children 
+  elementStateTypes, additionalStyles, additionalStateStyles, children 
 }: ShowcaseExampleStateRefProps) => {
   const id = useId();
   const [elementStates, setElementStates] = useState<Record<ElementStateTypes, boolean>>({
@@ -65,10 +65,10 @@ export const ShowcaseExample_StateRef = ({
 
   return (
     <>
-      <div className={styles}>
+      <div className={`showcase-state-ref-c ${additionalStyles}`}>
         { children }
       </div>
-      <div className={stateStyles}>
+      <div className={`showcase-state-ref-states-c ${additionalStateStyles}`}>
         { Object.entries(elementStates)?.map(([type, isSelected]) => 
           <ElementState type={type} isSelected={isSelected} onClick={() => onSelectState(type)} key={`element-state-${type}-${id}`} />
         )}

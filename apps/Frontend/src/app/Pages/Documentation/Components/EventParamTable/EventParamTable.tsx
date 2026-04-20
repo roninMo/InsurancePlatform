@@ -35,7 +35,7 @@ type InputEventHandlerTypes = 'onChange' | 'onBlur' | 'onFocus' | 'onClick' | 'o
 
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'onChange', 'onBlur', 'onFocus', 
+  'onFocus', 'onChange', 'onBlur', 
   'onClick', 'onMouseEnter', 'onMouseLeave'
 ];
 
@@ -61,15 +61,28 @@ const paramContextsList: Record</*InputEventHandlerTypes*/ string, ParamContext[
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<InputEventHandlerTypes, React.FC> = {
-  'onChange': () => <ParamType type='function' />,
-  'onBlur': () => <ParamType type='function' />,
-  'onFocus': () => <ParamType type='function' />,
-  'onClick': () => <ParamType type='function' />,
-  'onMouseEnter': () => <ParamType type='function' />,
-  'onMouseLeave': () => <ParamType type='function' />,
+  'onFocus': () => <ParamType type='function' tooltip={{ code: Code_onFocus, type: 'type' }} />,
+  'onChange': () => <ParamType type='function' tooltip={{ code: Code_onChange, type: 'type' }} />,
+  'onBlur': () => <ParamType type='function' tooltip={{ code: Code_onBlur, type: 'type' }} />,
+  'onClick': () => <ParamType type='function' tooltip={{ code: Code_onClick, type: 'type' }} />,
+  'onMouseEnter': () => <ParamType type='function' tooltip={{ code: Code_onMouseEnter, type: 'type' }} />,
+  'onMouseLeave': () => <ParamType type='function' tooltip={{ code: Code_onMouseLeave, type: 'type' }} />,
 };
 
+
+const Code_onFocus = 'onFocus: (e: FocusEvent<T>) => void';
+const Code_onChange = 'onChange: (e: ChangeEvent<any>) => void'; 
+const Code_onBlur = 'onBlur: (e: FocusEvent<T>) => void';
+const Code_onClick = 'onClick: (e: MouseEvent<T>) => void';
+const Code_onMouseEnter = 'onMouseEnter: (e: MouseEvent<T>) => void';
+const Code_onMouseLeave = 'onMouseLeave: (e: MouseEvent<T>) => void';
+
+
 const paramDescriptionElements: Record<InputEventHandlerTypes, React.FC> = {
+  'onFocus': () =>
+    <div className='param-item-desc-text'>
+      The focus event happens every time the user focuses on this element. 
+    </div>,
   'onChange': () =>
     <div className='param-item-desc-text'>
       the change function runs every time the value of this form element is updated.
@@ -77,10 +90,6 @@ const paramDescriptionElements: Record<InputEventHandlerTypes, React.FC> = {
   'onBlur': () =>
     <div className='param-item-desc-text'>
       the blur event happens every time the user leaves the focus of this element.
-    </div>,
-  'onFocus': () =>
-    <div className='param-item-desc-text'>
-      The focus event happens every time the user focuses on this element. 
     </div>,
   'onClick': () =>
     <div className='param-item-desc-text'>

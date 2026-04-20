@@ -127,7 +127,7 @@ export const Docs_Radio = () => {
             <ShowcaseExample_StateRef 
               error={defaultError} setError={setDefaultError}
               disabled={defaultDisabled} setDisabled={setDefaultDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_DefaultRadioGroup error={defaultError} disabled={defaultDisabled} />
             </ShowcaseExample_StateRef>
@@ -139,7 +139,7 @@ export const Docs_Radio = () => {
             <ShowcaseExample_StateRef 
               error={columnError} setError={setColumnError}
               disabled={columnDisabled} setDisabled={setColumnDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_ColumnRadioGroup error={columnError} disabled={columnDisabled} />
             </ShowcaseExample_StateRef>
@@ -151,7 +151,7 @@ export const Docs_Radio = () => {
             <ShowcaseExample_StateRef 
               error={columnInlineError} setError={setColumnInlineError}
               disabled={columnInlineDisabled} setDisabled={setColumnInlineDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_ColumnInlineRadioGroup error={columnInlineError} disabled={columnInlineDisabled} />
             </ShowcaseExample_StateRef>
@@ -163,7 +163,7 @@ export const Docs_Radio = () => {
             <ShowcaseExample_StateRef 
               error={listError} setError={setListError}
               disabled={listDisabled} setDisabled={setListDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_ListRadioGroup error={listError} disabled={listDisabled} />
             </ShowcaseExample_StateRef>
@@ -189,11 +189,6 @@ export const Docs_Radio = () => {
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Variants = styled.div``;
-
-const showCaseElementStyleProps = {
-  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
-};
 
 
 //---------------------------------------------//

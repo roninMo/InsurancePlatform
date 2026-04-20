@@ -111,7 +111,7 @@ export const Docs_Button = () => {
             <ShowcaseExample_StateRef 
               error={buttonError} setError={setButtonError}
               disabled={buttonDisabled} setDisabled={setButtonDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_PrimaryButton error={buttonError} disabled={buttonDisabled} />
             </ShowcaseExample_StateRef>
@@ -123,7 +123,7 @@ export const Docs_Button = () => {
             <ShowcaseExample_StateRef 
               error={buttonError} setError={setButtonError}
               disabled={buttonDisabled} setDisabled={setButtonDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_GrayButton error={buttonError} disabled={buttonDisabled} />
             </ShowcaseExample_StateRef>
@@ -135,7 +135,7 @@ export const Docs_Button = () => {
             <ShowcaseExample_StateRef 
               error={buttonError} setError={setButtonError}
               disabled={buttonDisabled} setDisabled={setButtonDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_GrayFocusButton error={buttonError} disabled={buttonDisabled} />
             </ShowcaseExample_StateRef>
@@ -147,7 +147,7 @@ export const Docs_Button = () => {
             <ShowcaseExample_StateRef 
               error={buttonError} setError={setButtonError}
               disabled={buttonDisabled} setDisabled={setButtonDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_CustomButton error={buttonError} disabled={buttonDisabled} />
             </ShowcaseExample_StateRef>
@@ -173,11 +173,6 @@ export const Docs_Button = () => {
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Variants = styled.div``;
-
-const showCaseElementStyleProps = {
-  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
-};
 
 
 //---------------------------------------------//

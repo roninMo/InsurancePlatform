@@ -155,7 +155,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={currencyError} setError={setCurrencyError}
               disabled={currencyDisabled} setDisabled={setCurrencyDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_CurrencyInput error={currencyError} disabled={currencyDisabled} />
             </ShowcaseExample_StateRef>
@@ -168,7 +168,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={creditError} setError={setCreditError}
               disabled={creditDisabled} setDisabled={setCreditDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_CreditCardInput error={creditError} disabled={creditDisabled} />
             </ShowcaseExample_StateRef>
@@ -181,7 +181,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={phoneError} setError={setPhoneError}
               disabled={phoneDisabled} setDisabled={setPhoneDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_PhoneInput error={phoneError} disabled={phoneDisabled} />
             </ShowcaseExample_StateRef>
@@ -194,7 +194,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={policyError} setError={setPolicyError}
               disabled={policyDisabled} setDisabled={setPolicyDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_PolicyNumberInput error={policyError} disabled={policyDisabled} />
             </ShowcaseExample_StateRef>
@@ -207,7 +207,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={searchError} setError={setSearchError}
               disabled={searchDisabled} setDisabled={setSearchDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_SearchInput error={searchError} disabled={searchDisabled} />
             </ShowcaseExample_StateRef>
@@ -220,7 +220,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={passwordError} setError={setPasswordError}
               disabled={passwordDisabled} setDisabled={setPasswordDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_PasswordInput error={passwordError} disabled={passwordDisabled} />
             </ShowcaseExample_StateRef>
@@ -233,7 +233,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={emailError} setError={setEmailError}
               disabled={emailDisabled} setDisabled={setEmailDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_EmailInput error={emailError} disabled={emailDisabled} />
             </ShowcaseExample_StateRef>
@@ -246,7 +246,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={numberError} setError={setNumberError}
               disabled={numberDisabled} setDisabled={setNumberDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_NumberInput error={numberError} disabled={numberDisabled} />
             </ShowcaseExample_StateRef>
@@ -259,7 +259,7 @@ export const Docs_Input = () => {
             <ShowcaseExample_StateRef 
               error={textError} setError={setTextError}
               disabled={textDisabled} setDisabled={setTextDisabled}
-              elementStateTypes={[]} { ...showCaseElementStyleProps } 
+              elementStateTypes={[]} 
             >
               <Example_TextInput error={textError} disabled={textDisabled} />
             </ShowcaseExample_StateRef>
@@ -294,11 +294,6 @@ export const Docs_Input = () => {
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Variants = styled.div``;
-
-const showCaseElementStyleProps = {
-  styles: "p-4 pl-8 pt-8 pb-2 span-12 lg:span-8",
-  stateStyles: "p-4 pl-8 span-12 lg:span-8 rowStart gap-2"
-};
 
 
 //---------------------------------------------//
