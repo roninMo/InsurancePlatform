@@ -29,12 +29,16 @@ export interface TextareaProps {
   // TODO: add the tooltip component to the textarea
   tooltip?: boolean;
   tooltipText?: string;
+	// tooltip?: TooltipBundle;
   
   // Variant specific params
   // Default and box variants
   // TODO: why don't we make the list areas where we add attachFile to another metadata tag list of sorts
   // TODO: Learn how to actually handle file attachment functionality
-  onAttachFile?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+	attachFile?: {
+		name: string;
+  	onAttachFile?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+	}
   // Box and post variants
   metadataTags?: MetadataTagProps[] | boolean;
 }
@@ -73,8 +77,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
 
         required={required}
         disabled={disabled}
-
-        // TODO: almost done with themes, need to add disabled / error themes
+				
         className={`ta-base
           ${type == 'default' ? 'ta-d-base' : ''}
           ${type == 'box' ? 'ta-b-base' : ''}
@@ -101,6 +104,8 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   //--------------------------------//
   // default style                  //
   //--------------------------------//
+	
+	//add a useMemo for the buttons and links, and the metdata inbetween them and the input
   if (type === 'default') {
     return (
       <div className="w-full flex flex-col gap-2">
@@ -123,10 +128,10 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
                 {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
               </PrecedingInputElements>
     
-              { submitButtonText && 
+              { onSubmit && 
                 <SubsequentInputElements>
                   <Button 
-                    displayText={submitButtonText} 
+                    displayText={submitButtonText || "Submit"} 
                     onClick={e => onSubmit && onSubmit(e)} 
                     disabled={disabled}
                     additionalStyles="ta-submit-btn px-3" 
@@ -150,6 +155,9 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   // box style                      //
   //--------------------------------//
   else if (type == 'box') {
+		
+		// add a useMemo for the buttons and links section
+		
     return (<>
       <Container className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
         { label && <h4 className="ta-b-label">{ label }</h4> }
@@ -164,15 +172,17 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
             <p className="italic">Attach a file</p>
           </div>
 
-          <div className="margin-auto-div-fix">
-            <Button 
-              displayText={submitButtonText ? submitButtonText : 'Create'} 
-              size="default" 
-              onClick={e => onSubmit && onSubmit(e)} 
-              disabled={disabled || submitButtonDisabled}
-              additionalStyles="ta-submit-btn px-3" 
-            />
-          </div>
+					{ onSubmit && 
+	          <div className="margin-auto-div-fix">
+	            <Button 
+	              displayText={submitButtonText ? submitButtonText : 'Create'} 
+	              size="default" 
+	              onClick={e => onSubmit && onSubmit(e)} 
+	              disabled={disabled || submitButtonDisabled}
+	              additionalStyles="ta-submit-btn px-3" 
+	            />
+	          </div>
+					}
         </ButtonsAndLinks>
       </Container>
       
@@ -192,6 +202,8 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
     const togglePreview = (type: 'write' | 'preview') => {
       setShowPreview(type);
     }
+		
+		// add a useMemo for the metadata tags
 
     return (
       <Container>
@@ -231,9 +243,9 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         <div className={`height-trans ${showPreview == 'write' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className="height-trans-content ">
           { showPreview == 'write' && 
-          <div className="">
-              <InputComponent { ...allProps } />
-          </div>
+	          <div className="">
+	              <InputComponent { ...allProps } />
+	          </div>
           }
           </div>
         </div>
@@ -264,6 +276,8 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
 // Universal error and description handling
 const ErrAndDescElements = ({ type, error, errorMessage, disabled, description }: any) => {
+	
+	// memo with config to only update when there's an error or disabled state
   return (
     <ErrorAndDescription className={`
       ${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}

@@ -31,6 +31,14 @@ export const Documentation = () => {
     x finish the select components multi select functionality
       - finish the select docs page
     - finish the textareas variant options
+		- add a file attachment input component - functionality and drag & drop
+			- add file attachment logic to the textarea
+		- update the form components with the proper tooltip props
+			- fix all props that shouldn't be objects. tooltip cant be memoized so it shouldn't be an object, just tooltipContext, and tooltipContent.
+			- update any props like input's variant options to be memoized, and flatten any others that shouldn't be an object. 
+			- comment about this in the component types
+			- add the props to the library, and do this for AttachfileProps as well
+				- fileattachment props need to be an object, so it's object should be memoized
   - Finish the documentation pages
     - Forms
     - Content
