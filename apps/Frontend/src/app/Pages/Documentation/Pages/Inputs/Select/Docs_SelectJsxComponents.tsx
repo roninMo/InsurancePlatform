@@ -1,5 +1,5 @@
 import { Select, SelectItem } from "@Project/ReactComponents";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
 
 
@@ -63,7 +63,10 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
   keepOpenOnSlct?: boolean;
   preventOpenOnTab?: boolean;
 }) => {
-  const [selectedValue, setSelectedValue] = useState<SelectItem>({ value: '', label: '' });
+  // universal tooltip provider
+  const tooltipContext = useContext(TooltipService);
+
+  // raw data object
   const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
     { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
@@ -72,13 +75,29 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
     ...selectIcons
   ]);
   
+  // state values for multiSelect
+  const currentlySelected = useRef<SelectItem>({ value: '', label: '' }); // up to you which value is displayed as the current
+  const [selectedValues, setSelectedValues] = useState<Record<string, SelectItem>>(
+    Object.fromEntries(projectIcons.map(item => [item.value, item]))
+  );
+  
   const onSelectValue = (selected: SelectItem, index: number) => {
-    setSelectedValue(selected);
-    // console.log('select: new value: ', {currentIcon, index, selectIcons});
-  }
+    const updatedSelection: SelectItem = { ...selected }; // rerender the SelectItem only w/new object and a memo.
+    updatedSelection.selected = !updatedSelection.selected; 
+    
+    // if most recently selected, then update single display 
+    if (updatedSelection.selected) currentlySelected.current = updatedSelection;
 
-  // universal tooltip provider
-  const tooltipContext = useContext(TooltipService);
+    // update the current list of selected values
+    setSelectedValues(prevValue => {
+      const newValue = { ...prevValue, [selected.value]: updatedSelection };
+      console.log(`multiSelect::updated: ${prevValue[updatedSelection.value].label}: `, { 
+        value: updatedSelection,
+        values: newValue
+      });
+      return newValue;
+    });
+  }
 
   return (
     <div>
@@ -88,8 +107,8 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
         placeholder="Select some values..."
         description="The select input's description."
 
-        value={selectedValue}
-        values={projectIcons}
+        value={currentlySelected.current} // only shows current if there's only one selected
+        values={Object.values(selectedValues)}
         onSelect={onSelectValue}
         multiSelect
 

@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import { memo } from 'react';
 import { Icon, IconTypes } from '../../../Common/Icons/Icon';
 
+import styled from '@emotion/styled';
 import styles from './SelectItem.module.scss';
-import { RefObject } from 'react';
 
 
 export interface SelectItem {
@@ -24,18 +24,19 @@ export interface SelectItemProps {
   onSelect?: (selected: SelectItem, index: number) => void;
   currentSelectValue: SelectItem;
   multiSelect?: boolean;
-  selectedValues?: RefObject<Record<string, boolean>>; // specific to multiSelect
   name: string; // "form group id"
 }
 
 
-export const SelectItemComponent = ({ item, index, onSelect, currentSelectValue, multiSelect, selectedValues, name }: SelectItemProps) => {
-  const { value, label, iconProps } = item;
+export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectValue, multiSelect, name }: SelectItemProps) => {
+  const { value, label, iconProps, selected } = item;
 
   const currentlySelected = () => {
-    if (multiSelect && selectedValues?.current) return selectedValues.current[value];
+    if (multiSelect) return selected; // TODO: this should be okay for both. 
     return value == currentSelectValue.value;
   };
+
+  console.log(`${label} updated values: `, item);
   
   return (
     <Container 
@@ -65,7 +66,14 @@ export const SelectItemComponent = ({ item, index, onSelect, currentSelectValue,
       }
     </Container>
   );
-}
+}, (prevProps, nextProps) => {
+  // We're using a map on the selectedValues, 
+  // so just check if the selectItem object is a "new" object to handle shallow equality checks. 
+  return (
+    prevProps.item === nextProps.item && 
+    prevProps.multiSelect === nextProps.multiSelect
+  );
+});
 
 
 // Styled Components

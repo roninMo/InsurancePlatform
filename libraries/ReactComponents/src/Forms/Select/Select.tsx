@@ -1,7 +1,6 @@
 import { MouseEvent, useEffect, useId, useRef, useState } from "react";
-
-import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItemComponent, SelectItem } from './SelectItem/SelectItem';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
 import styles from './Select.module.scss';
@@ -30,17 +29,20 @@ export interface SelectProps {
     content?: any; 
   }
 
-  opts?: {
-    // when they hover outside of the element, close the dropdown.
-    closeDropdownOnLeave?: boolean;
-
-    // for both normal or multiselect. undefined is ignored
-    keepDropdownOpenOnSelect?: boolean;
-    
-    // by default, we open the dropdown if the user tabs to it
-    preventOpenOnTabFocus?: boolean;
-  }
+  opts?: SelectOpts; 
 }
+
+export interface SelectOpts {
+  // when they hover outside of the element, close the dropdown.
+  closeDropdownOnLeave?: boolean;
+
+  // for both normal or multiselect. undefined is ignored
+  keepDropdownOpenOnSelect?: boolean;
+  
+  // by default, we open the dropdown if the user tabs to it
+  preventOpenOnTabFocus?: boolean;
+}
+
 
 // Custom select component for themes and advanced functionality
 export const Select = ({
@@ -50,7 +52,7 @@ export const Select = ({
 }: SelectProps & UniversalEventHandlers) => {
   const { show, hide } = tooltip?.context || {};  
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const selectedValues = useRef<Record<string, boolean>>(Object.fromEntries(values.map(item => [value.value, false])));
+  // const selectedValues = useRef<Record<string, boolean>>(Object.fromEntries(values.map(item => [value.value, false])));
   const dropdownId = `${name}-slct-dropdown`;
   const selectId = `${name}-slct`;
 
@@ -59,8 +61,9 @@ export const Select = ({
 
 
   //------------------------------------//
-  // Open / Close Logic                 //
+  // Open / Close Dropdown Logic        //
   //------------------------------------//
+  // #region Open / Close Dropdown
   const selectElementRef = useRef<HTMLButtonElement>(null);
   const dropdownElementRef = useRef<HTMLDivElement>(null);
 
@@ -73,13 +76,13 @@ export const Select = ({
   // Handles logic when the dropdown is selected
   const onDropdownItemSelected = (selected: SelectItem, index: number) => {
     // capture whether the value has been selected here and toggle it
-    if (multiSelect) {
-      selectedValues.current[selected.value] = !selectedValues.current[selected.value];
-    }
+    // if (multiSelect) {
+    //   selectedValues.current[selected.value] = !selectedValues.current[selected.value];
+    // }
 
     if (onSelect) onSelect(selected, index); // actual logic
     handleDropdownToggle();
-    console.log(`item ${index} selected: `, selected);
+    // console.log(`item ${index} selected: `, selected);
   }
 
   const handleDropdownToggle = () => {
@@ -192,7 +195,8 @@ export const Select = ({
 
     selectElement.addEventListener('focus', checkIfTabbed);
     return () => selectElement.removeEventListener('focus', checkIfTabbed);
-});
+  });
+  // #endregion
 
   const getSelectDisplay = () => {
     const defaultValue = value?.value ? value.label : placeholder;
@@ -260,7 +264,6 @@ export const Select = ({
                 onSelect={onDropdownItemSelected} 
                 currentSelectValue={value}
                 multiSelect={multiSelect}
-                selectedValues={selectedValues}
                 name={name}
                 key={`${name}-${item.value}`}
               />
