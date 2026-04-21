@@ -1,12 +1,13 @@
 
 
 
-import { ReactNode, useId } from 'react';
+import { ReactNode, useId, useState } from 'react';
 
 import styled from '@emotion/styled';
 import styles from './ParamTable.module.scss';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
 import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
+import { Button } from '@Project/ReactComponents';
 
 
 export type PTableItem = ParamItem | 'spacing';
@@ -41,11 +42,7 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles }: Pa
 
 			{/* Param Items */}
 			{ params?.map((item: PTableItem, index: number) => 
-				<ParamTableItem 
-					item={item} 
-					additionalStyles={additionalStyles}
-					key={`paramTableItem-${tableItemId}-${index}`} 
-				/>
+				<ParamTableItem item={item} key={`paramTableItem-${tableItemId}-${index}`} />
 				)}
 			</Table>
 		</Container>
@@ -55,9 +52,8 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles }: Pa
 
 interface ParamTableItemProps {
 	item: PTableItem;
-	additionalStyles?: string;
 }
-export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps)  => {
+export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 	// Create spacing between each of the params, like an empty row
 	if (typeof item == "string" && item == "spacing") {
 		return (
@@ -79,6 +75,10 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 	if (contextParam) contextStyles = 'param-item-context';
 	if (variantOption) variantStyles = 'param-item-variant-opt';
 
+	// Subtable properties!
+	const createSubTable = nestedParams && nestedParams.length > 0;
+	const [showSubTable, setShowSubTable] = useState<boolean>(true); // bad but only creates diff, i want this styling however
+	
 
 	return (
 		<>
@@ -89,11 +89,33 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 				{ ParamTypeElement ? <ParamTypeElement /> : null }
 			</div>
 			<div className={`param-item-desc ${variantStyles}`}>
-				{ ParamDescriptionElement ? <ParamDescriptionElement /> : null }
+				<div className='rowStart gap-2 items-center'>
+					{ createSubTable && (
+						<Button 
+							displayText={showSubTable ? 'Show Less' : 'Show More'}
+							onClick={() => setShowSubTable(!showSubTable)}
+							color={showSubTable ? 'gray-focus' : 'gray'} 
+							additionalStyles='px-2 py-1 mr-2 text-sm font-normal italic'
+						/>
+					)}
+					{ ParamDescriptionElement ? <ParamDescriptionElement /> : null }
+				</div>
 			</div>
-			
 
-			{ (nestedParams && nestedParams.length > 0) &&
+			{ createSubTable &&
+				<>
+					<div className="keep-grid-flow" /> {/* Container col-span-2 */}
+					<Container className={`col-span-2 height-trans 
+							${showSubTable ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} 
+							${showSubTable ? 'animate-fade-in' : ''}
+					`}>
+						<div className='height-trans-content'>
+							<ParamTable params={nestedParams} variant="subTable" additionalStyles='subtable-dropdown' />
+						</div>
+					</Container>
+				</>
+			}
+			{/* { createSubTable && // more performant
 				<>
 					<div className="keep-grid-flow" />
 					<div className="keep-grid-flow" />
@@ -101,7 +123,7 @@ export const ParamTableItem = ({ item, additionalStyles }: ParamTableItemProps) 
 						<ParamTable params={nestedParams} variant="subTable" additionalStyles={additionalStyles} />
 					</Dropdown>
 				</>
-			}
+			} */}
 		</>
 	);
 }

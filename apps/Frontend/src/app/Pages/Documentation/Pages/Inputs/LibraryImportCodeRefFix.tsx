@@ -68,3 +68,14 @@ export interface SelectItem {
     styles?: string;
   }
 }
+
+export interface SelectOpts {
+  // when they hover outside of the element, close the dropdown.
+  closeDropdownOnLeave?: boolean;
+
+  // for both normal or multiselect. undefined is ignored
+  keepDropdownOpenOnSelect?: boolean;
+  
+  // by default, we open the dropdown if the user tabs to it
+  preventOpenOnTabFocus?: boolean;
+}

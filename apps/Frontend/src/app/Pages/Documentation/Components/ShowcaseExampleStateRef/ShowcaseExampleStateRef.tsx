@@ -25,12 +25,13 @@ export const ShowcaseExample_StateRef = ({
     'error': (!!error && !disabled), 
     'disabled': (disabled && !error), 
     'errorAndDisabled': (!!error && disabled),
-    ...elementStateTypes?.map((stateType: ElementStateTypes) => ({[stateType]: false}))
+    ...Object.fromEntries((elementStateTypes || []).map((stateType) => [stateType, false]))
   });
+  
 
   const onSelectState = (type: ElementStateTypes | string) => {
-    const currentTypeValue = elementStates?.[type as ElementStateTypes] || false;
-    const nextTypeValue = !elementStates?.[type as ElementStateTypes] || false;
+    const currentTypeValue = elementStates?.[type] || false;
+    const nextTypeValue = !elementStates?.[type] || false;
     const clearedState: any = Object.fromEntries(Object.entries(elementStates)
       ?.map(([type, isSelected]) => [type, false])); // { 'error': false }
 
@@ -70,7 +71,12 @@ export const ShowcaseExample_StateRef = ({
       </div>
       <div className={`showcase-state-ref-states-c ${additionalStateStyles}`}>
         { Object.entries(elementStates)?.map(([type, isSelected]) => 
-          <ElementState type={type} isSelected={isSelected} onClick={() => onSelectState(type)} key={`element-state-${type}-${id}`} />
+          <ElementState 
+            type={type} 
+            isSelected={isSelected} 
+            onClick={() => onSelectState(type)} 
+            key={`element-state-${type}-${id}`} 
+          />
         )}
       </div>
     </>

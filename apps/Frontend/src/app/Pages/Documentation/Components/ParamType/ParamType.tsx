@@ -10,11 +10,12 @@ export type ParamTypes = "number" | "string" | "boolean" | "function" | "any" /*
 export interface ParamTypeProps {
 	type: ParamTypes;
 	isArray?: boolean;
+	optional?: boolean;
 
 	tooltip?: TooltipProps;
 }
 
-export const ParamType = ({ type, isArray, tooltip }: ParamTypeProps) => {
+export const ParamType = ({ type, isArray, optional, tooltip }: ParamTypeProps) => {
 	const { show, hide } = useContext(TooltipService);
 
   return (
@@ -23,7 +24,7 @@ export const ParamType = ({ type, isArray, tooltip }: ParamTypeProps) => {
 			onMouseLeave={(e) => hide()} 
 			className={`param-type ${getTypeStyles(type)}`}
 		>
-			{ type }<span className='text-sm text-colors font-semibold'>{ isArray ? "[]" : "" }</span>
+			{ type }<span className='text-sm text-colors font-semibold opacity-80'>{ isArray ? "[]" : optional ? "?" : "" }</span>
 		</Container>
   );
 }

@@ -1,10 +1,15 @@
-import { useState, useMemo } from 'react';
-import styled from '@emotion/styled';
+import { useState, useMemo, SetStateAction, Dispatch } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
+
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
-import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
+import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
+import { ElementState } from '../../../Components/ShowcaseElement/ElementStates/ElementState';
+
+import { Kw } from '../../../Components/Keyword/Keyword';
+import styled from '@emotion/styled';
 
 import SelectCodeSnippets from './Docs_SelectJsxComponents?raw';
 import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
@@ -19,8 +24,8 @@ export const Docs_Select = () => {
   // Tab Functionality              //
   //--------------------------------//
   const [currentTab, setCurrentTab] = useState<string>('Default');
-  const tabs: string[] = ['Default'];
-  const tabLabels: string[] = ['Default'];
+  const tabs: string[] = ['Default', 'MultiSelect'];
+  const tabLabels: string[] = ['Default', 'Multi Select'];
 
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
@@ -57,6 +62,24 @@ export const Docs_Select = () => {
   const [error, setError] = useState<string>('');
   const [disabled, setDisabled] = useState<boolean>(false);
 
+  const [dropdownSettings, setDropdownSettings] = useState<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean }>({});
+  const [msDropdownSettings, setMsDropdownSettings] = useState<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean }>({});
+
+  const updateDropdownSettings = (
+    setting: 'closeOnLeave' | 'keepOpenOnSlct' | 'preventOpenOnTab', 
+    setState: Dispatch<SetStateAction<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean}>>
+  ) => {
+    setState(prevState => {
+      const currentValue: true | false | undefined = prevState[setting];
+      let newValue: true | false | undefined; // undefined settings don't influence normal variant behavior
+      if (currentValue === undefined) newValue = true;
+      if (currentValue === true) newValue = false;
+      if (currentValue === false) newValue = undefined;
+
+      return {...prevState, [setting]: newValue };
+    });
+  }
+
 
   return (
     <Container className='spacing'>
@@ -66,9 +89,45 @@ export const Docs_Select = () => {
       </h3>
 
       <div className='span-12'>
-        <p className='p-2 showcase-text'>
-          Add content here
-        </p>
+        <div className='p-2 showcase-text'>
+          Add content soon
+
+          {/* <div className='ascii-text'> 
+                _                       
+                \`*-.                   
+                 )  _`-.                
+                .  : `. .               
+                : _   '  \              
+                ; *` _.   `*-._         
+                `-.-'          `-.      
+                  ;       `       `.    
+                  :.       .        \   
+                  . \  .   :   .-'   .  
+                  '  `+.;  ;  '      :  
+                  :  '  |    ;       ;-.
+                  ; '   : :`-:     _.`* ;
+         [bug] .*' /  .*' ; .*`- +'  `*'
+               `*-*   `*-*  `*-*'       
+          </div> */}
+          <p className='ascii-text hover:loading-text transition-all'>
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\`*-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;&nbsp;_`-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;:&nbsp;`.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;_&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;*`&nbsp;_.&nbsp;&nbsp;&nbsp;`*-._&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-.-'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`.&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;\&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;.-'&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;`+.;&nbsp;&nbsp;;&nbsp;&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;-.
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;'&nbsp;&nbsp;&nbsp;:&nbsp;:`-:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_.`*&nbsp;;
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bug]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
+            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;`*-*'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </p>
+
+        </div>
       </div>
 
       {/* Showcase Input Element Variants */}
@@ -88,10 +147,86 @@ export const Docs_Select = () => {
             <ShowcaseExample_StateRef 
               error={error} setError={setError}
               disabled={disabled} setDisabled={setDisabled}
-              elementStateTypes={[]} additionalStateStyles='pb-32'
+              elementStateTypes={[]} additionalStateStyles='pb-0'
             >
-              <Example_SelectInput error={error} disabled={disabled} />
+              <Example_SelectInput 
+                error={error} 
+                disabled={disabled} 
+                closeOnLeave={dropdownSettings.closeOnLeave}
+                keepOpenOnSlct={dropdownSettings.keepOpenOnSlct}
+                preventOpenOnTab={dropdownSettings.preventOpenOnTab}
+              />
             </ShowcaseExample_StateRef>
+
+            <div className={`pb-32 showcase-state-ref-states-c`}>
+              {/* Close dropdown when mouse leaves the select? */}
+              <div className={ dropdownSettings.closeOnLeave === true ?  'element-state-v-green' :
+                dropdownSettings.closeOnLeave === false ? 'element-state-v-red' : 'element-state-v-gray' }>
+                <ElementState type='closeOnLeave' onClick={() => updateDropdownSettings('closeOnLeave', setDropdownSettings)} isSelected />
+              </div>
+
+              {/* Keep dropdown open onSelect? */}
+              <div className={ dropdownSettings.keepOpenOnSlct === true ?  'element-state-v-green' :
+                dropdownSettings.keepOpenOnSlct === false ? 'element-state-v-red' :'element-state-v-gray' }>
+                <ElementState type='keepOpenOnSlct' onClick={() => updateDropdownSettings('keepOpenOnSlct', setDropdownSettings)} isSelected />
+              </div>
+
+              {/* Prevent opening the dropdown when user tabs to the select? */}
+              <div className={ dropdownSettings.preventOpenOnTab === true ?  'element-state-v-green' :
+                dropdownSettings.preventOpenOnTab === false ? 'element-state-v-red' : 'element-state-v-gray' }>
+                <ElementState type='preventOpenOnTab' onClick={() => updateDropdownSettings('preventOpenOnTab', setDropdownSettings)} isSelected />
+              </div>
+              
+              <span className='pl-4 rowStart items-center text-nowrap *:pr-4 *:text-sm *:italic *:font-semibold'>
+                <span className='ok-text'>green="true",</span> 
+                <span className='error-text'>red="false",</span> 
+                <span className='text-colors'>gray="undefined"</span>
+              </span>
+            </div>
+          </ShowcaseElement>
+        }
+        
+        { currentTab == 'MultiSelect' && 
+          <ShowcaseElement jsx={getSourceCode(SelectCodeSnippets, "Example_MultiSelectInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={error} setError={setError}
+              disabled={disabled} setDisabled={setDisabled}
+              elementStateTypes={[]} additionalStateStyles='pb-0'
+            >
+              <Example_SelectInput 
+                error={error} 
+                disabled={disabled} 
+                closeOnLeave={msDropdownSettings.closeOnLeave}
+                keepOpenOnSlct={msDropdownSettings.keepOpenOnSlct}
+                preventOpenOnTab={msDropdownSettings.preventOpenOnTab}
+              />
+            </ShowcaseExample_StateRef>
+
+            <div className={`pb-32 showcase-state-ref-states-c`}>
+              {/* Close dropdown when mouse leaves the select? */}
+              <div className={ msDropdownSettings.closeOnLeave === true ?  'element-state-v-green' :
+                msDropdownSettings.closeOnLeave === false ? 'element-state-v-red' : 'element-state-v-gray' }>
+                <ElementState type='closeOnLeave' onClick={() => updateDropdownSettings('closeOnLeave', setMsDropdownSettings)} isSelected />
+              </div>
+
+              {/* Keep dropdown open onSelect? */}
+              <div className={ msDropdownSettings.keepOpenOnSlct === true ?  'element-state-v-green' :
+                msDropdownSettings.keepOpenOnSlct === false ? 'element-state-v-red' :'element-state-v-gray' }>
+                <ElementState type='keepOpenOnSlct' onClick={() => updateDropdownSettings('keepOpenOnSlct', setMsDropdownSettings)} isSelected />
+              </div>
+
+              {/* Prevent opening the dropdown when user tabs to the select? */}
+              <div className={ msDropdownSettings.preventOpenOnTab === true ?  'element-state-v-green' :
+                msDropdownSettings.preventOpenOnTab === false ? 'element-state-v-red' : 'element-state-v-gray' }>
+                <ElementState type='preventOpenOnTab' onClick={() => updateDropdownSettings('preventOpenOnTab', setMsDropdownSettings)} isSelected />
+              </div>
+              
+              <span className='pl-4 rowStart items-center text-nowrap *:pr-4 *:text-sm *:italic *:font-semibold'>
+                <span className='ok-text'>green="true",</span> 
+                <span className='error-text'>red="false",</span> 
+                <span className='text-colors'>gray="undefined"</span>
+              </span>
+            </div>
           </ShowcaseElement>
         }
       </Variants>
@@ -123,7 +258,8 @@ const Variants = styled.div``;
 const defaultParams: string[] = [ 
   'name', 'label', 'description',
   'spacing', 'value', 'values', 'multiSelect', 'onSelect', 'placeholder',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required', 'tooltip'
+  'spacing', 'error', 'errorMessage', 'disabled', 'required', 'tooltip',
+  'opts'
 ];
 
 
@@ -134,6 +270,11 @@ const variantParamsList: Record<string, string[]> = {
 const childParamsList: Record<string, string[]> = {
   'tooltip': [
     'context', 'content',
+  ],
+  'opts': [
+    'closeDropdownOnLeave',
+    'keepDropdownOpenOnSelect',
+    'preventOpenOnTabFocus',
   ]
 };
 
@@ -177,14 +318,21 @@ const paramTypeElements: Record<string, React.FC> = {
   'tooltip': () => <ParamType type="TooltipBundle" tooltip={{ code: Code_TooltipBundle, type: 'interface' }} />,
   'context': () => <ParamType type="TooltipActions" tooltip={{ code: Code_TooltipActions, type: 'interface' }} />,
   'content': () => <ParamType type="TooltipServiceProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
+
+  'opts': () => <ParamType type="SelectOpts" tooltip={{ code: Code_opts, type: 'interface' }} />,
+  'closeDropdownOnLeave': () => <ParamType type="boolean" tooltip={{ code: dParArg('closeDropdownOnLeave', 'false', 'var'), type: 'interface' }} />,
+  'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
+  'preventOpenOnTabFocus': () => <ParamType type="boolean" tooltip={{ code: dParArg('preventOpenOnTabFocus', 'false', 'var'), type: 'interface' }} />,
+
 };
 
 import SourceSelectSnippets from '../LibraryImportCodeRefFix?raw';
 const Code_SelectItem = getSourceCode(SourceSelectSnippets, 'SelectItem', 'interface');
+const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';
 const Code_TooltipBundle = getSourceCode(SourceSelectSnippets, 'TooltipBundle', 'interface');
 const Code_TooltipActions = getSourceCode(SourceSelectSnippets, 'TooltipActions', 'interface');
 const Code_TooltipService = getSourceCode(SourceSelectSnippets, 'TooltipServiceProps', 'type');
-const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';
+const Code_opts = getSourceCode(SourceSelectSnippets, 'SelectOpts', 'interface');
 
 
 const paramDescriptionElements: Record<string, React.FC> = {
@@ -238,7 +386,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Whether the select component is required.
     </div>,
-    
+
   'tooltip' : () =>
     <div className='param-item-desc-text'>
       Should this component have a tooltip?
@@ -250,5 +398,22 @@ const paramDescriptionElements: Record<string, React.FC> = {
   'content': () =>
     <div className='param-item-desc-text'>
       The props to pass to the tooltip to render it's content.
+    </div>,
+
+  'opts' : () =>
+    <div className='param-item-desc-text'>
+      Optional parameters to adjust the select component's functionality.
+    </div>,
+  'closeDropdownOnLeave' : () =>
+    <div className='param-item-desc-text'>
+      Should the dropdown close when the user's mouse moves outside of the dropdown? 
+    </div>,
+  'keepDropdownOpenOnSelect' : () =>
+    <div className='param-item-desc-text'>
+      Whether the dropdown should stay open when they select a value. Keeping this undefined allows the default behavior for select and multi-select versions to take precedence.
+    </div>,
+  'preventOpenOnTabFocus' : () =>
+    <div className='param-item-desc-text'>
+      By default, when the user tabs to the select, the dropdown will open. If you don't want this behavior, set this value to true.
     </div>,
 };

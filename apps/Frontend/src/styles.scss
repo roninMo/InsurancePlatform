@@ -1680,15 +1680,42 @@
     @apply primary-text outline-focus; 
   }
 
+  // For true / false / other states @see Docs_Select
+  .element-state-v-green {
+    & .element-state {
+      @apply hover:ok-text hover:outline-ok;
+    }
+
+    & .element-state-selected {
+      @apply ok-text outline-ok;
+    }
+  }
+  
+  .element-state-v-red {
+    & .element-state {
+      @apply hover:error-text hover:outline-error;
+    }
+
+    & .element-state-selected {
+      @apply error-text outline-error;
+    }
+  }
+
+  .element-state-v-gray {
+    & .element-state {
+      @apply hover:text-colors hover:outline-light;
+    }
+
+    & .element-state-selected {
+      @apply text-colors outline-light;
+    }
+  }
 
   // SubTables
   .subtable-dropdown {
     @apply 
-      col-span-full p-4
-
-      outline-css outline-styles
-
-    ;
+      mx-4 mt-2 mb-12 p-0
+      outline-css outline-styles;
   }
 
 
@@ -1890,6 +1917,11 @@
   html.dark {
     background-color: #1e293b; /* Your exact Tailwind dark:bg color */
     color-scheme: dark;
+  }
+
+  .ascii-text {
+    @apply whitespace-pre-wrap text-base font-semibold;
+    letter-spacing: 0.4rem;
   }
   // #endregion
 

@@ -2,11 +2,12 @@ import { Icon } from '@Project/ReactComponents';
 import styles from './ElementState.module.scss';
 
 
-export type ElementStateTypes = 'default' | 'error' | 'disabled' | 'errorAndDisabled';
+export type ElementStateDefaults = 'default' | 'error' | 'disabled' | 'errorAndDisabled';
+export type ElementStateTypes = ElementStateDefaults | (string & {});
 export interface ElementStateProps {
-  type: ElementStateTypes | string;
+  type: ElementStateTypes;
   isSelected?: boolean;
-  onClick: (type: ElementStateTypes | string) => void;
+  onClick: (type: ElementStateTypes) => void;
 }
 
 export const ElementState = ({ type, isSelected = false, onClick }: ElementStateProps) => {

@@ -15,8 +15,7 @@ export interface SelectProps {
 
   value: SelectItem;
   values: SelectItem[];
-  multiSelect?: boolean; // TODO: create the multiselect
-  // focusType: mouseLeaveCloses, onSelectCloses
+  multiSelect?: boolean;
   onSelect?: (selected: SelectItem, index: number) => void;
   placeholder?: string;
 
@@ -31,8 +30,6 @@ export interface SelectProps {
     content?: any; 
   }
 
-  // TODO: additional variant options to keep the dropdown open when they select a value
-  // TODO: both for multiselect, and optionally on/off for both
   opts?: {
     // when they hover outside of the element, close the dropdown.
     closeDropdownOnLeave?: boolean;

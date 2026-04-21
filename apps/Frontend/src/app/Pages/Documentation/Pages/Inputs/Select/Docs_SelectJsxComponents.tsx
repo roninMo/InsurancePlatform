@@ -1,13 +1,14 @@
 import { Select, SelectItem } from "@Project/ReactComponents";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
 
 
-export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnSlct, preventOpenOnTab }: {
   error: string;
-  setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
-  setDisabled?: Dispatch<SetStateAction<boolean>>;
+  closeOnLeave?: boolean;
+  keepOpenOnSlct?: boolean;
+  preventOpenOnTab?: boolean;
 }) => {
   const [selectedValue, setSelectedValue] = useState<SelectItem>({ value: '', label: '' });
   const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
@@ -37,6 +38,59 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
         value={selectedValue}
         values={projectIcons}
         onSelect={onSelectValue}
+
+        error={!!error}
+        errorMessage={error}
+        disabled={disabled}
+        required
+
+        tooltip={{ context: tooltipContext, content: { text: "Tooltip text..." }}}
+        opts={{
+          closeDropdownOnLeave: closeOnLeave,
+          keepDropdownOpenOnSelect: keepOpenOnSlct, 
+          preventOpenOnTabFocus: preventOpenOnTab,
+        }}
+      />
+    </div>
+  );
+}
+
+
+export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOpenOnSlct, preventOpenOnTab }: {
+  error: string;
+  disabled: boolean;
+  closeOnLeave?: boolean;
+  keepOpenOnSlct?: boolean;
+  preventOpenOnTab?: boolean;
+}) => {
+  const [selectedValue, setSelectedValue] = useState<SelectItem>({ value: '', label: '' });
+  const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
+    { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
+    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
+    { value: 'error', label: "Error", iconProps:                  { icon: "Error", placement: 'left' }},
+    { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
+    ...selectIcons
+  ]);
+  
+  const onSelectValue = (selected: SelectItem, index: number) => {
+    setSelectedValue(selected);
+    // console.log('select: new value: ', {currentIcon, index, selectIcons});
+  }
+
+  // universal tooltip provider
+  const tooltipContext = useContext(TooltipService);
+
+  return (
+    <div>
+      <Select 
+        name={`select-form-name`}
+        label="Multi Select Component"
+        placeholder="Select some values..."
+        description="The select input's description."
+
+        value={selectedValue}
+        values={projectIcons}
+        onSelect={onSelectValue}
         multiSelect
 
         error={!!error}
@@ -46,10 +100,9 @@ export const Example_SelectInput = ({ error, setError, disabled, setDisabled }: 
 
         tooltip={{ context: tooltipContext, content: { text: "Tooltip text..." }}}
         opts={{
-          // TODO: add state refs for these values, and another variant in the docs for multiSelect
-          // closeDropdownOnLeave: true,
-          // keepDropdownOpenOnSelect: true, 
-          // preventOpenOnTabFocus: true,
+          closeDropdownOnLeave: closeOnLeave,
+          keepDropdownOpenOnSelect: keepOpenOnSlct, 
+          preventOpenOnTabFocus: preventOpenOnTab,
         }}
       />
     </div>
