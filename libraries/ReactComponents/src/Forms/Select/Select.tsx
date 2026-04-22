@@ -5,6 +5,7 @@ import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
 import styles from './Select.module.scss';
 import styled from '@emotion/styled';
+import { TooltipContentProps, TooltipContextActions } from "../../Common";
 
 
 export interface SelectProps {
@@ -18,24 +19,22 @@ export interface SelectProps {
   onSelect?: (selected: SelectItem, index: number) => void;
   placeholder?: string;
 
+  // Error / Validation // TODO: change the error state to a single value OR the error obj (if stable ref from RHF)
   error?: boolean;
   errorMessage?: string;
   disabled?: boolean;
   required?: boolean;
   
-  // TODO: TooltipProps; <- library / app import conflict, fix this later
-  tooltip?: {
-    context?: { show: (config?: any) => void; hide: () => void; };
-    content?: any; 
-  }
+  /* Tooltip */
+  // The Tooltip Context stable function ref
+  tooltipContext?: TooltipContextActions;
+  // The content props for the tooltip component
+  tooltipContent?: TooltipContentProps; 
 
-  opts?: SelectOpts; 
-}
-
-export interface SelectOpts {
+  /* Select Dropdown Options */
   // when they hover outside of the element, close the dropdown.
   closeDropdownOnLeave?: boolean;
-
+  
   // for both normal or multiselect. undefined is ignored
   keepDropdownOpenOnSelect?: boolean;
   
@@ -44,13 +43,15 @@ export interface SelectOpts {
 }
 
 
+
 // Custom select component for themes and advanced functionality
 export const Select = ({
   name, label, description, value, values, multiSelect, onSelect, placeholder,
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  error = false, errorMessage, disabled = false, required = false, tooltip, opts
+  closeDropdownOnLeave, keepDropdownOpenOnSelect, preventOpenOnTabFocus, 
+  error = false, errorMessage, disabled = false, required = false, tooltipContext, tooltipContent, 
 }: SelectProps & UniversalEventHandlers) => {
-  const { show, hide } = tooltip?.context || {};  
+  const { show, hide } = tooltipContext || {};  
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   // const selectedValues = useRef<Record<string, boolean>>(Object.fromEntries(values.map(item => [value.value, false])));
   const dropdownId = `${name}-slct-dropdown`;
@@ -86,7 +87,7 @@ export const Select = ({
   }
 
   const handleDropdownToggle = () => {
-    const keepDropdownOpen = opts?.keepDropdownOpenOnSelect;
+    const keepDropdownOpen = keepDropdownOpenOnSelect;
 
     // Default behavior
     if (keepDropdownOpen === undefined) {
@@ -128,13 +129,13 @@ export const Select = ({
   }, [dropdownOpen]);
 
 
-  // for opts?.closeDropdownOnLeave: Closes the dropdown when hovers outside of it 
+  // for closeDropdownOnLeave: Closes the dropdown when hovers outside of it 
   useEffect(() => {
     const select = selectElementRef.current;
     const dropdown = dropdownElementRef.current;
     
     // If the dropdown is closed or this option isn't enabled don't add the event
-    if (!dropdownOpen || !opts?.closeDropdownOnLeave) {
+    if (!dropdownOpen || !closeDropdownOnLeave) {
       return;
     }
 
@@ -179,13 +180,13 @@ export const Select = ({
 
     document.addEventListener('mouseover', handleMouseOver);
     return () => document.removeEventListener('mouseover', handleMouseOver);
-  }, [dropdownOpen, opts?.closeDropdownOnLeave]);
+  }, [dropdownOpen, closeDropdownOnLeave]);
 
 
   // Open the dropdown when the user tabs to it
   useEffect(() => {
     const selectElement = selectElementRef.current;
-    if (opts?.preventOpenOnTabFocus || !selectElement) return;
+    if (preventOpenOnTabFocus || !selectElement) return;
 
     // tabbed / keyboard nav to focus the element
     const checkIfTabbed = (event: globalThis.FocusEvent) => {
@@ -195,6 +196,8 @@ export const Select = ({
 
     selectElement.addEventListener('focus', checkIfTabbed);
     return () => selectElement.removeEventListener('focus', checkIfTabbed);
+
+    // TODO: add arrow keys after tabbing to allow them to focus and then select an item from this!
   });
   // #endregion
 
@@ -234,7 +237,7 @@ export const Select = ({
           </span>
 
           <TooltipIcons
-            onMouseEnter={() => show?.(tooltip?.content)}
+            onMouseEnter={() => show?.(tooltipContent)}
             onMouseLeave={() => hide?.()} 
             className={`row gap-1 items-center justify-end`
           }>

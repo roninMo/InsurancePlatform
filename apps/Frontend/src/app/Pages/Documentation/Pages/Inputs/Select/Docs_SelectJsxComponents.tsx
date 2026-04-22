@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { Select, SelectItem } from "@Project/ReactComponents";
 import { TooltipService } from "@Project/ReactComponents";
 
@@ -23,8 +23,11 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
     setSelectedValue(selected);
     // console.log('select: new value: ', {currentIcon, index, selectIcons});
   }
+  
+  // Prevent object from causing rerenders.
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text" }), []);
 
-  // universal tooltip provider
+  // The universal tooltip provider
   const tooltipContext = useContext(TooltipService);
 
   return (
@@ -39,17 +42,20 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
         values={projectIcons}
         onSelect={onSelectValue}
 
+        // Error / Validation
         error={!!error}
         errorMessage={error}
         disabled={disabled}
         required
 
-        tooltip={{ context: tooltipContext, content: { text: "Tooltip text..." }}}
-        opts={{
-          closeDropdownOnLeave: closeOnLeave,
-          keepDropdownOpenOnSelect: keepOpenOnSlct, 
-          preventOpenOnTabFocus: preventOpenOnTab,
-        }}
+        // Tooltip params
+        tooltipContext={ tooltipContext }
+        tooltipContent={ tooltipContent }
+        
+        // Dropdown options? 
+        closeDropdownOnLeave={ closeOnLeave}
+        keepDropdownOpenOnSelect={ keepOpenOnSlct} 
+        preventOpenOnTabFocus={ preventOpenOnTab}
       />
     </div>
   );
@@ -63,8 +69,6 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
   keepOpenOnSlct?: boolean;
   preventOpenOnTab?: boolean;
 }) => {
-  // universal tooltip provider
-  const tooltipContext = useContext(TooltipService);
 
   // raw data object
   const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
@@ -98,6 +102,12 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
       return newValue;
     });
   }
+  
+    // Prevent object from causing rerenders.
+    const tooltipContent = useMemo(() => ({ text: "Tooltip text" }), []);
+
+  // The universal tooltip provider
+  const tooltipContext = useContext(TooltipService);
 
   return (
     <div>
@@ -112,17 +122,20 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
         onSelect={onSelectValue}
         multiSelect
 
+        // Error / Validation
         error={!!error}
         errorMessage={error}
         disabled={disabled}
         required
 
-        tooltip={{ context: tooltipContext, content: { text: "Tooltip text..." }}}
-        opts={{
-          closeDropdownOnLeave: closeOnLeave,
-          keepDropdownOpenOnSelect: keepOpenOnSlct, 
-          preventOpenOnTabFocus: preventOpenOnTab,
-        }}
+        // Tooltip params
+        tooltipContext={ tooltipContext }
+        tooltipContent={ tooltipContent }
+        
+        // Dropdown options? 
+        closeDropdownOnLeave={ closeOnLeave}
+        keepDropdownOpenOnSelect={ keepOpenOnSlct} 
+        preventOpenOnTabFocus={ preventOpenOnTab}
       />
     </div>
   );

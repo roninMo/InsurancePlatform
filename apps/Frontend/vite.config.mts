@@ -17,7 +17,7 @@ export default defineConfig(() => ({
   plugins: [react()],
   
   // relative alias paths
-  resole: {
+  resolve: {
     alias: {
       // Relative path to the universal classes (if needed)
       // '@lib-cl': path.resolve(__dirname, '../../libraries/Classes/src'),

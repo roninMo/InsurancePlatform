@@ -8,8 +8,8 @@ import styles from './Tooltip.module.scss';
 
 // Tooltip variants 
 export type TooltipType = 'text' | 'code' | 'custom' | 'none';
-export type TooltipProps = TooltipBase & (TextTooltipProps | CodeTooltipProps | CustomTooltipProps); 
-export type TooltipServiceProps = TextTooltipProps | CodeTooltipProps | CustomTooltipProps;
+export type TooltipProps = TooltipBase & TooltipContentProps; 
+export type TooltipContentProps = TextTooltipProps | CodeTooltipProps | CustomTooltipProps;
 export interface TextTooltipProps {
   text: string;
 }

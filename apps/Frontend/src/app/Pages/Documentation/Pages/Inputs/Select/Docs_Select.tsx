@@ -1,7 +1,7 @@
-import { useState, useMemo, SetStateAction, Dispatch } from 'react';
+import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { getSourceCode, TooltipService } from "@Project/ReactComponents";
+import { getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -22,6 +22,7 @@ export const Docs_Select = () => {
   //--------------------------------//
   // Tab Functionality              //
   //--------------------------------//
+  const { show, hide } = useContext(TooltipService);
   const [currentTab, setCurrentTab] = useState<string>('Default');
   const tabs: string[] = ['Default', 'MultiSelect'];
   const tabLabels: string[] = ['Default', 'Multi Select'];
@@ -84,14 +85,14 @@ export const Docs_Select = () => {
     <Container className='spacing'>
 
       <h3 className="span-12 p-2">
-        Button Component
+        Select Component
       </h3>
 
       <div className='span-12'>
         <div className='p-2 showcase-text'>
-          Add content soon
-
-
+          The select component is a custom component that functions just like a select. It has built in styling and event functionality
+          for handling both select and <Kw>multi select</Kw> functionality, with built in options for how the dropdown behaves for either.
+          It has themed styling, and allows you to pass in custom Icons for the <Kw>selectItems</Kw>, and allows you to take control of the state with ease.
         </div>
       </div>
 
@@ -196,6 +197,18 @@ export const Docs_Select = () => {
         }
       </Variants>
 
+      <div className='span-12 pt-4'>
+        <div className='p-2 showcase-text'>
+          There's also custom properties for overriding the dropdown behavior to suit your needs. If you want the dropdown to close 
+          when the user's mouse leaves the dropdown, enable <Kw>closeDropdownOnLeave</Kw>. If you want to adjust when the dropdown closes for both the <Kw>Select</Kw> or <Kw>MultiSelect</Kw>, 
+          set <Kw>keepDropdownOpenOnSelect</Kw> to true or false. Leaving it undefined will let each variant keep it's natural behavior.
+
+          <br/><br/>
+          Finally, by default if you tab to the select component, the dropdown will automatically open. 
+          If you don't want this behavior, set <Kw>preventOpenOnTabFocus</Kw> to true.
+        </div>
+      </div>
+
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Select Parameters' openByDefault>
           <ParamTable 
@@ -224,7 +237,7 @@ const defaultParams: string[] = [
   'name', 'label', 'description',
   'spacing', 'value', 'values', 'multiSelect', 'onSelect', 'placeholder',
   'spacing', 'error', 'errorMessage', 'disabled', 'required', 'tooltip',
-  'opts'
+  'dropdownOptions'
 ];
 
 
@@ -236,7 +249,7 @@ const childParamsList: Record<string, string[]> = {
   'tooltip': [
     'context', 'content',
   ],
-  'opts': [
+  'dropdownOptions': [
     'closeDropdownOnLeave',
     'keepDropdownOpenOnSelect',
     'preventOpenOnTabFocus',
@@ -280,24 +293,26 @@ const paramTypeElements: Record<string, React.FC> = {
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 
-  'tooltip': () => <ParamType type="TooltipBundle" tooltip={{ code: Code_TooltipBundle, type: 'interface' }} />,
-  'context': () => <ParamType type="TooltipActions" tooltip={{ code: Code_TooltipActions, type: 'interface' }} />,
-  'content': () => <ParamType type="TooltipServiceProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
+  'tooltip': () => <ParamType type="TooltipOptions" />,
+  'context': () => <ParamType type="TooltipContextActions" tooltip={{ code: Code_TooltipContextActions, type: 'interface' }} />,
+  'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
 
-  'opts': () => <ParamType type="SelectOpts" tooltip={{ code: Code_opts, type: 'interface' }} />,
-  'closeDropdownOnLeave': () => <ParamType type="boolean" tooltip={{ code: dParArg('closeDropdownOnLeave', 'false', 'var'), type: 'interface' }} />,
+  'dropdownOptions': () => <ParamType type="SelectOpts" />,
+  'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'false', 'var'), type: 'interface' }} />,
   'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
-  'preventOpenOnTabFocus': () => <ParamType type="boolean" tooltip={{ code: dParArg('preventOpenOnTabFocus', 'false', 'var'), type: 'interface' }} />,
+  'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'false', 'var'), type: 'interface' }} />,
 
 };
 
 import SourceSelectSnippets from '../LibraryImportCodeRefFix?raw';
 const Code_SelectItem = getSourceCode(SourceSelectSnippets, 'SelectItem', 'interface');
 const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';
-const Code_TooltipBundle = getSourceCode(SourceSelectSnippets, 'TooltipBundle', 'interface');
-const Code_TooltipActions = getSourceCode(SourceSelectSnippets, 'TooltipActions', 'interface');
-const Code_TooltipService = getSourceCode(SourceSelectSnippets, 'TooltipServiceProps', 'type');
-const Code_opts = getSourceCode(SourceSelectSnippets, 'SelectOpts', 'interface');
+
+import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'TooltipContextActions', 'interface');
+
+import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
+const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
 
 
 const paramDescriptionElements: Record<string, React.FC> = {
@@ -365,9 +380,9 @@ const paramDescriptionElements: Record<string, React.FC> = {
       The props to pass to the tooltip to render it's content.
     </div>,
 
-  'opts' : () =>
+  'dropdownOptions' : () =>
     <div className='param-item-desc-text'>
-      Optional parameters to adjust the select component's functionality.
+      Optional parameters to adjust the select component's dropdown functionality.
     </div>,
   'closeDropdownOnLeave' : () =>
     <div className='param-item-desc-text'>

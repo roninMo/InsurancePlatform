@@ -63,6 +63,8 @@ export const Documentation = () => {
 	- Add react hook forms soon alongside the option to add state to the value for custom scenarios
     - this changes all inputs, add custom opts for using useState to track value instead.
 
+  - Eventually add aria specific stuff to custom components!
+
 	*/
 
 
