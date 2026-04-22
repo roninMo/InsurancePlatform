@@ -1,3 +1,5 @@
+// Old input component!
+
 import { Dispatch, MouseEvent, RefObject, SetStateAction, useId, useRef, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
 

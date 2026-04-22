@@ -25,10 +25,11 @@ export interface SelectItemProps {
   currentSelectValue: SelectItem;
   multiSelect?: boolean;
   name: string; // "form group id"
+  dropdownOpen: boolean; // because of the memo
 }
 
 
-export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectValue, multiSelect, name }: SelectItemProps) => {
+export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectValue, multiSelect, name, dropdownOpen }: SelectItemProps) => {
   const { value, label, iconProps, selected } = item;
 
   const currentlySelected = () => {
@@ -36,8 +37,6 @@ export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectV
     return value == currentSelectValue.value;
   };
 
-  console.log(`${label} updated values: `, item);
-  
   return (
     <Container 
       id={`${name}-${value}`}
@@ -71,7 +70,8 @@ export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectV
   // so just check if the selectItem object is a "new" object to handle shallow equality checks. 
   return (
     prevProps.item === nextProps.item && 
-    prevProps.multiSelect === nextProps.multiSelect
+    prevProps.multiSelect === nextProps.multiSelect && 
+    prevProps.dropdownOpen === nextProps.dropdownOpen
   );
 });
 

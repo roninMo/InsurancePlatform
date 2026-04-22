@@ -1,6 +1,5 @@
 import { MouseEvent, useContext } from 'react';
-import { TooltipProps, TooltipType } from '../../../../Components/Utils/Tooltip/Tooltip';
-import { TooltipService } from '../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+import { TooltipProps, TooltipService } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './ParamType.module.scss';

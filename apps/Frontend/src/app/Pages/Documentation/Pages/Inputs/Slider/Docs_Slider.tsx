@@ -7,8 +7,8 @@ import { ParamType } from "../../../Components/ParamType/ParamType";
 import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
 
 import SliderCodeSnippets from './Docs_SliderJsxComponent?raw';
-import { getSourceCode } from "../../../../../Components/Utils/GetSourceCode";
 import { Example_DefaultSlider } from "./Docs_SliderJsxComponent";
+import { getSourceCode } from "@Project/ReactComponents";
 
 
 export const Docs_Slider = () => {

@@ -1,6 +1,6 @@
-import { Select, SelectItem } from "@Project/ReactComponents";
 import { useContext, useRef, useState } from "react";
-import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
+import { Select, SelectItem } from "@Project/ReactComponents";
+import { TooltipService } from "@Project/ReactComponents";
 
 
 export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnSlct, preventOpenOnTab }: {

@@ -1,8 +1,9 @@
+import { ReactNode } from 'react';
+import { HashLink, HashLinkProps } from '../../../../Components/Utils/HashLink/HashLink';
+import { TooltipProps } from '@Project/ReactComponents';
+
 import styled from '@emotion/styled';
 import styles from './Keyword.module.scss';
-import { HashLink, HashLinkProps } from '../../../../Components/Utils/HashLink/HashLink';
-import { Tooltip, TooltipProps } from '../../../../Components/Utils/Tooltip/Tooltip';
-import { ReactNode } from 'react';
 
 
 interface KeywordProps {

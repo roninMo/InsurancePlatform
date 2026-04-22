@@ -1,9 +1,9 @@
 import { ReactNode, RefObject, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { CodeBlock } from '../../../Pages/Documentation/Documentation';
-
-import styles from './Tooltip.module.scss';
-import styled from '@emotion/styled';
+import { CodeRenderer } from '../CodeSnippets/CodeRenderer';
 import { Icon, interpFloat, interpV2 } from '@Project/ReactComponents';
+
+import styled from '@emotion/styled';
+import styles from './Tooltip.module.scss';
 
 
 // Tooltip variants 
@@ -257,7 +257,7 @@ export const Tooltip = (props: TooltipProps) => {
     if (!shouldRender) return null;
     return (
       <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
-        <CodeBlock 
+        <CodeRenderer 
           language='tsx' 
           code={code} 
           showLineNumbers={showLineNumbers} 

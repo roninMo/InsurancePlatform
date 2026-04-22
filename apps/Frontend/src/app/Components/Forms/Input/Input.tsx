@@ -3,9 +3,7 @@ import { InputMask, useMask } from '@react-input/mask';
 
 import styles from './Input.module.scss';
 import styled from '@emotion/styled';
-import { UniversalEventHandlers, Icon, Button } from '@Project/ReactComponents';
-import { TooltipProps } from '../../Utils/Tooltip/Tooltip';
-import { TooltipService } from '../../Utils/Tooltip/TooltipProvider/TooltipProvider';
+import { UniversalEventHandlers, Icon, Button, TooltipProps, TooltipService } from '@Project/ReactComponents';
 
 
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' 

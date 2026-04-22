@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 import { UserTokenInformation } from '@Project/Classes';
 import { jwtDecode } from 'jwt-decode';
-import { TooltipProvider } from './Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+import { TooltipProvider } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div``;

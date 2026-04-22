@@ -265,6 +265,7 @@ export const Select = ({
                 currentSelectValue={value}
                 multiSelect={multiSelect}
                 name={name}
+                dropdownOpen={dropdownOpen}
                 key={`${name}-${item.value}`}
               />
             )}

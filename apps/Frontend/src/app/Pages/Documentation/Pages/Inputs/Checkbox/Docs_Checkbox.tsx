@@ -2,7 +2,7 @@
 import { useState, useMemo, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { TooltipService } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+import { getSourceCode, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -16,7 +16,6 @@ import styled from '@emotion/styled';
 import CheckboxCodeSnippets from './Docs_CheckboxJsxComponents?raw';
 import RadioGroupSnippets from '../Radio/Docs_RadioJsxComponents?raw';
 import RadioTableSnippets from '../RadioTable/Docs_RadioTableJsxComponents?raw';
-import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { 
   Example_DefaultCheckbox,
   Example_ListCheckbox,

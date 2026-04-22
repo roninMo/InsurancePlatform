@@ -1,7 +1,7 @@
 import { useContext, useMemo, useState } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { TooltipService } from '../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider';
+import { getSourceCode, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -13,7 +13,6 @@ import { DocLink } from '../../../Components/DocLink/DocLink';
 import { TextInputTypes } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
-import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import InputCodeSnippets from './Docs_InputJsxComponents?raw';
 import TextareaCodeSnippets from '../Textarea/Docs_TextareaJsxComponents?raw';
 import { 

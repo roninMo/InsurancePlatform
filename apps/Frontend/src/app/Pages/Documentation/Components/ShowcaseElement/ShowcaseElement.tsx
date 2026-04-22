@@ -1,10 +1,9 @@
 import { useState, useEffect, ReactNode, Suspense, useMemo } from 'react';
-import { CodeBlock } from '../../Documentation';
+import { CodeRenderer, Icon } from '@Project/ReactComponents';
 // import { Notify } from '../../Pages/Utils/Notify/Notify'; // Alternative for delay, used w/Suspense and conditional render
 
 import styled from '@emotion/styled';
 import styles from './ShowcaseElement.module.scss';
-import { Icon } from '@Project/ReactComponents';
 
 
 export interface ParamContext {
@@ -103,7 +102,7 @@ const MemoizedCodeSnippet = ({ jsx, onCopyCodeSnippet }: MemoizedCodeSnippetProp
   // Do not rerender react-syntax-highlighter's import, it still takes time in the DOM to render and is very slow
   const memoizedSnippet = useMemo(() => (
     <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
-      <CodeBlock language='tsx' code={jsx} showLineNumbers />
+      <CodeRenderer language='tsx' code={jsx} showLineNumbers />
       <JsxCopySnippet onClick={onCopyCodeSnippet} className='p-2 m-4 showcase-jsx-copy-snippet'>
         <Icon variant='CodeBracket' styles='size-6 icon-default-color' />
       </JsxCopySnippet>

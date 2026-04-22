@@ -11,14 +11,16 @@ SyntaxHighlighter.registerLanguage('tsx', tsx);
 // SyntaxHighlighter.registerLanguage('typescript', typescript);
 // SyntaxHighlighter.registerLanguage('json', json);
 
-const LazySyntaxHighlighter = (props: SyntaxHighlighterProps | any) => {
+
+/** Renders code snippets like an actual code editor. Just pass the string to the code props */
+const CodeSnippet = (props: SyntaxHighlighterProps | any) => {
 	const pageTheme = localStorage.getItem('theme') || "light";
 	const theme = pageTheme == "dark" ? oneDark : oneDark; // TODO: we need a light theme
 	
 	return (
-  	<SyntaxHighlighter {...props} style={{...oneDark}} />
+		<SyntaxHighlighter {...props} style={{...oneDark}} />
 	);
 }
 
 
-export default LazySyntaxHighlighter;
+export default CodeSnippet;

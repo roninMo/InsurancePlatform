@@ -8,11 +8,6 @@
 // Tooltip props 
 //---------------------------------------------------------------//
 /* For components that want to optionally pass in the tooltip context and information */
-export interface TooltipBundle {
-  context?: TooltipActions;
-  content?: TooltipProps;
-}
-
 export interface TooltipActions { // These are stable refs, calling them won't cause rerenders
   show: (config?: TooltipServiceProps) => void;
   hide: () => void;

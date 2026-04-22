@@ -1,7 +1,7 @@
 import { useState, useMemo, SetStateAction, Dispatch } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
+import { getSourceCode, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -12,7 +12,6 @@ import { Kw } from '../../../Components/Keyword/Keyword';
 import styled from '@emotion/styled';
 
 import SelectCodeSnippets from './Docs_SelectJsxComponents?raw';
-import { getSourceCode } from '../../../../../Components/Utils/GetSourceCode';
 import { Example_MultiSelectInput, Example_SelectInput } from './Docs_SelectJsxComponents';
 
 

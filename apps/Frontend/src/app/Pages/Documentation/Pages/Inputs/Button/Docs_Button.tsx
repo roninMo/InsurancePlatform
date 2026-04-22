@@ -1,7 +1,7 @@
 import { MouseEvent, useState, useMemo, useContext } from "react";
 import { ShowcaseElement, ParamContext } from "../../../Components/ShowcaseElement/ShowcaseElement";
 import { ShowcaseExample_StateRef } from "../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef";
-import { TooltipService } from "../../../../../Components/Utils/Tooltip/TooltipProvider/TooltipProvider";
+import { getSourceCode, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
 import { dParArg, ParamType } from "../../../Components/ParamType/ParamType";
@@ -12,7 +12,6 @@ import styled from "@emotion/styled";
 
 import ButtonCodeSnippets from './Docs_ButtonJsxComponents?raw';
 import SliderCodeSnippets from '../Slider/Docs_SliderJsxComponent?raw';
-import { getSourceCode } from "../../../../../Components/Utils/GetSourceCode";
 import { 
   Example_CustomButton, 
   Example_GrayButton, 
