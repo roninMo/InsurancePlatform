@@ -1081,11 +1081,12 @@
     py-2 transition-all
 
     border-t border-default 
-    group-focus-within:border-focus;
+    // group-focus-within:border-focus
+    ;
   }
 
   .ta-d-btn-links-focus {
-    @apply group-focus-within:border-focus;
+    @apply group-focus-within:border-default;
   }
   
   .ta-d-btn-links-error { // The bottom border of the default variant
@@ -1114,7 +1115,7 @@
 	
 	.ta-b-attach-file {
 		@apply 
-			rowStart gap-2 
+			rowStart gap-2 py-1
 			*:cursor-pointer *:transition-all 
 			*:hover:text-slate-800 *:dark:hover:text-slate-200;
 	}
@@ -1154,12 +1155,31 @@
     }
   }
 
+  .focus-bar {
+    @apply 
+      w-0 -mb-[1px] z-10 transition-all 
+      border-b border-default
+
+      group-focus-within:animate-focus-bar
+      group-focus-within:w-full
+      group-focus-within:border-focus
+      group-focus-within:duration-200
+    ;
+
+    transform-origin: left; // important for it's animation
+  }
+  
+  .focus-bar-err { 
+    @apply w-full animate-focus-bar border-error; 
+  }
+
 
 	// MetadataTag styles
 	.metadata-tag-styles {
 		@apply
 			row justify-end gap-2 p-2  
 			*:row *:gap-2 *:p-3 *:py-2
+      animate-fade-in
     ;
 	}
 

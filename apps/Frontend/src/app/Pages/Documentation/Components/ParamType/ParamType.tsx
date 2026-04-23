@@ -46,9 +46,10 @@ const getTypeStyles = (type: ParamTypes) => {
 export const dParArg = (
   param: string, 
   value: string, 
-  type: 'str' | 'var' = 'str' // str: param="value", var: param={value}
+  type: 'str' | 'var' | 'bool' = 'str' // str: param="value", var: param={value}
 ): string => {
-  if (type == 'str') return `${param}="${value}"`;
-  if (type == 'var') return `${param}={${value}}`;
+  if (type == 'str') 	return `${param}="${value}"`;
+  if (type == 'var') 	return `${param}={${value}}`;
+	if (type == 'bool')	return `${param}`;
   return '';
 };

@@ -465,24 +465,24 @@ const paramTypeElements: Record<string, React.FC> = {
   'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOpts, type: 'interface' }} />,
 
   // Variant params
-  'incrementButtons': () => <ParamType type='boolean' />,
-  'showEmailIcon': () => <ParamType type='boolean' />,
-  'visibilityIcon': () => <ParamType type='boolean' />,
+  'incrementButtons': () => <ParamType type='boolean' tooltip={{ code: dParArg('incrementButtons', 'incrementButtons', 'var') }} />,
+  'showEmailIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showEmailIcon', 'showEmailIcon', 'var') }} />,
+  'visibilityIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('visibilityIcon', 'visibilityIcon', 'var') }} />,
 
-  'sortButton': () => <ParamType type='boolean' />,
+  'sortButton': () => <ParamType type='boolean' tooltip={{ code: dParArg('sortButton', 'sortButton', 'var') }} />,
   'sortType': () => <ParamType type='SearchSortType' tooltip={{ code: Code_SearchSortType, type: 'type' }} />,
   
-  'showPolicyNumberIcon': () => <ParamType type='boolean' />,
-  'policyNumberMask': () => <ParamType type='RefObject' />,
+  'showPolicyNumberIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPolicyNumberIcon', 'showPolicyNumberIcon', 'var') }} />,
+  'policyNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('policyMask', 'AB 0123456789') }} />,
 
-  'showPhoneIcon': () => <ParamType type='boolean' />,
-  'phoneNumberMask': () => <ParamType type='RefObject' />,
+  'showPhoneIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPhoneIcon', 'showPhoneIcon', 'var') }} />,
+  'phoneNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('phoneMask', '(123)-456-7890') }} />,
   
-  'showCreditCardIcon': () => <ParamType type='boolean' />,
-  'creditCarkMask': () => <ParamType type='RefObject' />,
+  'showCreditCardIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showCreditCardIcon', 'showCreditCardIcon', 'var') }} />,
+  'creditCarkMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('creditCardMask', '0000-0000-0000-0000') }} />,
 
-  'showMoneySign': () => <ParamType type='boolean' />,
-  'currencyTypeDropdown': () => <ParamType type='boolean' />,
+  'showMoneySign': () => <ParamType type='boolean' tooltip={{ code: dParArg('showMoneySign', 'showMoneySign', 'var') }} />,
+  'currencyTypeDropdown': () => <ParamType type='boolean' tooltip={{ code: dParArg('currencyTypeDropdown', 'currencyTypeDropdown', 'var') }} />,
 };
 
 // codeblocks - TextInputTypes, TextInputAutoCompleteTypes, InputVariantOps

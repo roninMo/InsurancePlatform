@@ -1,5 +1,6 @@
-import { Dispatch, SetStateAction, useState, ChangeEvent, FocusEvent } from "react";
+import { Dispatch, SetStateAction, useState, ChangeEvent, FocusEvent, useMemo, useContext } from "react";
 import { Input } from "../../../../../Components/Forms/Input/Input";
+import { TooltipService } from "@Project/ReactComponents";
 // import { Input } from "@Project/ReactComponents";
 
 
@@ -16,6 +17,10 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
+
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
 
   return (
     <div>
@@ -36,7 +41,8 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
       />
     </div>
   );
@@ -56,6 +62,10 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
     setValue(newValue);
   }
 
+
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
   return (
     <div>
       <Input 
@@ -76,7 +86,8 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           incrementButtons: true
         }}
@@ -99,6 +110,10 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
     setValue(newValue);
   }
 
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
+
   return (
     <div>
       <Input 
@@ -118,7 +133,8 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           showEmailIcon: true
         }}
@@ -141,6 +157,10 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
     setValue(newValue);
   }
 
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
+
   return (
     <div>
       <Input 
@@ -160,7 +180,8 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           visibilityIcon: true
         }}
@@ -183,6 +204,10 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
     setValue(newValue);
   }
 
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
+
   return (
     <div>
       <Input 
@@ -202,7 +227,8 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           sortButton: true,
           sortType: 'alphabetical',
@@ -225,6 +251,10 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
     setValue(newValue);
   }
 
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
+
   return (
     <div>
       <Input 
@@ -244,7 +274,8 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           showPolicyNumberIcon: true,
           policyNumberMask: true,
@@ -268,6 +299,10 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
     setValue(newValue);
   }
 
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
+
   return (
     <div>
       <Input 
@@ -287,7 +322,8 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           showPhoneIcon: true,
           phoneNumberMask: true,
@@ -311,6 +347,10 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
     setValue(newValue);
   }
 
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
+
   return (
     <div>
       <Input 
@@ -330,7 +370,8 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           showCreditCardIcon: true,
           creditCarkMask: true,
@@ -354,6 +395,10 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
     setValue(newValue);
   }
 
+  // tooltip logic
+  const tooltipContext = useContext(TooltipService);
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
+
   return (
     <div>
       <Input 
@@ -373,7 +418,8 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
-        tooltip={{ text: "Tooltip text..." }}
+        tooltipContext={tooltipContext}
+        tooltipContent={tooltipContent}
         opts={{
           showMoneySign: true,
           currencyTypeDropdown: true,

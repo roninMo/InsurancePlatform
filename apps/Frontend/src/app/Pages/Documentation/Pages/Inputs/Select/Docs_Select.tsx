@@ -197,7 +197,11 @@ export const Docs_Select = () => {
         }
       </Variants>
 
-      <div className='span-12 pt-4'>
+      <h3 className="span-12 p-2 pt-8">
+        Customizing the Dropdown's behavior
+      </h3>
+
+      <div className='span-12'>
         <div className='p-2 showcase-text'>
           There's also custom properties for overriding the dropdown behavior to suit your needs. If you want the dropdown to close 
           when the user's mouse leaves the dropdown, enable <Kw>closeDropdownOnLeave</Kw>. If you want to adjust when the dropdown closes for both the <Kw>Select</Kw> or <Kw>MultiSelect</Kw>, 
@@ -298,13 +302,13 @@ const paramTypeElements: Record<string, React.FC> = {
   'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
 
   'dropdownOptions': () => <ParamType type="SelectOpts" />,
-  'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'false', 'var'), type: 'interface' }} />,
+  'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'true | false | undefined', 'var'), type: 'interface' }} />,
   'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
-  'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'false', 'var'), type: 'interface' }} />,
+  'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'true | false | undefined', 'var'), type: 'interface' }} />,
 
 };
 
-import SourceSelectSnippets from '../LibraryImportCodeRefFix?raw';
+import SourceSelectSnippets from '@lib-rc/Forms/Select/SelectItem/SelectItem.tsx?raw';
 const Code_SelectItem = getSourceCode(SourceSelectSnippets, 'SelectItem', 'interface');
 const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';
 

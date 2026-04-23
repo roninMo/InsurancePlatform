@@ -1,5 +1,5 @@
 import { MouseEvent, useId, useState } from "react";
-import { UniversalEventHandlers, Icon, Button, IconTypes } from '@Project/ReactComponents';
+import { UniversalEventHandlers, Icon, Button, IconTypes, TooltipContextActions, TooltipContentProps } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
 import styles from './Textarea.module.scss';
@@ -15,29 +15,22 @@ export interface TextareaProps {
   placeholder?: string;
   value: string;
   
-  // TODO: Better error and disabled themes for all variants
   error?: boolean;
   errorMessage?: string | null;
   disabled?: boolean;
   required?: boolean;
   
-  // TODO: make the submit button optional, and only display if added
   onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   submitButtonText?: string;
   submitButtonDisabled?: boolean;
 
-  // TODO: add the tooltip component to the textarea
-  tooltip?: boolean;
-  tooltipText?: string;
-	// tooltip?: TooltipBundle;
-  
-  // Variant specific params
-  // Default and box variants
-  // TODO: why don't we make the list areas where we add attachFile to another metadata tag list of sorts
-  // TODO: Learn how to actually handle file attachment functionality
+  // TODO: Update the post variant to include the same textarea styling as the box, and add attach file to it.
+  // TODO: Add metadata tags to the default layout after the first two icons (or let emojis be a metadata tag, (create a universal help for this))
+  // TODO: Add a drag and drop file attachment component, use it's props for attachFile here, and notify that the object needs to be memoized
+  // Attach file for all variants
 	attachFile?: {
 		name: string;
-  	onAttachFile?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+    onAttachFile?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 	}
   // Box and post variants
   metadataTags?: MetadataTagProps[] | boolean;
@@ -53,7 +46,7 @@ export interface MetadataTagProps {
 
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
-  const { type = 'default', name, value, placeholder, metadataTags, onAttachFile, 
+  const { type = 'default', name, value, placeholder, metadataTags, 
     error = false, errorMessage, required, disabled,
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
@@ -91,13 +84,12 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
 
 
 export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
-  const { type = 'default', name, label, description, value, placeholder, 
-    metadataTags, onAttachFile, tooltip = false, tooltipText,
+  const { 
+    type = 'default', name, label, description, 
+    value, metadataTags,
     error = false, errorMessage, required = false, disabled = false, 
     onSubmit, submitButtonText, submitButtonDisabled = false, 
-    onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-    // ...props
-		} = allProps;
+  } = allProps;
 
 
   // TODO: add a fill bar, from left to right, or from the center out on focus for the variants 
@@ -121,9 +113,11 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
             <InputComponent { ...allProps } />
 
             {/* Icons and post button */}
-            <ButtonsAndLinks className={`ta-d-btn-links ${error && !disabled ? 'ta-d-btn-links-error' : 'ta-d-btn-links-focus'}`}>
-              <PrecedingInputElements className="rowStart items-center gap-4 pl-1">
-                <AttachFileElement onClickAttachFile={onAttachFile} iconStyles="ta-d-icon" />
+            
+            <div className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
+            <ButtonsAndLinks className={`ta-d-btn-links`}>
+              <PrecedingInputElements className="rowStart items-center gap-4 pl-1 py-1">
+                <AttachFileElement onClickAttachFile={() => {}} iconStyles="ta-d-icon" />
                 <Icon variant='Smile'       styles="ta-d-icon" />
                 {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
               </PrecedingInputElements>
@@ -168,20 +162,20 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
         <ButtonsAndLinks className="ta-b-btn-links">
           <div className="ta-b-attach-file">
-            <AttachFileElement onClickAttachFile={onAttachFile} iconStyles="ta-b-icon" />
+            <AttachFileElement onClickAttachFile={() => {}} iconStyles="ta-b-icon" />
             <p className="italic">Attach a file</p>
           </div>
 
 					{ onSubmit && 
-	          <div className="margin-auto-div-fix">
-	            <Button 
-	              displayText={submitButtonText ? submitButtonText : 'Create'} 
-	              size="default" 
-	              onClick={e => onSubmit && onSubmit(e)} 
-	              disabled={disabled || submitButtonDisabled}
-	              additionalStyles="ta-submit-btn px-3" 
-	            />
-	          </div>
+            <div className="margin-auto-div-fix">
+              <Button 
+                displayText={submitButtonText ? submitButtonText : 'Create'} 
+                size="default" 
+                onClick={e => onSubmit && onSubmit(e)} 
+                disabled={disabled || submitButtonDisabled}
+                additionalStyles="ta-submit-btn px-3" 
+              />
+            </div>
 					}
         </ButtonsAndLinks>
       </Container>
@@ -226,27 +220,23 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
           </div>
 
           { showPreview == 'write' && 
-            <MetadataTagElements type='post' metadataTags={metadataTags} id={name} />
+            <div className="animate-fade-in">
+              <MetadataTagElements type='post' metadataTags={metadataTags} id={name} />
+            </div>
           }
         </ButtonsAndLinks>
 
         <div className={`height-trans ${showPreview == 'preview' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className="height-trans-content ">
-          { showPreview == 'preview' && 
             <div className="ta-p-preview-c">
               { value ? value : 'Preview content will render here.' }
             </div>
-          }
           </div>
         </div>
 
         <div className={`height-trans ${showPreview == 'write' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className="height-trans-content ">
-          { showPreview == 'write' && 
-	          <div className="">
-	              <InputComponent { ...allProps } />
-	          </div>
-          }
+            <InputComponent { ...allProps } />
           </div>
         </div>
 
@@ -259,6 +249,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
           />
 
           <div className="margin-auto-div-fix">
+          { onSubmit && (
             <Button 
               displayText="Post" 
               size="default" 
@@ -266,6 +257,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
               disabled={disabled}
               additionalStyles="ta-submit-btn px-3 self-start" 
             />
+          )}
           </div>
         </div>
       </Container>

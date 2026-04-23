@@ -1,9 +1,15 @@
-import { Dispatch, MouseEvent, RefObject, SetStateAction, useContext, useId, useState } from 'react';
+import { Dispatch, MouseEvent, RefObject, SetStateAction, useContext, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
+import { 
+  UniversalEventHandlers, 
+  Button, 
+  Icon, 
+  TooltipContextActions, 
+  TooltipContentProps 
+} from '@Project/ReactComponents';
 
-import styles from './Input.module.scss';
 import styled from '@emotion/styled';
-import { UniversalEventHandlers, Icon, Button, TooltipProps, TooltipService } from '@Project/ReactComponents';
+import styles from './Input.module.scss';
 
 
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' 
@@ -27,7 +33,9 @@ export interface InputProps {
   errorMessage?: string | null;
   disabled?: boolean;
   required?: boolean;
-  tooltip?: TooltipProps;
+
+  tooltipContext?: TooltipContextActions;
+  tooltipContent?: TooltipContentProps;
 
   autocomplete?: TextInputAutoCompleteTypes;
 
@@ -37,7 +45,7 @@ export interface InputProps {
 
 export const Input = ({
   type = 'text', name, label, description, value, setValue, placeholder,
-  error = false, errorMessage, required = false, disabled = false, tooltip,
+  error = false, errorMessage, required = false, disabled = false, tooltipContext, tooltipContent,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
   autocomplete, opts = DefaultInputVariantOpts, ...props
 }: InputProps & UniversalEventHandlers) => {
@@ -107,7 +115,8 @@ export const Input = ({
           setValue={setValue} 
           disabled={disabled}
           error={getError()} 
-          tooltip={tooltip}
+          tooltipContext={tooltipContext}
+          tooltipContent={tooltipContent}
         />
         
         <LoadingBar className='input-loading-bar-cont'>
@@ -184,12 +193,13 @@ interface SubsequentElProps {
   disabled: boolean;
   error: boolean;
   setValue?: Dispatch<SetStateAction<string>>;
-  tooltip?: TooltipProps;
+  tooltipContext?: TooltipContextActions;
+  tooltipContent?: TooltipContentProps;
 }
 export const SubsequentElements: React.FC<SubsequentElProps> = ({
-  name, type, disabled, error, setValue, tooltip,
+  name, type, disabled, error, setValue, tooltipContext, tooltipContent
 }) => {
-  const { show, hide } = useContext(TooltipService);
+  const { show, hide } = tooltipContext || {};
 
   const incrementValue = (add: boolean) => {
     if (!setValue) return;
@@ -208,8 +218,8 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
 
         {/* Error / Tooltip icon */}
         <ErrorAndTooltipIcon className="input-tooltip-icon"
-          onMouseEnter={() => tooltip && show(tooltip)} 
-          onMouseLeave={() => tooltip && hide()} 
+          onMouseEnter={() => tooltipContent && show?.(tooltipContent)} 
+          onMouseLeave={() => hide?.()} 
         >
           { error ? <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
           :         <Icon variant='InfoBox' styles='mr-3 size-4 cursor-pointer' /> }

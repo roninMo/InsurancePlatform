@@ -1,11 +1,11 @@
 import { MouseEvent, useEffect, useId, useRef, useState } from "react";
 import { SelectItemComponent, SelectItem } from './SelectItem/SelectItem';
+import { TooltipContentProps, TooltipContextActions } from "../../Common";
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
 import styles from './Select.module.scss';
 import styled from '@emotion/styled';
-import { TooltipContentProps, TooltipContextActions } from "../../Common";
 
 
 export interface SelectProps {
@@ -237,7 +237,7 @@ export const Select = ({
           </span>
 
           <TooltipIcons
-            onMouseEnter={() => show?.(tooltipContent)}
+            onMouseEnter={() => tooltipContent && show?.(tooltipContent)}
             onMouseLeave={() => hide?.()} 
             className={`row gap-1 items-center justify-end`
           }>

@@ -34,7 +34,7 @@ export const Button = ({
       className={`button-base 
         ${  size == 'default' ? 'btn-al-d' 
           : size == 'md'      ? 'btn-al-md' 
-          : size == 'lg'      ? 'btn-al-pg'
+          : size == 'lg'      ? 'btn-al-lg'
           : size == 'xl'      ? 'btn-al-xl'
           : ''
         } 

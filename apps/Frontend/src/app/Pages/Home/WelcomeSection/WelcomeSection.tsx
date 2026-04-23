@@ -136,15 +136,15 @@ export const WelcomeSection = () => {
           <div className='rowStart gap-4 pt-2'> 
             <Button displayText='Get Started'
               onClick={() => openNavMenu()}
-              size='lg'
+              size='md'
               color='primary'
               additionalStyles='text-base rounded-lg'
             />
 
-            <HashLink url="/Documentation" opts={{ type: 'useNavigate' }}>
+            <HashLink url="/Documentation/Forms/Input" opts={{ type: 'useNavigate' }}>
               <Button displayText='Documentation'
                 onClick={() => {}}
-                size='lg'
+                size='md'
                 color='primary'
                 additionalStyles='text-base rounded-lg'
               />

@@ -25,10 +25,7 @@ export const Documentation = () => {
   /* TODO: From where we left off
   
   x Finally, go through each component and refactor to make them very organized and themed
-    x currently on Select, just about finished all form components. 
-    x finish the select components multi select functionality
-      - finish the select docs page
-    - finish the textareas variant options
+    x currently on Textarea, need to update styling and add Attach File functionality.
     - update all docs page codeSnippets to be proper refs @see vite.config.ts
     
 		- add a file attachment input component - functionality and drag & drop
@@ -108,7 +105,6 @@ export const Documentation = () => {
               
               <div className='span-12'>
                 <div className='p-2 showcase-text'>
-                  Add content soon
 
                   {/* <div className='ascii-text'> 
                         _                       

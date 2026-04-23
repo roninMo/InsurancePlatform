@@ -21,7 +21,7 @@ module.exports = {
         'fade-pulse-i': 'fade-pulse-i 1.7s ease-out',
 
         // Loading animations for inputs
-        'fill-bar': 'fill-bar 1.25s ease-in forwards',
+        'focus-bar': 'focus-bar 0.15s ease-in forwards',
         'loading-bar': 'loading-bar 1.25s ease-in-out infinite',
 
         'rainbow': 'rainbow 3s linear infinite',
@@ -43,7 +43,7 @@ module.exports = {
         'fade-in-slow': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'fade-out':     { '0%': { opacity: '1' }, '100%': { opacity: '0' } },
 
-        // Displays element for a second and then fades out.
+        // Displays element for a second and then fades out. Think indiana jones for display messages
         'fade-pulse':   {
           '0%':   { opacity: '0' },
           '10%':  { opacity: '0' },
@@ -62,10 +62,15 @@ module.exports = {
           '100%': { opacity: '1' },
         },
 
-        // Loading animations for inputs
-        'fill-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
-        'loading-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
+        // Input border fill animations for focused inputs
+        'focus-bar': { 
+          '0%':   { transform: 'scaleX(0)' }, 
+          '100%': { transform: 'scaleX(1)' } 
+        }, 
 
+        // Input Loading anim - div bar placed by borders for state displays
+        'loading-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
+        
 
         'rainbow': {
           '0%': { 'background-position':   '0% 0%' },

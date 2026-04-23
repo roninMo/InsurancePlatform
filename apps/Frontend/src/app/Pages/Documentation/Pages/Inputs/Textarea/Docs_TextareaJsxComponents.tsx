@@ -44,7 +44,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         disabled={disabled}
         required
 
-        onAttachFile={onAttachFile}
+        // onAttachFile={onAttachFile}
       />
     </div>
   );
@@ -99,7 +99,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         disabled={disabled}
         required
 
-        onAttachFile={onAttachFile}
+        // onAttachFile={onAttachFile}
         metadataTags={boxMetadataTags}
       />
     </div>
