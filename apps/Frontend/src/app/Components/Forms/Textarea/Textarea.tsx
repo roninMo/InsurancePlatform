@@ -1,4 +1,4 @@
-import { MouseEvent, useId, useState } from "react";
+import { memo, MouseEvent, useId, useMemo, useState } from "react";
 import { UniversalEventHandlers, Icon, Button, IconTypes, TooltipContextActions, TooltipContentProps } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
@@ -24,8 +24,6 @@ export interface TextareaProps {
   submitButtonText?: string;
   submitButtonDisabled?: boolean;
 
-  // TODO: Update the post variant to include the same textarea styling as the box, and add attach file to it.
-  // TODO: Add metadata tags to the default layout after the first two icons (or let emojis be a metadata tag, (create a universal help for this))
   // TODO: Add a drag and drop file attachment component, use it's props for attachFile here, and notify that the object needs to be memoized
   // Attach file for all variants
 	attachFile?: {
@@ -47,7 +45,7 @@ export interface MetadataTagProps {
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
   const { type = 'default', name, value, placeholder, metadataTags, 
-    error = false, errorMessage, required, disabled,
+    error = false, errorMessage, disabled, required, 
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     ...props
@@ -74,8 +72,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
         className={`ta-base
           ${type == 'default' ? 'ta-d-base' : ''}
           ${type == 'box' ? 'ta-b-base' : ''}
-          ${type == 'post' ? `ta-p-base ${error && !disabled ? 'ta-p-error' : ''}` : ''}
-          ${type !== 'post' ? `ta-db-base` : ''}
+          ${type == 'post' ? `ta-p-base` : ''}
         `}
         { ...props }
       />
@@ -87,17 +84,37 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   const { 
     type = 'default', name, label, description, 
     value, metadataTags,
-    error = false, errorMessage, required = false, disabled = false, 
+    error = false, errorMessage, disabled = false, 
     onSubmit, submitButtonText, submitButtonDisabled = false, 
   } = allProps;
 
-
-  // TODO: add a fill bar, from left to right, or from the center out on focus for the variants 
   //--------------------------------//
   // default style                  //
   //--------------------------------//
+  const ButtonsAndLinksSection = useMemo(() => (
+    <ButtonsAndLinks className={`ta-d-btn-links`}>
+      <PrecedingInputElements className="rowStart items-center gap-4 pl-1 py-1">
+        <AttachFileElement onClickAttachFile={() => {}} iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} />
+
+        <div className="animate-fade-in">
+          <MetadataTagElements type='post' metadataTags={metadataTags} id={name} disabled={disabled} />
+        </div>
+        {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
+      </PrecedingInputElements>
+
+      { onSubmit && 
+        <SubsequentInputElements>
+          <Button 
+            displayText={submitButtonText || "Submit"} 
+            onClick={e => onSubmit && onSubmit(e)} 
+            disabled={disabled}
+            additionalStyles="ta-submit-btn px-3" 
+          />
+        </SubsequentInputElements>
+      }
+    </ButtonsAndLinks>
+  ), [disabled]);
 	
-	//add a useMemo for the buttons and links, and the metdata inbetween them and the input
   if (type === 'default') {
     return (
       <div className="w-full flex flex-col gap-2">
@@ -111,28 +128,8 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
           <InputContainer className="w-full col group">
             <InputComponent { ...allProps } />
-
-            {/* Icons and post button */}
-            
-            <div className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
-            <ButtonsAndLinks className={`ta-d-btn-links`}>
-              <PrecedingInputElements className="rowStart items-center gap-4 pl-1 py-1">
-                <AttachFileElement onClickAttachFile={() => {}} iconStyles="ta-d-icon" />
-                <Icon variant='Smile'       styles="ta-d-icon" />
-                {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
-              </PrecedingInputElements>
-    
-              { onSubmit && 
-                <SubsequentInputElements>
-                  <Button 
-                    displayText={submitButtonText || "Submit"} 
-                    onClick={e => onSubmit && onSubmit(e)} 
-                    disabled={disabled}
-                    additionalStyles="ta-submit-btn px-3" 
-                  />
-                </SubsequentInputElements>
-              }
-            </ButtonsAndLinks>
+            <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
+            { ButtonsAndLinksSection }
           </InputContainer>
         </Container>
         
@@ -145,12 +142,31 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
     );
   }
 
+
   //--------------------------------//
   // box style                      //
   //--------------------------------//
   else if (type == 'box') {
-		
-		// add a useMemo for the buttons and links section
+    const ButtonsAndLinksSection = useMemo(() => (
+      <ButtonsAndLinks className="ta-b-btn-links">
+        <div className={`ta-b-attach-file ${!disabled ? 'ta-b-attach-file-ha' : 'ta-b-attach-file-d'}`}>
+          <AttachFileElement onClickAttachFile={() => {}} iconStyles={`ta-b-icon ${disabled ? 'icon-disabled-color' : ''}`} />
+          <p className="italic">Attach a file</p>
+        </div>
+
+        { onSubmit && 
+          <div className="margin-auto-div-fix">
+            <Button 
+              displayText={submitButtonText ? submitButtonText : 'Create'} 
+              size="default" 
+              onClick={e => onSubmit && onSubmit(e)} 
+              disabled={disabled || submitButtonDisabled}
+              additionalStyles="ta-submit-btn px-3" 
+            />
+          </div>
+        }
+      </ButtonsAndLinks>
+    ), [disabled, submitButtonDisabled]);
 		
     return (<>
       <Container className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
@@ -158,26 +174,10 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 				<InputComponent { ...allProps } />
         
         {/* Pill action buttons */}
-        <MetadataTagElements type='box' metadataTags={metadataTags} id={name} />
+        <MetadataTagElements type='box' metadataTags={metadataTags} id={name} disabled={disabled} />
 
-        <ButtonsAndLinks className="ta-b-btn-links">
-          <div className="ta-b-attach-file">
-            <AttachFileElement onClickAttachFile={() => {}} iconStyles="ta-b-icon" />
-            <p className="italic">Attach a file</p>
-          </div>
-
-					{ onSubmit && 
-            <div className="margin-auto-div-fix">
-              <Button 
-                displayText={submitButtonText ? submitButtonText : 'Create'} 
-                size="default" 
-                onClick={e => onSubmit && onSubmit(e)} 
-                disabled={disabled || submitButtonDisabled}
-                additionalStyles="ta-submit-btn px-3" 
-              />
-            </div>
-					}
-        </ButtonsAndLinks>
+        <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
+        { ButtonsAndLinksSection }
       </Container>
       
       <ErrAndDescElements 
@@ -188,43 +188,44 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
     </>);
   }
 
+
   //--------------------------------//
   // post style                     //
   //--------------------------------//
   else {
     const [showPreview, setShowPreview] = useState<'write' | 'preview'>('write');
-    const togglePreview = (type: 'write' | 'preview') => {
-      setShowPreview(type);
-    }
+    const togglePreview = (type: 'write' | 'preview') => setShowPreview(type);
 		
-		// add a useMemo for the metadata tags
+    const PostSectionHeader = useMemo(() => (<>
+      { label && <h4 className="py-2 ta-p-label">{ label }</h4> }
+
+      <ButtonsAndLinks className="row justify-between items-center py-2">
+        <div className="row gap-2">
+          <Button 
+            displayText="Write" 
+            onClick={() => togglePreview('write')} 
+            size="default" 
+            color={showPreview == 'write' ? 'gray' : 'gray-focus'}
+          />
+          <Button 
+            displayText="Preview" 
+            onClick={() => togglePreview('preview')} 
+            size="default" 
+            color={showPreview == 'preview' ? 'gray' : 'gray-focus'}
+          />
+        </div>
+
+        { showPreview == 'write' && 
+          <div className="animate-fade-in">
+            <MetadataTagElements type='post' metadataTags={metadataTags} id={name} disabled={disabled} />
+          </div>
+        }
+      </ButtonsAndLinks>
+    </>), [showPreview]);
 
     return (
       <Container>
-        { label && <h4 className="py-2 ta-p-label">{ label }</h4> }
-
-        <ButtonsAndLinks className="row justify-between items-center py-2">
-          <div className="row gap-2">
-            <Button 
-              displayText="Write" 
-              onClick={() => togglePreview('write')} 
-              size="default" 
-              color={showPreview == 'write' ? 'gray' : 'gray-focus'}
-            />
-            <Button 
-              displayText="Preview" 
-              onClick={() => togglePreview('preview')} 
-              size="default" 
-              color={showPreview == 'preview' ? 'gray' : 'gray-focus'}
-            />
-          </div>
-
-          { showPreview == 'write' && 
-            <div className="animate-fade-in">
-              <MetadataTagElements type='post' metadataTags={metadataTags} id={name} />
-            </div>
-          }
-        </ButtonsAndLinks>
+        { PostSectionHeader }
 
         <div className={`height-trans ${showPreview == 'preview' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
           <div className="height-trans-content ">
@@ -234,32 +235,42 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
           </div>
         </div>
 
-        <div className={`height-trans ${showPreview == 'write' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-          <div className="height-trans-content ">
-            <InputComponent { ...allProps } />
+        <InputContainer className={`ta-p-c group 
+          ${!disabled && error ? 'outline-error' : 'outline-styles'}
+          ${showPreview == 'write' ? 'bg-default' : ''}
+        `}>
+          <div className={`height-trans ${showPreview == 'write' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+            <div className="height-trans-content ">
+              <InputComponent { ...allProps } />
+            </div>
           </div>
-        </div>
 
+          <FocusBar className={`${showPreview == 'write' ? 'focus-bar' : ''} ${error && !disabled ? 'focus-bar-err' : ''}`} />
+          <div className={`ta-p-btn-links ${showPreview == 'write' ? 'border-styles border-t' : ''}`}>
+            <div className={`ta-b-attach-file ${!disabled ? 'ta-b-attach-file-ha' : 'ta-b-attach-file-d'}`}>
+              <AttachFileElement onClickAttachFile={() => {}} iconStyles="ta-b-icon" />
+              <p className="italic">Attach a file</p>
+            </div>
+
+            <div className="margin-auto-div-fix">
+              { onSubmit && (
+                <Button 
+                displayText="Post" 
+                size="default" 
+                onClick={e => onSubmit && onSubmit(e)} 
+                disabled={disabled}
+                additionalStyles="ta-submit-btn px-3 self-start" 
+                />
+              )}
+            </div>
+          </div>
+        </InputContainer>
         
-        <div className="row justify-between pt-1">
-          <ErrAndDescElements 
-            type={type} description={description} 
-            error={error} errorMessage={errorMessage} 
-            disabled={disabled}
-          />
-
-          <div className="margin-auto-div-fix">
-          { onSubmit && (
-            <Button 
-              displayText="Post" 
-              size="default" 
-              onClick={e => onSubmit && onSubmit(e)} 
-              disabled={disabled}
-              additionalStyles="ta-submit-btn px-3 self-start" 
-            />
-          )}
-          </div>
-        </div>
+        <ErrAndDescElements 
+          type={type} description={description} 
+          error={error} errorMessage={errorMessage} 
+          disabled={disabled}
+        />
       </Container>
     );
   }
@@ -267,35 +278,47 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
 
 // Universal error and description handling
-const ErrAndDescElements = ({ type, error, errorMessage, disabled, description }: any) => {
-	
-	// memo with config to only update when there's an error or disabled state
-  return (
-    <ErrorAndDescription className={`
-      ${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}
-      height-trans ${description || (error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
-    `}>
-      <p className={`height-trans-content text-sm ${(!disabled && error && errorMessage) ? 'error-text' : 'text-colors'}`}>
-        { (!disabled && error && errorMessage) ? errorMessage : description } &nbsp;
-      </p>
-    </ErrorAndDescription>
-  );
-}
+const ErrAndDescElements = memo(({ type, error, errorMessage, disabled, description }: any) => (
+  <ErrorAndDescription className={`
+    ${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}
+    height-trans ${description || (error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
+  `}>
+    <p className={`height-trans-content text-sm ${(!disabled && error && errorMessage) ? 'error-text' : 'text-colors'}`}>
+      { (!disabled && error && errorMessage) ? errorMessage : description } &nbsp;
+    </p>
+  </ErrorAndDescription>
+), (prev, next) => (prev.error === next.error && prev.disabled === next.disabled));
+
 
 // additional action events to capture metadata during input captures. ex. Due dates, tags, etc.
-const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps) => {
+const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagElementProps) => {
+  const getIconStyles = (styles?: string, defaultStyles?: string): string => 
+    (styles ? styles : defaultStyles || '') + ` ${disabled ? 'icon-disabled-color' : ''}`; 
 
   //--------------------------------//
   // metadata tags                  //
   //--------------------------------//
   if (Array.isArray(metadataTags)) {
 
+    // Default variant
+    if (type == 'default') return (
+      <div className="row gap-4">
+        { metadataTags.map(({tagIcon, iconStyles, onClickTag}: MetadataTagProps) => {
+          if (tagIcon) return (
+            <div onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagIcon}`}>
+              <Icon variant={tagIcon} styles={getIconStyles(iconStyles, 'ta-d-icon')} /> 
+            </div>
+          )}
+        )}
+      </div>
+    );
+
     // Box variant
     if (type == 'box') return (
       <PillActions className="metadata-tag-styles">
         { metadataTags.map(({tagLabel, tagIcon, iconStyles, onClickTag }: MetadataTagProps) => 
           <div className="ta-pill-actions" onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagLabel}`}>
-            { tagIcon && <Icon variant={tagIcon} styles={iconStyles ? iconStyles : 'metadata-tag-icon-b'} />}
+            { tagIcon && <Icon variant={tagIcon} styles={getIconStyles(iconStyles, 'metadata-tag-icon-b')} />}
             { tagLabel }
           </div>
         )}
@@ -308,7 +331,7 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
         { metadataTags.map(({tagIcon, iconStyles, onClickTag }: MetadataTagProps) => {
           if (tagIcon) return (
             <div onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagIcon}`}>
-              <Icon variant={tagIcon} styles={iconStyles ? iconStyles : 'metadata-tag-icon-p'} /> 
+              <Icon variant={tagIcon} styles={getIconStyles(iconStyles, 'metadata-tag-icon-p')} /> 
             </div>
           )}
         )}
@@ -317,6 +340,7 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
   }
 
   // solely for documentation and display purposes
+  // TODO: delete this
   else if (typeof metadataTags === 'boolean' && metadataTags == true) {
     if (type == 'box') return (
       <PillActions className="metadata-tag-styles">
@@ -333,6 +357,12 @@ const MetadataTagElements = ({ type, metadataTags, id }: MetadataTagElementProps
         <Icon variant="AtSymbol"    styles="metadata-tag-icon-p" />
       </div>
     );
+
+    else if (type == 'default') return (
+      <div className="row gap-4">
+        <Icon variant='Smile'       styles="ta-d-icon" />
+      </div>
+    )
   }
 
   return (<></>);
@@ -354,6 +384,7 @@ interface MetadataTagElementProps {
   type: TextareaTypes;
   metadataTags?: MetadataTagProps[] | boolean;
   id: string;
+  disabled: boolean;
 };
 export interface AttachFileProps {
   onClickAttachFile?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
@@ -395,6 +426,7 @@ export const defaultPostMetadataTags:MetadataTagProps[] = [
 const InputContainer = styled.div``;
 const Container = styled.div``;
 const ErrorAndDescription = styled.div``;
+const FocusBar = styled.div``;
 
 const Avatar = styled.div``;
 const PrecedingInputElements = styled.div``;

@@ -183,6 +183,10 @@
 
   .icon-error-color { @apply text-red-500 dark:text-red-400; }
   .icon-ok-color { @apply text-emerald-500 dark:text-emerald-400; }
+  .icon-disabled-color { @apply 
+    disabled-text hover:disabled-text active:disabled-text
+    dark:disabled-text dark:hover:disabled-text dark:active:disabled-text; 
+  }
   // #endregion
 
 
@@ -1047,6 +1051,9 @@
       w-full p-0 h-24 text-base 
       cursor-text transition-all
       disabled:disabled-text
+
+      // Remove some of the outline styling on inputs
+      ta-db-base
     ;
   }
 
@@ -1054,7 +1061,7 @@
   .ta-b-base {  @apply h-16 pl-4; }
 
   .ta-p-base { 
-    @apply bg-default outline-css outline-styles p-2 pl-4;
+    @apply p-2 pt-3 pl-4;
   }
 
   // default and box
@@ -1116,22 +1123,50 @@
 	.ta-b-attach-file {
 		@apply 
 			rowStart gap-2 py-1
-			*:cursor-pointer *:transition-all 
-			*:hover:text-slate-800 *:dark:hover:text-slate-200;
+			*:transition-all 
 	}
+  
+  .ta-b-attach-file-ha {
+    &:hover {
+      & > p, & svg {
+        @apply text-slate-800 dark:text-slate-200 cursor-pointer;
+      }
+    }
+    
+    @apply
+      group-active:[&>p]:text-slate-600 dark:group-active:[&>p]:text-slate-400
+      group-active:[&_svg]:text-slate-600 dark:group-active:[&_svg]:text-slate-400;
+  }
+  
+  .ta-b-attach-file-d {
+    @apply 
+      [&>p]:disabled-text dark:[&>p]:disabled-text
+      [&_svg]:icon-disabled-color dark:[&_svg]:icon-disabled-color
+    ;
+  }
 
 
   // Post variant styles
+  .ta-p-c {
+    @apply 
+      col w-full transition-all
+      outline-css rounded-lg 
+      focus-within:outline-focus;
+  }
+
 	.ta-p-label {
 		@apply text-slate-800 dark:text-slate-500 font-normal;
 	}
-	
-  .ta-p-error {
-    @apply outline-error focus:outline-focus;
-  }
   
+	.ta-p-btn-links {
+		@apply 
+			p-2 row justify-between items-center
+      border-styles transition-all
+    ;
+	}
+
   .ta-p-preview-c {
-    @apply p-2 pb-10 mb-1 border-b border-styles;
+    @apply p-2 pb-10;
   }
 
 
@@ -1144,7 +1179,7 @@
   // Error and Description container
 	.ta-d-d-c { @apply pl-10; }
 	.ta-d-b-c { @apply p-2 pl-1; }
-	.ta-d-p-c { @apply pb-2 pl-1; }
+	.ta-d-p-c { @apply p-2 pl-1; }
 
   .ta-d { @apply text-colors dark:text-slate-500; }
   .ta-d-disabled { @apply disabled-text }

@@ -25,16 +25,22 @@ export const Documentation = () => {
   /* TODO: From where we left off
   
   x Finally, go through each component and refactor to make them very organized and themed
-    x currently on Textarea, need to update styling and add Attach File functionality.
+    x currently on Textarea, just need to add Attach File functionality.
+		- add a file attachment component - utilizes drag & drop logic
+      - add file attachment logic to the textarea, use the types from the drag & drop component's
+
+    - add a height trans utility wrapper component to declutter the html code for our fancy renders
+      - props: show, children, styles, cStyles
+      - then add it to all components using the height trans logic
+
     - update all docs page codeSnippets to be proper refs @see vite.config.ts
-    
-		- add a file attachment input component - functionality and drag & drop
-      - add file attachment logic to the textarea
-		
-    - update the form components with the proper tooltip props
-			- fix all props that shouldn't be objects. tooltip cant be memoized so it shouldn't be an object, just tooltipContext, and tooltipContent.
+
+
+
+    x update the form components with the proper tooltip props - this is pretty much done
+			x fix all props that shouldn't be objects. tooltip cant be memoized so it shouldn't be an object, just tooltipContext, and tooltipContent.
 			- update any props like input's variant options to be memoized, and flatten any others that shouldn't be an object. 
-			- comment about this in the component types
+        x comment about this in the component types
 			- add the props to the library, and do this for AttachFileProps as well
 				- fileAttachment props need to be an object, so it's object should be memoized
 

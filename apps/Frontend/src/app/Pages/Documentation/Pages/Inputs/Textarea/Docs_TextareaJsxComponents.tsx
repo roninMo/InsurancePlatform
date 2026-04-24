@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent } from "react";
+import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo } from "react";
 import { Textarea, MetadataTagProps } from "../../../../../Components/Forms/Textarea/Textarea";
 
 
@@ -9,6 +9,11 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [value, setValue] = useState<string>('');
+  const defaultMetadataTags: MetadataTagProps[] = useMemo(() => ([
+      { tagIcon: 'Smile',     onClickTag: () => {}, iconStyles: undefined},
+      { tagIcon: 'Tag',       onClickTag: () => {}, iconStyles: undefined},
+      { tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
+  ]), []);
   
   const onValueUpdated = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
@@ -45,6 +50,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         required
 
         // onAttachFile={onAttachFile}
+        metadataTags={defaultMetadataTags}
       />
     </div>
   );
@@ -58,11 +64,11 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [value, setValue] = useState<string>('');
-  const boxMetadataTags: MetadataTagProps[] = [
-    { tagLabel: 'assign', tagIcon: 'Profile', onClickTag: () => {}, iconStyles: ''},
-    { tagLabel: 'label', tagIcon: 'Tag', onClickTag: () => {}, iconStyles: ''},
-    { tagLabel: 'due date', tagIcon: 'Calendar', onClickTag: () => {}, iconStyles: ''},
-  ];
+  const boxMetadataTags: MetadataTagProps[] = useMemo(() => ([
+    { tagLabel: 'assign',   tagIcon: 'Profile',   onClickTag: () => {}, iconStyles: undefined},
+    { tagLabel: 'label',    tagIcon: 'Tag',       onClickTag: () => {}, iconStyles: undefined},
+    { tagLabel: 'due date', tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
+  ]), []);
   
   const onValueUpdated = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
@@ -114,11 +120,11 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [value, setValue] = useState<string>('');
-  const postMetadataTags: MetadataTagProps[] = [
-    { tagIcon: 'Link', iconStyles: '', onClickTag: () => {}},
-    { tagIcon: 'CodeBracket', iconStyles: '', onClickTag: () => {}},
-    { tagIcon: 'AtSymbol', iconStyles: '', onClickTag: () => {}},
-  ];
+  const postMetadataTags: MetadataTagProps[] = useMemo(() => ([
+    { tagIcon: 'Link',        onClickTag: () => {}, iconStyles: undefined},
+    { tagIcon: 'CodeBracket', onClickTag: () => {}, iconStyles: undefined},
+    { tagIcon: 'AtSymbol',    onClickTag: () => {}, iconStyles: undefined},
+  ]), []);
   
   const onValueUpdated = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
