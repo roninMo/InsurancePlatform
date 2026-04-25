@@ -161,6 +161,7 @@
   .border-default   { @apply border-blue-300    dark:border-slate-700; }
   .border-div       { @apply border-slate-300   dark:border-slate-900; }
   .border-focus     { @apply border-blue-500    dark:border-indigo-500; }
+  .border-disabled  { @apply border-gray-300    dark:border-gray-600; }
   .border-warning   { @apply border-amber-500   dark:border-amber-400; }
   .border-error     { @apply border-red-400     dark:border-red-500; }
   .border-ok        { @apply border-emerald-600 dark:border-emerald-400; }
@@ -497,14 +498,26 @@
   .dropbox {
     @apply 
       w-full col items-center gap-2 py-10
-      rounded-md cursor-pointer transition-all
-      border-2 border-styles border-dashed
+      cursor-pointer transition-all duration-300
+      border-2 rounded-md border-styles border-dashed
       hover:theme-fa
     ;
   }
 
   .dropbox-drag-hover { 
-    & .dropbox { @apply bg-white dark:bg-white; }
+    & .dropbox { 
+      @apply 
+        border-focus
+      ; 
+    }
+  }
+
+  .dropbox-disabled {
+    @apply border-disabled;
+  }
+
+  .dropbox-err {
+    @apply border-error;
   }
 
   // prevent nested elements from interfering w/dragEnter 

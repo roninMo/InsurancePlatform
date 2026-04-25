@@ -51,26 +51,50 @@ export const Dropbox = ({
   }
 
   // drag over styling
+  const nestedDragCounter = useRef(0);
   useEffect(() => {
     const dropbox = dropboxRef.current;
     if (!dropbox) return;
 
-    const handleDragStyle = (action: 'add' | 'remove') => (e: globalThis.DragEvent) => {
+    // Handle dragLeave/dragEnter on children, w/counter starting at 1 for the dropbox.
+    const onDragEnter = (e: globalThis.DragEvent) => {
       e.preventDefault();
-      console.log(`${action == 'add' ? 'adding' : 'removing'} the drag hover style`);
-      dropbox.classList[action]('dropbox-drag-hover');
-    }
+      nestedDragCounter.current++;
 
-    // Capture the specific function references, and invoke them
-    const onEnter = handleDragStyle('add');
-    const onLeave = handleDragStyle('remove');
-    dropbox.addEventListener('dragenter', onEnter);
-    dropbox.addEventListener('dragleave', onLeave);
+      if (nestedDragCounter.current === 1) {
+        console.log(`adding the dropbox-drag-hover class`);
+        dropbox.classList.add('dropbox-drag-hover');
+      }
+    };
+
+    // Only remove classes when it leaves the actual dropbox, and not to a nested dropbox child element
+    const onDragLeave = (e: globalThis.DragEvent) => {
+      e.preventDefault();
+      nestedDragCounter.current--;
+      
+      if (nestedDragCounter.current === 0) {
+        console.log(`removing the dropbox-drag-hover class`);
+        dropbox.classList.remove('dropbox-drag-hover');
+      }
+    };
+
+    console.log('rerendering');
+
+    const onDrop = () => {
+      nestedDragCounter.current = 0; // Reset counter so next drag starts fresh
+      dropbox.classList.remove('dropbox-drag-hover');
+        console.log(`onDrop: removing the dropbox-drag-hover class`);
+    };
+
+    dropbox.addEventListener('dragenter', onDragEnter);
+    dropbox.addEventListener('dragleave', onDragLeave);
+    dropbox.addEventListener('drop', onDrop); // Essential to clean up the style
 
     return () => {
-      dropbox.removeEventListener('dragenter', onEnter);
-      dropbox.removeEventListener('dragleave', onLeave);
-    }
+      dropbox.removeEventListener('dragenter', onDragEnter);
+      dropbox.removeEventListener('dragleave', onDragLeave);
+      dropbox.removeEventListener('drop', onDrop);
+    };
   }, []);
 
   // Error state
@@ -82,10 +106,10 @@ export const Dropbox = ({
       { label && <label className='dropbox-label'>{ label }</label> }
 
       <FileUpload 
-        className={`dropbox ${additionalStyles}`}
         onClick={(e) => onClickDropdown(e)}
         onDragOver={(e) => e.preventDefault() } // Prevent opening the file in a new tab
         onDrop={(e) => onDropFiles(e)}
+        className={`dropbox ${disabled ? 'dropbox-disabled' : error ? 'dropbox-err' : ''} ${additionalStyles}`}
       >
         { customIcon 
           ? <Icon variant={customIcon} styles={iconStyles ? iconStyles : 'dropbox-icon'} />
@@ -98,17 +122,14 @@ export const Dropbox = ({
         </Descriptions>
 
         <HiddenInput 
-          type="file"
-          name={name}
+          name={name} type="file" ref={fileInputRef}
           onChange={(e) => handleFileUpload(e.target.files)}
-          ref={fileInputRef}
 
           accept={accept || ''}
           multiple={multiple}
           className='sr-only'
 
-          disabled={disabled}
-          required={required}
+          disabled={disabled} required={required}
         />
       </FileUpload>
 
