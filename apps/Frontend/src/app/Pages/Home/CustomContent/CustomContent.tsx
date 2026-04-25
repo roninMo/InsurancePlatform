@@ -345,11 +345,18 @@ export const CustomContent = () => {
               required
             />
 
-            <div>
+            <div className=''>
               <Button 
                 displayText={fileUploadError ? 'Unset Error' : 'Set Error'}
                 color={fileUploadError ? 'gray-focus' : 'gray'}
                 onClick={() => setFileUploadError(!fileUploadError)}
+                additionalStyles='mr-4'
+              />
+              
+              <Button 
+                displayText={disabled ? 'Enable' : 'Disable'}
+                color={fileUploadDisabled ? 'gray-focus' : 'gray'}
+                onClick={() => setFileUploadDisabled(!fileUploadDisabled)}
               />
             </div>
           </div>
