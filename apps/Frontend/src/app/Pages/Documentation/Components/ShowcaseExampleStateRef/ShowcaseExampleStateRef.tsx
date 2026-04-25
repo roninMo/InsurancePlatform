@@ -29,6 +29,7 @@ export const ShowcaseExample_StateRef = ({
   });
   
 
+	// TODO: this only works because it's being rerendered without reopening the tab? investigate how state is persisting
   const onSelectState = (type: ElementStateTypes | string) => {
     const currentTypeValue = elementStates?.[type] || false;
     const nextTypeValue = !elementStates?.[type] || false;

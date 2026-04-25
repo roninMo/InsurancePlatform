@@ -70,6 +70,7 @@ const paramTypeElements: Record<InputEventHandlerTypes, React.FC> = {
 };
 
 
+// TODO: retrieve from import
 const Code_onFocus = 'onFocus: (e: FocusEvent<T>) => void';
 const Code_onChange = 'onChange: (e: ChangeEvent<any>) => void'; 
 const Code_onBlur = 'onBlur: (e: FocusEvent<T>) => void';

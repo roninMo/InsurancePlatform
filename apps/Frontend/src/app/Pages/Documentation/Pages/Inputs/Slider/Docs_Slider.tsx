@@ -1,14 +1,15 @@
 import { useState, useMemo } from "react";
-import styled from "@emotion/styled";
 import { ShowcaseElement, ParamContext } from "../../../Components/ShowcaseElement/ShowcaseElement";
 import { ShowcaseExample_StateRef } from "../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef";
+import { getSourceCode } from "@Project/ReactComponents";
+
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
 import { ParamType } from "../../../Components/ParamType/ParamType";
 import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
+import styled from "@emotion/styled";
 
 import SliderCodeSnippets from './Docs_SliderJsxComponent?raw';
 import { Example_DefaultSlider } from "./Docs_SliderJsxComponent";
-import { getSourceCode } from "@Project/ReactComponents";
 
 
 export const Docs_Slider = () => {

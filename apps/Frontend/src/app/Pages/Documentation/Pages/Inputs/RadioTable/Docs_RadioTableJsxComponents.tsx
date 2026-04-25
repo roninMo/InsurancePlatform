@@ -3,8 +3,6 @@ import { useState } from "react";
 import { RadioTable } from "../../../../../Components/Forms/RadioTable/RadioTable";
 
 
-
-
 export const Example_InlineRadioTable = ({ error, disabled }: {
   error: string;
   disabled: boolean;

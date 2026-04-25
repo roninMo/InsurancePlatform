@@ -308,14 +308,17 @@ const paramTypeElements: Record<string, React.FC> = {
 
 };
 
-import SourceSelectSnippets from '@lib-rc/Forms/Select/SelectItem/SelectItem.tsx?raw';
+// import SourceSelectSnippets from '@lib-rc/Forms/Select/SelectItem/SelectItem.tsx?raw';
+const SourceSelectSnippets = "";
 const Code_SelectItem = getSourceCode(SourceSelectSnippets, 'SelectItem', 'interface');
 const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';
 
-import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+// import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+const TooltipServiceSnippets = "";
 const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'TooltipContextActions', 'interface');
 
-import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
+// import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
+const TooltipSnippets = "";
 const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
 
 

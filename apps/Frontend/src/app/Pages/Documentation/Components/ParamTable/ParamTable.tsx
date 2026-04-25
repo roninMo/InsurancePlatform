@@ -2,12 +2,12 @@
 
 
 import { ReactNode, useId, useState } from 'react';
-
-import styled from '@emotion/styled';
-import styles from './ParamTable.module.scss';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
 import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
 import { Button } from '@Project/ReactComponents';
+
+import styled from '@emotion/styled';
+import styles from './ParamTable.module.scss';
 
 
 export type PTableItem = ParamItem | 'spacing';

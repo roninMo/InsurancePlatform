@@ -34,6 +34,8 @@ export const Documentation = () => {
       - then add it to all components using the height trans logic
 
     - update all docs page codeSnippets to be proper refs @see vite.config.ts
+		- after you fix the build error ocurring, add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
+		- then add convenience functions for object entries logic and looping
 
 
 
