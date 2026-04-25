@@ -1,9 +1,9 @@
 import { ReactNode, RefObject, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { CodeRenderer } from '../CodeSnippets/CodeRenderer';
-import { Icon, interpFloat, interpV2 } from '@Project/ReactComponents'; // todo: this needs to be fixed
 
 import styled from '@emotion/styled';
 import styles from './Tooltip.module.scss';
+import { Icon, interpFloat, interpV2 } from '../..';
 
 
 // Tooltip variants 

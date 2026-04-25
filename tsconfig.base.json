@@ -21,8 +21,7 @@
     // "baseUrl": ".",
     "paths": {
       "@Project/ReactComponents/*": ["./libraries/ReactComponents/src/*"],
-      "@lib-rc/*": ["./libraries/ReactComponents/src/*"],
-      "@lib-cl/*": ["./libraries/Classes/src/*"]
+      "@Project/Classes/*": ["./libraries/Classes/src/*"],
     }
   }
 }
