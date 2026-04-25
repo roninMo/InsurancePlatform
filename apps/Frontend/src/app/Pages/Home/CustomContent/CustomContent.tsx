@@ -1,9 +1,10 @@
-import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId } from 'react';
-
+import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId, useContext, useMemo } from 'react';
+import { Input } from '../../../Components/Forms/Input/Input';
 import { Card } from '../../../Components/Content/Card/Card';
 import { CheckboxItem, Checkbox, CheckboxProps } from '../../../Components/Forms/Checkbox/Checkbox';
 import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
 import { Slider } from '../../../Components/Forms/Slider/Slider';
+import { defaultBoxMetadataTags, defaultPostMetadataTags, Textarea } from '../../../Components/Forms/Textarea/Textarea';
 import { 
   Button, 
   InputProps_Email, 
@@ -12,19 +13,18 @@ import {
   RadioItem, 
   Select, 
   SelectItem, 
-  TextInputTypes, 
+  TextInputTypes,
+  TooltipService, 
 } from '@Project/ReactComponents';
-import { defaultBoxMetadataTags, defaultPostMetadataTags, Textarea } from '../../../Components/Forms/Textarea/Textarea';
 
 import styles from './CustomContent.module.scss';
-import { Input } from '../../../Components/Forms/Input/Input';
+import { Dropbox } from '../../../Components/Forms/Dropbox/Dropbox';
 
-
-export interface CustomContentProps {
-
-};
 
 export const CustomContent = () => {
+  const tooltipContext = useContext(TooltipService);
+  const genericTooltipContent = useMemo(() => ({ text: 'Tooltip text...'}), []);
+
   // #region Input Elements
   // Input
   const inputId = useId();
@@ -136,8 +136,8 @@ export const CustomContent = () => {
   const [favoriteFood, setFavoriteFood] = useState<RadioItem>({ value: '', label: ''});
   const [radioItemError, setRadioItemError] = useState<boolean>(false);
   const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
-  const selectedFavoriteFood = (selected: RadioItem, currentValue: RadioItem) => {
-    setFavoriteFood(selected);
+  const selectedFavoriteFood = (item: RadioItem, currentValue: RadioItem, e?: ChangeEvent<HTMLInputElement>) => {
+    setFavoriteFood(item);
     // console.log(`radioButton: `, {selected, index, currentValue});
   }
 
@@ -149,11 +149,22 @@ export const CustomContent = () => {
     'ramen': { ...favoriteFoods[2], checked: false },
     'broccoliPotatoesAndChicken': { ...favoriteFoods[3], checked: false },
   });
+  const [checkedFoods2, setCheckedFoods2] = useState<{ [key: string]: CheckboxItem }>({
+    'none': { ...favoriteFoodsNoDescriptions[0], checked: false },
+    'peanutButterJelly': { ...favoriteFoodsNoDescriptions[1], checked: false },
+    'ramen': { ...favoriteFoodsNoDescriptions[2], checked: false },
+    'broccoliPotatoesAndChicken': { ...favoriteFoodsNoDescriptions[3], checked: false },
+  });
+  
   const [checkedError, setCheckedError] = useState<boolean>();
   const [checkedErrorMessage, setCheckedErrorMessage] = useState<string>();
   const checkedFavoriteFood = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
     // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
     setCheckedFoods({ ...checkedFoods, [item.value]: {...item, checked: !item.checked} });
+  }
+  const checkedFavoriteFood2 = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
+    // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
+    setCheckedFoods2({ ...checkedFoods2, [item.value]: {...item, checked: !item.checked} });
   }
 
   // Slider component
@@ -198,6 +209,8 @@ export const CustomContent = () => {
     required: false,
   }
 
+  const [fileUploadError, setFileUploadError] = useState<boolean>(false);
+  const [fileUploadDisabled, setFileUploadDisabled] = useState<boolean>(false);
 
   return (
     <>
@@ -216,8 +229,8 @@ export const CustomContent = () => {
             error={inputError} 
             errorMessage={inputErrorMessage} 
             disabled={disabled}
-            tooltip
-            tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
         </div>
 
@@ -255,57 +268,91 @@ export const CustomContent = () => {
             type="text" name="TextInputShowcase"
             label="Text Input" description=""
             value="Hello " placeholder="Input Text..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="email" name="EmailInputShowcase"
             label="Email Input" description=""
             value="example@email.com" placeholder="Input Email..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="password" name="PasswordInputShowcase"
             label="Password Input" description=""
             value="password" placeholder="Input Password..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="phone" name="PhoneInputShowcase"
             label="Phone Input" description=""
             value="(123)-456-7890" placeholder="Input Phone..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="creditCard" name="CreditCardInputShowcase"
             label="CreditCard Input" description=""
             value="0000 0000 0000 0000" placeholder="Input Credit Card..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="currency" name="CurrencyInputShowcase"
             label="Currency Input" description=""
             value="$100.00" placeholder="Input Credit Card..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="policyNumber" name="PolicyNumberInputShowcase"
             label="Policy Number Input" description=""
             value="90012345-AB" placeholder="Input Policy Number..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="search" name="SearchInputShowcase"
             label="Search Input" description=""
             value="" placeholder="Search for Something..."
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
+
+          {/* Drag and drop component */}
+          <div className='mt-2 col gap-4'>
+            <Dropbox 
+              name="fileUpload"
+              label="Upload files"
+              description='The description of the dropbox.'
+              handleFiles={(files) => console.log('files retrieved: ', files)}
+              // multiple
+              // accept='image/*'
+              customIcon='Canvas'
+
+              error={fileUploadError}
+              errorMessage='An error occurred.'
+              disabled={fileUploadDisabled}
+              required
+            />
+
+            <div>
+              <Button 
+                displayText={fileUploadError ? 'Unset Error' : 'Set Error'}
+                color={fileUploadError ? 'gray-focus' : 'gray'}
+                onClick={() => setFileUploadError(!fileUploadError)}
+              />
+            </div>
+          </div>
         </div>
 
         {/* List of the different textarea types */}
@@ -357,8 +404,6 @@ export const CustomContent = () => {
             />
           </div>
         </div>
-
-          
       </div>
 
 
@@ -423,6 +468,7 @@ export const CustomContent = () => {
             variant='inline' 
             name='radioTable-1'
             radioItems={favoriteFoods}
+            onSelect={selectedFavoriteFood}
           />
         </div>
         <div className='span-12 lg:span-6 md:span-10 p-4 pb-4'>
@@ -431,6 +477,7 @@ export const CustomContent = () => {
             variant='block' 
             name='radioTable-2'
             radioItems={favoriteFoods}
+            onSelect={selectedFavoriteFood}
             disabled
           />
         </div>
@@ -482,24 +529,28 @@ export const CustomContent = () => {
           <h4 className='pb-2 pt-1 label-colors'>Default and Inline style Checkboxes</h4>
         </div>
         
-        <div className='span-12 lg:span-6 p-4 mx-4 bg-default text-colors rounded-md'>
-            <Checkbox 
-              {...CheckboxProps}
-              variant='default'
-              name="checkbox-2"
-              label="What are your favorite foods?"
-              description="Select from the list of our favorite foods."
-            />
-        </div>
-        
-        <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
-            <Checkbox 
-              {...CheckboxProps}
-              variant='inline'
-              name="checkbox-3"
-              label="What are your favorite foods?"
-              description="Select from the list of our favorite foods."
-            />
+        <div className='spacing lg:span-10 xl:span-8 p-4 mx-4'>
+          <div className='span-12 p-4 bg-default text-colors rounded-md'>
+              <Checkbox 
+                {...CheckboxProps}
+                items={checkedFoods2}
+                onSelect={checkedFavoriteFood2}
+                variant='inline'
+                name="checkbox-2"
+                label="What are your favorite foods?"
+                description="Select from the list of our favorite foods."
+              />
+          </div>
+
+          <div className='span-12 p-4 bg-default text-colors rounded-md'>
+              <Checkbox 
+                {...CheckboxProps}
+                variant='default'
+                name="checkbox-3"
+                label="What are your favorite foods?"
+                description="Select from the list of our favorite foods."
+              />
+          </div>
         </div>
       </div>
 
@@ -676,7 +727,7 @@ export const CustomContent = () => {
       </div>
 
 
-      <div className='pb-24'></div>
+      <div className='pb-24' />
     </>
   );
 }

@@ -77,9 +77,9 @@
   .theme-focus-1  { @apply hover:brightness-110  active:brightness-90; }
   .theme-focus-2  { @apply hover:brightness-125  active:brightness-90; }
 
-  .theme-fa { @apply theme-f theme-a; }
-  .theme-f { @apply hover:brightness-90     dark:hover:brightness-125; }
-  .theme-a { @apply active:brightness-110   dark:active:brightness-90; }
+  .theme-fa { @apply hover:theme-f active:theme-a; }
+  .theme-f { @apply brightness-90   dark:brightness-125; }
+  .theme-a { @apply brightness-110  dark:brightness-90; }
 
 
   // default background colors
@@ -488,6 +488,58 @@
   // #endregion
 
 
+  // Dropbox element classes
+  // #region Dropbox component styles
+  .dropbox-c {
+    @apply w-full col gap-2;
+  }
+
+  .dropbox {
+    @apply 
+      w-full col items-center gap-2 py-10
+      rounded-md cursor-pointer transition-all
+      border-2 border-styles border-dashed
+      hover:theme-fa
+    ;
+  }
+
+  .dropbox-drag-hover { 
+    & .dropbox { @apply bg-white dark:bg-white; }
+  }
+
+  // prevent nested elements from interfering w/dragEnter 
+  // .dropbox-drag-hover * {
+  //   @apply pointer-events-none; // still doesn't work
+  // }
+
+  .dropbox-label { 
+    @apply pb-0;
+  }
+
+  .dropbox-icon {
+    @apply 
+      icon-default-theme size-14
+      text-slate-400 dark:text-slate-600
+    ;
+  }
+
+  .dropbox-text-c {
+    @apply rowStart items-center pt-2;
+  }
+
+  .dropbox-up-link {
+    @apply 
+      transition-all 
+      link-text font-semibold;
+  }
+
+  .dropbox-text {
+    @apply text-colors;
+  }
+
+  // #endregion
+
+
   // Input element classes
   // #region Input component styles
   .input-base {
@@ -773,7 +825,7 @@
   
 	// radio item container variants
   .radio-item-c {
-    @apply cursor-pointer transition-all font-normal;
+    @apply cursor-pointer transition-all font-normal pb-1;
   }
 
   .radio-item-c-d {
@@ -859,7 +911,8 @@
   }
   
   .radio-t-i-selected-disabled {
-    @apply z-10 radio-t-i-disabled disabled-box;
+    @apply z-10 radio-t-i-disabled disabled-box 
+    bg-opacity-75 dark:bg-opacity-60;
   }
 
   .radio-t-i-label { @apply label-colors text-sm font-semibold; }

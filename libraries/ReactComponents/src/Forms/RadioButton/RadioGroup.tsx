@@ -60,7 +60,7 @@ export const RadioGroup = ({
         </div>
       }
 
-      <RadioItems className={rowStyleVariants.includes(variant) ? 'rowStart gap-1' : 'colStart *:pb-4'}>
+      <RadioItems className={rowStyleVariants.includes(variant) ? 'rowStart gap-1 flex-wrap' : 'colStart *:pb-4'}>
         { radioItems.map((item: RadioItem) =>
           <RadioGroupItem
             variant={variant}

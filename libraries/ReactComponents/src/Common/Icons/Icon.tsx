@@ -73,6 +73,9 @@ import { Icon_EyeSlash } from "./Default/EyeSlash/Icon_EyeSlash";
 import { Icon_CreditCard } from "./Default/CreditCard/Icon_CreditCard";
 import { Icon_ChevronDown } from "./Default/ChevronDown/Icon_ChevronDown";
 import { Icon_ChevronUp } from "./Default/ChevronUp/Icon_ChevronUp";
+import { Icon_Canvas } from "./Default/Canvas/Icon_Canvas";
+import { Icon_CloudUpload } from "./Default/CloudUpload/Icon_CloudUpload";
+import { Icon_Upload } from "./Default/Upload/Icon_Upload";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
@@ -98,6 +101,7 @@ export type DefaultIconTypes =
   'AtSymbol' |
   'AttachFile' |
   'Calendar' |
+  'Canvas' |
   'Checkbox' |
   'ChevronDown' |
   'ChevronUp' |
@@ -106,6 +110,7 @@ export type DefaultIconTypes =
   'CirclePause' |
   'Close' |
   'Cloud' |
+  'CloudUpload' |
   'CodeBracket' |
   'Computer' |
   'CreditCard' |
@@ -132,6 +137,7 @@ export type DefaultIconTypes =
   'System' |
   'Tag' |
   'Trash' |
+  'Upload' |
   'VennDiagram' 
 ;
 
@@ -145,6 +151,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
   if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
   if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
+  if (variant == 'Canvas')          return (<Icon_Canvas styles={iconStyles} />);
   if (variant == 'Checkbox')        return (<Icon_Checkbox styles={defaultOkayStyles} />);
   if (variant == 'ChevronDown')     return (<Icon_ChevronDown styles={iconStyles} />);
   if (variant == 'ChevronUp')       return (<Icon_ChevronUp styles={iconStyles} />);
@@ -153,6 +160,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'CirclePause')     return (<Icon_CirclePause styles={iconStyles} />);
   if (variant == 'Close')           return (<Icon_Close styles={iconStyles} />);
   if (variant == 'Cloud')           return (<Icon_Cloud styles={iconStyles} />);
+  if (variant == 'CloudUpload')     return (<Icon_CloudUpload styles={iconStyles} />);
   if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
   if (variant == 'Computer')        return (<Icon_Computer styles={iconStyles} />);
   if (variant == 'CreditCard')      return (<Icon_CreditCard styles={iconStyles} />);
@@ -179,6 +187,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
   if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
   if (variant == 'Trash')           return (<Icon_Trash styles={defaultErrorStyles} />);
+  if (variant == 'Upload')          return (<Icon_Upload styles={defaultErrorStyles} />);
   if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
 
   // Social Media Icons
@@ -218,10 +227,10 @@ export const MediaIcon = ({ variant, styles = ''}: IconProps) => {
 
   // Social media icons
   if (variant == 'Facebook')        Icon = (<Icon_Facebook styles={iconStyles} />);
-  if (variant == 'Github')          Icon = (<Icon_Github styles={iconStyles} />);
-  if (variant == 'LinkedIn')        Icon = (<Icon_LinkedIn styles={iconStyles} />);
-  if (variant == 'Twitter')         Icon = (<Icon_Twitter styles={iconStyles} />);
-  if (variant == 'Youtube')         Icon = (<Icon_Youtube styles={iconStyles} />);
+  else if (variant == 'Github')     Icon = (<Icon_Github styles={iconStyles} />);
+  else if (variant == 'LinkedIn')   Icon = (<Icon_LinkedIn styles={iconStyles} />);
+  else if (variant == 'Twitter')    Icon = (<Icon_Twitter styles={iconStyles} />);
+  else if (variant == 'Youtube')    Icon = (<Icon_Youtube styles={iconStyles} />);
   return Icon;
 }
 
@@ -258,7 +267,7 @@ export const TechIcon = ({ variant, styles = ''}: IconProps) => {
   let Icon: JSX.Element | undefined = undefined;
 
   // Automation
-  if (variant == 'Atlassian')           Icon = (<Icon_Atlassian styles={iconStyles} />);
+  if (variant == 'Atlassian')                Icon = (<Icon_Atlassian styles={iconStyles} />);
   else if (variant == 'AWS CDK')             Icon = (<Icon_AwsCdk styles={iconStyles} />);
   else if (variant == 'Azure Devops')        Icon = (<Icon_AzureDevops styles={iconStyles} />);
   else if (variant == 'Bamboo')              Icon = (<Icon_Bamboo styles={iconStyles} />);

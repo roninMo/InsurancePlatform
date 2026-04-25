@@ -280,37 +280,31 @@ const TooltipIcon = styled.div`pointer-events: all;`;
 type InputPropsPartial = Partial<InputProps> & { type: TextInputTypes } & any;
 export const InputProps_Text: InputPropsPartial = {
   type: 'text',
-  name: 'text',
+  label: 'Text Input',
 }
 
 export const InputProps_Email: InputPropsPartial = {
   type: 'email',
-  name: 'email',
-  label: 'Email',
+  label: 'Email Input',
   description: 'What is your email address?',
   placeholder: 'yourname@email.com',
-  tooltip: true,
-  tooltipText: 'The email used to create your account.',
+  tooltipContent: 'The email used to create your account.',
   autocomplete: 'email',
 }
 
 export const InputProps_Password: InputPropsPartial = {
   type: 'password',
-  name: 'password',
   label: 'Password',
   description: 'Create your password.',
-  tooltip: true,
-  tooltipText: 'The used for your account.',
+  tooltipContent: 'The used for your account.',
   autocomplete: 'password',
 }
 
 export const InputProps_Phone: InputPropsPartial = {
   type: 'phone',
-  name: 'phone',
-  label: 'Phone',
+  label: 'Phone Input',
   description: 'What is your phone number?',
-  tooltip: true,
-  tooltipText: 'Your phone number, including the area code. ex: (000)-000-0000',
+  tooltipContent: 'Your phone number, including the area code. ex: (000)-000-0000',
   autocomplete: 'tel',
 }
 // #endregion

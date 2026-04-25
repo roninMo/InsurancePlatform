@@ -1,6 +1,6 @@
-import { ChangeEvent, memo, MouseEvent, useCallback, useId } from 'react';
-import styled from '@emotion/styled';
+import { ChangeEvent, memo, MouseEvent, useCallback } from 'react';
 
+import styled from '@emotion/styled';
 import styles from './Checkbox.module.scss';
 
 
@@ -33,7 +33,6 @@ export interface CheckboxProps {
   required?: boolean;
 }
 
-
 export const Checkbox = ({
   variant = 'default', name, label, description,
   items, onSelect, 
@@ -54,7 +53,7 @@ export const Checkbox = ({
         { description && <Description className='checkbox-desc'>{ description }</Description> }
       </HeaderContainer>
 
-      <ItemContainer className={`${variant != 'inline' ? 'colStart' : 'rowStart gap-4'} mt-4`}>
+      <ItemContainer className={`${variant != 'inline' ? 'colStart' : 'rowStart gap-4 flex-wrap'} mt-4`}>
         {Object.values(items).map((item: CheckboxItem) =>  
           <CheckBoxItemComponent
             variant={variant}
@@ -96,6 +95,7 @@ interface CheckBoxItemComponentProps {
   onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 } 
+
 const CheckBoxItemComponent = memo(({
   variant, name, item, onSelect,
   error, required, disabled, onMouseEnter, onMouseLeave 
