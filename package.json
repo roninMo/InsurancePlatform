@@ -5,10 +5,7 @@
   "scripts": {
     "serve": "nx run ReactComponents:build && nx run Frontend:serve",
     "reloadDeps": "nx watch --projects=ReactComponents --includeDependentProjects -- nx run-many -t build -p ReactComponents",
-    "olddev": "concurrently -k --pad-prefix -n \"Libraries,Deployment\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run reloadDeps\" \"npm run serve\"",
-
     "dev": "concurrently -k -p \"[{name}] ({time})\" -t \"HH:mm:ss\" --pad-prefix -n \"Libraries,Deployment\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run reloadDeps\" \"npm run serve\""
-
   },
   "private": true,
   "devDependencies": {

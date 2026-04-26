@@ -1,5 +1,7 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+
 import react from '@vitejs/plugin-react';
 import * as path from 'path';
 
@@ -14,7 +16,10 @@ export default defineConfig(() => ({
     port: 4200,
     host: 'localhost',
   },
-  plugins: [react()],
+  plugins: [
+    nxViteTsPaths(), // when you serve an app that uses this library, vite watches this library and reloads the app when there are saved changes 
+    react()
+  ],
   
   // relative alias paths
   resolve: {
@@ -23,7 +28,7 @@ export default defineConfig(() => ({
       // '@lib-cl': path.resolve(__dirname, '../../libraries/Classes/src'),
 
       // Relative path to the react component's library (for documentation jsx examples via './Comp.tsx?raw' )
-      '@lib-rc': path.resolve(__dirname, '../../libraries/ReactComponents/src'),
+      // '@lib-rc': path.resolve(__dirname, '../../libraries/ReactComponents/src'),
     }
   },
 
