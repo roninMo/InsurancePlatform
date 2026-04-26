@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { HashLink } from '../Utils/HashLink/HashLink';
 import { SidebarLinkProps, SubPageLinkProps } from '../Sidebar/Sidebar';
+import { DocumentationPage_SidebarLinks } from '../../Pages/Documentation/Documentation';
 
 import styled from '@emotion/styled';
 import styles from './Hashbar.module.scss';
-import { DocumentationPage_SidebarLinks } from '../../Pages/Documentation/Documentation';
 
 
 export const Hashbar = () => {

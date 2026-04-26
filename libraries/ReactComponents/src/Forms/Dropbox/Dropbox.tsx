@@ -47,7 +47,7 @@ export const Dropbox = ({
 
   const handleFileUpload = (files: FileList | null) => {
     // console.log('handling file upload: ', files);
-    handleFiles(files);
+    handleFiles(files); 
   }
 
   // Error state

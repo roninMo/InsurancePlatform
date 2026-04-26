@@ -1,10 +1,9 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
-import styled from '@emotion/styled';
-import { Input, Icon } from '@Project/ReactComponents';
+import { Input, Icon, defaultBoxMetadataTags, Textarea } from '@Project/ReactComponents';
 
+import styled from '@emotion/styled';
 import styles from './ContactUsSection.module.scss';
-import { TechIcon } from '../../../../../../../libraries/ReactComponents/src/Common/Icons/Icon';
-import { defaultBoxMetadataTags, Textarea } from '../../../Components/Forms/Textarea/Textarea';
+
 
 export const ContactUsSection = () => {
   // LinkedIn, phone, and email information 

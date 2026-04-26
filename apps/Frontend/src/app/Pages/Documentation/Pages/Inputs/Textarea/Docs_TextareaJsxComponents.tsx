@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo } from "react";
-import { Textarea, MetadataTagProps } from "../../../../../Components/Forms/Textarea/Textarea";
+import { MetadataTagProps, Textarea } from "@Project/ReactComponents";
 
 
 export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDisabled }: {
