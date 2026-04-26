@@ -2,7 +2,6 @@ import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId, use
 import { Input } from '../../../Components/Forms/Input/Input';
 import { Card } from '../../../Components/Content/Card/Card';
 import { CheckboxItem, Checkbox, CheckboxProps } from '../../../Components/Forms/Checkbox/Checkbox';
-import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
 import { 
   Button, 
   defaultBoxMetadataTags, 
@@ -12,6 +11,7 @@ import {
   RadioGroup, 
   RadioGroupProps,
   RadioItem, 
+  RadioTable, 
   Select, 
   SelectItem, 
   Slider, 

@@ -1,68 +1,66 @@
-// Old input component!
-
-import { Dispatch, MouseEvent, RefObject, SetStateAction, useId, useRef, useState } from 'react';
-import { InputMask, useMask } from '@react-input/mask';
-
-import styles from './Input.module.scss';
-import styled from '@emotion/styled';
+import { Dispatch, MouseEvent, RefObject, SetStateAction, useContext, useState } from 'react';
+import { Button } from '../Button/Button';
 import { Icon } from '../../Common/Icons/Icon';
+import { InputMask, useMask } from '@react-input/mask';
+import { TooltipContextActions } from '../../Common/Utilities/Tooltip/TooltipProvider/TooltipProvider';
+import { TooltipContentProps } from '../../Common/Utilities/Tooltip/Tooltip';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 
+import styled from '@emotion/styled';
+import styles from './Input.module.scss';
 
-export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' | 'policyNumber' | 'phone' | 'creditCard' | 'currency';
-export type TextInputAutoCompleteTypes = "email"  | "tel" | "name"  | "password"  | "family-name" | "given-name" | "country-name" | "postal-code" | "street-address" | "address-level1" | "address-level2";
 
-interface InputProps {
+export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' 
+                          |  'policyNumber' | 'phone' | 'creditCard' | 'currency';
+
+export type TextInputAutoCompleteTypes = 
+  | "name" | "given-name" | "family-name" | "email" | "password" | "tel" 
+  | "street-address" | "address-level2"| "address-level1" | "postal-code" | "country-name";
+
+export interface InputProps {
   type?: TextInputTypes
   
   name: string;
   label: string;
   description?: string;
   value: string;
+  setValue?: Dispatch<SetStateAction<string>>;
   placeholder?: string;
 
   error?: boolean;
   errorMessage?: string | null;
   disabled?: boolean;
   required?: boolean;
-  tooltip?: boolean;
-  tooltipText?: string;
+
+  tooltipContext?: TooltipContextActions;
+  tooltipContent?: TooltipContentProps;
 
   autocomplete?: TextInputAutoCompleteTypes;
 
   // variant specific configurations
-  opts?: {
-
-  };
+  opts?: InputVariantOpts;
 }
 
-
 export const Input = ({
-  type = 'text', name, label, description, value, placeholder,
-  error = false, errorMessage, required = false, disabled = false, tooltip = false, tooltipText,
+  type = 'text', name, label, description, value, setValue, placeholder,
+  error = false, errorMessage, required = false, disabled = false, tooltipContext, tooltipContent,
   onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  autocomplete, opts, ...props
+  autocomplete, opts = DefaultInputVariantOpts, ...props
 }: InputProps & UniversalEventHandlers) => {
-  const id = useId();
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
-  const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This might mess with seeing loading with actual load times
+  const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This could mess with seeing loading with actual load times
 
+  // TODO: when we use rhf, find a mask that works well with controlled components, or create our own
   const getMaskRef = (type: TextInputTypes): RefObject<HTMLInputElement> | undefined => {
     // if (type == 'phone') return phoneMaskRef;
-    // if (type == 'creditCard') return creditCardMaskRef;
-    // if (type == 'policyNumber') return policyNumberMaskRef;
-    return undefined
+    return undefined;
   }
 
   // Password visibility
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  // Tooltip logic
-  const [tooltipActive, setTooltipActive] = useState<boolean>(false);
-  const tooltipCoordinates = useRef<{ x: number, y: number}>({ x: 0, y: 0 });
-
   const getType = (): TextInputTypes => {
-    if (type == 'number') return type;
+    if (type == 'number' || type == 'currency') return 'number';
     if (type == 'password') return showPassword ? 'text' : 'password';
     return 'text';
   }
@@ -80,41 +78,43 @@ export const Input = ({
       <InputContainer className="input-container group">
         <input 
           type={getType()}
-          name={name}
-          value={value}
+          name={name} id={`${name}-${type}`}
           // ref={getMaskRef(type)} // TODO: add optional input masking
+          value={value}
           placeholder={placeholder}
           autoComplete={autocomplete}
-          id={id}
-
-          onChange={(e) => onChange ? onChange(e) : null}
-          onBlur={(e) => onBlur ? onBlur(e) : null}
-          onFocus={(e) => onFocus ? onFocus(e) : null}
-          onClick={(e) => onClick ? onClick(e) : null}
-          onMouseEnter={(e) => onMouseEnter ? onMouseEnter(e) : null}
-          onMouseLeave={(e) => onMouseLeave ? onMouseLeave(e) : null}
-
-          required={required}
+          required={required} 
           disabled={disabled}
 
+          onChange={(e) => onChange && onChange(e)}
+          onBlur={  (e) => onBlur && onBlur(e)}
+          onFocus={ (e) => onFocus && onFocus(e)}
+          onClick={ (e) => onClick && onClick(e)}
+          onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
+          onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
+
           className={`input-base peer
-            ${!(type == 'search' || type == 'text' || type == 'currency') ? 'input-icon-spacing' : ''}
-            ${error && !disabled ? 'input-error' : ''}
+            ${!inputTypesWithoutIcons.includes(type) ? 'input-icon-spacing' : ''}
+            ${getError() ? 'input-error' : ''}
           `}
           { ...props }
         />
 
+        {/* Variant specific elements before and after the input element */}
         <PrecedingElements 
           type={type}
           showPassword={showPassword}
           setShowPassword={setShowPassword}
+          opts={opts}
         />
 
         <SubsequentElements
           type={type} name={name}
-          error={getError()} disabled={disabled}
-          tooltip={tooltip} tooltipCoords={tooltipCoordinates}
-          tooltipActive={tooltipActive} setTooltipActive={setTooltipActive}
+          setValue={setValue} 
+          disabled={disabled}
+          error={getError()} 
+          tooltipContext={tooltipContext}
+          tooltipContent={tooltipContent}
         />
         
         <LoadingBar className='input-loading-bar-cont'>
@@ -126,39 +126,34 @@ export const Input = ({
       </InputContainer>
 
       {/* Error / Description messages */}
-      <ErrorAndDescription className='mt-2 ml-1'>
-        { getError() && errorMessage ? 
-        <p className="error-text">  { errorMessage } </p> : description && 
-        <p className="">            { description } </p> }
-      </ErrorAndDescription>
-
-      {/* Tooltip Text */}
-      <Tooltip 
-        style={{ transform: `translate(${tooltipCoordinates.current.x + 8}px, ${tooltipCoordinates.current.y + 12}px)`}}
-        className={`input-tooltip ${tooltipCoordinates} ${tooltipActive ? 'input-tooltip-v' : 'input-tooltip-h'}`}
-      >
-        {tooltipText ? tooltipText : 'Tooltip text...'}
-      </Tooltip>
-
+      <ErrorAndDesc className={`mt-2 ml-1 height-trans ${description || getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <p className={`height-trans-content ${(getError() && errorMessage) ? 'error-text' : 'text-colors'}`}>
+          { (getError() && errorMessage) ? errorMessage : description } &nbsp;
+        </p>
+      </ErrorAndDesc>
     </TextInput>
   );
 }
 
 
-// Variant elements
+
+//------------------------------------------//
+// Preceding Variant Elements               //
+//------------------------------------------//
 interface PrecedingElProps {
   type: TextInputTypes;
   showPassword: boolean;
   setShowPassword: Dispatch<SetStateAction<boolean>>;
+  opts: InputVariantOpts;
 }
-export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPassword, setShowPassword }) => {
+export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPassword, setShowPassword, opts }) => {
   const toggleShowPassword = (visible: boolean) => setShowPassword(visible);
-  const VariantIcon: React.FC | undefined = PrecedingIcons[type] || undefined;
+  const VariantIcon: React.FC<InputVariantOpts> | undefined = PrecedingIcons[type] || undefined;
   
   return (
-    <div className="input-preceding-el-c">
+    <VariantIcons className="input-preceding-el-c">
       <div className='input-preceding-el'>
-        {VariantIcon && <VariantIcon />}
+        {VariantIcon && <VariantIcon {...opts} />}
 
         { type == 'password' && 
           <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
@@ -167,144 +162,215 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPasswo
           </div>
         }
       </div>
-    </div>
+    </VariantIcons>
   );
 }
 
-const PrecedingIcons: Partial<Record<TextInputTypes, React.FC>> = {
-  'email':          () => <Icon variant='Envelope'    styles='input-icon-def' />,
-  'policyNumber':   () => <Icon variant='Profile'     styles='input-icon-def' />,
-  'phone':          () => <Icon variant='Phone'       styles='input-icon-def' />,
-  'creditCard':     () => <Icon variant='CreditCard'  styles='input-icon-def' />,
+const inputTypesWithoutIcons = ['search', 'text', 'currency', 'number'];
+const PrecedingIcons: Partial<Record<TextInputTypes, React.FC<InputVariantOpts>>> = {
+  'email': (opts) => opts.showEmailIcon 
+  ? <Icon variant='Envelope'    styles='input-icon-def' /> : undefined,
+
+  'policyNumber': (opts) => opts.showPolicyNumberIcon 
+  ? <Icon variant='Profile'     styles='input-icon-def' /> : undefined,
+
+  'phone': (opts) => opts.showPhoneIcon 
+  ? <Icon variant='Phone'       styles='input-icon-def' /> : undefined,
+
+  'creditCard': (opts) => opts.showCreditCardIcon 
+  ? <Icon variant='CreditCard'  styles='input-icon-def' /> : undefined,
 };
 
 
+//------------------------------------------//
+// Subsequent Variant Elements              //
+//------------------------------------------//
 interface SubsequentElProps {
   name: string;
   type: TextInputTypes;
   disabled: boolean;
   error: boolean;
-
-  tooltip?: boolean;
-  tooltipCoords: RefObject<{ x: number, y: number }>;
-  tooltipActive: boolean;
-  setTooltipActive: Dispatch<SetStateAction<boolean>>;
+  setValue?: Dispatch<SetStateAction<string>>;
+  tooltipContext?: TooltipContextActions;
+  tooltipContent?: TooltipContentProps;
 }
 export const SubsequentElements: React.FC<SubsequentElProps> = ({
-  name, type, disabled, error, 
-  tooltip, tooltipCoords, setTooltipActive 
-}) => {  
-  const tooltipMouseEnter = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    // console.log('mouse enter tooltip', {Event: e});
-    setTooltipActive(true);
-  }
-  
-  const tooltipMouseLeave = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    // console.log('mouse leave tooltip', {Event: e});
-    setTooltipActive(false);
-  }
+  name, type, disabled, error, setValue, tooltipContext, tooltipContent
+}) => {
+  const { show, hide } = tooltipContext || {};
 
-  const toolTipHover = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>): void => {
-    const coordinates = { x: e.clientX, y: e.clientY };
-    tooltipCoords.current = coordinates;
-    // console.log(`mouseCoordinates: `, tooltipCoordinates.current); //  {x: coordinates.x, y: coordinates.y });
+  const incrementValue = (add: boolean) => {
+    if (!setValue) return;
+
+    setValue(prevValue => {
+      const num = Number(prevValue); 
+      const isNumber = prevValue.trim() !== '' && Number.isFinite(num);
+      if (isNumber) return add ? `${num + 1}` : `${num - 1}`;
+      return prevValue;
+    })
   }
   
   return (
-    <SubsequentInputElements className={`input-subsequent-el-c`}>
-      <div className={`row flex-grow justify-items-end items-center`}>
+    <div className="input-subsequent-el-c">
+      <div className="input-subsequent-el">
+
         {/* Error / Tooltip icon */}
-        { error ?
-          <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
-        : 
-          <TooltipIcon 
-            onMouseEnter={e => tooltip && tooltipMouseEnter(e)} 
-            onMouseOver={e =>  tooltip && toolTipHover(e)} 
-            onMouseLeave={e => tooltip && tooltipMouseLeave(e)} 
-            className={`cursor-pointer`}
-          >
-            <Icon variant='InfoBox' styles='mr-3 size-4' /> 
-          </TooltipIcon>
+        <ErrorAndTooltipIcon className="input-tooltip-icon"
+          onMouseEnter={() => tooltipContent && show?.(tooltipContent)} 
+          onMouseLeave={() => hide?.()} 
+        >
+          { error ? <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
+          :         <Icon variant='InfoBox' styles='mr-3 size-4 cursor-pointer' /> }
+        </ErrorAndTooltipIcon>
+
+        {/* Increment buttons - type="number" */}
+        { type == 'number' && 
+          <div className={`increment-btns ${!disabled && !error ? 'increment-btns-states' : error ? 'input-btns-error' : ''}`}>
+            <Button 
+              onClick={() => incrementValue(true)}
+              icon='ChevronUp' iconStyles='input-inc-i' disabled={disabled} 
+              color='gray' additionalStyles='inc-btn-base input-inc-btn-t' 
+            />
+            <Button 
+              onClick={() => incrementValue(false)}
+              icon='ChevronDown' iconStyles='input-inc-i' disabled={disabled} 
+              color='gray' additionalStyles='inc-btn-base input-inc-btn-b' 
+            />
+          </div>
         }
 
-        {/* Currency Dropdown */}
+        {/* Currency Dropdown - type="currency" */}
         { type == 'currency' && 
           <CurrencySelectContainer className='row relative'>
-            <Icon variant='DropdownArrow' styles='size-5 absolute top-[7px] right-[6px]' />
+            <Icon variant='DropdownArrow' styles='input-curr-i' />
             <CurrencySelect 
               name={`${name}-currencyType`} disabled={disabled}
               className={`input-curr ${error ? 'input-curr-error' : ''}`}
             >
-              <option>USD</option> 
-              <option>CAD</option> 
-              <option>EUR</option>
+              <option value="USD">USD</option> 
+              <option value="CAD">CAD</option> 
+              <option value="EUR">EUR</option>
+              <option value="YEN">YEN</option>
             </CurrencySelect>
           </CurrencySelectContainer>
         }
 
-        {/* Search Sort Button */}
+        {/* Search Sort Button - type="search" */}
         { type == 'search' &&
           <SortSearchButton 
             type="button" disabled={disabled} 
             className={`input-sort-btn ${error ? 'input-sort-error' : ''}`}
           >
-            <Icon variant='Sort' styles='size-5 text-slate-100 dark:text-slate-400' />
+            <Icon variant='Sort' styles='input-sort-i' />
             Sort
           </SortSearchButton>
         }
 
       </div>
-    </SubsequentInputElements>
+    </div>
   );
 }
 
+
 // Component Styles
+const Label = styled.label``;
 const TextInput = styled.div``;
 const InputContainer = styled.div``;
+const ErrorAndDesc = styled.div``;
 
-const SubsequentInputElements = styled.div``;
-const Label = styled.label``;
-const ErrorAndDescription = styled.div``;
-
+const VariantIcons = styled.div``;
+const ErrorAndTooltipIcon = styled.div``;
 const LoadingBar = styled.div``;
 const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
-const CurrencySelect = styled.select`pointer-events: all;`;
+const CurrencySelect = styled.select``;
 
-// TODO: this needs to be fixed positioning to handle proper placement with scroll
-const Tooltip = styled.div``;
-const TooltipIcon = styled.div`pointer-events: all;`;
 
+// TODO: update the docs input examples to include these variant options
+export interface InputVariantOpts {
+    /* Number  */
+    incrementButtons?: boolean;
+    
+    /* Email */
+    showEmailIcon?: boolean;
+
+    /* Password */
+    visibilityIcon?: boolean;
+
+    /* Search */
+    sortButton?: boolean;
+    sortType?: SearchSortType;
+    
+    /* Policy Number */
+    showPolicyNumberIcon?: boolean;
+    policyNumberMask?: boolean;
+
+    /* Phone Number */
+    showPhoneIcon?: boolean;
+    phoneNumberMask?: boolean;
+
+    /* Credit Card */
+    showCreditCardIcon?: boolean;
+    creditCarkMask?: boolean;
+
+    /* Currency */
+    showMoneySign?: boolean;
+    currencyTypeDropdown?: boolean;
+}
+
+export type SearchSortType = 'alphabetical' | 'numerical' | ((a: any, b: any) => void);
+
+const DefaultInputVariantOpts: InputVariantOpts = {
+    incrementButtons: true,
+    showEmailIcon: true,
+    visibilityIcon: true,
+    sortButton: true,
+    sortType: 'alphabetical',
+    showPolicyNumberIcon: true,
+    policyNumberMask: true,
+    showPhoneIcon: true,
+    phoneNumberMask: true,
+    showCreditCardIcon: true,
+    creditCarkMask: true,
+    showMoneySign: true,
+    currencyTypeDropdown: true,
+}
 
 // #region Input Type Props
 type InputPropsPartial = Partial<InputProps> & { type: TextInputTypes } & any;
 export const InputProps_Text: InputPropsPartial = {
   type: 'text',
-  label: 'Text Input',
+  name: 'text',
 }
 
 export const InputProps_Email: InputPropsPartial = {
   type: 'email',
-  label: 'Email Input',
+  name: 'email',
+  label: 'Email',
   description: 'What is your email address?',
   placeholder: 'yourname@email.com',
-  tooltipContent: 'The email used to create your account.',
+  tooltip: true,
+  tooltipText: 'The email used to create your account.',
   autocomplete: 'email',
 }
 
 export const InputProps_Password: InputPropsPartial = {
   type: 'password',
+  name: 'password',
   label: 'Password',
   description: 'Create your password.',
-  tooltipContent: 'The used for your account.',
+  tooltip: true,
+  tooltipText: 'The used for your account.',
   autocomplete: 'password',
 }
 
 export const InputProps_Phone: InputPropsPartial = {
   type: 'phone',
-  label: 'Phone Input',
+  name: 'phone',
+  label: 'Phone',
   description: 'What is your phone number?',
-  tooltipContent: 'Your phone number, including the area code. ex: (000)-000-0000',
+  tooltip: true,
+  tooltipText: 'Your phone number, including the area code. ex: (000)-000-0000',
   autocomplete: 'tel',
 }
 // #endregion
