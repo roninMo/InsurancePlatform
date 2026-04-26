@@ -354,7 +354,7 @@ export const CustomContent = () => {
               />
               
               <Button 
-                displayText={disabled ? 'Enable' : 'Disable'}
+                displayText={fileUploadDisabled ? 'Enable' : 'Disable'}
                 color={fileUploadDisabled ? 'gray-focus' : 'gray'}
                 onClick={() => setFileUploadDisabled(!fileUploadDisabled)}
               />

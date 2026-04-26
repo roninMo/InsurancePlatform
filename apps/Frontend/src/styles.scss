@@ -493,6 +493,11 @@
   // #region Dropbox component styles
   .dropbox-c {
     @apply w-full col gap-2;
+      
+    // Add disabled styles for the dropbox content
+    @apply group-has-[:disabled]:[&_.dropbox-icon]:disabled-text;
+    @apply group-has-[:disabled]:[&_.dropbox-up-link]:disabled-text;
+    @apply group-has-[:disabled]:[&_.dropbox-text]:input-colors;
   }
 
   .dropbox {
@@ -540,15 +545,13 @@
     @apply rowStart items-center pt-2;
   }
 
-  .dropbox-up-link {
-    @apply 
-      transition-all 
-      link-text font-semibold;
-  }
+  .dropbox-up-link-base { @apply font-semibold transition-all; }
+  .dropbox-up-link   { @apply link-text dropbox-up-link-base; }
+  .dropbox-up-link-d { @apply disabled-text dropbox-up-link-base; }
 
-  .dropbox-text {
-    @apply text-colors;
-  }
+  .dropbox-text-base { @apply transition-all; }
+  .dropbox-text   { @apply text-colors dropbox-text-base; }
+  .dropbox-text-d { @apply disabled-text dropbox-text-base; }
 
   // #endregion
 

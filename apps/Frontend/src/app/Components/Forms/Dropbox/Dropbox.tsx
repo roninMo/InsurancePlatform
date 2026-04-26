@@ -50,7 +50,13 @@ export const Dropbox = ({
     handleFiles(files);
   }
 
-  // drag over styling
+  // Error state
+  const getError = () => !disabled && error;
+
+
+  //--------------------------------------//
+  // drag over styling                    //
+  //--------------------------------------//
   const nestedDragCounter = useRef(0);
   useEffect(() => {
     const dropbox = dropboxRef.current;
@@ -78,8 +84,7 @@ export const Dropbox = ({
       }
     };
 
-    console.log('rerendering');
-
+    // Remove the classes
     const onDrop = () => {
       nestedDragCounter.current = 0; // Reset counter so next drag starts fresh
       dropbox.classList.remove('dropbox-drag-hover');
@@ -96,9 +101,6 @@ export const Dropbox = ({
       dropbox.removeEventListener('drop', onDrop);
     };
   }, []);
-
-  // Error state
-  const getError = () => !disabled && error;
 
 
   return (
@@ -117,8 +119,12 @@ export const Dropbox = ({
         }
 
         <Descriptions className='dropbox-text-c'>
-          <p className='dropbox-up-link'>Choose a file</p> &nbsp;
-          <p className='dropbox-text'>or drag it here.</p>
+          <p className={`${!disabled ? 'dropbox-up-link' : 'dropbox-up-link-d'}`}>
+            Choose a file
+          </p> &nbsp;
+          <p className={`${!disabled ? 'dropbox-text' : 'dropbox-text-d'}`}>
+            or drag it here.
+          </p>
         </Descriptions>
 
         <HiddenInput 
@@ -149,7 +155,7 @@ export const Dropbox = ({
   - Excel	.xls, .xlsx, application/vnd.ms-excel
   - Video	video/*
 */
-const defaultFiles = '.pdf, .doc, .docx, .txt';
+export const defaultFilesTypes = '.pdf, .doc, .docx, .txt';
 
 
 // Styled Components
