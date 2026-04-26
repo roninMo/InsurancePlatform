@@ -26,7 +26,7 @@ export const Documentation = () => {
   
   x Finally, go through each component and refactor to make them very organized and themed
     x currently on Textarea, just need to add Attach File functionality.
-		- add a file attachment component - utilizes drag & drop logic
+		x add a file attachment component - utilizes drag & drop logic
       - add file attachment logic to the textarea, use the types from the drag & drop component's
 
     - add a height trans utility wrapper component to declutter the html code for our fancy renders
@@ -34,7 +34,7 @@ export const Documentation = () => {
       - then add it to all components using the height trans logic
 
     - update all docs page codeSnippets to be proper refs @see vite.config.ts
-		- after you fix the build error ocurring, add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
+		- after you fix the build error occurring, add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
 		- then add convenience functions for object entries logic and looping
 
 
