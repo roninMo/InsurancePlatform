@@ -1,5 +1,5 @@
 import { DragEvent, MouseEvent, useEffect, useRef } from 'react';
-import { Icon, IconTypes } from '@Project/ReactComponents';
+import { Icon, IconTypes } from "../../Common/Icons/Icon";
 
 import styled from '@emotion/styled';
 import styles from './Dropbox.module.scss';

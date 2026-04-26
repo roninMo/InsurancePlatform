@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Slider } from "../../../../../Components/Forms/Slider/Slider";
+import { Slider } from "@Project/ReactComponents";
 
 
 export const Example_DefaultSlider = ({ error, disabled }: {
@@ -10,8 +10,9 @@ export const Example_DefaultSlider = ({ error, disabled }: {
   
   const onChangeSlider = () => {
     setSliderValue((prevState: boolean) => {
-      // console.log('slider value: ', !prevState);
-      return !prevState;
+      const newState = !prevState;
+      console.log('slider value: ', newState);
+      return newState;
     });
   }
 

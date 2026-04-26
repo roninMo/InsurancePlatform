@@ -1,7 +1,9 @@
 import { memo, MouseEvent, useId, useMemo, useState } from "react";
-import { UniversalEventHandlers, Icon, Button, IconTypes, TooltipContextActions, TooltipContentProps } from '@Project/ReactComponents';
-import styled from '@emotion/styled';
+import { Button } from "../Button/Button";
+import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
+import { Icon, IconTypes } from "../../Common/Icons/Icon";
 
+import styled from '@emotion/styled';
 import styles from './Textarea.module.scss';
 
 

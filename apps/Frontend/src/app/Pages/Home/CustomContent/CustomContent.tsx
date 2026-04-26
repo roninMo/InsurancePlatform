@@ -3,7 +3,6 @@ import { Input } from '../../../Components/Forms/Input/Input';
 import { Card } from '../../../Components/Content/Card/Card';
 import { CheckboxItem, Checkbox, CheckboxProps } from '../../../Components/Forms/Checkbox/Checkbox';
 import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
-import { Slider } from '../../../Components/Forms/Slider/Slider';
 import { 
   Button, 
   defaultBoxMetadataTags, 
@@ -15,6 +14,7 @@ import {
   RadioItem, 
   Select, 
   SelectItem, 
+  Slider, 
   Textarea, 
   TextInputTypes,
   TooltipService, 
