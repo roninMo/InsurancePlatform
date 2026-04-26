@@ -7,8 +7,8 @@ import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 
-import { Kw } from "../../../Components/Keyword/Keyword";
 import { DocLink } from "../../../Components/DocLink/DocLink";
+import { Kw } from "../../../Components/Keyword/Keyword";
 import styled from '@emotion/styled';
 
 import RadioCodeSnippets from './Docs_RadioJsxComponents?raw';

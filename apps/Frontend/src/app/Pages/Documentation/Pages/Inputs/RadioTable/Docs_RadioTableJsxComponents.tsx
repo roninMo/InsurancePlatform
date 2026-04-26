@@ -1,6 +1,5 @@
-import { RadioItem } from "@Project/ReactComponents";
 import { useState } from "react";
-import { RadioTable } from "../../../../../Components/Forms/RadioTable/RadioTable";
+import { RadioItem, RadioTable } from "@Project/ReactComponents";
 
 
 export const Example_InlineRadioTable = ({ error, disabled }: {

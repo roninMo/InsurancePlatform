@@ -1,7 +1,7 @@
-import { ChangeEvent, memo, MouseEvent, useCallback, useId, useRef } from 'react';
-import styled from '@emotion/styled';
+import { ChangeEvent, memo, MouseEvent, useCallback, useRef } from 'react';
+import { RadioItem } from '../RadioButton/RadioGroup';
 
-import { RadioItem } from '@Project/ReactComponents';
+import styled from '@emotion/styled';
 import styles from './RadioTable.module.scss';
 
 

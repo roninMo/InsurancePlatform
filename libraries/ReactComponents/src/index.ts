@@ -9,6 +9,7 @@ export * from './Forms/Dropbox/Dropbox';
 export * from './Forms/Input/Input';
 export * from './Forms/RadioButton/RadioGroup';
 export * from './Forms/RadioButton/RadioItem/RadioItem';
+export * from './Forms/RadioTable/RadioTable';
 export * from './Forms/Select/Select';
 export * from './Forms/Select/SelectItem/SelectItem';
 export * from './Forms/Slider/Slider';

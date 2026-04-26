@@ -9,8 +9,8 @@ import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
-import { HashLink } from '../../../../../Components/Utils/HashLink/HashLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
+import { HashLink } from '../../../../../Components/Utils/HashLink/HashLink';
 import styled from '@emotion/styled';
 
 import CheckboxCodeSnippets from './Docs_CheckboxJsxComponents?raw';
