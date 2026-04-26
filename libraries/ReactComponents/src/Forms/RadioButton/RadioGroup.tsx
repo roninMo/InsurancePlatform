@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useRef } from 'react';
-import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { RadioGroupItem } from './RadioItem/RadioItem';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 
 import styled from '@emotion/styled';
 import styles from './RadioGroup.module.scss';

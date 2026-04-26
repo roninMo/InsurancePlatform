@@ -1,7 +1,7 @@
 import { memo, MouseEvent, useId, useMemo, useState } from "react";
 import { Button } from "../Button/Button";
-import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
+import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
 
 import styled from '@emotion/styled';
 import styles from './Textarea.module.scss';

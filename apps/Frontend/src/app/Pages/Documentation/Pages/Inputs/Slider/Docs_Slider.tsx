@@ -6,10 +6,15 @@ import { getSourceCode } from "@Project/ReactComponents";
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
 import { ParamType } from "../../../Components/ParamType/ParamType";
 import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
+
+import { DocLink } from '../../../Components/DocLink/DocLink';
+import { Kw } from '../../../Components/Keyword/Keyword';
 import styled from "@emotion/styled";
 
 import SliderCodeSnippets from './Docs_SliderJsxComponent?raw';
-import { Example_DefaultSlider } from "./Docs_SliderJsxComponent";
+import { 
+  Example_DefaultSlider, 
+} from "./Docs_SliderJsxComponent";
 
 
 export const Docs_Slider = () => {

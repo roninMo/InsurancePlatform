@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import { Checkbox, CheckboxItem } from "../../../../../Components/Forms/Checkbox/Checkbox";
+import { Checkbox, CheckboxItem } from "@Project/ReactComponents";
 
 
 export const Example_DefaultCheckbox = ({ error, disabled }: {

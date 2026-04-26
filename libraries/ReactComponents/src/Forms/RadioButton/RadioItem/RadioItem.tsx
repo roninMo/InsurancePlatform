@@ -1,9 +1,9 @@
-import { UniversalEventHandlers } from '@Project/ReactComponents';
+import { ChangeEvent, memo } from 'react';
 import { RadioItem, RadioVariant } from '../RadioGroup';
+import { UniversalEventHandlers } from '../../../Common/Utilities/Utils';
 
 import styled from '@emotion/styled';
 import styles from './RadioItem.module.scss';
-import { ChangeEvent, memo } from 'react';
 
 
 export interface RadioItemProps {

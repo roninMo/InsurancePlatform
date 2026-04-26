@@ -4,6 +4,7 @@ export * from './Common/index';
 // Forms
 export * from './Forms/Address/AddressInfo';
 export * from './Forms/Button/Button';
+export * from './Forms/Checkbox/Checkbox';
 export * from './Forms/CCInformation/CCInformation';
 export * from './Forms/Dropbox/Dropbox';
 export * from './Forms/Input/Input';

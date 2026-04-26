@@ -8,6 +8,7 @@ import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { ElementState } from '../../../Components/ShowcaseElement/ElementStates/ElementState';
 
+import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
 import styled from '@emotion/styled';
 

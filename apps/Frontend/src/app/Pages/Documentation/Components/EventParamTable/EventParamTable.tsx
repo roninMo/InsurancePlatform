@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { getParamsTableItems, ParamTable, ParamTableProps } from '../ParamTable/ParamTable';
-import { ParamType } from '../ParamType/ParamType';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
+import { ParamType } from '../ParamType/ParamType';
 
 import styled from '@emotion/styled';
 import styles from './EventParamTable.module.scss';

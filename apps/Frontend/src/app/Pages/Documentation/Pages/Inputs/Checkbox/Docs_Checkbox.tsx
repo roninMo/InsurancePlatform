@@ -242,8 +242,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
 
-// TODO: when imported to the library, use actual refs
-import SourceChckbxSnippets from '../../../../../Components/Forms/Checkbox/Checkbox?raw';
+import SourceChckbxSnippets from '@lib-rc/Forms/Checkbox/Checkbox.tsx?raw';
 const Code_Variant = getSourceCode(SourceChckbxSnippets, 'CheckboxVariant', 'type');
 const Code_ChckbxItem = getSourceCode(SourceChckbxSnippets, 'CheckboxItem', 'interface');
 const Code_OnSelect = 'onSelect: (checked: CheckboxItem, event: ChangeEvent<HTMLElement>) => void;';

@@ -21,7 +21,7 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
   
   const onSelectValue = (selected: SelectItem, index: number) => {
     setSelectedValue(selected);
-    // console.log('select: new value: ', {currentIcon, index, selectIcons});
+    console.log('select: new value: ', selected);
   }
   
   // Prevent object from causing rerenders.
