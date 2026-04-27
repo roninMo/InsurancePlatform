@@ -45,7 +45,7 @@ export interface MetadataTagProps {
 
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
-  const { type = 'default', name, value, placeholder, metadataTags, 
+  const { type = 'default', name, value, placeholder, metadataTags, attachFile,
     error = false, errorMessage, disabled, required, 
     onSubmit, submitButtonText, submitButtonDisabled = false, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,

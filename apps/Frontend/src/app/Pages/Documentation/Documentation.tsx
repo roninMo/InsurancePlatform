@@ -116,7 +116,7 @@ export const Documentation = () => {
               Notification
             </NotificationContainer>
             
-            <PageContent className="py-4">
+            <PageContent className="py-4 pr-4 2xl:pr-0">
               <Outlet />
               
               <div className='span-12'>

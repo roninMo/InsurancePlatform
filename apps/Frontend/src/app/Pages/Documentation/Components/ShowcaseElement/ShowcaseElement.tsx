@@ -29,7 +29,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
     if (activeTab != 'jsx') return;
     if (isRenderDelayDone) return;
 
-    const timeout = setTimeout(() => setIsRenderDelayDone(true), 450);
+    const timeout = setTimeout(() => setIsRenderDelayDone(true), 2450);
     return () => clearTimeout(timeout);
   }, [activeTab]);
 
@@ -60,20 +60,24 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
       </Tabs>
 
       <Content className='w-full bg-div rounded-b-md'>
+        <Jsx show={activeTab == 'jsx' && isRenderDelayDone} cStyles='content-auto'>
+          <Suspense>
+            <MemoizedCodeSnippet jsx={jsx} onCopyCodeSnippet={copyCodeSnippet} />
+          </Suspense>
+        </Jsx>
+
         <RenderedComponent show={activeTab == 'component'} cStyles={`content-auto ${styles}`}>
           { children }
         </RenderedComponent>
-        
-        <Jsx show={activeTab == 'jsx' && isRenderDelayDone} cStyles='content-auto'>
-          {activeTab == 'jsx' && 
-            <Suspense>
-              <MemoizedCodeSnippet jsx={jsx} onCopyCodeSnippet={copyCodeSnippet} />
-            </Suspense>
-          }
-        </Jsx>
-
         <PreJsxRenderedContent show={activeTab == 'jsx' && !isRenderDelayDone} cStyles='content-auto'>
-          <p className='p-4 italic loading-text'>Loading code...</p>
+          <div className='w-full lg:w-7/12 col gap-2 py-4 px-6 pb-8'>
+            <div className='p-1.5 italic font-semibold loading-text'>Loading code...</div>
+            <div className='showcase-jsx-sk-bg w-full' />
+            <div className='showcase-jsx-sk-bg w-1/4' />
+            <div className='showcase-jsx-sk-bg w-4/5' />
+            <div className='showcase-jsx-sk-bg w-1/2' />
+          </div>
+
           {/* TODO: Add skeleton loading components
             <div className='w-full p-4 skeleton-bg outline-css outline-default'>
               Hello

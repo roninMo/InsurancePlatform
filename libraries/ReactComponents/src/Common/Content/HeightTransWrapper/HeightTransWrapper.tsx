@@ -16,7 +16,6 @@ export interface HeightTransProps {
 export const Ht = ({ show, cStyles, styles, children, heightTransClass, heightTransContentClass }: HeightTransProps) => {
   const htClass = heightTransClass ? heightTransClass : 'height-trans';
   const htcClass = heightTransContentClass ? heightTransContentClass : 'height-trans-content';
-  console.log('height trans class: ', htClass);
 
   return (
     <div className={`

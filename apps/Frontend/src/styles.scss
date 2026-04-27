@@ -1779,6 +1779,10 @@
     ;
   }
 
+  .showcase-jsx-sk-bg {
+    @apply p-2 skeleton-bg rounded-lg transition-all opacity-35;
+  }
+
   .showcase-state-ref-c {
     @apply p-4 pl-8 pt-8 pb-2 span-12 lg:span-8;
   }
