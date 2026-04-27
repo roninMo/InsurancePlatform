@@ -36,6 +36,8 @@ export interface TooltipBase {
 export const Tooltip = (props: TooltipProps) => {
   const [shouldRender, setShouldRender] = useState<boolean>(false);
   const { showTooltip, additionalStyles } = props;
+  const { code, showLineNumbers, type = 'example' } = props as CodeTooltipProps;
+
   const [isVisible, setIsVisible] = useState<boolean>(false); // transitions don't work otherwise + transform gpu rendering
   useEffect(() => { setIsVisible(!!showTooltip) }, [showTooltip]); 
 
@@ -60,21 +62,20 @@ export const Tooltip = (props: TooltipProps) => {
   const initialMove = useRef(true); // whether it's the first frame move
   
   // Scroll functionality 
+  const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
   const currentScroll = useRef(0); 
   const targetScroll = useRef(0);
 
   useEffect(() => {
     // Retrieve the mouse location and set the initial render location of the tooltip
-    const captureMouseMove = (e: MouseEvent) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-    };
+    const captureMouseMove = (e: MouseEvent) => (mouse.current = { x: e.clientX, y: e.clientY });
+    document.addEventListener('mousemove', captureMouseMove);
 
 
     //----------------------------------//
     // The Animation Loop               //
     //----------------------------------//
     if (!showTooltip) return;
-    
     let frameId: number;
     const animate = () => {
       const mouseLoc = { ...mouse.current };
@@ -90,7 +91,7 @@ export const Tooltip = (props: TooltipProps) => {
       // Smoothed scroll logic    //
       //--------------------------//
       const scrollDelta = targetScroll.current - currentScroll.current; // with @see handleGlobalWheel
-      if (Math.abs(scrollDelta) > 0.1) {
+      if (Math.abs(scrollDelta) > 0.1 && isRenderDelayDone) {
         const nonLinearFactor = 0.025 + (Math.abs(scrollDelta) / 4000);
         currentScroll.current = interpFloat(currentScroll.current, targetScroll.current, nonLinearFactor);
         tooltip.scrollTop = Math.round(currentScroll.current); // - quick, then eases to a stop.
@@ -108,10 +109,12 @@ export const Tooltip = (props: TooltipProps) => {
       let shouldPlaceBelow = true;
       const interpSpeed = 0.1;
 
-      // if we're already at the target location
-      if (Math.abs(tooltipLoc.x - targetLoc.x) < 0.1 && Math.abs(tooltipLoc.y - targetLoc.y) < 0.1) {
-        frameId = requestAnimationFrame(animate);
-        return;
+      // if we're already at the target and scroll locations
+      const isMouseSettled = Math.abs(tooltipLoc.x - targetLoc.x) < 0.1 && Math.abs(tooltipLoc.y - targetLoc.y) < 0.1;
+      const isScrollSettled = Math.abs(scrollDelta) < 0.1;
+      if (isMouseSettled && isScrollSettled) {
+          frameId = requestAnimationFrame(animate);
+          return;
       }
 
       // Adjust the location based on how close the tooltip is to the edge of the screen
@@ -193,7 +196,7 @@ export const Tooltip = (props: TooltipProps) => {
           
           // Add to our target, clamped between 0 and max scroll
           const maxScroll = tooltip.scrollHeight - tooltip.clientHeight;
-          const scrollBoundOffset = 25; // accounts for custom scrollbar styles
+          const scrollBoundOffset = 25; // accounts for custom scrollbar styles padding prevent full scrolls
           targetScroll.current = Math.max(
             0 - scrollBoundOffset,
             Math.min(maxScroll + scrollBoundOffset, ( targetScroll.current + scrollAmount ))
@@ -205,7 +208,6 @@ export const Tooltip = (props: TooltipProps) => {
 
 
     // Initial frame call
-    document.addEventListener('mousemove', captureMouseMove);
     window.addEventListener('wheel', handleGlobalWheel, { passive: false });
     frameId = requestAnimationFrame(animate);
 
@@ -219,11 +221,13 @@ export const Tooltip = (props: TooltipProps) => {
       initialMove.current = true;
       
       // Reset the tooltip state
-      tooltipLocation.current = { x: 0, y: 0 };
+      // tooltipLocation.current = { x: 0, y: 0 };
       currentScroll.current = 0;
       targetScroll.current = 0;
     };
-  }, [showTooltip]);
+    // showTooltip        - for running the animation when the tooltip should be "rendered"
+    // isRenderDelayDone  - renders scrollbar (code is up to date before this is reran (during showTooltip's change))
+  }, [showTooltip, isRenderDelayDone]);
   // #endregion
 
 
@@ -233,8 +237,6 @@ export const Tooltip = (props: TooltipProps) => {
   // Code Snippet and Render delay          //
   //----------------------------------------//
   // #region Code Snippet and Render Delay
-  const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
-  const { code, showLineNumbers, type = 'example' } = props as CodeTooltipProps;
 
   // Quick Render delay for jsx code and to enable the scrollbar (to allow other transition css to work via overflow)
   useEffect(() => {
