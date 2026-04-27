@@ -1,5 +1,6 @@
-import { memo, MouseEvent, useId, useMemo, useState } from "react";
+import { memo, MouseEvent, useId, useMemo, useRef, useState } from "react";
 import { Button } from "../Button/Button";
+import { FileUploadProps } from "../Dropbox/Dropbox";
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
 
@@ -26,13 +27,10 @@ export interface TextareaProps {
   submitButtonText?: string;
   submitButtonDisabled?: boolean;
 
-  // TODO: Add a drag and drop file attachment component, use it's props for attachFile here, and notify that the object needs to be memoized
-  // Attach file for all variants
-	attachFile?: {
-		name: string;
-    onAttachFile?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-	}
-  // Box and post variants
+  // This object needs to be memoized when used to prevent extra rerenders.
+	attachFile?: FileUploadProps;
+
+  // Custom interactive buttons for various functionality you'd like to implement alongside this input component
   metadataTags?: MetadataTagProps[] | boolean;
 }
 
@@ -85,8 +83,8 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
 export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   const { 
     type = 'default', name, label, description, 
-    value, metadataTags,
-    error = false, errorMessage, disabled = false, 
+    value, attachFile, metadataTags,
+    error = false, errorMessage, required = false, disabled = false, 
     onSubmit, submitButtonText, submitButtonDisabled = false, 
   } = allProps;
 
@@ -95,12 +93,18 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   //--------------------------------//
   const ButtonsAndLinksSection = useMemo(() => (
     <ButtonsAndLinks className={`ta-d-btn-links`}>
-      <PrecedingInputElements className="rowStart items-center gap-4 pl-1 py-1">
-        <AttachFileElement onClickAttachFile={() => {}} iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} />
+      <PrecedingInputElements className="rowStart items-center gap-4 pl-1 py-1 animate-fade-in">
+          { attachFile?.handleFiles && 
+            <AttachFileElement 
+              name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
+              multiple={attachFile?.multiple} accept={attachFile?.accept} 
 
-        <div className="animate-fade-in">
+              iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
+              required={required} disabled={disabled}
+            />
+          }
+
           <MetadataTagElements type='post' metadataTags={metadataTags} id={name} disabled={disabled} />
-        </div>
         {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
       </PrecedingInputElements>
 
@@ -152,7 +156,15 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
     const ButtonsAndLinksSection = useMemo(() => (
       <ButtonsAndLinks className="ta-b-btn-links">
         <div className={`ta-b-attach-file ${!disabled ? 'ta-b-attach-file-ha' : 'ta-b-attach-file-d'}`}>
-          <AttachFileElement onClickAttachFile={() => {}} iconStyles={`ta-b-icon ${disabled ? 'icon-disabled-color' : ''}`} />
+          { attachFile?.handleFiles && 
+            <AttachFileElement 
+              name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
+              multiple={attachFile?.multiple} accept={attachFile?.accept} 
+
+              iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
+              required={required} disabled={disabled}
+            />
+          }
           <p className="italic">Attach a file</p>
         </div>
 
@@ -250,7 +262,15 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
           <FocusBar className={`${showPreview == 'write' ? 'focus-bar' : ''} ${error && !disabled ? 'focus-bar-err' : ''}`} />
           <div className={`ta-p-btn-links ${showPreview == 'write' ? 'border-styles border-t' : ''}`}>
             <div className={`ta-b-attach-file ${!disabled ? 'ta-b-attach-file-ha' : 'ta-b-attach-file-d'}`}>
-              <AttachFileElement onClickAttachFile={() => {}} iconStyles="ta-b-icon" />
+              { attachFile?.handleFiles && 
+                <AttachFileElement 
+                  name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
+                  multiple={attachFile?.multiple} accept={attachFile?.accept} 
+
+                  iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
+                  required={required} disabled={disabled}
+                />
+              }
               <p className="italic">Attach a file</p>
             </div>
 
@@ -370,15 +390,29 @@ const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagEl
   return (<></>);
 }
 
-const AttachFileElement = ({onClickAttachFile, iconStyles}: AttachFileProps) => {
-  // if (onClickAttachFile) return ( // TODO: only render when provided functionality
+const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, required, disabled }: TA_FileUploadProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // invoke the file input's native event for opening the file selection.
+  const onClickDropdown = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    fileInputRef?.current?.click();
+  }
+
   if (true) return (
-    <div onClick={(e) => onClickAttachFile && onClickAttachFile(e)}>
+    <div onClick={onClickDropdown}>
+      <HiddenInput 
+        name={name} type="file" ref={fileInputRef}
+        onChange={(e) => handleFiles(e.target.files)}
+
+        accept={accept || ''}
+        multiple={multiple}
+        className='sr-only'
+
+        disabled={disabled} required={required}
+      />
       <Icon variant='AttachFile'  styles={iconStyles} />
     </div>
   );
-
-  return (<></>);
 }
 
 
@@ -388,9 +422,10 @@ interface MetadataTagElementProps {
   id: string;
   disabled: boolean;
 };
-export interface AttachFileProps {
-  onClickAttachFile?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
+export interface TA_FileUploadProps extends FileUploadProps {
   iconStyles: string;
+  required?: boolean;
+  disabled?: boolean;
 }
 
 
@@ -436,3 +471,4 @@ const SubsequentInputElements = styled.div``;
 
 const PillActions = styled.div``;
 const ButtonsAndLinks = styled.div``;
+const HiddenInput = styled.input``;

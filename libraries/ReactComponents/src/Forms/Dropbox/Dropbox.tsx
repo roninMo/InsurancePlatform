@@ -7,9 +7,9 @@ import styles from './Dropbox.module.scss';
 
 export interface FileUploadProps {
   name: string;
+  accept?: string;
   handleFiles: (files: FileList | null) => void;
   multiple?: boolean;
-  accept?: string;
 }
 
 export interface DropboxProps extends FileUploadProps {

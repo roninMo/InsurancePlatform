@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo } from "react";
-import { MetadataTagProps, Textarea } from "@Project/ReactComponents";
+import { FileUploadProps, MetadataTagProps, Textarea } from "@Project/ReactComponents";
 
 
 export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDisabled }: {
@@ -9,6 +9,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [value, setValue] = useState<string>('');
+  const [uploadedFiles, setUploadedFiles] = useState<FileList>();
   const defaultMetadataTags: MetadataTagProps[] = useMemo(() => ([
       { tagIcon: 'Smile',     onClickTag: () => {}, iconStyles: undefined},
       { tagIcon: 'Tag',       onClickTag: () => {}, iconStyles: undefined},
@@ -21,12 +22,24 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
   }
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-    // Logic for handling form submission...
+    // Logic for handling input or form submission...
+    console.log(`submitting the textarea's data`, { value, uploadedFiles});
   };
   
-  const onAttachFile = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+  const onAttachFile = (files: FileList | null) => {
     // Additional logic for handling file attachments
+    console.log(`files uploaded: `, files);
+    setUploadedFiles(files || undefined);
   };
+
+  // Prevent unnecessary rerenders.
+  const fileUpload: FileUploadProps = useMemo(() => ({
+    name: 'textarea-upload-form-name',
+    accept: 'image/*, .pdf, .doc, .docx, .txt',
+    handleFiles: onAttachFile,
+    multiple: true
+  }), []);
+
 
   return (
     <div>
@@ -49,7 +62,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         disabled={disabled}
         required
 
-        // onAttachFile={onAttachFile}
+        attachFile={fileUpload}
         metadataTags={defaultMetadataTags}
       />
     </div>
@@ -64,6 +77,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [value, setValue] = useState<string>('');
+  const [uploadedFiles, setUploadedFiles] = useState<FileList>();
   const boxMetadataTags: MetadataTagProps[] = useMemo(() => ([
     { tagLabel: 'assign',   tagIcon: 'Profile',   onClickTag: () => {}, iconStyles: undefined},
     { tagLabel: 'label',    tagIcon: 'Tag',       onClickTag: () => {}, iconStyles: undefined},
@@ -77,13 +91,24 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // Logic for handling form submission...
+    console.log(`submitting the textarea's data`, { value, uploadedFiles});
   };
   
-  const onAttachFile = (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+  const onAttachFile = (files: FileList | null) => {
     // Additional logic for handling file attachments
-    console.log('attach file function', e);
+    console.log(`files uploaded: `, files);
+    setUploadedFiles(files || undefined);
   };
-  
+
+  // Prevent unnecessary rerenders.
+  const fileUpload: FileUploadProps = useMemo(() => ({
+    name: 'textarea-upload-form-name',
+    accept: 'image/*, .pdf, .doc, .docx, .txt',
+    handleFiles: onAttachFile,
+    multiple: true
+  }), []);
+
+
   return (
     <div className="pt-2">
       <Textarea  
@@ -105,7 +130,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         disabled={disabled}
         required
 
-        // onAttachFile={onAttachFile}
+        attachFile={fileUpload}
         metadataTags={boxMetadataTags}
       />
     </div>
@@ -120,6 +145,7 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [value, setValue] = useState<string>('');
+  const [uploadedFiles, setUploadedFiles] = useState<FileList>();
   const postMetadataTags: MetadataTagProps[] = useMemo(() => ([
     { tagIcon: 'Link',        onClickTag: () => {}, iconStyles: undefined},
     { tagIcon: 'CodeBracket', onClickTag: () => {}, iconStyles: undefined},
@@ -133,7 +159,23 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // Logic for handling form submission...
+    console.log(`submitting the textarea's data`, { value, uploadedFiles});
   };
+
+  const onAttachFile = (files: FileList | null) => {
+    // Additional logic for handling file attachments
+    console.log(`files uploaded: `, files);
+    setUploadedFiles(files || undefined);
+  };
+
+  // Prevent unnecessary rerenders.
+  const fileUpload: FileUploadProps = useMemo(() => ({
+    name: 'textarea-upload-form-name',
+    accept: 'image/*, .pdf, .doc, .docx, .txt',
+    handleFiles: onAttachFile,
+    multiple: true
+  }), []);
+
 
   return (
     <div>
@@ -156,6 +198,7 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
         disabled={disabled}
         required
 
+        attachFile={fileUpload}
         metadataTags={postMetadataTags}
       />
     </div>

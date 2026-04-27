@@ -349,8 +349,7 @@ export const InputProps_Email: InputPropsPartial = {
   label: 'Email',
   description: 'What is your email address?',
   placeholder: 'yourname@email.com',
-  tooltip: true,
-  tooltipText: 'The email used to create your account.',
+  tooltipContent: { text: 'The email used to create your account.' },
   autocomplete: 'email',
 }
 
@@ -359,8 +358,7 @@ export const InputProps_Password: InputPropsPartial = {
   name: 'password',
   label: 'Password',
   description: 'Create your password.',
-  tooltip: true,
-  tooltipText: 'The used for your account.',
+  tooltipContent: { text: 'The used for your account.' },
   autocomplete: 'password',
 }
 
@@ -369,8 +367,7 @@ export const InputProps_Phone: InputPropsPartial = {
   name: 'phone',
   label: 'Phone',
   description: 'What is your phone number?',
-  tooltip: true,
-  tooltipText: 'Your phone number, including the area code. ex: (000)-000-0000',
+  tooltipContent: { text: 'Your phone number, including the area code. ex: (000)-000-0000' },
   autocomplete: 'tel',
 }
 // #endregion

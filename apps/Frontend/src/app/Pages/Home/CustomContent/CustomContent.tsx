@@ -428,6 +428,7 @@ export const CustomContent = () => {
         <div className='span-4 pb-8 px-4 p-2'>
           <Input 
             { ...InputProps_Email } 
+            tooltipContext={tooltipContext}
             value={email}
             id={emailId}
             onChange={emailChanged}
