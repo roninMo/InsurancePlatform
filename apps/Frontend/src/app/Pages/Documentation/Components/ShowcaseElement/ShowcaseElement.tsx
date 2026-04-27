@@ -1,5 +1,5 @@
 import { useState, useEffect, ReactNode, Suspense, useMemo } from 'react';
-import { CodeRenderer, Icon } from '@Project/ReactComponents';
+import { CodeRenderer, Ht, Icon } from '@Project/ReactComponents';
 // import { Notify } from '../../Pages/Utils/Notify/Notify'; // Alternative for delay, used w/Suspense and conditional render
 
 import styled from '@emotion/styled';
@@ -51,44 +51,36 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
   return (
     <Container className='col outline-css outline-default'>
       <Tabs className='w-full rowStart items-center gap-4 px-4 border-b border-default rounded-t-md faded-box'>
-        <div onClick={() => toggleTab('component')} className={`tab-default ${isTabActive('component', activeTab)}`}>
+        <div onClick={() => toggleTab('component')} className={`tab-default ${activeTab == 'component' ? 'tab-active' : ''}`}>
           Component
         </div>
-        <div onClick={() => toggleTab('jsx')} className={`tab-default ${isTabActive('jsx', activeTab)}`}>
+        <div onClick={() => toggleTab('jsx')} className={`tab-default ${activeTab == 'jsx' ? 'tab-active' : ''}`}>
           Jsx
         </div>
       </Tabs>
 
       <Content className='w-full bg-div rounded-b-md'>
-        <RenderedComponent className={`height-trans ${displayContent('component', activeTab)}`}>
-          <div className={`height-trans-content content-auto ${styles}`}>
-            { children }
-          </div>
+        <RenderedComponent show={activeTab == 'component'} cStyles={`content-auto ${styles}`}>
+          { children }
         </RenderedComponent>
         
-        <Jsx className={`height-trans ${displayContent('jsx', activeTab, isRenderDelayDone)}`}>
-          <div className={`height-trans-content content-auto`}>
-            {activeTab == 'jsx' && 
-              <Suspense>
-                <MemoizedCodeSnippet jsx={jsx} onCopyCodeSnippet={copyCodeSnippet} />
-              </Suspense>
-            }
-          </div>
+        <Jsx show={activeTab == 'jsx' && isRenderDelayDone} cStyles='content-auto'>
+          {activeTab == 'jsx' && 
+            <Suspense>
+              <MemoizedCodeSnippet jsx={jsx} onCopyCodeSnippet={copyCodeSnippet} />
+            </Suspense>
+          }
         </Jsx>
 
-        <PreJsxRenderedContent className={`height-trans ${displayContent('jsx', activeTab, !isRenderDelayDone)}`}>
-          <div className={`height-trans-content content-auto`}>
-            <p className='p-4 italic loading-text'>Loading code...</p>
-            {/* TODO: Add skeleton loading components
-              <div className='w-full p-4 skeleton-bg outline-css outline-default'>
-                Hello
-              </div>  
-            */}
-          </div>
+        <PreJsxRenderedContent show={activeTab == 'jsx' && !isRenderDelayDone} cStyles='content-auto'>
+          <p className='p-4 italic loading-text'>Loading code...</p>
+          {/* TODO: Add skeleton loading components
+            <div className='w-full p-4 skeleton-bg outline-css outline-default'>
+              Hello
+            </div>  
+          */}
         </PreJsxRenderedContent>
-          
       </Content>
-
     </Container>
   );
 }
@@ -117,15 +109,11 @@ const MemoizedCodeSnippet = ({ jsx, onCopyCodeSnippet }: MemoizedCodeSnippetProp
 const Container = styled.div``;
 const Tabs = styled.div``;
 const Content = styled.div``;
-const RenderedComponent = styled.div``;
-const Jsx = styled.div``;
+const RenderedComponent = styled(Ht)``;
+const Jsx = styled(Ht)``;
 const JsxCopySnippet = styled.div``;
-const PreJsxRenderedContent = styled.div``;
+const PreJsxRenderedContent = styled(Ht)``;
 
 // Conditional Styles
 const isTabActive = (tab: showcaseTabType, activeTab: showcaseTabType): string => 
   tab == activeTab ? 'tab-active' : '';
-const displayContent = (tab: showcaseTabType, activeTab: showcaseTabType, shouldRender: boolean = true): string => 
-  (tab == activeTab && shouldRender) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]';
-const animateClose = (tab: showcaseTabType, activeTab: showcaseTabType, shouldRender: boolean = true): string => 
-  (tab == activeTab && shouldRender) ? 'height-trans-op-content' : '';

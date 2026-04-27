@@ -1,5 +1,5 @@
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
-import { IconTypes, Icon } from "@Project/ReactComponents";
+import { Ht, Icon, IconTypes } from "@Project/ReactComponents";
 import styled from "@emotion/styled";
 import styles from './Dropdown.module.scss';
 
@@ -59,10 +59,8 @@ export const Dropdown = ({
         </p>
       </Header>
 
-      <Container className={`height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <div className='height-trans-content'>
-          { children }
-        </div>
+      <Container show={dropdownOpen}>
+        { children }
       </Container>
     </div>
   );
@@ -71,4 +69,4 @@ export const Dropdown = ({
 
 // Styled Components
 const Header = styled.div``;
-const Container = styled.div``;
+const Container = styled(Ht)``;

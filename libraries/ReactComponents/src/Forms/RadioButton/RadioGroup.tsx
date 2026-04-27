@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useRef } from 'react';
 import { RadioGroupItem } from './RadioItem/RadioItem';
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 
 import styled from '@emotion/styled';
@@ -83,10 +84,8 @@ export const RadioGroup = ({
         )}
       </RadioItems>
 
-      <ErrorText className={`pt-2 height-trans ${getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <div className={`error-text height-trans-content`}>
-          { errorMessage ? errorMessage : '' } &nbsp;
-        </div>
+      <ErrorText show={getError()} styles='pt-2' cStyles='error-text'>
+        { errorMessage ? errorMessage : '' } &nbsp;
       </ErrorText>
     </Container>
   );
@@ -98,7 +97,7 @@ const Container = styled.div``;
 const Description = styled.p``;
 const Label = styled.label``;
 const RadioItems = styled.div``;
-const ErrorText = styled.div``;
+const ErrorText = styled(Ht)``;
 
 // Radio items layout
 const rowStyleVariants = ['default'];

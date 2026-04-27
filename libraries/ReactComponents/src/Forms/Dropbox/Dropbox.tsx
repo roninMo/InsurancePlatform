@@ -1,5 +1,6 @@
 import { DragEvent, MouseEvent, useEffect, useRef } from 'react';
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
 import styles from './Dropbox.module.scss';
@@ -139,10 +140,8 @@ export const Dropbox = ({
         />
       </FileUpload>
 
-      <ErrorAndDesc className={`pl-1 mt-2 height-trans ${description || getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <p className={`height-trans-content text-sm ${getError() ? 'error-text' : 'text-colors'}`}>
-          { getError() ? errorMessage : description } &nbsp;
-        </p>
+      <ErrorAndDesc show={!!description || getError()} styles='pl-1 mt-2' cStyles={`text-sm ${getError() ? 'error-text' : 'text-colors'}`}>
+        { getError() ? errorMessage : description } &nbsp;
       </ErrorAndDesc>
     </Container>
   );
@@ -162,5 +161,5 @@ export const defaultFilesTypes = '.pdf, .doc, .docx, .txt';
 const Container = styled.div``;
 const FileUpload = styled.div``;
 const Descriptions = styled.div``;
-const ErrorAndDesc = styled.div``;
+const ErrorAndDesc = styled(Ht)``;
 const HiddenInput = styled.input``;

@@ -1,8 +1,9 @@
 import { memo, MouseEvent, useId, useMemo, useRef, useState } from "react";
 import { Button } from "../Button/Button";
 import { FileUploadProps } from "../Dropbox/Dropbox";
-import { Icon, IconTypes } from "../../Common/Icons/Icon";
+import { Ht } from "../../Common/Content/HeightTransWrapper/HeightTransWrapper";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
+import { Icon, IconTypes } from "../../Common/Icons/Icon";
 
 import styled from '@emotion/styled';
 import styles from './Textarea.module.scss';
@@ -241,23 +242,19 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
       <Container>
         { PostSectionHeader }
 
-        <div className={`height-trans ${showPreview == 'preview' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-          <div className="height-trans-content ">
-            <div className="ta-p-preview-c">
-              { value ? value : 'Preview content will render here.' }
-            </div>
+        <Ht show={showPreview == 'preview'}>
+          <div className="ta-p-preview-c">
+            { value ? value : 'Preview content will render here.' }
           </div>
-        </div>
+        </Ht>
 
         <InputContainer className={`ta-p-c group 
           ${!disabled && error ? 'outline-error' : 'outline-styles'}
           ${showPreview == 'write' ? 'bg-default' : ''}
         `}>
-          <div className={`height-trans ${showPreview == 'write' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-            <div className="height-trans-content ">
-              <InputComponent { ...allProps } />
-            </div>
-          </div>
+          <Ht show={showPreview == 'write'}>
+            <InputComponent { ...allProps } />
+          </Ht>
 
           <FocusBar className={`${showPreview == 'write' ? 'focus-bar' : ''} ${error && !disabled ? 'focus-bar-err' : ''}`} />
           <div className={`ta-p-btn-links ${showPreview == 'write' ? 'border-styles border-t' : ''}`}>
@@ -301,13 +298,12 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
 // Universal error and description handling
 const ErrAndDescElements = memo(({ type, error, errorMessage, disabled, description }: any) => (
-  <ErrorAndDescription className={`
-    ${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}
-    height-trans ${description || (error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
-  `}>
-    <p className={`height-trans-content text-sm ${(!disabled && error && errorMessage) ? 'error-text' : 'text-colors'}`}>
-      { (!disabled && error && errorMessage) ? errorMessage : description } &nbsp;
-    </p>
+  <ErrorAndDescription 
+    show={description || (error && !disabled)} 
+    styles={`${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}`}
+    cStyles={`text-sm ${(!disabled && error && errorMessage) ? 'error-text' : 'text-colors'}`}
+  >
+    { (!disabled && error && errorMessage) ? errorMessage : description } &nbsp;
   </ErrorAndDescription>
 ), (prev, next) => (prev.error === next.error && prev.disabled === next.disabled));
 
@@ -462,7 +458,7 @@ export const defaultPostMetadataTags:MetadataTagProps[] = [
 // Styled Components
 const InputContainer = styled.div``;
 const Container = styled.div``;
-const ErrorAndDescription = styled.div``;
+const ErrorAndDescription = styled(Ht)``;
 const FocusBar = styled.div``;
 
 const Avatar = styled.div``;

@@ -4,6 +4,7 @@ import { Icon } from '../../Common/Icons/Icon';
 import { InputMask, useMask } from '@react-input/mask';
 import { TooltipContextActions } from '../../Common/Utilities/Tooltip/TooltipProvider/TooltipProvider';
 import { TooltipContentProps } from '../../Common/Utilities/Tooltip/Tooltip';
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 
 import styled from '@emotion/styled';
@@ -126,10 +127,8 @@ export const Input = ({
       </InputContainer>
 
       {/* Error / Description messages */}
-      <ErrorAndDesc className={`mt-2 ml-1 height-trans ${description || getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <p className={`height-trans-content ${(getError() && errorMessage) ? 'error-text' : 'text-colors'}`}>
-          { (getError() && errorMessage) ? errorMessage : description } &nbsp;
-        </p>
+      <ErrorAndDesc show={!!description || getError()} styles='mt-2 ml-1' cStyles={(getError() && errorMessage) ? 'error-text' : 'text-colors'}>
+        { (getError() && errorMessage) ? errorMessage : description } &nbsp;
       </ErrorAndDesc>
     </TextInput>
   );
@@ -276,7 +275,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
 const Label = styled.label``;
 const TextInput = styled.div``;
 const InputContainer = styled.div``;
-const ErrorAndDesc = styled.div``;
+const ErrorAndDesc = styled(Ht)``;
 
 const VariantIcons = styled.div``;
 const ErrorAndTooltipIcon = styled.div``;

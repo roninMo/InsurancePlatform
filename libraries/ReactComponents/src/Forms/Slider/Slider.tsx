@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
 import styles from './Slider.module.scss';
@@ -41,10 +42,8 @@ export const Slider = ({
           </Description> 
         }
 
-        <ErrorText className={`height-trans ${(error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-          <p className={`pt-1 error-text height-trans-content`}>
-            { errorMessage ? errorMessage : '' } &nbsp;
-          </p>
+        <ErrorText show={error && !disabled} cStyles='pt-1 error-text'>
+          { errorMessage ? errorMessage : '' } &nbsp;
         </ErrorText>
       </Content>
       
@@ -79,4 +78,4 @@ const Label = styled.label``;
 const Description = styled.p``;
 const SliderContainer = styled.label``;
 const Switch = styled.div``;
-const ErrorText = styled.div``;
+const ErrorText = styled(Ht)``;

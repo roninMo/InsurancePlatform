@@ -1,3 +1,4 @@
+export * from './Common/Content/HeightTransWrapper/HeightTransWrapper';
 // Common
 export * from './Common/index';
 

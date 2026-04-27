@@ -4,7 +4,7 @@
 import { ReactNode, useId, useState } from 'react';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
 import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
-import { Button } from '@Project/ReactComponents';
+import { Button, Ht } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './ParamTable.module.scss';
@@ -31,20 +31,19 @@ export interface ParamTableProps {
 export const ParamTable = ({ params, variant = 'default', additionalStyles }: ParamTableProps) => {
 	const tableItemId = useId();
   return (
-		<Container className={`height-trans grid-rows-[1fr] ${variant == "subTable" ? 'param-subtable' : ''}`}>
-			<Table className={`param-item-table dual-column-3 height-trans-content ${additionalStyles}`}>
-				
-				{/* Header */}
-				<label className="param-item-base">Name</label>
-				<label className="param-item-type">Type</label>
-				<label className="param-item-desc">Description</label>
-				
+		<Container 
+			show styles={variant == "subTable" ? 'param-subtable' : ''}
+			cStyles={`param-item-table dual-column-3 ${additionalStyles}`}
+		>
+			{/* Table Header */}
+			<label className="param-item-base">Name</label>
+			<label className="param-item-type">Type</label>
+			<label className="param-item-desc">Description</label>
 
 			{/* Param Items */}
 			{ params?.map((item: PTableItem, index: number) => 
 				<ParamTableItem item={item} key={`paramTableItem-${tableItemId}-${index}`} />
-				)}
-			</Table>
+			)}
 		</Container>
   );
 }
@@ -77,7 +76,7 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 
 	// Subtable properties!
 	const createSubTable = nestedParams && nestedParams.length > 0;
-	const [showSubTable, setShowSubTable] = useState<boolean>(true); // bad but only creates diff, i want this styling however
+	const [showSubtable, setShowSubtable] = useState<boolean>(true); // bad but only creates diff, i want this styling however
 	
 
 	return (
@@ -92,9 +91,9 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 				<div className='rowStart gap-2 items-center'>
 					{ createSubTable && (
 						<Button 
-							displayText={showSubTable ? 'Show Less' : 'Show More'}
-							onClick={() => setShowSubTable(!showSubTable)}
-							color={showSubTable ? 'gray-focus' : 'gray'} 
+							displayText={showSubtable ? 'Show Less' : 'Show More'}
+							onClick={() => setShowSubtable(!showSubtable)}
+							color={showSubtable ? 'gray-focus' : 'gray'} 
 							additionalStyles='px-2 py-1 mr-2 text-sm font-normal italic'
 						/>
 					)}
@@ -105,13 +104,8 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 			{ createSubTable &&
 				<>
 					<div className="keep-grid-flow" /> {/* Container col-span-2 */}
-					<Container className={`col-span-2 height-trans 
-							${showSubTable ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} 
-							${showSubTable ? 'animate-fade-in' : ''}
-					`}>
-						<div className='height-trans-content'>
-							<ParamTable params={nestedParams} variant="subTable" additionalStyles='subtable-dropdown' />
-						</div>
+					<Container show={showSubtable} styles={`col-span-2 ${showSubtable ? 'animate-fade-in' : ''}`}>
+						<ParamTable params={nestedParams} variant="subTable" additionalStyles='subtable-dropdown' />
 					</Container>
 				</>
 			}
@@ -129,7 +123,7 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 }
 
 // Styled Components
-const Container = styled.div``;
+const Container = styled(Ht)``;
 const Param = styled.div``;
 const Table = styled.div``;
 

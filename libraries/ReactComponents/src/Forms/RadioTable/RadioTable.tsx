@@ -1,5 +1,6 @@
 import { ChangeEvent, memo, MouseEvent, useCallback, useRef } from 'react';
 import { RadioItem } from '../RadioButton/RadioGroup';
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
 import styles from './RadioTable.module.scss';
@@ -71,10 +72,8 @@ export const RadioTable = ({
       </Table>
 
       {/* Error Text */}
-      <ErrorText className={`px-1 pt-3 height-trans ${getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <p className={`error-text height-trans-content`}>
-          { errorMessage ? errorMessage : '' } &nbsp;
-        </p>
+      <ErrorText show={getError()} styles='px-1 pt-3' cStyles='error-text'>
+        { errorMessage ? errorMessage : '' } &nbsp;
       </ErrorText>
     </Container>
   );
@@ -143,7 +142,7 @@ const Table = styled.div``;
 
 const Label = styled.label``;
 const Description = styled.p``;
-const ErrorText = styled.div``;
+const ErrorText = styled(Ht)``;
 
 const Radio = styled.input``
 const ItemLabel = styled.span``;

@@ -1,4 +1,5 @@
 import { ChangeEvent, memo, MouseEvent, useCallback } from 'react';
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
 import styles from './Checkbox.module.scss';
@@ -72,10 +73,8 @@ export const Checkbox = ({
         )}
       </ItemContainer>
 
-      <ErrorText className={`pl-1 height-trans ${(error && !disabled) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <p className={`error-text height-trans-content ${variant == 'list' && 'pt-3'}`}>
-          { errorMessage ? errorMessage : '' } &nbsp;
-        </p>
+      <ErrorText show={error && !disabled} styles='pl-1' cStyles={`error-text ${variant == 'list' ? 'pt-3' : ''}`}>
+        { errorMessage ? errorMessage : '' } &nbsp;
       </ErrorText>
     </Container>
   );
@@ -156,6 +155,6 @@ const ListLayout = styled.div``;
 const StyledCheckbox = styled.input``;
 const Label = styled.p``;
 const Description = styled.p``;
-const ErrorText = styled.div``;
+const ErrorText = styled(Ht)``;
 const ItemLabel = styled.p``;
 const ItemDescription = styled.p``;

@@ -27,17 +27,25 @@ export const Documentation = () => {
   x Finally, go through each component and refactor to make them very organized and themed
     x currently on Textarea, just need to add Attach File functionality.
 		x add a file attachment component - utilizes drag & drop logic
-      - add file attachment logic to the textarea, use the types from the drag & drop component's
+      x add file attachment logic to the textarea, use the types from the drag & drop component's
 
-    - add a height trans utility wrapper component to declutter the html code for our fancy renders
-      - props: show, children, styles, cStyles
-      - then add it to all components using the height trans logic
+    x add a height trans utility wrapper component to declutter the html code for our fancy renders
+      x props: show, styles, cStyles, children
+      x then add it to all components using the height trans logic
 
     - update all docs page codeSnippets to be proper refs @see vite.config.ts
+      - every param table, including the eventParamTable need to be updated with the library refs and proper refs
 		- after you fix the build error occurring, add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
 		- then add convenience functions for object entries logic and looping
 
+    - there is a bug in the ShowcaseElement when switching back from the jsx tab to the component tab.
+        Find out why it isn't smoothing transitioning then, and fix it so it's the same as it's normal behavior.
 
+    - there is another bug with the tooltip for when they don't move 
+        on the first frame they hover over an element with the tooltip.
+        It ends up not moving the tooltip to the cursor until you move again
+          - either hide it until we capture it (messy with the fade in, and render delay animations)
+          - find a way to move it properly on the first frame.
 
     x update the form components with the proper tooltip props - this is pretty much done
 			x fix all props that shouldn't be objects. tooltip cant be memoized so it shouldn't be an object, just tooltipContext, and tooltipContent.

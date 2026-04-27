@@ -116,7 +116,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         name="textarea-form-name"
         
         label="Box style"
-        description="The description of the textarea."
+        // description="The description of the textarea."
         placeholder="input text..."
         value={value}
         onChange={(e) => onValueUpdated(e)}

@@ -1,6 +1,7 @@
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import { SelectItemComponent, SelectItem } from './SelectItem/SelectItem';
 import { TooltipContentProps, TooltipContextActions } from "../../Common";
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
@@ -258,28 +259,24 @@ export const Select = ({
           ${getError() ? 'select-dd-error' : ''}
           ${!disabled ? 'select-dd-scroll' : 'select-dd-disabled'}
       `}>			
-        <DropdownAnim className={`height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-          <div className={`height-trans-content`}>
-            {values.map((item: SelectItem, index: number) => 
-              <SelectItemComponent 
-                item={item}
-                index={index}
-                onSelect={onDropdownItemSelected} 
-                currentSelectValue={value}
-                multiSelect={multiSelect}
-                name={name}
-                dropdownOpen={dropdownOpen}
-                key={`${name}-${item.value}`}
-              />
-            )}
-          </div>
+        <DropdownAnim show={dropdownOpen}>
+          {values.map((item: SelectItem, index: number) => 
+            <SelectItemComponent 
+              item={item}
+              index={index}
+              onSelect={onDropdownItemSelected} 
+              currentSelectValue={value}
+              multiSelect={multiSelect}
+              name={name}
+              dropdownOpen={dropdownOpen}
+              key={`${name}-${item.value}`}
+            />
+          )}
         </DropdownAnim>
       </Dropdown>
 
-      <ErrorAndDescription className={`pl-1 mt-2 height-trans ${description || getError() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <p className={`height-trans-content text-sm ${getError() ? 'error-text' : 'text-colors'}`}>
-          { getError() ? errorMessage : description } &nbsp;
-        </p>
+      <ErrorAndDescription show={!!description || getError()} styles="pl-1 mt-2" cStyles={`text-sm ${getError() ? 'error-text' : 'text-colors'}`}>
+        { getError() ? errorMessage : description } &nbsp;
       </ErrorAndDescription>
     </Container>
   );
@@ -292,6 +289,6 @@ const Label = styled.label``;
 const StyledSelect = styled.button``;
 const CurrentlySelected = styled.div``;
 const Dropdown = styled.div``;
-const DropdownAnim = styled.div``;
+const DropdownAnim = styled(Ht)``;
 const TooltipIcons = styled.div``;
-const ErrorAndDescription = styled.div``;
+const ErrorAndDescription = styled(Ht)``;

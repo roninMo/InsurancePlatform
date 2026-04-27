@@ -1,9 +1,11 @@
 import { ReactNode, RefObject, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { CodeRenderer } from '../CodeSnippets/CodeRenderer';
+import { Icon } from '../../Icons/Icon';
+import { Ht } from '../../Content/HeightTransWrapper/HeightTransWrapper';
+import { interpFloat, interpV2 } from '../Utils';
 
 import styled from '@emotion/styled';
 import styles from './Tooltip.module.scss';
-import { Icon, interpFloat, interpV2 } from '../..';
 
 
 // Tooltip variants 
@@ -351,37 +353,33 @@ export const Tooltip = (props: TooltipProps) => {
         <CodeVariant className={`col ${type == 'type' || type == 'example' ? 'tooltip-c-type' : 'tooltip-c-class'}`}>
 
           {/* Keeps transitions while using suspense and a lazy import */}
-          <OpenAnimation className={`height-trans-500 ${isRenderDelayDone ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-            <AnimContent className='height-trans-content col gap-2'>
-              <div className='rowStart items-center gap-4'>
-                <label className='p-2'>
-                  {type == 'component' || type == 'interface' || type == 'type' 
-                    ? 'Code' 
-                    : 'Example'
-                  }
-                </label>
+          <OpenAnimation show={isRenderDelayDone} cStyles='col gap-2' heightTransClass='height-trans-500'>
+            <AnimContent className='rowStart items-center gap-4'>
+              <label className='p-2'>
+                {type == 'component' || type == 'interface' || type == 'type' 
+                  ? 'Code' 
+                  : 'Example'
+                }
+              </label>
 
-                <div className='grid grid-cols-1 justify-items-start items-center'>
-                  <div ref={copyShortcutRef} className='row-start-1 col-start-1 tooltip-copy-text'>
-                    Ctrl + /
-                  </div>
+              <div className='grid grid-cols-1 justify-items-start items-center'>
+                <div ref={copyShortcutRef} className='row-start-1 col-start-1 tooltip-copy-text'>
+                  Ctrl + /
+                </div>
 
-                  <div ref={copiedSnippetRef} className='row-start-1 col-start-1 tooltip-copied-notification'>
-                    Copied to clipboard
-                    <Icon variant='Checkbox' styles='tooltip-copied-icon' />
-                  </div>
+                <div ref={copiedSnippetRef} className='row-start-1 col-start-1 tooltip-copied-notification'>
+                  Copied to clipboard
+                  <Icon variant='Checkbox' styles='tooltip-copied-icon' />
                 </div>
               </div>
-              <Suspense>
-                { MemoizedCodeSnippet }
-              </Suspense>
             </AnimContent>
+            <Suspense>
+              { MemoizedCodeSnippet }
+            </Suspense>
           </OpenAnimation>
 
-          <OpenAnimation className={`height-trans-500 ${!isRenderDelayDone ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-            <AnimContent className='height-trans-content content-auto'>
-              <p className='p-2 italic loading-text'>Loading code...</p>
-            </AnimContent>
+          <OpenAnimation show={!isRenderDelayDone} cStyles='content-auto' heightTransClass='height-trans-500'>
+            <p className='p-2 italic loading-text'>Loading code...</p>
           </OpenAnimation>
         </CodeVariant>
 
@@ -398,6 +396,6 @@ export const Tooltip = (props: TooltipProps) => {
 
 
 // Styled Components
-const OpenAnimation = styled.div``;
+const OpenAnimation = styled(Ht)``;
 const AnimContent = styled.div``;
 const CodeVariant = styled.div``;
