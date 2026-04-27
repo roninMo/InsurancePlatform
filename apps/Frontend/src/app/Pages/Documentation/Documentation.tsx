@@ -38,14 +38,16 @@ export const Documentation = () => {
 		- after you fix the build error occurring, add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
 		- then add convenience functions for object entries logic and looping
 
-    - there is a bug in the ShowcaseElement when switching back from the jsx tab to the component tab.
-        Find out why it isn't smoothing transitioning then, and fix it so it's the same as it's normal behavior.
+    x fixed: there is a bug in the ShowcaseElement when switching back from the jsx tab to the component tab.
+        x Find out why it isn't smoothing transitioning then, and fix it so it's the same as it's normal behavior.
 
-    - there is another bug with the tooltip for when they don't move 
+    x fixed: there is another bug with the tooltip for when they don't move 
         on the first frame they hover over an element with the tooltip.
         It ends up not moving the tooltip to the cursor until you move again
-          - either hide it until we capture it (messy with the fade in, and render delay animations)
-          - find a way to move it properly on the first frame.
+          x find a way to move it properly on the first frame.
+      x mouseCapture was moved to the rest of the add event listener invocations
+      x scroll behavior was calculating based on stale values from the useEffect scope, 
+          so we added isRenderDelayDone to the dependencies and some of the conditions for calculations.
 
     x update the form components with the proper tooltip props - this is pretty much done
 			x fix all props that shouldn't be objects. tooltip cant be memoized so it shouldn't be an object, just tooltipContext, and tooltipContent.

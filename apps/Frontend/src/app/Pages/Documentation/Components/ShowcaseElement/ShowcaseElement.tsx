@@ -29,7 +29,8 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
     if (activeTab != 'jsx') return;
     if (isRenderDelayDone) return;
 
-    const timeout = setTimeout(() => setIsRenderDelayDone(true), 2450);
+    const delay = 400 + (Math.random() * 101);
+    const timeout = setTimeout(() => setIsRenderDelayDone(true), delay);
     return () => clearTimeout(timeout);
   }, [activeTab]);
 
@@ -71,7 +72,7 @@ export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps)
         </RenderedComponent>
         <PreJsxRenderedContent show={activeTab == 'jsx' && !isRenderDelayDone} cStyles='content-auto'>
           <div className='w-full lg:w-7/12 col gap-2 py-4 px-6 pb-8'>
-            <div className='p-1.5 italic font-semibold loading-text'>Loading code...</div>
+            <div className='p-1.5 italic font-semibold skeleton-txt'>Loading code...</div>
             <div className='showcase-jsx-sk-bg w-full' />
             <div className='showcase-jsx-sk-bg w-1/4' />
             <div className='showcase-jsx-sk-bg w-4/5' />

@@ -22,6 +22,10 @@
     "paths": {
       "@Project/ReactComponents/*": ["./libraries/ReactComponents/src/*"],
       "@Project/Classes/*": ["./libraries/Classes/src/*"],
+      
+      // Relative path to the react component's library (for documentation jsx examples via './Comp.tsx?raw' )
+      "@lib/rc/*": ["./libraries/ReactComponents/src/*"], 
+      "@lib/cl/*": ["./libraries/Classes/src/*"], 
     }
   }
 }

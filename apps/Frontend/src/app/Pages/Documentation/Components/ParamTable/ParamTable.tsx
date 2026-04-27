@@ -1,13 +1,14 @@
 
 
 
-import { ReactNode, useId, useState } from 'react';
+import { ReactNode, useContext, useId, useMemo, useState } from 'react';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
 import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
-import { Button, Ht } from '@Project/ReactComponents';
+import { Button, Ht, Icon, TooltipContentProps, TooltipService } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './ParamTable.module.scss';
+import { Kw } from '../Keyword/Keyword';
 
 
 export type PTableItem = ParamItem | 'spacing';
@@ -29,7 +30,11 @@ export interface ParamTableProps {
 }
 
 export const ParamTable = ({ params, variant = 'default', additionalStyles }: ParamTableProps) => {
+	const { show, hide } = useContext(TooltipService);
+	const tooltipContent: TooltipContentProps = useMemo(() => ({ children: ParamTableTooltip }), []);
 	const tableItemId = useId();
+	
+
   return (
 		<Container 
 			show styles={variant == "subTable" ? 'param-subtable' : ''}
@@ -38,7 +43,17 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles }: Pa
 			{/* Table Header */}
 			<label className="param-item-base">Name</label>
 			<label className="param-item-type">Type</label>
-			<label className="param-item-desc">Description</label>
+			<div className='param-item-desc justify-between'>
+				<label className="">Description</label>
+
+				<div
+					onMouseEnter={() => show(tooltipContent)}
+					onMouseLeave={() => hide()}
+					className='mr-0.5'>
+					<Icon variant='InfoBox' styles='icon-default' />
+				</div>
+
+			</div>
 
 			{/* Param Items */}
 			{ params?.map((item: PTableItem, index: number) => 
@@ -221,3 +236,33 @@ const addParamContext = (item: ParamItem, context?: ParamContext) => {
 	item.contextParam = context.contextParam;
 	item.variantOption = context.variantOption;
 }
+
+
+// Tooltip for the param table
+const ParamTableTooltip: React.FC = () => (
+	<div className='pt-tooltip'>
+		<h4 className='pt-header'>Quick Reference</h4>
+
+		<p className='pt-desc'>
+			This contains information about the parameters for a specific component.
+		</p>
+
+		<p className='pt-desc'>
+			When you select a specific <Kw>variant</Kw>, the name will be highlighted with it's corresponding value in order
+			to denote the specific variant you're using. 
+			
+			When one is <Kw>selected</Kw>, every prop's table row specific to that 
+			variant will be highlighted for distinction and readability.
+		</p>
+
+		<div className='pt-type-desc *:text-sm leading-7'>
+			<Kw>Param Types</Kw> have different colors specific to their type. 
+
+			<Kw>strings</Kw> are <span className='param-type-string'> purple, </span>
+			<Kw>numbers</Kw> are <span className='param-type-number'> blue, </span>
+			<Kw>booleans</Kw> are <span className='param-type-boolean'> red, </span>
+			<Kw>functions</Kw> are <span className='param-type-function'> cyan, </span>
+			and <Kw>custom classes and types</Kw> are <span className='param-type-custom'> green. </span>
+		</div>
+	</div>
+);

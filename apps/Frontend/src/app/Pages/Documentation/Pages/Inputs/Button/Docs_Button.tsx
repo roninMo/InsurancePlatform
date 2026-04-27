@@ -212,7 +212,7 @@ const paramContextsList: Record<string, ParamContext[]> = {
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
   'displayText': () => <ParamType type="string" tooltip={{ code: dParArg('displayText', 'Click me') }} />, 
-  'onClick': () => <ParamType type="function" tooltip={{ code: Code_onClickBtn, type: 'type' }} />,
+  'onClick': () => <ParamType type="MouseEvent" tooltip={{ code: Code_onClickBtn, type: 'type' }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }}/>,
 
   'size': () => <ParamType type="ButtonSizes" tooltip={{ code: Code_ButtonSzs, type: 'type' }}  />,
@@ -223,10 +223,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'icon-class') }} />,
 };
 
-// TODO: when imported to the library, use actual refs
-type ButtonSizes = 'default' | 'md' | 'lg' | 'xl' | 'none';
-type ButtonColors = 'primary' | 'gray' | 'gray-focus' | 'none';
-import SourceBtnSnippets from './Docs_Button?raw';
+import SourceBtnSnippets from '@lib-rc/Forms/Button/Button.tsx?raw';
 const Code_onClickBtn = 'onClick: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;';
 const Code_ButtonSzs = getSourceCode(SourceBtnSnippets, 'ButtonSizes', 'type');
 const Code_ButtonClrs = getSourceCode(SourceBtnSnippets, 'ButtonColors', 'type');

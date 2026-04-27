@@ -23,18 +23,20 @@ module.exports = {
         // Loading animations for inputs
         'focus-bar': 'focus-bar 0.15s ease-in forwards',
         'loading-bar': 'loading-bar 1.25s ease-in-out infinite',
+        'loading-text': 'skeleton-text 1.25s ease-in-out infinite',
+        'loading-text-dark': 'skeleton-text-dark 1.25s ease-in-out infinite',
 
         'rainbow': 'rainbow 3s linear infinite',
 
         // Skeleton loaders
-        'skeleton-bg': 'skeleton-bg 1.25s ease-in-out infinite',
-        'skeleton-bg-dark': 'skeleton-bg-dark 1.25s ease-in-out infinite',
+        'skeleton-bg': 'skeleton-bg 0.75s ease-in-out infinite',
+        'skeleton-bg-dark': 'skeleton-bg-dark 0.75s ease-in-out infinite',
+        
+        'skeleton-text': 'skeleton-text 0.75s ease-in-out infinite',
+        'skeleton-text-dark': 'skeleton-text-dark 0.75s ease-in-out infinite',
 
         'skeleton-bar': 'skeleton-bar 1.25 ease-in-out infinite',
         'skeleton-bar-dark': 'skeleton-bar-dark 1.25 ease-in-out infinite',
-
-        'skeleton-text': 'skeleton-text 1.25s ease-in-out infinite',
-        'skeleton-text-dark': 'skeleton-text-dark 1.25s ease-in-out infinite',
       },
 
 

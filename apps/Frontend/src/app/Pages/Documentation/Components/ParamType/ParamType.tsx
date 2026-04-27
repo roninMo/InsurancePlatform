@@ -5,7 +5,8 @@ import styled from '@emotion/styled';
 import styles from './ParamType.module.scss';
 
 
-export type ParamTypes = "number" | "string" | "boolean" | "function" | "any" /* | "custom" */ | string & {};		 
+type EventHandlers = "ChangeEvent" | "FocusEvent" | "MouseEvent";
+export type ParamTypes = "number" | "string" | "boolean" | "function" | EventHandlers | "any" /* | "custom" */ | string & {};		 
 export interface ParamTypeProps {
 	type: ParamTypes;
 	isArray?: boolean;
@@ -32,14 +33,16 @@ export const ParamType = ({ type, isArray, optional, tooltip }: ParamTypeProps) 
 // Styled Components 
 const Container = styled.span``;
 
+
+// Returns the proper coloring styles for each param type
 const getTypeStyles = (type: ParamTypes) => {
 	if (type == 'string') return 'param-type-string';
 	if (type == 'number') return 'param-type-number';
 	if (type == 'boolean') return 'param-type-boolean';
-	if (type == 'function') return 'param-type-function';
 	if (type == 'any') return 'param-type-boolean';
+	if (type == 'function' || type == 'ChangeEvent' || type == 'FocusEvent' || type == 'MouseEvent') return 'param-type-function';
 	return 'param-type-custom';
-	return 'text-slate-900 dark:text-slate-400';
+	// return 'text-slate-900 dark:text-slate-400';
 }
 
 // Create a code snippet of the default definition of a prop for an element.

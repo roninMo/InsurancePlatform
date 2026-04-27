@@ -26,7 +26,7 @@ export default defineConfig(() => ({
     alias: {
       // using nxViteTsPaths(), only use these for vite's ?raw refs to retrieve code snippets for the Documentation page
       // Relative path to the universal classes (if needed)
-      // '@lib-cl': path.resolve(__dirname, '../../libraries/Classes/src'),
+      '@lib-cl': path.resolve(__dirname, '../../libraries/Classes/src'),
 
       // Relative path to the react component's library (for documentation jsx examples via './Comp.tsx?raw' )
       '@lib-rc': path.resolve(__dirname, '../../libraries/ReactComponents/src'),
