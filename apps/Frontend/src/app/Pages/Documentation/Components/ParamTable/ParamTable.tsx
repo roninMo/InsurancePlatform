@@ -3,12 +3,12 @@
 
 import { ReactNode, useContext, useId, useMemo, useState } from 'react';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
-import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
 import { Button, Ht, Icon, TooltipContentProps, TooltipService } from '@Project/ReactComponents';
+import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
+import { Kw } from '../Keyword/Keyword';
 
 import styled from '@emotion/styled';
 import styles from './ParamTable.module.scss';
-import { Kw } from '../Keyword/Keyword';
 
 
 export type PTableItem = ParamItem | 'spacing';
@@ -46,13 +46,14 @@ export const ParamTable = ({ params, variant = 'default', additionalStyles }: Pa
 			<div className='param-item-desc justify-between'>
 				<label className="">Description</label>
 
-				<div
-					onMouseEnter={() => show(tooltipContent)}
-					onMouseLeave={() => hide()}
-					className='mr-0.5'>
-					<Icon variant='InfoBox' styles='icon-default' />
-				</div>
-
+				{ variant != 'subTable' && 
+					<div
+						onMouseEnter={() => show(tooltipContent)}
+						onMouseLeave={() => hide()}
+						className='mr-0.5'>
+						<Icon variant='InfoBox' styles='icon-default' />
+					</div>
+				}
 			</div>
 
 			{/* Param Items */}

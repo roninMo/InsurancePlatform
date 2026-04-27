@@ -16,7 +16,7 @@ export interface SliderProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 
   error?: boolean;
-  errorMessage?: string | null;
+  errorMessage?: string;
   disabled?: boolean;
   required?: boolean;
   additionalStyles?: string;

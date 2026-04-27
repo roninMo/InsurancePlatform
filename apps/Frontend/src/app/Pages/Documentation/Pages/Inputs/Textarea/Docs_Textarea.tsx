@@ -5,7 +5,7 @@ import { getSourceCode, TextareaTypes, TooltipService } from "@Project/ReactComp
 
 import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/ParamTable/ParamTable';
 import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
-import { ParamType } from '../../../Components/ParamType/ParamType';
+import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
@@ -180,15 +180,12 @@ const Variants = styled.div``;
 const defaultParams: string[] = [
   'type', 'name',
   'spacing', 'label', 'description', 'placeholder', 'value',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required',
   'spacing', 'onSubmit', 'submitButtonText', 'submitButtonDisabled',
-  'spacing', 'tooltip', 'tooltipText',
+  'spacing', 'error', 'errorMessage', 'disabled', 'required',
+  'spacing', 'attachFile', 'metadataTags',
 ];
 
 const variantParamsList: Record<string, string[]> = {
-  'default': ['onAttachFile'],
-  'box':     ['onAttachFile', 'metadataTags'],
-  'post':    ['metadataTags'],
 }
 
 const paramContextsList: Record<string, ParamContext[]> = {
@@ -198,10 +195,6 @@ const paramContextsList: Record<string, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'onAttachFile', 
-      contextParam: false,
-      variantOption: true,
-    },
   ],
   "box": [
     { name: 'type="box"', 
@@ -209,24 +202,12 @@ const paramContextsList: Record<string, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'onAttachFile', 
-      contextParam: false,
-      variantOption: true,
-    },
-    { name: 'metadataTags', 
-      contextParam: false,
-      variantOption: true,
-    },
   ],
   "post": [
     { name: 'type="post"', 
       contextParam: true,
       variantOption: false,
 			overwrite: 'type'
-    },
-    { name: 'metadataTags', 
-      contextParam: false,
-      variantOption: true,
     },
   ],
 };
@@ -238,36 +219,36 @@ const paramContextsList: Record<string, ParamContext[]> = {
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
   // Default params
-  'type': () => <ParamType type='string' />,
-  'name': () => <ParamType type='string' />,
+  'type': () => <ParamType type='string' tooltip={{ code: Code_TextAreaTypes }} />,
+  'name': () => <ParamType type='string' tooltip={{ code: dParArg('name', 'textarea-form-name') }} />,
 
-  'label': () => <ParamType type='string' />,
-  'description': () => <ParamType type='string' />,
-  'placeholder': () => <ParamType type='string' />,
-  'value': () => <ParamType type='string' />,
+  'label': () => <ParamType type='string' tooltip={{ code: dParArg('label', 'Textarea Label') }} />,
+  'description': () => <ParamType type='string' tooltip={{ code: dParArg('description', 'The description of the textarea.') }} />,
+  'placeholder': () => <ParamType type='string' tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
+  'value': () => <ParamType type='string' tooltip={{ code: dParArg('value', 'value', 'var') }} />,
 
-  'error': () => <ParamType type='boolean' />,
-  'errorMessage': () => <ParamType type='string' />,
-  'disabled': () => <ParamType type='boolean' />,
-  'required': () => <ParamType type='boolean' />,
+  'error': () => <ParamType type='boolean' tooltip={{ code: dParArg('error', 'error', 'var') }} />,
+  'errorMessage': () => <ParamType type='string' tooltip={{ code: dParArg('errorMessage', '')}} />,
+  'disabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 
-  'onSubmit': () => <ParamType type='function' />,
-  'submitButtonText': () => <ParamType type='string' />,
-  'submitButtonDisabled': () => <ParamType type='boolean' />,
+  'onSubmit': () => <ParamType type='MouseEvent' tooltip={{ code: Code_OnSubmit }} />,
+  'submitButtonText': () => <ParamType type='string' tooltip={{ code: dParArg('submitButtonText', '')}} />,
+  'submitButtonDisabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('submitButtonDisabled', 'submitButtonDisabled', 'var') }} />,
 
-  'tooltip': () => <ParamType type='boolean' />,
-  'tooltipText': () => <ParamType type='string' />,
-  
-  'onAttachFile': () => <ParamType type='function' />,
-  'metadataTags': () => <ParamType type='function' />,
+  'attachFile': () => <ParamType type='FileUploadProps' tooltip={{ code: Code_FileUploadProps }} />,
+  'metadataTags': () => <ParamType type='MetadataTagProps' isArray tooltip={{ code: Code_MetaDataTags }} />,
 };
 
-//update the textarea and then add the default params
-// type
-// onSubmit
-// tooltip
-// onAttachFile
-// metadatatags
+// Code Snippets
+import SourceTextareaSnippets from '@lib-rc/Forms/Textarea/Textarea.tsx?raw';
+const Code_TextAreaTypes = getSourceCode(SourceTextareaSnippets, 'TextareaTypes', 'type');
+const Code_MetaDataTags = getSourceCode(SourceTextareaSnippets, 'MetadataTagProps', 'interface');
+const Code_OnSubmit = 'onSubmit: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;';
+
+import SourceDropboxSnippets from '@lib-rc/Forms/Dropbox/Dropbox.tsx?raw';
+const Code_FileUploadProps = getSourceCode(SourceDropboxSnippets, 'FileUploadProps', 'interface');
+
 
 const paramDescriptionElements: Record<string, React.FC> = {
   // Default params
@@ -314,7 +295,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
       Is this textarea required during submission?
     </div>,
 
-
   'onSubmit' : () =>
     <div className='param-item-desc-text'>
       Event handler for when the user presses the button attached to this component. It's optional, and is up to you when to utilize it.
@@ -328,17 +308,8 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Is this textarea required during submission?
     </div>,
-  
-  'tooltip' : () =>
-    <div className='param-item-desc-text'>
-      Should this component have a tooltip?
-    </div>,
-  'tooltipText' : () =>
-    <div className='param-item-desc-text'>
-      The tooltip text.
-    </div>,
 
-  'onAttachFile' : () =>
+  'attachFile' : () =>
     <div className='param-item-desc-text'>
       If you want to additionally allow the user to attach files alongside the text form, 
       there's a built in button on some of this component's variants you can use.

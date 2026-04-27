@@ -4,7 +4,7 @@ import { ShowcaseExample_StateRef } from "../../../Components/ShowcaseExampleSta
 import { getSourceCode } from "@Project/ReactComponents";
 
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
-import { ParamType } from "../../../Components/ParamType/ParamType";
+import { dParArg, ParamType } from "../../../Components/ParamType/ParamType";
 import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
@@ -69,7 +69,7 @@ export const Docs_Slider = () => {
 
       <div className='span-12'>
         <p className='p-2 showcase-text'>
-          A themed functional slider component for this project. 
+          A themed functional <Kw>Slider</Kw> component for this project. 
           It's a styled button with a hidden input wired to it to link the value to a form component if needed. 
           You can override the styles if you need a custom theme or other styles to suit your project goal.
         </p>
@@ -127,9 +127,9 @@ const Variants = styled.div``;
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'type', 'name' , 'label', 'description', 
+  'variant', 'name' , 'label', 'description', 
   'spacing', 'value', 'onChange',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required',
+  'spacing', 'error', 'errorMessage', 'disabled', 'required', 'additionalStyles'
 ];
 
 const variantParamsList: Record<string, string[]> = {
@@ -159,25 +159,29 @@ const paramContextsList: Record<string, ParamContext[]> = {
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
 
-  'type': () => <ParamType type="SliderVariants" />,
-  'name': () => <ParamType type="string" />, 
-  'label': () => <ParamType type="string" />,
-  'description': () => <ParamType type="string" />,
+  'variant': () => <ParamType type="SliderVariants" tooltip={{ code: Code_SliderVariant }} />,
+  'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'slider-form-name') }} />, 
+  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Slider Label') }} />,
+  'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the slider.') }} />,
 
-  'value': () => <ParamType type="boolean" />,
-  'onChange': () => <ParamType type="function" />,
+  'value': () => <ParamType type="boolean" tooltip={{ code: dParArg('value', 'value', 'var') }} />,
+  'onChange': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_OnChange }} />,
 
-  'error': () => <ParamType type="boolean" />,
-  'errorMessage': () => <ParamType type="string" />,
-  'disabled': () => <ParamType type="boolean" />,
-  'required': () => <ParamType type="boolean" />,
+  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
+  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
+  'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionStyles', 'additionStyles', 'var') }} />,
 };
 
-// onChange
-// add default params to these
+// Code Snippet imports
+import SourceChckbxSnippets from '@lib-rc/Forms/Slider/Slider.tsx?raw';
+const Code_SliderVariant = getSourceCode(SourceChckbxSnippets, 'SliderVariants', 'type');
+const Code_OnChange = 'onChange: (e: ChangeEvent<HTMLInputElement>) => void;';
+
 
 const paramDescriptionElements: Record<string, React.FC> = {
-  'type': () => 
+  'variant': () => 
     <div className='param-item-desc-text'>
       The style of slider you want. Currently there's only the default, but you can override the css with the "styles" attribute.
     </div>,
@@ -218,5 +222,9 @@ const paramDescriptionElements: Record<string, React.FC> = {
   'required': () =>
     <div className='param-item-desc-text'>
       Whether the slider component is required.
+    </div>,
+  'additionalStyles': () =>
+    <div className='param-item-desc-text'>
+      Additional styles for the slider.
     </div>,
 };

@@ -19,8 +19,6 @@ import {
 } from './Docs_RadioTableJsxComponents';
 
 
-
-
 export const Docs_RadioTable = () => {
   //--------------------------------//
   // Tab Functionality              //
@@ -212,9 +210,9 @@ const paramTypeElements: Record<string, React.FC> = {
 
   'radioItems': () => <ParamType type="RadioItem" isArray tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
   'currentValue': () => <ParamType type="RadioItem" tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
-  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_onSelect, type: 'type' }} />,
-  'onMouseEnter': () => <ParamType type="function" tooltip={{ code: Code_onMouseEnter, type: 'type' }} />,
-  'onMouseLeave': () => <ParamType type="function" tooltip={{ code: Code_onMouseLeave, type: 'type' }} />,
+  'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
+  'onMouseEnter': () => <ParamType type="MouseEvent" tooltip={{ code: Code_onMouseEnter, type: 'type' }} />,
+  'onMouseLeave': () => <ParamType type="MouseEvent" tooltip={{ code: Code_onMouseLeave, type: 'type' }} />,
 
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'errorMessage', 'var') }} />,
@@ -222,25 +220,14 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
 
-
-// TODO: when imported to the library, use actual refs
-interface RadioItem {
-  value: string;
-  label: string;
-  description?: string;
-  disabled?: boolean;
-}
-type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
-import SourceRadioSnippets from './Docs_RadioTable?raw';
+// Code Snippets
+import SourceRadioSnippets from '@lib-rc/Forms/RadioTable/RadioTable.tsx?raw';
 const Code_onSelect = 'onSelect: (item: RadioItem, currentValue: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;';
 const Code_onMouseEnter = 'onMouseEnter: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
 const Code_onMouseLeave = 'onMouseLeave: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
 const Code_RadioVariant = getSourceCode(SourceRadioSnippets, 'RadioVariant', 'type');
 const Code_RadioItem = getSourceCode(SourceRadioSnippets, 'RadioItem', 'interface');
 
-// variant
-// radioItem, current value
-// onselect
 
 const paramDescriptionElements: Record<string, React.FC> = {
   'variant': () => 

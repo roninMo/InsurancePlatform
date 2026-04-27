@@ -61,20 +61,19 @@ const paramContextsList: Record</*InputEventHandlerTypes*/ string, ParamContext[
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<InputEventHandlerTypes, React.FC> = {
-  'onFocus': () => <ParamType type='function' tooltip={{ code: Code_onFocus, type: 'type' }} />,
-  'onChange': () => <ParamType type='function' tooltip={{ code: Code_onChange, type: 'type' }} />,
-  'onBlur': () => <ParamType type='function' tooltip={{ code: Code_onBlur, type: 'type' }} />,
-  'onClick': () => <ParamType type='function' tooltip={{ code: Code_onClick, type: 'type' }} />,
-  'onMouseEnter': () => <ParamType type='function' tooltip={{ code: Code_onMouseEnter, type: 'type' }} />,
-  'onMouseLeave': () => <ParamType type='function' tooltip={{ code: Code_onMouseLeave, type: 'type' }} />,
+  'onFocus': () => <ParamType type='FocusEvent' tooltip={{ code: Code_onFocus, type: 'type' }} />,
+  'onChange': () => <ParamType type='ChangeEvent' tooltip={{ code: Code_onChange, type: 'type' }} />,
+  'onBlur': () => <ParamType type='FocusEvent' tooltip={{ code: Code_onBlur, type: 'type' }} />,
+  'onClick': () => <ParamType type='MouseEvent' tooltip={{ code: Code_onClick, type: 'type' }} />,
+  'onMouseEnter': () => <ParamType type='MouseEvent' tooltip={{ code: Code_onMouseEnter, type: 'type' }} />,
+  'onMouseLeave': () => <ParamType type='MouseEvent' tooltip={{ code: Code_onMouseLeave, type: 'type' }} />,
 };
 
-
-// TODO: retrieve from import
-const Code_onFocus = 'onFocus: (e: FocusEvent<T>) => void';
-const Code_onChange = 'onChange: (e: ChangeEvent<any>) => void'; 
-const Code_onBlur = 'onBlur: (e: FocusEvent<T>) => void';
-const Code_onClick = 'onClick: (e: MouseEvent<T>) => void';
+// Code snippets
+const Code_onFocus =      'onFocus: (e: FocusEvent<T>) => void';
+const Code_onChange =     'onChange: (e: ChangeEvent<any>) => void'; 
+const Code_onBlur =       'onBlur: (e: FocusEvent<T>) => void';
+const Code_onClick =      'onClick: (e: MouseEvent<T>) => void';
 const Code_onMouseEnter = 'onMouseEnter: (e: MouseEvent<T>) => void';
 const Code_onMouseLeave = 'onMouseLeave: (e: MouseEvent<T>) => void';
 

@@ -23,7 +23,6 @@ import {
 } from './Docs_CheckboxJsxComponents';
 
 
-
 export const Docs_Checkbox = () => {
   //--------------------------------//
   // Tab Functionality              //
@@ -232,7 +231,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the checkbox.') }} />,
 
   'items': () => <ParamType type="CheckboxItems" isArray tooltip={{ code: Code_ChckbxItem, type: 'interface' }}/>,
-  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_OnSelect, type: 'type' }} />,
+  'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_OnSelect, type: 'type' }} />,
   'onMouseEnter': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseEnter, type: 'type' }} />,
   'onMouseLeave': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseLeave, type: 'type' }} />,
 
@@ -242,6 +241,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
 
+// Code Snippet imports
 import SourceChckbxSnippets from '@lib-rc/Forms/Checkbox/Checkbox.tsx?raw';
 const Code_Variant = getSourceCode(SourceChckbxSnippets, 'CheckboxVariant', 'type');
 const Code_ChckbxItem = getSourceCode(SourceChckbxSnippets, 'CheckboxItem', 'interface');

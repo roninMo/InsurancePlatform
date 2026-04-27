@@ -235,7 +235,7 @@ const paramTypeElements: Record<string, React.FC> = {
 
   'radioItems': () => <ParamType type="RadioItem" isArray tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
   'currentValue': () => <ParamType type="RadioItem" tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
-  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_onSelect, type: 'type' }} />,
+  'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
 
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'errorMessage', 'var') }} />,
@@ -243,16 +243,8 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
 
-
-// TODO: when imported to the library, use actual refs
-interface RadioItem {
-  value: string;
-  label: string;
-  description?: string;
-  disabled?: boolean;
-}
-type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
-import SourceRadioSnippets from './Docs_Radio?raw';
+// Code Snippets
+import SourceRadioSnippets from '@lib-rc/Forms/RadioGroup/RadioGroup.tsx?raw';
 const Code_onSelect = 'onSelect: (item: RadioItem, currentValue: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;';
 const Code_RadioVariant = getSourceCode(SourceRadioSnippets, 'RadioVariant', 'type');
 const Code_RadioItem = getSourceCode(SourceRadioSnippets, 'RadioItem', 'interface');

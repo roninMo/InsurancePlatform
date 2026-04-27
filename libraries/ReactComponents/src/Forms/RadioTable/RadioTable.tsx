@@ -1,5 +1,5 @@
 import { ChangeEvent, memo, MouseEvent, useCallback, useRef } from 'react';
-import { RadioItem } from '../RadioButton/RadioGroup';
+import { RadioItem } from '../RadioGroup/RadioGroup';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
@@ -104,6 +104,7 @@ const RadioTableItem = memo(({
       ${isSelected ? 'radio-t-i-selected z-10' : ''}
       ${error && isSelected    ? 'radio-t-i-selected-error' :     error    ? 'radio-t-i-error' : ''} 
       ${disabled && isSelected ? 'radio-t-i-selected-disabled' :  disabled ? 'radio-t-i-disabled' : ''}
+      ${!isSelected && !disabled ? 'hover:theme-fa' : ''}
   `}>
     <Radio 
       type='radio' name={name} 

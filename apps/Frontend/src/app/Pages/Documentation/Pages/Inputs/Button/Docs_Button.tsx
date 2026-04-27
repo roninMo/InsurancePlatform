@@ -223,6 +223,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'icon-class') }} />,
 };
 
+// Code Snippet imports
 import SourceBtnSnippets from '@lib-rc/Forms/Button/Button.tsx?raw';
 const Code_onClickBtn = 'onClick: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;';
 const Code_ButtonSzs = getSourceCode(SourceBtnSnippets, 'ButtonSizes', 'type');
@@ -253,7 +254,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     </div>, 
   'additionalStyles': () =>
     <div className='param-item-desc-text'>
-      Additional styles you can add to the button.
+      Additional styles for the button.
     </div>,
 
   'icon': () =>

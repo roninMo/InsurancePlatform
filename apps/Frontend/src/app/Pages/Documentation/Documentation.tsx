@@ -69,6 +69,7 @@ export const Documentation = () => {
     - Add a getEntries to return either an array or the default entries list without calling Object.fromEntries
     - check if there's any other quick functions you can add for Record/map edit and retrieval scenarios
 
+  - decide whether you want to find a place to add the tooltip on the textarea
 
   - Documentation pages
     - Introduction: list of boxes categorizing each subroot section 

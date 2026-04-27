@@ -49,16 +49,17 @@ export const Docs_Input = () => {
   //--------------------------------//
   const paramTableItems = useMemo(() => {
     const baseParamList: string[] = defaultParams || [];
-    const contextParams: ParamContext[] = paramContextsList[currentTab]; 
-    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, childParamsList, paramTypeElements, paramDescriptionElements);
+    const contextParams: ParamContext[] = []; // paramContextsList[currentTab]; // We're using subtableParams instead
+    const subTableParams: Record<string, string[]> =  { ...childParamsList, ...childParamsVarList[currentTab] };
+    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, subTableParams, paramTypeElements, paramDescriptionElements);
     
     // Variant specific params
     const variantParams: string[] = variantParamsList[currentTab] || [];
     const variantContextParams = paramContextsList[currentTab];
     if (variantParams?.length > 0) {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
-      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements);
-      // call getParamsTableItems once [...base, 'spacing', ...variants]
+      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, subTableParams, paramTypeElements, paramDescriptionElements);
+      // TODO: call getParamsTableItems once [...base, 'spacing', ...variants]
       params.push(...spacing, ...variantParamItems);
     }
 
@@ -302,7 +303,7 @@ const Variants = styled.div``;
 const defaultParams: string[] = [ 
   'type', 'name', 'label', 'description', 'value', 'placeholder', 
   'spacing', 'error', 'errorMessage', 'disabled', 'required', 
-  'spacing', 'tooltip', 'tooltipText', 'autocomplete', 'opts',
+  'spacing', 'autocomplete', 'tooltip', 'opts',
 ];
 
 const variantParamsList: Record<TextInputTypes, string[]> = {
@@ -317,16 +318,22 @@ const variantParamsList: Record<TextInputTypes, string[]> = {
   'currency':     [], // ['showMoneySign', 'currencyTypeDropdown'],
 }
 
-// All variant params are stashed in here
+// The input's doc page uses a subtable to display variant specific parameters dynamically
 const childParamsList: Record<string, string[]> = {
-  'opts': [
-    'incrementButtons', 'showEmailIcon', 'visibilityIcon',
-    'sortButton', 'sortType',
-    'showPolicyNumberIcon', 'policyNumberMask',
-    'showPhoneIcon', 'phoneNumberMask',
-    'showCreditCardIcon', 'creditCarkMask',
-    'showMoneySign', 'currencyTypeDropdown',
-  ]
+  'tooltip': [
+    'context', 'content',
+  ],
+}
+const childParamsVarList: Record<TextInputTypes, Record<string, string[]>> = {
+  'text':         { "opts": [] },
+  'number':       { 'opts': ['incrementButtons'] },
+  'email':        { 'opts': ['showEmailIcon'] },
+  'password':     { 'opts': ['visibilityIcon'] },
+  'search':       { 'opts': ['sortButton', 'sortType'] },
+  'policyNumber': { 'opts': ['showPolicyNumberIcon', 'policyNumberMask'] },
+  'phone':        { 'opts': ['showPhoneIcon', 'phoneNumberMask'] },
+  'creditCard':   { 'opts': ['showCreditCardIcon', 'creditCarkMask'] },
+  'currency':     { 'opts': ['showMoneySign', 'currencyTypeDropdown'] },
 };
 
 
@@ -459,10 +466,12 @@ const paramTypeElements: Record<string, React.FC> = {
   'errorMessage': () => <ParamType type='string' tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
   'disabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
-  'tooltip': () => <ParamType type='boolean' tooltip={{ code: dParArg('tooltip', 'tooltip', 'var') }} />,
-  'tooltipText': () => <ParamType type='string' tooltip={{ code: dParArg('tooltip text', 'Tooltip text...') }} />,
   'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' tooltip={{ code: Code_TextInputAutoCompleteTypes, type: 'type' }} />,
   'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOpts, type: 'interface' }} />,
+
+  'tooltip': () => <ParamType type="TooltipOptions" />,
+  'context': () => <ParamType type="TooltipContextActions" tooltip={{ code: Code_TooltipContextActions, type: 'interface' }} />,
+  'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
 
   // Variant params
   'incrementButtons': () => <ParamType type='boolean' tooltip={{ code: dParArg('incrementButtons', 'incrementButtons', 'var') }} />,
@@ -485,13 +494,18 @@ const paramTypeElements: Record<string, React.FC> = {
   'currencyTypeDropdown': () => <ParamType type='boolean' tooltip={{ code: dParArg('currencyTypeDropdown', 'currencyTypeDropdown', 'var') }} />,
 };
 
-// codeblocks - TextInputTypes, TextInputAutoCompleteTypes, InputVariantOps
-// import SourceInputSnippets from '../../../../../Components/Forms/Input/Input?raw';
-const SourceInputSnippets = "";
+// Code Snippet imports
+import SourceInputSnippets from '@lib-rc/Forms/Input/Input.tsx?raw';
 const Code_TextInputTypes = getSourceCode(SourceInputSnippets, 'TextInputTypes', 'type');
 const Code_TextInputAutoCompleteTypes = getSourceCode(SourceInputSnippets, 'TextInputAutoCompleteTypes', 'type');
 const Code_InputVariantOpts = getSourceCode(SourceInputSnippets, 'InputVariantOpts', 'interface');
 const Code_SearchSortType = getSourceCode(SourceInputSnippets, 'SearchSortType', 'type');
+
+import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'TooltipContextActions', 'interface');
+
+import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
+const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
 
 
 const paramDescriptionElements: Record<string, React.FC> = {
@@ -512,7 +526,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description for this input element.
     </div>,
-
   'value' : () =>
     <div className='param-item-desc-text'>
       The value of the input. Use your own state management for handling editing this value.
@@ -538,24 +551,29 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Is this input required during submission?
     </div>,
-
-  'tooltip' : () =>
-    <div className='param-item-desc-text'>
-      Should this component have a tooltip?
-    </div>,
-  'tooltipText' : () =>
-    <div className='param-item-desc-text'>
-      The tooltip text.
-    </div>,
-
   'autocomplete' : () =>
     <div className='param-item-desc-text'>
       The autocomplete text for this input.
     </div>,
 
+  'tooltip' : () =>
+    <div className='param-item-desc-text'>
+      Should this component have a tooltip?
+    </div>,
+  'context': () =>
+    <div className='param-item-desc-text'>
+      A reference to the tooltip context for rendering the tooltip on this component.
+    </div>,
+  'content': () =>
+    <div className='param-item-desc-text'>
+      The props to pass to the tooltip to render it's content.
+    </div>,
+
+
   'opts' : () =>
     <div className='param-item-desc-text'>
-      An object containing variant specific customization and functions.
+      All the input's variant specific params stashed in a subtable. Select a variant, and they'll be displayed below. 
+      Each variant only accepts these specific props to declutter the prop list and intellisense when you're coding.
     </div>,
 
   // Variant params

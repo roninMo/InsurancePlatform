@@ -13,10 +13,10 @@ import { Kw } from '../../../Components/Keyword/Keyword';
 import styled from '@emotion/styled';
 
 import SelectCodeSnippets from './Docs_SelectJsxComponents?raw';
-import { Example_MultiSelectInput, Example_SelectInput } from './Docs_SelectJsxComponents';
-
-
-
+import { 
+  Example_MultiSelectInput, 
+  Example_SelectInput 
+} from './Docs_SelectJsxComponents';
 
 
 export const Docs_Select = () => {
@@ -290,7 +290,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'value': () => <ParamType type="SelectItem" tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
   'values': () => <ParamType type="SelectItem" isArray tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
   'multiSelect': () => <ParamType type="boolean" tooltip={{ code: dParArg('multiSelect', 'multiSelect', 'var') }} />,
-  'onSelect': () => <ParamType type="function" tooltip={{ code: Code_onSelect, type: 'type' }} />,
+  'onSelect': () => <ParamType type="changeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
   'placeholder': () => <ParamType type="string" tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
 
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
@@ -309,6 +309,7 @@ const paramTypeElements: Record<string, React.FC> = {
 
 };
 
+// Code Snippets
 import SourceSelectSnippets from '@lib-rc/Forms/Select/SelectItem/SelectItem.tsx?raw';
 const Code_SelectItem = getSourceCode(SourceSelectSnippets, 'SelectItem', 'interface');
 const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';

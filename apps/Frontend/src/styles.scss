@@ -1884,7 +1884,7 @@
   .param-item-name { 
     @apply 
       py-0.5 px-1.5 
-      text-blue-500 dark:text-blue-500
+      text-blue-500 dark:text-blue-400/80
       
       bg-opacity-40 dark:bg-opacity-20
       bg-gray-300/75 dark:bg-blue-500
@@ -1968,7 +1968,7 @@
   }
 
   .pt-desc {
-    @apply block leading-5;
+    @apply block leading-6;
   }
 
   .pt-type {
