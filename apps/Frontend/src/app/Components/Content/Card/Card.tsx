@@ -9,26 +9,125 @@ export type CardType =
     'default'     // standard container
   | 'card'        // card layout with description, title, and custom content
   | 'card-button' // card with a title, description, and a button event
-  | 'card-link'   // card with a title, description, and a button event
+  | 'card-link'   // card with a title, description, and a hashLink
 ;
 
 export interface CardProps {
   type?: CardType;
-  children?: ReactNode; // Make children optional
+  children?: ReactNode;
 
-  // styles 
-  border?: 'default' | 'none';
-  background?: 'default' | 'none';
+  // universal styles
+  border?: boolean | 'default' | 'interactive' | 'none';
+  background?: boolean | 'default' | 'none';
   divider?: boolean;
   additionalStyles?: string;
 
   title?: string;
   description?: string;
+
+  // This needs to be memoized to prevent unnecessary rerenders 
   buttonProps?: ButtonProps;
 
+  // card-link props
   linkText?: string;
   onClickLink?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 }
+
+type ContainerStyles = 
+  | { styles?: string; additStyles?: never } 
+  | { additStyles?: string; styles?: never };
+type HeaderStyles = 
+  | { headerStyles?: string; additHeaderStyles?: never } 
+  | { additHeaderStyles?: string; headerStyles?: never }; 
+type ContentStyles = 
+  | { contentStyles?: string; additContentStyles?: never } 
+  | { additContentStyles?: string; contentStyles?: never };
+
+interface CardPropsBase {
+  type?: CardType;
+  children?: ReactNode;
+
+  // Removed styling from the base styles
+  noBackground?: boolean;
+
+  // If either of these are interactive, both will use interactive styles (if enabled)
+  noBorder?: boolean | 'interactive';
+  noDivider?: boolean | 'interactive';
+
+  // // Container styles
+  // (styles || additStyles)?: string;
+  // // Header styles
+  // (headerStyles || additHeaderStyles)?: string;
+  // // Content styles
+  // (contentStyles || additContentStyles)?: string;
+}
+
+interface ContentCardProps extends CardPropsBase {
+  type: 'card' | 'card-button' | 'card-link';
+  title?: string;
+  description?: string;
+  
+  // // Container styles
+  // (styles || additStyles)?: string;
+  // // Header styles
+  // (headerStyles || additHeaderStyles)?: string;
+  // // Content styles
+  // (contentStyles || additContentStyles)?: string;
+}
+
+interface ButtonCardProps extends ContentCardProps {
+  type: 'card-button';
+  buttonProps?: ButtonProps;
+}
+
+interface LinkCardProps extends ContentCardProps {
+  
+}
+
+
+
+
+
+interface AdditiveStyles { 
+
+}
+
+/* 
+
+Styles
+  - Container + (background, outline, styles)
+  - Header 
+  - Description
+  - Content Container
+
+
+Card props distribution 
+
+  Universal
+    - type
+    - background, border, divider
+    - children (content)
+
+  default (Container)
+    - title, description
+    - additionalStyles
+
+
+  card (title, desc, content)
+    - title, description
+    - additionalStyles
+
+  card-button (title, desc, button event)
+    - title, description
+    - buttonProps, buttonLocation
+    - additionalStyles
+
+  card-link (title, desc, content, link)
+    - title, description
+    - linkText, linkStyles, onClickLink
+    - additionalStyles
+
+*/
 
 
 export const Card = ({ 
@@ -42,7 +141,7 @@ export const Card = ({
 	// TODO: The styles and themes need to be added globally and themed
   const getContainerStyles = (): string => {
     let classes = `rounded-md trans p-2 `;
-    classes += border    == 'default' ? ' outline-css outline-styles ' : '';
+    classes += border     == 'default' ? ' outline-css outline-styles ' : '';
     classes += background == 'default' ? ' bg-default ' : '';
     return classes + ` ${additionalStyles}`;
   }

@@ -25,15 +25,18 @@ export interface DropdownProps {
 }
 
 export const Dropdown = ({ 
-  label, styles, additionalStyles, labelStyles, icon, iconStyles, openByDefault,
-  hasBeenOpened, setHasBeenOpened, children 
+  label, openByDefault, styles, additionalStyles, 
+  labelStyles, icon, iconStyles,
+  hasBeenOpened, setHasBeenOpened, 
+  children 
 }: DropdownProps) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const defaultIconStyles = `dropdown-icon ${dropdownOpen ? '' : '-rotate-90'}`;
 
+  // OpenByDefault and listeners logic
   useEffect(() => {
     if (openByDefault) {
       setDropdownOpen(true);
+
       if (setHasBeenOpened) {
         if (hasBeenOpened == undefined) setHasBeenOpened(true);
         else if (hasBeenOpened == false) setHasBeenOpened(true);
@@ -42,10 +45,10 @@ export const Dropdown = ({
   }, []);
 
   const toggleDropdown = () => {
-    const prevState = dropdownOpen;
-    setDropdownOpen(!dropdownOpen);
+    const opened = !dropdownOpen;
+    setDropdownOpen(opened);
     
-    if (setHasBeenOpened && !hasBeenOpened && !prevState) { 
+    if (opened && (!hasBeenOpened && setHasBeenOpened)) { 
       setHasBeenOpened(true);
     }
   }
@@ -53,10 +56,13 @@ export const Dropdown = ({
   return (
     <div className={styles ? styles : `col gap-2 w-full animate-fade-in ${additionalStyles}`}>
       <Header className="w-full rowStart items-center gap-1 " onClick={() => toggleDropdown()}>
-        <Icon variant={icon ? icon : 'DropdownArrow'} styles={`${defaultIconStyles} ${iconStyles}`} />
-        <p className={labelStyles ? labelStyles : 'dropdown-header'}>
+        <Icon 
+          variant={icon ? icon : 'DropdownArrow'} 
+          styles={`${iconStyles ? iconStyles : 'dropdown-icon'} ${dropdownOpen ? '' : '-rotate-90'}`} 
+        />
+        <div className={labelStyles ? labelStyles : 'dropdown-header'}>
           { label }
-        </p>
+        </div>
       </Header>
 
       <Container show={dropdownOpen}>
