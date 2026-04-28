@@ -13,23 +13,19 @@ import { Kw } from '../../../Components/Keyword/Keyword';
 import { HashLink } from '../../../../../Components/Utils/HashLink/HashLink';
 import styled from '@emotion/styled';
 
-import CheckboxCodeSnippets from './Docs_CheckboxJsxComponents?raw';
-import RadioGroupSnippets from '../Radio/Docs_RadioJsxComponents?raw';
-import RadioTableSnippets from '../RadioTable/Docs_RadioTableJsxComponents?raw';
+import DropboxCodeSnippets from './Docs_DropboxJsxComponents.tsx?raw';
 import { 
-  Example_DefaultCheckbox,
-  Example_ListCheckbox,
-  Example_InlineCheckbox 
-} from './Docs_CheckboxJsxComponents';
+  Example_Dropbox,
+} from './Docs_DropboxJsxComponents';
 
 
-export const Docs_Checkbox = () => {
+export const Docs_Dropbox = () => {
   //--------------------------------//
   // Tab Functionality              //
   //--------------------------------//
-  const [currentTab, setCurrentTab] = useState<string>('list');
-  const tabs: string[] = ['default', 'list', 'inline',];
-  const tabLabels: string[] = ['Default', 'List', 'Inline',];
+  const [currentTab, setCurrentTab] = useState<string>('default');
+  const tabs: string[] = ['default'];
+  const tabLabels: string[] = ['Default'];
 
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
@@ -66,56 +62,21 @@ export const Docs_Checkbox = () => {
   const { show, hide } = useContext(TooltipService);
   const [defaultError, setDefaultError] = useState<string>('');
   const [defaultDisabled, setDefaultDisabled] = useState<boolean>(false);
-  
-  const [listError, setListError] = useState<string>('');
-  const [listDisabled, setListDisabled] = useState<boolean>(false);
-  
-  const [inlineError, setInlineError] = useState<string>('');
-  const [inlineDisabled, setInlineDisabled] = useState<boolean>(false);
 
 
   return (
     <Container className='spacing'>
 
       <h3 className="span-12 p-2">
-        Checkbox Component
+        Dropbox Component
       </h3>
 
       <div className='span-12'>
         <p className='p-2 showcase-text'>
-          A styled checkbox input with <Kw>themed</Kw> styles for every form state. 
-          Easily customizable with multiple events you can use alongside 
-          <HashLink url='https://react-hook-form.com/' opts={{ type: 'page' }}>
-          &nbsp; <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span> &nbsp;
-          </HashLink>
-          or your own state hooks.
+          A <Kw>drag and drop</Kw> file input component. It has themed styles with hover and error/disabled styles.
+          Allows you to choose whether to accept <Kw>multiple</Kw> files, and what kind of files the user is allowed to choose.
 
-          The variants are <Kw>default</Kw>, <Kw>list</Kw>, and <Kw>inline</Kw>.
-
-        </p>
-      </div>
-
-      <div className='span-12'>
-        <p className='p-2 showcase-text'>
-          If you're looking for an input that only allows selecting a single value, try&nbsp;
-          <span 
-            onClick={hide} onMouseLeave={hide}
-            onMouseEnter={() => show({ 
-              code: getSourceCode(RadioTableSnippets, "Example_BlockRadioTable"), 
-              type: "component" 
-            })} 
-          >
-            <DocLink label='RadioTable' url='/Documentation/Forms/RadioTable' />
-          </span>, or&nbsp;
-          <span 
-            onClick={hide} onMouseLeave={hide}
-            onMouseEnter={() => show({ 
-              code: getSourceCode(RadioGroupSnippets, "Example_ListRadioGroup"), 
-              type: "component" 
-            })} 
-          >
-            <DocLink label='RadioGroup' url='/Documentation/Forms/Radio' />
-          </span>.
+          There's additional functionality to edit the display and add your own background icon or custom styling if you need.
         </p>
       </div>
 
@@ -132,37 +93,13 @@ export const Docs_Checkbox = () => {
       {/* Variants */}
       <Variants className='span-12 py-2'>
         { currentTab == 'default' && 
-          <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_DefaultCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(DropboxCodeSnippets, "Example_Dropbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
               error={defaultError} setError={setDefaultError}
               disabled={defaultDisabled} setDisabled={setDefaultDisabled}
               elementStateTypes={[]} 
             >
-              <Example_DefaultCheckbox error={defaultError} disabled={defaultDisabled} />
-            </ShowcaseExample_StateRef>
-          </ShowcaseElement>
-        }
-
-        { currentTab == 'list' && 
-          <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_ListCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
-            <ShowcaseExample_StateRef 
-              error={listError} setError={setListError}
-              disabled={listDisabled} setDisabled={setListDisabled}
-              elementStateTypes={[]} 
-            >
-              <Example_ListCheckbox error={listError} disabled={listDisabled} />
-            </ShowcaseExample_StateRef>
-          </ShowcaseElement>
-        }
-
-        { currentTab == 'inline' && 
-          <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_InlineCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
-            <ShowcaseExample_StateRef 
-              error={inlineError} setError={setInlineError}
-              disabled={inlineDisabled} setDisabled={setInlineDisabled}
-              elementStateTypes={[]} 
-            >
-              <Example_InlineCheckbox error={inlineError} disabled={inlineDisabled} />
+              <Example_Dropbox error={defaultError} disabled={defaultDisabled} />
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
@@ -193,10 +130,9 @@ const Variants = styled.div``;
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'variant', 'name', 'label', 'description',
-
-  'spacing', 'items', 'onSelect', 'onMouseEnter', 'onMouseLeave',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required',
+  'name', 'accept', 'handleFiles', 'multiple',
+  'spacing', 'label', 'description', 'customIcon', 'iconStyles',
+  'spacing', 'value', 'error', 'errorMessage', 'disabled', 'required',
 ];
 
 const variantParamsList: Record<string, string[]> = {
@@ -225,16 +161,18 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'variant': () => <ParamType type="CheckboxVariant" tooltip={{ code: Code_Variant, type: 'type' }} />,
-  'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'checkbox-form-name') }} />,
-  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Checkbox label') }} />,
-  'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the checkbox.') }} />,
+  'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'dropbox.form.name') }} />,
+  'accept': () => <ParamType type="string" tooltip={{ code: dParArg('accept', 'image/*, .pdf, .doc, .docx, .txt') }} />,
+  'handleFiles': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_HandleFiles }} />,
+  'multiple': () => <ParamType type="boolean" tooltip={{ code: dParArg('multiple', 'multiple', 'var') }} />,
 
-  'items': () => <ParamType type="CheckboxItems" isArray tooltip={{ code: Code_ChckbxItem, type: 'interface' }}/>,
-  'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_OnSelect, type: 'type' }} />,
-  'onMouseEnter': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseEnter, type: 'type' }} />,
-  'onMouseLeave': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseLeave, type: 'type' }} />,
-
+  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Upload files') }} />,
+  'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the dropbox.') }} />,
+  'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionalStyles', 'stylesClass') }} />,
+  'customIcon': () => <ParamType type="IconTypes" tooltip={{ code: dParArg('customIcon', 'Canvas') }} />,
+  'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'iconStylesClass') }} />,
+  
+  'value': () => <ParamType type="string" tooltip={{ code: dParArg('value', 'files', 'var') }} />,
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var'), }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
@@ -242,64 +180,62 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippet imports
-import SourceChckbxSnippets from '@lib-rc/Forms/Checkbox/Checkbox.tsx?raw';
-const Code_Variant = getSourceCode(SourceChckbxSnippets, 'CheckboxVariant', 'type');
-const Code_ChckbxItem = getSourceCode(SourceChckbxSnippets, 'CheckboxItem', 'interface');
-const Code_OnSelect = 'onSelect: (checked: CheckboxItem, event: ChangeEvent<HTMLElement>) => void;';
-const Code_MouseEnter = 'onMouseEnter: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
-const Code_MouseLeave = 'onMouseLeave: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
+const Code_HandleFiles = 'handleFiles: (files: FileList | null) => void;';
 
 
 const paramDescriptionElements: Record<string, React.FC> = {
-  'variant': () =>
-    <div className='param-item-desc-text'>
-      The style of checkbox you want. The options are default, inline, and list.
-    </div>,
   'name': () =>
     <div className='param-item-desc-text'>
       The internal id used for capturing values during submit and with form libraries like @see react-hook-forms.
     </div>,
+  'accept': () =>
+    <div className='param-item-desc-text'>
+      A stringified list of the different file types it accepts. Leaving it blank allows for any, if you want certain types: 'image/*, .pdf, .doc, .docx, .txt'.
+    </div>,
+  'handleFiles': () =>
+    <div className='param-item-desc-text'>
+      The event function for you to handle storing the files retrieved from the user.
+    </div>,
+  'multiple': () =>
+    <div className='param-item-desc-text'>
+      Whether the dropbox allows for uploading multiple files
+    </div>,
+
   'label': () =>
     <div className='param-item-desc-text'>
-      The label of the checkbox component.
+      The label of the dropbox component.
     </div>,
   'description': () =>
     <div className='param-item-desc-text'>
-      The description of the checkbox component.
+      The description of the dropbox component.
     </div>,
-
-  'items': () =>
+  'additionalStyles': () =>
     <div className='param-item-desc-text'>
-      A list containing the information and state of each checkbox item. You should use the 
-      @see onSelect function for handling the state and whether each item is checked, as this isn't handled internally. 
+      The description of the dropbox component.
     </div>,
-  'onSelect': () =>
+  'customIcon': () =>
     <div className='param-item-desc-text'>
-      The function used to handle when one of the checkbox items are selected. 
+      Whether you want to add your own icon from this project's library as the image.
     </div>,
-  'onMouseEnter': () =>
+  'iconStyles': () =>
     <div className='param-item-desc-text'>
-      An optional event function for when you hover over the checkbox component.
-    </div>,
-  'onMouseLeave': () =>
-    <div className='param-item-desc-text'>
-      An optional event function for when the user's mouse leaves the checkbox component.
+      Custom styles for the dropbox's icon.
     </div>,
 
   'error': () =>
     <div className='param-item-desc-text'>
-      Whether there's an error for the checkbox component.
+      Whether there's an error for the dropbox component.
     </div>,
   'errorMessage': () =>
     <div className='param-item-desc-text'>
-      The error message for the checkbox component.
+      The error message for the dropbox component.
     </div>,
   'disabled': () =>
     <div className='param-item-desc-text'>
-      Whether the checkbox component is disabled.
+      Whether the dropbox component is disabled.
     </div>,
   'required': () =>
     <div className='param-item-desc-text'>
-      Whether the checkbox component is required.
+      Whether the dropbox component is required.
     </div>,
 };

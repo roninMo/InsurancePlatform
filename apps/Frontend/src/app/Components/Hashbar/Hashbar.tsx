@@ -69,6 +69,7 @@ export type UrlToHashLinkMap =
 | '/Documentation/Forms' 
 | '/Documentation/Forms/Button' 
 | '/Documentation/Forms/Checkbox' 
+| '/Documentation/Forms/Dropbox' 
 | '/Documentation/Forms/Input' 
 | '/Documentation/Forms/Radio' 
 | '/Documentation/Forms/RadioTable' 
@@ -88,6 +89,7 @@ const getPageHashLinks = (url: UrlToHashLinkMap): SubPageLinkProps[] => {
   if (url == '/Documentation/Forms' ) return [];
   if (url == '/Documentation/Forms/Button' ) return GenericDocHashLinkList;
   if (url == '/Documentation/Forms/Checkbox' ) return GenericDocHashLinkList;
+  if (url == '/Documentation/Forms/Dropbox' ) return GenericDocHashLinkList;
   if (url == '/Documentation/Forms/Input' ) return GenericDocHashLinkList;
   if (url == '/Documentation/Forms/Radio' ) return GenericDocHashLinkList;
   if (url == '/Documentation/Forms/RadioTable' ) return GenericDocHashLinkList;
@@ -115,7 +117,7 @@ export const GenericDocHashLinkList: SubPageLinkProps[] = [
   {
     sectionLink: { label: "Input", url: "" }, 
     subLinks: [
-      { label: 'Variants', url: '#showcase-element' },
+      { label: 'Variants', url: '#showcase-variants' },
       { label: 'Parameters', url: '#param-table' },
       { label: 'Event Handlers ', url: '#event-handler-table' },
     ]

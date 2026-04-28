@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
 import { getSourceCode, TextareaTypes, TooltipService } from "@Project/ReactComponents";
@@ -12,7 +12,8 @@ import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
 import styled from "@emotion/styled";
 
-import TextareaCodeSnippets from './Docs_TextareaJsxComponents?raw';
+import InputCodeSnippets from '../Input/Docs_InputJsxComponents.tsx?raw';
+import TextareaCodeSnippets from './Docs_TextareaJsxComponents.tsx?raw';
 import { 
   Example_BoxTextareaInput, 
   Example_DefaultTextareaInput, 
@@ -60,7 +61,7 @@ export const Docs_Textarea = () => {
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
-  // #region States
+  const { show, hide } = useContext(TooltipService);
   const [defaultError, setDefaultError] = useState<string>('');
   const [defaultDisabled, setDefaultDisabled] = useState<boolean>(false);
   
@@ -69,26 +70,59 @@ export const Docs_Textarea = () => {
   
   const [postError, setPostError] = useState<string>('');
   const [postDisabled, setPostDisabled] = useState<boolean>(false);
-  // #endregion
 
+  
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2">
-        Input Component
+        Textarea Component
       </h3>
 
       <div className='span-12'>
         <p className='p-2 showcase-text'>
-          The input component is designed with functionality and customization 
-          to fit your needs for the varying form types. It comes with tooltips, 
-          loading bars for server side autosaving, event hooks, error handling, and input masking. 
-          Each type has varying icons and functionality so you know whether the input is for 
-          text, email, phone, policy number, credit, currency, or search.
+          The <Kw>textarea</Kw> is designed to be used for a variety of scenarios with lots of customization that works alongside
+          the input with ease. Each variant helps you handle both multi line content, or chat boxes for workspaces like jira
+          or media apps, and you can add your own list of metadata tags to suit your needs. 
+          
+          The variants are 
+          <Kw>Default</Kw>,
+          <Kw>Box</Kw>,
+          and <Kw>Post</Kw>,
+        </p> 
+        
+        <p className='p-2 showcase-text'>
+          The <Kw>MetadataTags</Kw> could be a list of additional functionality for the textarea, 
+          Each one is under the hood is a styled button with an icon and optionally a label, with an event function for 
+          when the user interacts with it. 
+          It's a decent way to provide a customizable component with decoupled functionality alongside this specific input.
+          
+          However; if you're looking for specific inputs that handle certain input types, try the &nbsp;
+          <span 
+            onClick={hide} onMouseLeave={hide}
+            onMouseEnter={() => show({ 
+              code: getSourceCode(InputCodeSnippets, "Example_TextInput"), 
+              type: "component" 
+            })} 
+          >
+            <DocLink label='Input' url='/Documentation/Forms/Input' />
+          </span>.
+        </p>
+
+        <p className='p-2 showcase-text'>
+          You can use them for things like tagging coworkers in a post,
+          adding labels to new tasks you're commenting about, or assigning a calender dates for 
+          upcoming tasks and deadlines that need to be completed by. 
+        </p>
+        
+        <p className='p-2 showcase-text'>
+          There's also <Kw>attachFile</Kw> functionality to this specific input, which should be memoized to prevent extra rerenders if
+          you need your page to be performant. For <Kw>submitting</Kw>, 
+          or if you need a post button for the input, reference the submission props.
         </p>
       </div>
 
       {/* Showcase Input Element Variants */}
-      <Tabs className='span-12 px-4 tab-container'>
+      <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: TextareaTypes, index: number) => 
           <div onClick={() => onClickTab(tab)} className={tabStyles(tab)} key={`showcase-input-tab-${tab}-${index}`} >
             {/* { tab && tab.charAt(0) ? tab.charAt(0).toUpperCase() + tab.slice(1) : ''} */}

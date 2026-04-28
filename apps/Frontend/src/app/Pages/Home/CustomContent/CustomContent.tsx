@@ -213,8 +213,15 @@ export const CustomContent = () => {
     required: false,
   }
 
+  // Dropbox component
+  const [files, setFiles] = useState<FileList | null>(null);
   const [fileUploadError, setFileUploadError] = useState<boolean>(false);
   const [fileUploadDisabled, setFileUploadDisabled] = useState<boolean>(false);
+  const handleFiles = (files: FileList | null) => {
+    setFiles(files);
+    console.log('files uploaded: ', files);
+  }
+
 
   return (
     <>
@@ -338,7 +345,8 @@ export const CustomContent = () => {
               name="fileUpload"
               label="Upload files"
               description='The description of the dropbox.'
-              handleFiles={(files) => console.log('files retrieved: ', files)}
+              value={files}
+              handleFiles={handleFiles}
               // multiple
               // accept='image/*'
               customIcon='Canvas'

@@ -24,62 +24,38 @@ import styles from './Documentation.module.scss';
 export const Documentation = () => {
   /* TODO: From where we left off
   
-  x Finally, go through each component and refactor to make them very organized and themed
-    x currently on Textarea, just need to add Attach File functionality.
-		x add a file attachment component - utilizes drag & drop logic
-      x add file attachment logic to the textarea, use the types from the drag & drop component's
-
-    x add a height trans utility wrapper component to declutter the html code for our fancy renders
-      x props: show, styles, cStyles, children
-      x then add it to all components using the height trans logic
-
-    - update all docs page codeSnippets to be proper refs @see vite.config.ts
-      - every param table, including the eventParamTable need to be updated with the library refs and proper refs
-		- after you fix the build error occurring, add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
-		- then add convenience functions for object entries logic and looping
-
-    x fixed: there is a bug in the ShowcaseElement when switching back from the jsx tab to the component tab.
-        x Find out why it isn't smoothing transitioning then, and fix it so it's the same as it's normal behavior.
-
-    x fixed: there is another bug with the tooltip for when they don't move 
-        on the first frame they hover over an element with the tooltip.
-        It ends up not moving the tooltip to the cursor until you move again
-          x find a way to move it properly on the first frame.
-      x mouseCapture was moved to the rest of the add event listener invocations
-      x scroll behavior was calculating based on stale values from the useEffect scope, 
-          so we added isRenderDelayDone to the dependencies and some of the conditions for calculations.
-
-    x update the form components with the proper tooltip props - this is pretty much done
-			x fix all props that shouldn't be objects. tooltip cant be memoized so it shouldn't be an object, just tooltipContext, and tooltipContent.
-			- update any props like input's variant options to be memoized, and flatten any others that shouldn't be an object. 
-        x comment about this in the component types
-			- add the props to the library, and do this for AttachFileProps as well
-				- fileAttachment props need to be an object, so it's object should be memoized
+    x Update any props like input's variant options to be memoized, and flatten any others that shouldn't be an object. 
+      - Update the input props to be flattened, and dynamically add variant params based on the input's variant prop
 
 
-  - Finish the documentation pages
-    - Forms
-    - Content
-    - Utils
-  - This entails the docs content, component themes, variants, and options
-	- add the introduction pages and quickLinks for the docs sections and introduction
-  - fix up the CustomContent page to use the proper props
-  - add utility functions for Records mapping and retrieval
-    - add documentation to UpdateRecord, and move it to the library utils
-    - Add a getEntries to return either an array or the default entries list without calling Object.fromEntries
-    - check if there's any other quick functions you can add for Record/map edit and retrieval scenarios
+    - Finish the documentation pages
+      - Content
+        - Alert, Card, Icon, Dropdown
+      - Utils
+        - Modal, Tooltip & Provider, HashLink, HeightTransWrapper
 
-  - decide whether you want to find a place to add the tooltip on the textarea
+    - This entails the docs content, component themes, variants, and options
+      - Add the introduction pages and quickLinks for the docs sections and introduction
 
-  - Documentation pages
-    - Introduction: list of boxes categorizing each subroot section 
-    - each subroot/ should have QuickList to display their components
-    - Inputs, content, utils component showcases
-  
-	- Add react hook forms soon alongside the option to add state to the value for custom scenarios
-    - this changes all inputs, add custom opts for using useState to track value instead.
 
-  - Eventually add aria specific stuff to custom components!
+    - Add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
+    - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
+      - add documentation to UpdateRecord, and move it to the library utils
+      - Add a getEntries to return either an array or the default entries list without calling Object.fromEntries
+      - check if there's any other quick functions you can add for Record/map edit and retrieval scenarios
+    - Fix up the CustomContent page to use the proper props
+    - Decide whether you want to find a place to add the tooltip on the textarea
+
+
+    - Documentation pages
+      - Introduction: list of boxes categorizing each subroot section 
+      - each subroot/ should have QuickList to display their components
+      - Inputs, content, utils component showcases
+    
+    - Add react hook forms soon alongside the option to add state to the value for custom scenarios
+      - this changes all inputs, add custom opts for using useState to track value instead.
+
+    - Eventually add aria specific stuff to custom components!
 
 	*/
 
@@ -207,6 +183,7 @@ export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
     subLinks: [
       { label: 'Button', url: '/Documentation/Forms/Button' },
       { label: 'Checkbox', url: '/Documentation/Forms/Checkbox' },
+      { label: 'Dropbox', url: '/Documentation/Forms/Dropbox' },
       { label: 'Input', url: '/Documentation/Forms/Input' },
       { label: 'Radio', url: '/Documentation/Forms/Radio' },
       { label: 'Radio Table', url: '/Documentation/Forms/RadioTable' },

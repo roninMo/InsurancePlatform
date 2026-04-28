@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction} from "react";
+import { MouseEvent, Dispatch, SetStateAction, useState} from "react";
 import { HashLink } from "../Utils/HashLink/HashLink";
 
 import styled from "@emotion/styled";
@@ -25,13 +25,14 @@ export interface SidebarProps {
   LinkSections: SubPageLinkProps[];
 }
 export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSections }: SidebarProps) => {
+  const [currentPage, setCurrentPage] = useState<string>("");
   const toggleSidebar = (setOpened: boolean) => {
     setSidebarOpen(setOpened);
     if (onSetSidebarState) onSetSidebarState(setOpened);
   }
   
   return (
-    <Container className="sidebar col gap-2 p-4 pr-20">
+    <Container className="sidebar col gap-2 p-4 pr-10">
       {/* TODO: Eventual open close arrow with fixed positioning */}
       
       <h4 className="pb-6">
@@ -42,6 +43,8 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSe
         <SidebarLinks 
           sectionLink={sectionLink} 
           subLinks={subLinks} 
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
           key={`sidebar-section-${sectionLink.label}-${index}`} 
         />
       )}
@@ -51,7 +54,17 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSe
 }
 
 
-const SidebarLinks = ({ sectionLink, subLinks }: SubPageLinkProps) => {
+// Sidebar nested links
+interface SideBarLinkProps extends SubPageLinkProps {
+  currentPage: string;
+  setCurrentPage: Dispatch<SetStateAction<string>>;
+}
+
+const SidebarLinks = ({ sectionLink, subLinks, currentPage, setCurrentPage }: SideBarLinkProps) => {
+  const handlePageSelected = (pageLabel: string, e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+    setCurrentPage(pageLabel);
+  }
+
   return (
     <div className="colStart pb-4">
       <HashLink 
@@ -60,12 +73,15 @@ const SidebarLinks = ({ sectionLink, subLinks }: SubPageLinkProps) => {
       />
 
       { subLinks.map(({url, label}: SidebarLinkProps, index: number) =>
-        <HashLink 
-          label={label} 
-          url={url} 
-          styles="pl-4 sidebar-link"
-          key={`sidebar-link(${index})-${label}`} 
-        />
+        <HashLink url={url}>
+          <div 
+            onClick={(e) => handlePageSelected(label, e)}
+            className={`px-4 pr-8 sidebar-link ${currentPage == label ? 'sidebar-link-selected' : ''}`}
+            key={`sidebar-link(${index})-${label}`}
+          >
+            { label }
+          </div>
+        </HashLink>
       )}
     </div>
   );

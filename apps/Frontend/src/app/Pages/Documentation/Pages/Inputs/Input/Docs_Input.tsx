@@ -138,7 +138,7 @@ export const Docs_Input = () => {
       </div>
 
       {/* Showcase Input Element Variants */}
-      <Tabs className='span-12 px-4 tab-container'>
+      <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: TextInputTypes, index: number) => 
           <div onClick={() => onClickTab(tab)} className={tabStyles(tab)} key={`showcase-input-tab-${tab}-${index}`} >
             {/* { tab && tab.charAt(0) ? tab.charAt(0).toUpperCase() + tab.slice(1) : ''} */}

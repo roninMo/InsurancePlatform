@@ -1201,7 +1201,7 @@
   
   .ta-b-attach-file-ha {
     &:hover {
-      & > p, & svg {
+      & p, & svg {
         @apply text-slate-800 dark:text-slate-200 cursor-pointer;
       }
     }
@@ -1591,6 +1591,17 @@
       border-l border-default
       hover:border-l-2 hover:border-focus
     ;
+
+    // &:hover {
+    //   @apply border-l-2 border-focus;
+    //   & .footer-link { @apply primary-text; }
+    // }
+    
+    // &:active .footer-link { @apply link-text; }
+  }
+
+  .sidebar-link-selected {
+    @apply border-l-2 border-focus primary-text;
   }
   
   .sidebar-link-base {
@@ -1732,7 +1743,7 @@
 
   .tab-container {
     @apply
-      rowStart items-center gap-4
+      rowStart items-center gap-4 pt-6
       border-b border-default rounded-t-md
       
     ;
@@ -2077,6 +2088,12 @@
     color-scheme: dark;
   }
 
+  // Id ScrollRestoration fixes with this app's navbar
+  [id] {
+    scroll-margin-top: 4.5rem;
+  }
+
+  // themes for ascii images
   .ascii-text {
     @apply whitespace-pre-wrap text-base font-semibold;
     letter-spacing: 0.4rem;

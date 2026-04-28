@@ -257,7 +257,7 @@ const ParamTableTooltip: React.FC = () => (
 		</p>
 
 		<div className='pt-type-desc *:text-sm leading-7'>
-			<Kw>Param Types</Kw> have different colors specific to their type. 
+			Hover over a <Kw>Param Type</Kw> for contextual info about the prop definition. Each have different colors specific to their type: &nbsp; 
 
 			<Kw>strings</Kw> are <span className='param-type-string'> purple, </span>
 			<Kw>numbers</Kw> are <span className='param-type-number'> blue, </span>
@@ -265,5 +265,10 @@ const ParamTableTooltip: React.FC = () => (
 			<Kw>functions</Kw> are <span className='param-type-function'> cyan, </span>
 			and <Kw>custom classes and types</Kw> are <span className='param-type-custom'> green. </span>
 		</div>
+		
+		<p className='pt-desc'>
+			The contextual information either references the object's definition, 
+			or how it's defined when you add it to this specific component.
+		</p>
 	</div>
 );

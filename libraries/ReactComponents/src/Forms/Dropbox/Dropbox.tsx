@@ -20,6 +20,7 @@ export interface DropboxProps extends FileUploadProps {
   customIcon?: IconTypes;
   iconStyles?: string;
 
+  value: FileList | null;
   error?: boolean;
   errorMessage?: string;
   disabled?: boolean;

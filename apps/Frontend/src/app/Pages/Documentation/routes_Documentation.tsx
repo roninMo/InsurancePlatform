@@ -8,6 +8,7 @@ import { Docs_Utils } from "./Pages/Utils/Docs_Utils";
 // Documentation/Forms
 import { Docs_Button } from "./Pages/Inputs/Button/Docs_Button";
 import { Docs_Checkbox } from "./Pages/Inputs/Checkbox/Docs_Checkbox";
+import { Docs_Dropbox } from "./Pages/Inputs/Dropbox/Docs_Dropbox";
 import { Docs_Input } from "./Pages/Inputs/Input/Docs_Input";
 import { Docs_Radio } from "./Pages/Inputs/Radio/Docs_Radio";
 import { Docs_RadioTable } from "./Pages/Inputs/RadioTable/Docs_RadioTable";
@@ -50,6 +51,7 @@ export const DocumentationPageRoutes: RouteObject = {
       children: [
         { path: 'Button',  element: <Docs_Button /> },
         { path: 'Checkbox',  element: <Docs_Checkbox /> },
+        { path: 'Dropbox',  element: <Docs_Dropbox /> },
         { path: 'Input',  element: <Docs_Input /> },
         { path: 'Radio',  element: <Docs_Radio /> },
         { path: 'RadioTable',  element: <Docs_RadioTable /> },

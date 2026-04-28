@@ -108,7 +108,7 @@ export const Docs_Select = () => {
       </Tabs>
       
       {/* Variants */}
-      <Variants className='span-12 py-2'>
+      <Variants className='span-12 py-2' id="showcase-variants">
         { currentTab == 'Default' && 
           <ShowcaseElement jsx={getSourceCode(SelectCodeSnippets, "Example_SelectInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 

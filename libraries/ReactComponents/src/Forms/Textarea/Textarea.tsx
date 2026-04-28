@@ -1,4 +1,4 @@
-import { memo, MouseEvent, useId, useMemo, useRef, useState } from "react";
+import { memo, MouseEvent, ReactNode, useId, useMemo, useRef, useState } from "react";
 import { Button } from "../Button/Button";
 import { FileUploadProps } from "../Dropbox/Dropbox";
 import { Ht } from "../../Common/Content/HeightTransWrapper/HeightTransWrapper";
@@ -164,9 +164,10 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
               iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
               required={required} disabled={disabled}
-            />
+            >
+              <p className="italic transition-all">Attach a file</p>
+            </AttachFileElement>
           }
-          <p className="italic">Attach a file</p>
         </div>
 
         { onSubmit && 
@@ -266,9 +267,10 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
                   iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
                   required={required} disabled={disabled}
-                />
+                >
+                  <p className="italic transition-all">Attach a file</p>
+                </AttachFileElement>
               }
-              <p className="italic">Attach a file</p>
             </div>
 
             <div className="margin-auto-div-fix">
@@ -386,7 +388,7 @@ const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagEl
   return (<></>);
 }
 
-const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, required, disabled }: TA_FileUploadProps) => {
+const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, required, disabled, children }: TA_FileUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // invoke the file input's native event for opening the file selection.
@@ -395,7 +397,7 @@ const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, re
   }
 
   if (true) return (
-    <div onClick={onClickDropdown}>
+    <div onClick={onClickDropdown} className="rowStart gap-2">
       <HiddenInput 
         name={name} type="file" ref={fileInputRef}
         onChange={(e) => handleFiles(e.target.files)}
@@ -407,6 +409,7 @@ const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, re
         disabled={disabled} required={required}
       />
       <Icon variant='AttachFile'  styles={iconStyles} />
+      { children }
     </div>
   );
 }
@@ -422,6 +425,7 @@ export interface TA_FileUploadProps extends FileUploadProps {
   iconStyles: string;
   required?: boolean;
   disabled?: boolean;
+  children?: ReactNode;
 }
 
 
