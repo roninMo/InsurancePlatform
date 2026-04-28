@@ -1482,6 +1482,42 @@
   // Universal Components                     //
   //------------------------------------------//
   // #region Universal Component Themes
+  // #region Card / Container Component
+  .card-container {
+    @apply 
+      p-2 col gap-2 
+      rounded-md transition-all
+    ;
+  }
+  .card-bg { @apply bg-default; }
+  .card-border { @apply outline-css outline-default; }
+  .card-interactive {
+    &:focus-within {
+      // @apply border-focus;
+      & .card-border  { @apply border-focus; }
+      & .card-divider { @apply border-focus; }
+    }
+  }
+  
+  .card-header {
+    @apply text-base label-colors;
+  }
+  
+  .card-description {
+    @apply pb-1 text-colors;
+  }
+
+  .card-divider {
+    @apply w-full mb-2 border-b border-styles;
+  }
+  
+  .card-content {
+    @apply block;
+  }
+  // #endregion
+
+
+  // #region Dropdown component styles
   .dropdown-icon {
     @apply 
       size-7 text-colors mt-1
@@ -1528,9 +1564,10 @@
       dark:hover:theme-focus-2
     ;
   }
+  // #endregion
 
 
-  // Hashbar
+  // #region Hashbar component styles
   .hashbar {
     @apply 
       h-0 min-h-[100%] /* Dependent on parent height */
@@ -1563,9 +1600,10 @@
       cursor-pointer transition-all duration-300 
     ;
   }
+  // #endregion
 
 
-  // Sidebar
+  // #region Sidebar component styles
   .sidebar {
     @apply
       h-0 min-h-[100%] /* Dependent on parent height */
@@ -1613,9 +1651,10 @@
   
   .sidebar-link-base:hover { @apply primary-text; }
   .sidebar-link-base:active { @apply link-text; }
+  // #endregion
 
 
-  // Tooltip
+  // #region Tooltip component styles
   .tooltip {
     @apply
       fixed top-0 left-0 max-h-64 pr-40
@@ -1693,6 +1732,7 @@
   .tooltip-copied-icon {
     @apply size-4 icon-ok-color mt-[1px];
   }
+  // #endregion
   // #endregion
 
 

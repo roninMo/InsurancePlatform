@@ -1,18 +1,18 @@
 import { ReactNode, MouseEvent } from 'react';
-import styled from '@emotion/styled';
-
-import styles from './Card.module.scss';
 import { Button, ButtonProps } from '@Project/ReactComponents';
+
+import styled from '@emotion/styled';
+import styles from './Card.module.scss';
 
 
 export type CardType = 
-    'default'     // standard container
+  | 'default'     // standard container
   | 'card'        // card layout with description, title, and custom content
   | 'card-button' // card with a title, description, and a button event
   | 'card-link'   // card with a title, description, and a hashLink
 ;
 
-export interface CardProps {
+export interface OldCardProps {
   type?: CardType;
   children?: ReactNode;
 
@@ -33,131 +33,132 @@ export interface CardProps {
   onClickLink?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 }
 
+// Card styles
 type ContainerStyles = 
   | { styles?: string; additStyles?: never } 
   | { additStyles?: string; styles?: never };
 type HeaderStyles = 
-  | { headerStyles?: string; additHeaderStyles?: never } 
-  | { additHeaderStyles?: string; headerStyles?: never }; 
-type ContentStyles = 
-  | { contentStyles?: string; additContentStyles?: never } 
-  | { additContentStyles?: string; contentStyles?: never };
+  | { title: string; headerStyles?: string; additHeaderStyles?: never } 
+  | { title: string; additHeaderStyles?: string; headerStyles?: never }; 
+type DescriptionStyles = 
+  | { description: string; descStyles?: string; additDescStyles?: never } 
+  | { description: string; additDescStyles?: string; descStyles?: never } 
+  | { description?: never; additDescStyles?: never; descStyles?: never }; 
+type ContentStyles = // children is a reactNode, will this show up in intellisense whenever it's defined, no matter "what" it is?
+  | { children: ReactNode; contentStyles?: string; additContentStyles?: never } 
+  | { children: ReactNode; additContentStyles?: string; contentStyles?: never }
+  | { children?: never; additContentStyles?: never; contentStyles?: never };
 
-interface CardPropsBase {
+
+export type CardPropsBase = ContainerStyles & ContentStyles & {
   type?: CardType;
-  children?: ReactNode;
-
-  // Removed styling from the base styles
-  noBackground?: boolean;
+  noBackground?: boolean; // Removed styling from the base styles
 
   // If either of these are interactive, both will use interactive styles (if enabled)
-  noBorder?: boolean | 'interactive';
-  noDivider?: boolean | 'interactive';
+  noBorder?: boolean;
+  noDivider?: boolean;
+  interactive?: boolean;
 
   // // Container styles
   // (styles || additStyles)?: string;
-  // // Header styles
-  // (headerStyles || additHeaderStyles)?: string;
-  // // Content styles
-  // (contentStyles || additContentStyles)?: string;
 }
 
-interface ContentCardProps extends CardPropsBase {
+
+export type ContentCardProps = CardPropsBase 
+  & HeaderStyles 
+  & DescriptionStyles 
+& {
   type: 'card' | 'card-button' | 'card-link';
-  title?: string;
-  description?: string;
-  
+  // title?: string;
+  // description?: string;
+
   // // Container styles
   // (styles || additStyles)?: string;
   // // Header styles
   // (headerStyles || additHeaderStyles)?: string;
+  // // Description styles
+  // (descStyles || additDescStyles)?: string;
   // // Content styles
   // (contentStyles || additContentStyles)?: string;
-}
+};
 
-interface ButtonCardProps extends ContentCardProps {
+export type ButtonCardProps = ContentCardProps & {
   type: 'card-button';
   buttonProps?: ButtonProps;
 }
 
-interface LinkCardProps extends ContentCardProps {
-  
+export type LinkCardProps = ContentCardProps & {
+  type: 'card-link';
+  linkText: string;
+  onClickLink: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 }
 
+export type CardProps = 
+  | ButtonCardProps 
+  | LinkCardProps
+  | ContentCardProps 
+  | CardPropsBase 
+;
 
 
+export const Card = (props: CardProps) => {
+  const { 
+    type, styles, additStyles, 
+    noBackground, noBorder, noDivider, interactive,
+    children, contentStyles, additContentStyles 
+  } = props as CardPropsBase;
 
-
-interface AdditiveStyles { 
-
-}
-
-/* 
-
-Styles
-  - Container + (background, outline, styles)
-  - Header 
-  - Description
-  - Content Container
-
-
-Card props distribution 
-
-  Universal
-    - type
-    - background, border, divider
-    - children (content)
-
-  default (Container)
-    - title, description
-    - additionalStyles
-
-
-  card (title, desc, content)
-    - title, description
-    - additionalStyles
-
-  card-button (title, desc, button event)
-    - title, description
-    - buttonProps, buttonLocation
-    - additionalStyles
-
-  card-link (title, desc, content, link)
-    - title, description
-    - linkText, linkStyles, onClickLink
-    - additionalStyles
-
-*/
-
-
-export const Card = ({ 
-  type = 'default', children, 
-  border = 'none', background = 'default', divider = true, additionalStyles, 
-  title, description, buttonProps, linkText, onClickLink 
-}: CardProps) => {
   const titleStyles = `text-base`;
   const dividerStyles = `mb-2 border-b border-styles`;
 
-	// TODO: The styles and themes need to be added globally and themed
   const getContainerStyles = (): string => {
-    let classes = `rounded-md trans p-2 `;
-    classes += border     == 'default' ? ' outline-css outline-styles ' : '';
-    classes += background == 'default' ? ' bg-default ' : '';
-    return classes + ` ${additionalStyles}`;
+    let classes = styles ? styles : `card-container ${additStyles}`;
+    if (!noBackground) classes += ` card-bg`;
+    if (!noBorder) classes += ` card-border`;
+    if (interactive) classes += ' card-interactive';
+    return classes;
   }
+
+
+
+
+  //--------------------------------//
+  // Default (Container)            //
+  //--------------------------------//
+  if (type == 'default') return (
+    <Container className={getContainerStyles()}>
+      { children }
+    </Container>
+  );
+
 
   //--------------------------------//
   // Card                           //
   //--------------------------------//
-  if (type == 'card') return (
-    <Container className={ getContainerStyles() + ' col gap-2' }>
-      <label className={titleStyles}>{ title }</label>
-      <p className='pb-1'>{ description }</p>
-      { divider && <div className={dividerStyles} />}
-      
-      { children }
-    </Container>
-  );
+  if (type == 'card') {
+    const { 
+      title, description, 
+      headerStyles, additHeaderStyles,
+      contentStyles, additContentStyles
+    } = props as ContentCardProps;
+    
+    
+    return (
+      <Container className={getContainerStyles()}>
+        <label className="card-header">
+          { title }
+        </label>
+        <p className="card-description">
+          { description }
+        </p>
+        
+        {/* Divider and Content */}
+        { !noDivider && <div className="card-divider" />}
+        { children }
+      </Container>
+    );
+  }
+
 
   //--------------------------------//
   // Card-Button                    //
@@ -207,16 +208,6 @@ export const Card = ({
           { linkText }
         </p>
       }
-    </Container>
-  );
-
-
-  //--------------------------------//
-  // Default                        //
-  //--------------------------------//
-  return (
-    <Container className={ getContainerStyles() }>
-      { children }
     </Container>
   );
 }
