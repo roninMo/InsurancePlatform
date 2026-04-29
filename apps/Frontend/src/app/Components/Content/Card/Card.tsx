@@ -1,4 +1,4 @@
-import { ReactNode, MouseEvent } from 'react';
+import { ReactNode, MouseEvent, useMemo } from 'react';
 import { Button, ButtonProps } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
@@ -12,52 +12,13 @@ export type CardType =
   | 'card-link'   // card with a title, description, and a hashLink
 ;
 
-export interface OldCardProps {
-  type?: CardType;
-  children?: ReactNode;
-
-  // universal styles
-  border?: boolean | 'default' | 'interactive' | 'none';
-  background?: boolean | 'default' | 'none';
-  divider?: boolean;
-  additionalStyles?: string;
-
-  title?: string;
-  description?: string;
-
-  // This needs to be memoized to prevent unnecessary rerenders 
-  buttonProps?: ButtonProps;
-
-  // card-link props
-  linkText?: string;
-  onClickLink?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-}
-
-// Card styles
-type ContainerStyles = 
-  | { styles?: string; additStyles?: never } 
-  | { additStyles?: string; styles?: never };
-type HeaderStyles = 
-  | { title: string; headerStyles?: string; additHeaderStyles?: never } 
-  | { title: string; additHeaderStyles?: string; headerStyles?: never }; 
-type DescriptionStyles = 
-  | { description: string; descStyles?: string; additDescStyles?: never } 
-  | { description: string; additDescStyles?: string; descStyles?: never } 
-  | { description?: never; additDescStyles?: never; descStyles?: never }; 
-type ContentStyles = // children is a reactNode, will this show up in intellisense whenever it's defined, no matter "what" it is?
-  | { children: ReactNode; contentStyles?: string; additContentStyles?: never } 
-  | { children: ReactNode; additContentStyles?: string; contentStyles?: never }
-  | { children?: never; additContentStyles?: never; contentStyles?: never };
-
-
 // Card Props
 export type CardPropsBase = ContainerStyles & ContentStyles & {
-  type?: CardType;
+  type: CardType;
   noBackground?: boolean; // Removed styling from the base styles
 
-	
   noBorder?: boolean;
-  interactive?: boolean; // makes the border and divider have focused styles
+  hoverTheme?: boolean;
 
   // // Container styles
   // (styles || additStyles)?: string;
@@ -86,6 +47,8 @@ type CardContentProps = CardPropsBase
 export type CardButtonProps = CardContentProps & {
   type: 'card-button';
   buttonProps: ButtonProps;
+  buttonLocation: 'bottomLeft' | 'bottomRight' | 'top';
+  focusTheme?: boolean; // add focus to the border when the button is clicked?
 }
 
 export type CardLinkProps = CardContentProps & {
@@ -95,31 +58,110 @@ export type CardLinkProps = CardContentProps & {
 }
 
 export type CardProps = 
-  | CardButtonProps 
-  | CardLinkProps  
-  | CardPropsBase 
+  | CardButtonProps   // card-button
+  | CardLinkProps     // card-link
+  | CardContentProps  // card & ^
+  | CardPropsBase     // default (intellisense routing)
 ;
+
+
+// #region Card styles 
+// note: Adding @deprecated is what removes it from the intellisense options, so these are kind of bloated
+// Container Styles
+type ContainerStyles = 
+| { 
+    styles?: string; 
+    /** @deprecated CANNOT use 'additStyles' when 'styles' is present. */
+    additStyles?: never; 
+  } 
+| { 
+    additStyles?: string; 
+    /** @deprecated CANNOT use 'styles' when 'additStyles' is present. */
+    styles?: never; 
+  };
+
+// Header Styles
+type HeaderStyles = 
+| { 
+    title: string; 
+    headerStyles?: string; 
+    /** @deprecated CANNOT use 'additHeaderStyles' when 'headerStyles' is present. */
+    additHeaderStyles?: never; 
+  } 
+| { 
+    title: string; 
+    additHeaderStyles?: string; 
+    /** @deprecated CANNOT use 'headerStyles' when 'additHeaderStyles' is present. */
+    headerStyles?: never; 
+  }
+
+| { 
+    title?: never; 
+    headerStyles?: never; 
+    additHeaderStyles?: never; 
+  };
+
+// Description Styles
+type DescriptionStyles = 
+| { 
+    description: string; 
+    descStyles?: string; 
+    /** @deprecated CANNOT use 'additDescStyles' when 'descStyles' is present. */
+    additDescStyles?: never; 
+  } 
+
+| { 
+    description: string; 
+    additDescStyles?: string; 
+    /** @deprecated CANNOT use 'descStyles' when 'additDescStyles' is present. */
+    descStyles?: never; 
+  }
+| { 
+    description?: never; 
+    descStyles?: never; 
+    additDescStyles?: never; 
+  };
+
+// Content Styles
+type ContentStyles = 
+
+| { 
+    children: ReactNode; 
+    contentStyles?: string; 
+    /** @deprecated CANNOT use 'additContentStyles' when 'contentStyles' is present. */
+    additContentStyles?: never; 
+  } 
+| { 
+    children: ReactNode; 
+    additContentStyles?: string; 
+    /** @deprecated CANNOT use 'contentStyles' when 'additContentStyles' is present. */
+    contentStyles?: never; 
+  }
+| { 
+    children?: never; 
+    contentStyles?: never; 
+    additContentStyles?: never; 
+  };
+// #endregion
+
 
 
 export const Card = (props: CardProps) => {
   const { 
     type, styles, additStyles, 
-    noBackground, noBorder, interactive,
-    children, contentStyles, additContentStyles 
+    noBackground, noBorder, hoverTheme,
+    children 
   } = props as CardPropsBase;
-
-  const titleStyles = `text-base`;
-  const dividerStyles = `mb-2 border-b border-styles`;
+  const { focusTheme } = props as any;
 
   const getContainerStyles = (): string => {
     let classes = styles ? styles : `card-container ${additStyles}`;
     if (!noBackground) classes += ` card-bg`;
     if (!noBorder) classes += ` card-border`;
-    if (interactive) classes += ' card-interactive';
+    if (hoverTheme) classes += ` card-hover`;
+    if (focusTheme) classes += ` card-focus`;
     return classes;
   }
-
-
 
 
   //--------------------------------//
@@ -133,86 +175,79 @@ export const Card = (props: CardProps) => {
 
 
   //--------------------------------//
-  // Card                           //
+  // Card, Card-Button, Card-Link   //
   //--------------------------------//
   else {
     const { 
       title, description, noDivider, 
-      headerStyles, additHeaderStyles,
-      contentStyles, additContentStyles
-    } = props as ContentCardProps;
-		const { buttonProps } = props as CardButtonProps;
+      headerStyles, additHeaderStyles = '', 
+      descStyles, additDescStyles = '', 
+      contentStyles, additContentStyles = '' 
+    } = props as CardContentProps;
+		const { buttonProps, buttonLocation = 'top' } = props as CardButtonProps;
 		const { linkText, onClickLink } = props as CardLinkProps;
     
-    
+    const cardButton = () => {
+      if (type != 'card-button' || !buttonProps) return null;
+      return (
+        <div className={`pt-0.5
+          ${buttonLocation == 'bottomLeft' ? 'text-left mt-2' : ''}
+          ${buttonLocation == 'bottomRight' ? 'text-right' : ''}
+        `}>
+          <div>
+            <Button 
+              displayText={buttonProps.displayText || 'Submit'}
+              onClick={buttonProps.onClick}
+              disabled={buttonProps.disabled}
+              
+              icon={buttonProps.icon}
+              iconStyles={buttonProps.iconStyles}
+              size={buttonProps?.size}
+              color={buttonProps.color}
+              additionalStyles={buttonProps.additionalStyles}
+              />
+          </div>
+        </div>
+      )
+    };
+
     return (
       <Container className={getContainerStyles()}>
-        <label className="card-header">
-          { title }
-        </label>
-        <p className="card-description">
-          { description }
-        </p>
+        <HeaderAndDescription className='row justify-between gap-2'>
+          <div className='col gap-2'>
+            <label className={headerStyles ? headerStyles : `card-header ${additHeaderStyles}`}>
+              { title }
+            </label>
+            <p className={descStyles ? descStyles : `card-description ${additDescStyles}`}>
+              { description }
+            </p>
+          </div>
+
+          { buttonLocation == 'top' && cardButton() }
+        </HeaderAndDescription>
         
         {/* Divider and Content */}
-        { !noDivider && <div className="card-divider" />}
-        { children }
+        { !noDivider && <Divider className="card-divider" />}
+        <Content className={contentStyles ? contentStyles : `card-content ${additContentStyles}`}>
+          { children }
+        </Content>
+
+        {/* Card Button and Link */}
+        { buttonLocation != 'top' && cardButton() }
+        { type == 'card-link' && 
+          <CardLink onClick={(e) => onClickLink(e)} className='card-link' >
+            { linkText }
+          </CardLink>
+        }
       </Container>
     );
   }
-
-
-  //--------------------------------//
-  // Card-Button                    //
-  //--------------------------------//
-  if (type == 'card-button') return (
-    <Container className={ getContainerStyles()}>
-      <div className='row justify-between items-start'>
-        <div className='col pb-4 gap-2'>
-          <label className={titleStyles}>{ title }</label>
-          <p>{ description }</p>
-        </div>
-
-        {(buttonProps?.displayText && buttonProps.onClick) && 
-          <Button 
-          displayText={buttonProps.displayText}
-          onClick={buttonProps.onClick}
-          disabled={buttonProps.disabled}
-          
-          icon={buttonProps.icon}
-          iconStyles={buttonProps.iconStyles}
-          size={buttonProps?.size || 'md'}
-          color={buttonProps.color}
-          additionalStyles={buttonProps.additionalStyles}
-          />
-        }
-      </div>
-
-      { divider && <div className={dividerStyles} />}
-      { children }
-    </Container>
-  );
-
-
-  //--------------------------------//
-  // Card-Link                      //
-  //--------------------------------//
-  if (type == 'card-link') return (
-    <Container className={ getContainerStyles() + ' col gap-2'}>
-      <label className={titleStyles}>{ title }</label>
-      <p className='pb-1'>{ description }</p>
-      { divider && <div className={dividerStyles} />}
-      
-      { children }
-
-      { (linkText && onClickLink) &&
-        <p onClick={(e) => onClickLink(e)} className='pt-2 font-semibold link-text' >
-          { linkText }
-        </p>
-      }
-    </Container>
-  );
 }
 
 
+// Styled Components
 const Container = styled.div``;
+const HeaderAndDescription = styled.div``;
+const CardLink = styled.div``;
+const Divider = styled.div``;
+const Content = styled.div``;

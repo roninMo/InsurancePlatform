@@ -637,15 +637,15 @@ export const CustomContent = () => {
           <h4 className='pb-2 pt-1 label-colors'>Containers</h4>
         </div>
         <div className='default-layouts spacing pb-8'>
-          <Card additionalStyles='span-12 lg:span-4 p-4' border='default' background='default'>
+          <Card type='default' additStyles='span-12 lg:span-4 p-4' >
             Default layout
           </Card>
 
-          <Card additionalStyles='span-12 lg:span-4 p-4' border='none' background='none'>
+          <Card type='default' additStyles='span-12 lg:span-4 p-4' noBorder noBackground>
             Default layout
           </Card>
 
-          <Card additionalStyles='span-12 lg:span-4 p-4' border='default' background='none'>
+          <Card type='default' additStyles='span-12 lg:span-4 p-4' noBackground>
             Default layout
           </Card>
         </div>
@@ -659,8 +659,19 @@ export const CustomContent = () => {
           <Card
             type='card' 
             title='Card Layout'
+
             description='The description of a card style element'
-            additionalStyles='span-12 lg:span-4 p-4' border='default' background='default'
+            additStyles='span-12 lg:span-4 p-4'
+          >
+            <div>Card content</div>
+            <div>Card content</div>
+          </Card>
+
+          <Card
+            type='card' 
+            title='Card Layout'
+            description='The description of a card style element' 
+            additStyles='span-12 lg:span-4 p-4' noBackground
           >
             <div>Card content</div>
             <div>Card content</div>
@@ -670,17 +681,7 @@ export const CustomContent = () => {
             type='card' 
             title='Card Layout'
             description='The description of a card style element'
-            additionalStyles='span-12 lg:span-4 p-4' border='default' background='none'
-          >
-            <div>Card content</div>
-            <div>Card content</div>
-          </Card>
-
-          <Card
-            type='card' 
-            title='Card Layout'
-            description='The description of a card style element'
-            additionalStyles='span-12 lg:span-4 p-4' border='none' background='none'
+            additStyles='span-12 lg:span-4 p-4' noBorder noBackground
           >
             <div>Card content</div>
             <div>Card content</div>
@@ -698,8 +699,9 @@ export const CustomContent = () => {
             type='card-button' 
             title='Card Button Layout'
             description='The description of a card button element'
-            additionalStyles='span-12 lg:span-6 p-4' border='default' background='default'
+            additStyles='span-12 lg:span-6 p-4'
             buttonProps={{displayText: 'Create', onClick: () => {}}}
+            hoverTheme focusTheme
             >
             <div>Card button content</div>
             <div>Card button content</div>
@@ -709,8 +711,9 @@ export const CustomContent = () => {
             type='card-button' 
             title='Card Button Layout'
             description='The description of a card button element'
-            additionalStyles='span-12 lg:span-6 p-4' border='default' background='none'
+            additStyles='span-12 lg:span-6 p-4' noBackground
             buttonProps={{displayText: 'Create', onClick: () => {}}}
+            hoverTheme focusTheme
             >
             <div>Card button content</div>
             <div>Card button content</div>
@@ -726,8 +729,9 @@ export const CustomContent = () => {
             type='card-link' 
             title='Card Link Layout'
             description='The description of a card link element'
-            additionalStyles='span-12 lg:span-6 p-4' border='default' background='none'
+            additStyles='span-12 lg:span-6 p-4' noBackground
             linkText='Card link' onClickLink={() => {}}
+            hoverTheme
           >
             <div>Card link content</div>
             <div>Card link content</div>
@@ -737,8 +741,9 @@ export const CustomContent = () => {
             type='card-link' 
             title='Card Link Layout'
             description='The description of a card link element'
-            additionalStyles='span-12 lg:span-6 p-4' border='default' background='default'
+            additStyles='span-12 lg:span-6 p-4'
             linkText='Card link' onClickLink={() => {}}
+            hoverTheme
           >
             <div>Card link content</div>
             <div>Card link content</div>

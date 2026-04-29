@@ -1490,12 +1490,19 @@
     ;
   }
   .card-bg { @apply bg-default; }
-  .card-border { @apply outline-css outline-default; }
-  .card-interactive {
-    &:focus-within {
-      // @apply border-focus;
-      & .card-border  { @apply border-focus; }
-      & .card-divider { @apply border-focus; }
+  .card-border { @apply outline-css outline-default transition-all; }
+  .card-hover {
+    &:hover {
+      @apply 
+        duration-200 outline-light 
+        backdrop-brightness-110 dark:backdrop-brightness-125
+      ;
+      // & .card-divider { @apply border-focus; }
+    }
+  }  .card-focus {
+    &:focus-within, &:focus {
+      @apply outline-focus;
+      // & .card-divider { @apply border-focus; }
     }
   }
   
@@ -1508,11 +1515,15 @@
   }
 
   .card-divider {
-    @apply w-full mb-2 border-b border-styles;
+    @apply w-full mb-2 border-b border-styles transition-all;
   }
   
   .card-content {
     @apply block;
+  }
+
+  .card-link {
+    @apply link-text font-semibold pt-2;
   }
   // #endregion
 

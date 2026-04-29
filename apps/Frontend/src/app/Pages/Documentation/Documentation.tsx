@@ -34,6 +34,11 @@ export const Documentation = () => {
       - Utils
         - Modal, Tooltip & Provider, HashLink, HeightTransWrapper
 
+    - Before you finish the intro pages and navLinks for the Documentation page,
+        switch to using type definitions for conditional props for all the components
+    - Then add an alternative to getSourceCode to retrieve lines of code, instead of just definitions
+      - We need combined snippets for union type definitions
+
     - This entails the docs content, component themes, variants, and options
       - Add the introduction pages and quickLinks for the docs sections and introduction
 
