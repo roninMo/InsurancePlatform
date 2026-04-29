@@ -50,25 +50,26 @@ type ContentStyles = // children is a reactNode, will this show up in intellisen
   | { children?: never; additContentStyles?: never; contentStyles?: never };
 
 
+// Card Props
 export type CardPropsBase = ContainerStyles & ContentStyles & {
   type?: CardType;
   noBackground?: boolean; // Removed styling from the base styles
 
-  // If either of these are interactive, both will use interactive styles (if enabled)
+	
   noBorder?: boolean;
-  noDivider?: boolean;
-  interactive?: boolean;
+  interactive?: boolean; // makes the border and divider have focused styles
 
   // // Container styles
   // (styles || additStyles)?: string;
 }
 
 
-export type ContentCardProps = CardPropsBase 
+type CardContentProps = CardPropsBase 
   & HeaderStyles 
   & DescriptionStyles 
 & {
   type: 'card' | 'card-button' | 'card-link';
+  noDivider?: boolean;
   // title?: string;
   // description?: string;
 
@@ -82,21 +83,20 @@ export type ContentCardProps = CardPropsBase
   // (contentStyles || additContentStyles)?: string;
 };
 
-export type ButtonCardProps = ContentCardProps & {
+export type CardButtonProps = CardContentProps & {
   type: 'card-button';
-  buttonProps?: ButtonProps;
+  buttonProps: ButtonProps;
 }
 
-export type LinkCardProps = ContentCardProps & {
+export type CardLinkProps = CardContentProps & {
   type: 'card-link';
   linkText: string;
   onClickLink: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 }
 
 export type CardProps = 
-  | ButtonCardProps 
-  | LinkCardProps
-  | ContentCardProps 
+  | CardButtonProps 
+  | CardLinkProps  
   | CardPropsBase 
 ;
 
@@ -104,7 +104,7 @@ export type CardProps =
 export const Card = (props: CardProps) => {
   const { 
     type, styles, additStyles, 
-    noBackground, noBorder, noDivider, interactive,
+    noBackground, noBorder, interactive,
     children, contentStyles, additContentStyles 
   } = props as CardPropsBase;
 
@@ -135,12 +135,14 @@ export const Card = (props: CardProps) => {
   //--------------------------------//
   // Card                           //
   //--------------------------------//
-  if (type == 'card') {
+  else {
     const { 
-      title, description, 
+      title, description, noDivider, 
       headerStyles, additHeaderStyles,
       contentStyles, additContentStyles
     } = props as ContentCardProps;
+		const { buttonProps } = props as CardButtonProps;
+		const { linkText, onClickLink } = props as CardLinkProps;
     
     
     return (
