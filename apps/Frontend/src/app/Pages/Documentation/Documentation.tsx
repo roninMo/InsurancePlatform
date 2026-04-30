@@ -1,6 +1,5 @@
-import { useState, lazy } from 'react';
+import { useState } from 'react';
 import { Outlet } from "react-router-dom";
-import { SyntaxHighlighterProps } from 'react-syntax-highlighter';
 
 import { Navbar } from '../../Components/Navbar/Navbar';
 import { Sidebar, SubPageLinkProps } from "../../Components/Sidebar/Sidebar";

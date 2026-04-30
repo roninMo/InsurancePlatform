@@ -1,21 +1,14 @@
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { Ht, Icon, IconTypes } from "@Project/ReactComponents";
+
 import styled from "@emotion/styled";
 import styles from './Dropdown.module.scss';
 
 
-export interface DropdownProps {
+export interface DropdownPropsBase {
   label: string;
-
-  // Dropdown
   openByDefault?: boolean;
-  styles?: string;
-  additionalStyles?: string;
-
-  // Component Styles
-  labelStyles?: string;
   icon?: IconTypes;
-  iconStyles?: string;
 
   // optional state tracking
   hasBeenOpened?: boolean;
@@ -24,11 +17,62 @@ export interface DropdownProps {
   children: ReactNode;
 }
 
+export type DropdownProps = DropdownPropsBase 
+  & DropdownStyleProps & LabelStyleProps & IconStyleProps;
+
+// #region conditional style props 
+// Container Styles
+type DropdownStyleProps = 
+| { 
+    styles?: string; 
+    /** @deprecated CANNOT use 'additStyles' when 'styles' is present. */
+    additStyles?: never; 
+  } 
+| { 
+    additStyles?: string; 
+    /** @deprecated CANNOT use 'styles' when 'additStyles' is present. */
+    styles?: never; 
+  };
+
+type LabelStyleProps = 
+| { 
+    labelStyles?: string; 
+    /** @deprecated CANNOT use 'additStyles' when 'styles' is present. */
+    additLabelStyles?: never; 
+  } 
+| { 
+    additLabelStyles?: string; 
+    /** @deprecated CANNOT use 'styles' when 'additStyles' is present. */
+    labelStyles?: never; 
+  };
+
+type IconStyleProps = 
+| { 
+    iconStyles?: string; 
+    /** @deprecated CANNOT use 'additStyles' when 'styles' is present. */
+    additIconStyles?: never; 
+  } 
+| { 
+    additIconStyles?: string; 
+    /** @deprecated CANNOT use 'styles' when 'additStyles' is present. */
+    iconStyles?: never; 
+  }
+| { 
+    icon?: never; 
+    iconStyles?: never; 
+    additIconStyles?: never; 
+  };
+// #endregion
+
+
 export const Dropdown = ({ 
-  label, openByDefault, styles, additionalStyles, 
-  labelStyles, icon, iconStyles,
+  label, openByDefault, icon, 
   hasBeenOpened, setHasBeenOpened, 
-  children 
+  children,  
+  
+  styles, additStyles, 
+  labelStyles, additLabelStyles, 
+  iconStyles, additIconStyles, 
 }: DropdownProps) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
 
@@ -54,13 +98,16 @@ export const Dropdown = ({
   }
 
   return (
-    <div className={styles ? styles : `col gap-2 w-full animate-fade-in ${additionalStyles}`}>
+    <div className={styles ? styles : `col gap-2 w-full animate-fade-in ${additStyles}`}>
       <Header className="w-full rowStart items-center gap-1 " onClick={() => toggleDropdown()}>
         <Icon 
           variant={icon ? icon : 'DropdownArrow'} 
-          styles={`${iconStyles ? iconStyles : 'dropdown-icon'} ${dropdownOpen ? '' : '-rotate-90'}`} 
+          styles={`
+            ${iconStyles ? iconStyles : `dropdown-icon ${additIconStyles}`} 
+            ${dropdownOpen ? '' : '-rotate-90'}
+          `} 
         />
-        <div className={labelStyles ? labelStyles : 'dropdown-header'}>
+        <div className={labelStyles ? labelStyles : `dropdown-header ${additLabelStyles}`}>
           { label }
         </div>
       </Header>

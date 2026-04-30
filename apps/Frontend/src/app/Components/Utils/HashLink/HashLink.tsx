@@ -14,6 +14,13 @@ export interface HashLinkProps {
   children?: ReactNode;
 }
 
+// there are some loopholes in the dynamic props that we don't have conditional props for, and account for in the code
+
+// handle the different navigate scenarios properly
+// add a notification to the props that the opts object will cause rerenders if it isn't memoized
+// find out whether that default object prop will cause render issues
+// Label is only needed if we aren't passing in a react node to this element, update the prop conditions to only show for the right scenarios
+
 export const DEFAULT_OPTS: HashLinkProps['opts'] = { type: 'router'};
 export const BASE_NAV_STATE = { fromNavigate: true };
 

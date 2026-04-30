@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { IconTypes, Icon } from "@Project/ReactComponents";
 import { useInView } from 'react-intersection-observer';
+import { HashLink } from "../../../../Components/Utils/HashLink/HashLink";
+
 import styled from "@emotion/styled";
 import styles from './QuickLinks.module.scss';
-import { HashLink } from "../../../../Components/Utils/HashLink/HashLink";
 
 
 export interface QuickLinksProps {
@@ -53,11 +54,11 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
     }
 
     const checkStatus = async (url: string) => {
-
       // Delay the status check for visuals
       const timeout = setTimeout(async () => {
         try {
-          const response = await fetch(url, { mode: 'no-cors', signal: AbortSignal.timeout(5000) });
+          // TODO: refactor: this is pseudo code that's just a hack
+          const response = await fetch(url, { mode: 'no-cors', signal: AbortSignal.timeout(5000) }); 
 
           // if (env == 'stage') setStatus('Error');
           setStatus('Ok');// The site is up
@@ -67,7 +68,7 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
           const error = err as Partial<Error>; // "TimeoutError", "Abort Error", else Network Error
           setStatus('Error');
         }
-      }, 2040);
+      }, 1040);
       return () => clearTimeout(timeout);
     }
 
@@ -89,28 +90,22 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
 
   return (
     <div ref={ref} className={`dropdown-link-container ${bgStyles()} relative overflow-hidden`}>
-      <div className="span-1 rowStart items-center gap-2">
+      <IconAndEnv className="span-1 rowStart items-center gap-2">
         <Icon variant={getStatusIcon()} styles={`dropdown-link-icon ${getTextStyles()}`} />
-
         <span className={`dropdown-env ${envTextStyles()}`}>
           { env }
         </span>
-      </div>
-      
+      </IconAndEnv>
 
-      <div className="span-9 rowStart items-center gap-1">
+      <UrlLinks className="span-9 rowStart items-center gap-1">
+        {/* name: link w/label */}
         <span className={`pl-2 pr-1 mb-[2px] italic ${status == 'Loading' ? 'loading-text' : 'text-colors'}`}> name: </span>
         <HashLink label={label} url={url} opts={{ type: 'page' }} styles={`dropdown-link-text ${getTextStyles()}`} />
 
-        
-        
+        {/* url: link w/url */}
         <span className={`pl-8 pr-1 mb-[2px] italic ${status == 'Loading' ? 'loading-text' : 'text-colors'}`}> url: </span>
         <HashLink label={url} url={url} opts={{ type: 'page' }} styles={`dropdown-link-text ${getTextStyles()}`} />
-      </div>
-      
-      <div className="span-2 rowStart gap-1">
-      </div>
-
+      </UrlLinks>
 
       {/* Loading bar animation */}
       <LoadingBar 
@@ -124,8 +119,9 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
 
 // Styled components
 const Container = styled.div``;
+const IconAndEnv = styled.div``;
+const UrlLinks = styled.div``;
 const LoadingBar = styled.div``;
-const Text = styled.p``;
 
 /* 
   Link:

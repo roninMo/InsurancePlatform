@@ -1482,7 +1482,22 @@
   // Universal Components                     //
   //------------------------------------------//
   // #region Universal Component Themes
-  // #region Card / Container Component
+
+  // #region Alert component styles
+  .alert {
+    @apply 
+      p-2 rowStart items-start gap-1.5 transition-all
+      outline-css
+    ;
+  }
+
+  .alert-content {
+    @apply w-full;
+  }
+  // #endregion
+
+
+  // #region Card / Container component styles
   .card-container {
     @apply 
       p-2 col gap-2 
@@ -1744,6 +1759,45 @@
     @apply size-4 icon-ok-color mt-[1px];
   }
   // #endregion
+  // #endregion
+
+  // #region Modal component styles
+  .modal-base {
+    @apply 
+      fixed top-0 left-0 
+      min-w-full min-h-full z-40
+      row justify-center items-center 
+      transition-all;
+  }
+
+  .modal-container {
+    @apply 
+      col items-center gap-2
+      bg-div outline-css outline-default
+      transition-all;
+  }
+  
+  .modal-overlay { 
+    @apply bg-black bg-opacity-40 dark:bg-opacity-40; 
+  }
+
+  .modal-header {
+    @apply p-6 w-full row justify-between items-center;
+  }
+
+  .modal-icon {
+    @apply 
+      size-8 lg:size-10 cursor-pointer transition-all 
+      hover:text-blue-500 dark:hover:text-blue-500;
+  }
+
+  .modal-content {
+    @apply 
+    mx-8 mb-8 pr-4 
+    overflow-auto overflow-x-hidden 
+    scrollbar-theme transition-all;
+  }
+
   // #endregion
 
 

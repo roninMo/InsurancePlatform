@@ -38,6 +38,26 @@ const NavbarComponent = ({}: NavbarProps) => {
 
         // We've already rerendered from navigation, just clear the state
         window.history.replaceState({...state, fromNavigate: false}, '');
+        
+        // TODO: Add a specific route map to define the page names for the browser history
+        // Update the browser history's document title so we have some context when going backwards or forwards
+        console.log('navigated, information: ', { pathname, hash, key, state });
+        let pageName = '';
+        
+        const routeSegments = pathname.split('/').filter(Boolean);
+        const lastRoute = routeSegments.pop() || "Home"; // Fallback for root '/'
+
+        // Adds space before capital letters
+        const currentRoute = lastRoute.charAt(0).toUpperCase() + lastRoute.slice(1);
+        pageName = currentRoute.replace(/([A-Z])/g, ' $1').trim(); 
+        
+        let pageSection = '';
+        if (hash) {
+          let segments = hash.replace("#", "").split('-').map(section => section?.charAt(0).toUpperCase() + section.slice(1));
+          pageSection = ` - ${segments.join(' ')}`;
+        }
+        document.title = pageName + pageSection;
+        console.log('pageName: ', document.title);
       }, 10);
       
       return () => clearTimeout(timeout);

@@ -65,8 +65,7 @@ export type CardProps =
 ;
 
 
-// #region Card styles 
-// note: Adding @deprecated is what removes it from the intellisense options, so these are kind of bloated
+// #region conditional style props 
 // Container Styles
 type ContainerStyles = 
 | { 
@@ -94,7 +93,6 @@ type HeaderStyles =
     /** @deprecated CANNOT use 'headerStyles' when 'additHeaderStyles' is present. */
     headerStyles?: never; 
   }
-
 | { 
     title?: never; 
     headerStyles?: never; 
@@ -109,7 +107,6 @@ type DescriptionStyles =
     /** @deprecated CANNOT use 'additDescStyles' when 'descStyles' is present. */
     additDescStyles?: never; 
   } 
-
 | { 
     description: string; 
     additDescStyles?: string; 
@@ -124,7 +121,6 @@ type DescriptionStyles =
 
 // Content Styles
 type ContentStyles = 
-
 | { 
     children: ReactNode; 
     contentStyles?: string; 

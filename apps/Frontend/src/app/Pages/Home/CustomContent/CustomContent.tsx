@@ -23,6 +23,7 @@ import {
 } from '@Project/ReactComponents';
 
 import styles from './CustomContent.module.scss';
+import { Alert } from '../../../Components/Content/Alert/Alert';
 
 
 export const CustomContent = () => {
@@ -748,6 +749,76 @@ export const CustomContent = () => {
             <div>Card link content</div>
             <div>Card link content</div>
           </Card>
+        </div>
+        
+        {/* Card Links */}
+        <div className='spacing pb-8'>
+          <h4 className='span-12 pb-2 pt-1 label-colors'>Alerts</h4>
+
+          <div className='span-12 lg:span-6'>
+            <Alert type="info">
+              This is an alert notification element.
+            </Alert>
+          </div>
+          
+          <div className='span-12 lg:span-6'>
+            <Alert type="warning">
+              This is an alert notification element.
+            </Alert>
+          </div>
+          
+          <div className='span-12 lg:span-6'>
+            <Alert type="error">
+              This is an alert notification element.
+            </Alert>
+          </div>
+          
+          <div className='span-12 lg:span-6'>
+            <Alert type="ok">
+              This is an alert notification element.
+            </Alert>
+          </div>
+          
+          <div className='span-12 lg:span-3' />
+          <div className='span-12 lg:span-6'>
+            <Alert type="gray">
+              This is an alert notification element.
+            </Alert>
+          </div>
+          <div className='span-12 lg:span-3' />
+
+          <div className='span-12'>
+            <Alert type="info" additionalStyles='p-4'>
+              
+              <div className='card-layouts spacing'>
+                <Card
+                  type='card-link' 
+                  title='Card Link Layout'
+                  description='The description of a card link element'
+                  additStyles='span-12 lg:span-6 p-4' noBackground
+                  linkText='Card link' onClickLink={() => {}}
+                  hoverTheme
+                >
+                  <div>Card link content</div>
+                  <div>Card link content</div>
+                </Card>
+                
+                <Card
+                  type='card-link' 
+                  title='Card Link Layout'
+                  description='The description of a card link element'
+                  additStyles='span-12 lg:span-6 p-4'
+                  linkText='Card link' onClickLink={() => {}}
+                  hoverTheme
+                >
+                  <div>Card link content</div>
+                  <div>Card link content</div>
+                </Card>
+              </div>
+
+            </Alert>
+
+          </div>
         </div>
       </div>
 

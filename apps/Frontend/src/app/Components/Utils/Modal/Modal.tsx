@@ -1,8 +1,8 @@
 import { Dispatch, MouseEvent, ReactNode, SetStateAction, useEffect, useId, useState } from 'react';
-import styled from '@emotion/styled';
-
-import styles from './Modal.module.scss';
 import { Icon } from '@Project/ReactComponents';
+
+import styled from '@emotion/styled';
+import styles from './Modal.module.scss';
 
 
 export interface ModalProps {
@@ -14,11 +14,13 @@ export interface ModalProps {
   overlay?: boolean;
   closeModalButton?: boolean;
 
+  // Styles
   labelStyles?: string;
   overlayStyles?: string;
-  closeModalStyles?:string;
+  closeIconStyles?:string;
   additionalStyles?: string;
 
+  // Rendered content
   children?: ReactNode;
 }
 
@@ -26,7 +28,7 @@ export const Modal = ({
   isModalOpen, setModalOpen, onCloseModal,
   label, additionalStyles,
   overlay = true, overlayStyles,
-  closeModalButton = true, closeModalStyles,
+  closeModalButton = true, closeIconStyles,
   children
 }: ModalProps) => {
   const [isModalRendered, setIsModalRendered] = useState<boolean>(false);
@@ -46,12 +48,15 @@ export const Modal = ({
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
+    // keyframe animations fade in smoothly
     if (isModalOpen) {
       setIsModalRendered(true);
     }
+
+    // Wait a second to unmount this component to allow it to fade out of view gracefully
     else if (isModalRendered && !isModalOpen) {
       timeoutId = setTimeout(() => setIsModalRendered(false), 200);
-      return () => clearTimeout(timeoutId); // finished
+      return () => clearTimeout(timeoutId);
     }
 
     // If the effect was called again before the timer completes
@@ -77,36 +82,25 @@ export const Modal = ({
 
   if (isModalRendered) return (
       <Overlay
-          id={renderedModalId}
-          onClick={(e) => userClicked(e)}
-          className={`fixed top-0 left-0 min-w-full min-h-full z-40 
-        row justify-center items-center 
-        ${overlay ? 'bg-black bg-opacity-40 dark:bg-opacity-40' : ''} 
-        ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} trans
-        ${overlayStyles}
-      `}
-      >
-        <Container id={closeModalId} className={`
-        col items-center gap-2
-        outline-css outline-default bg-div 
-        trans ${isModalOpen ? 'opacity-100' : 'opacity-0'}
-        ${additionalStyles}
+        id={renderedModalId}
+        onClick={(e) => userClicked(e)}
+        className={`modal-base ${overlay ? 'modal-overlay' : ''} ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} ${overlayStyles}
       `}>
-
-          <Header className='p-6 w-full row justify-between items-center'>
+        <Container id={closeModalId} className={`modal-container ${isModalOpen ? 'opacity-100' : 'opacity-0'} ${additionalStyles}`}>
+          <Header className='modal-header'>
             <label className='text-xl lg:text-2xl header-colors'>
               { label }
             </label>
 
             <div onClick={() => closeModal()}>
               { closeModalButton &&
-                  <Icon variant='Close' styles={closeModalStyles ? closeModalStyles : 'size-8 lg:size-10 trans hover:text-blue-500 dark:hover:text-blue-500 cursor-pointer'} />
+                <Icon variant='Close' styles={closeIconStyles ? closeIconStyles : 'modal-icon'} />
               }
             </div>
           </Header>
 
           {/* User Content */}
-          <div className="mx-8 mb-8 pr-4 overflow-auto overflow-x-hidden scrollbar-theme">
+          <div className="modal-content">
             { children }
           </div>
         </Container>
