@@ -56,6 +56,10 @@ export const Documentation = () => {
       - each subroot/ should have QuickList to display their components
       - Inputs, content, utils component showcases
     
+      
+    - We need a specific route map to define the page names for the browser history
+    - Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
+
     - Add react hook forms soon alongside the option to add state to the value for custom scenarios
       - this changes all inputs, add custom opts for using useState to track value instead.
 

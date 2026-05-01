@@ -19,11 +19,13 @@ import {
   Slider, 
   Textarea, 
   TextInputTypes,
-  TooltipService, 
+  TooltipService,
+  Icon, 
 } from '@Project/ReactComponents';
 
 import styles from './CustomContent.module.scss';
 import { Alert } from '../../../Components/Content/Alert/Alert';
+import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
 
 
 export const CustomContent = () => {
@@ -270,6 +272,7 @@ export const CustomContent = () => {
         </div>
         
       </div>
+
 
       {/* Input and Textarea */}
       <div className='spacing p-2 bg-div outline-css outline-styles'>
@@ -634,10 +637,11 @@ export const CustomContent = () => {
         </div>
 
         {/* Default */}
-        <div className='span-12 pb-2'>
-          <h4 className='pb-2 pt-1 label-colors'>Containers</h4>
-        </div>
         <div className='default-layouts spacing pb-8'>
+          <h4 className='span-12 pb-2 pt-1 label-colors'>
+            Containers
+          </h4>
+
           <Card type='default' additStyles='span-12 lg:span-4 p-4' >
             Default layout
           </Card>
@@ -653,10 +657,11 @@ export const CustomContent = () => {
 
 
         {/* Card */}
-        <div className='span-12 pb-2'>
-          <h4 className='pb-2 pt-1 label-colors'>Cards</h4>
-        </div>
         <div className='card-layouts spacing pb-8'>
+          <h4 className='span-12 pb-2 pt-1 label-colors'>
+            Cards
+          </h4>
+
           <Card
             type='card' 
             title='Card Layout'
@@ -689,13 +694,12 @@ export const CustomContent = () => {
           </Card>
         </div>
 
-
-
         {/* Card Buttons */}
-        <div className='span-12 pb-2'>
-          <h4 className='pb-2 pt-1 label-colors'>Card Buttons</h4>
-        </div>
         <div className='card-layouts spacing pb-8'>
+          <h4 className='span-12 pb-2 pt-1 label-colors'>
+            Card Buttons
+          </h4>
+
           <Card
             type='card-button' 
             title='Card Button Layout'
@@ -722,10 +726,11 @@ export const CustomContent = () => {
         </div>
 
         {/* Card Links */}
-        <div className='span-12 pb-2'>
-          <h4 className='pb-2 pt-1 label-colors'>Card Links</h4>
-        </div>
         <div className='card-layouts spacing pb-8'>
+          <h4 className='span-12 pb-2 pt-1 label-colors'>
+            Card Links
+          </h4>
+
           <Card
             type='card-link' 
             title='Card Link Layout'
@@ -749,78 +754,165 @@ export const CustomContent = () => {
             <div>Card link content</div>
             <div>Card link content</div>
           </Card>
-        </div>
-        
-        {/* Card Links */}
-        <div className='spacing pb-8'>
-          <h4 className='span-12 pb-2 pt-1 label-colors'>Alerts</h4>
-
-          <div className='span-12 lg:span-6'>
-            <Alert type="info">
-              This is an alert notification element.
-            </Alert>
-          </div>
-          
-          <div className='span-12 lg:span-6'>
-            <Alert type="warning">
-              This is an alert notification element.
-            </Alert>
-          </div>
-          
-          <div className='span-12 lg:span-6'>
-            <Alert type="error">
-              This is an alert notification element.
-            </Alert>
-          </div>
-          
-          <div className='span-12 lg:span-6'>
-            <Alert type="ok">
-              This is an alert notification element.
-            </Alert>
-          </div>
-          
-          <div className='span-12 lg:span-3' />
-          <div className='span-12 lg:span-6'>
-            <Alert type="gray">
-              This is an alert notification element.
-            </Alert>
-          </div>
-          <div className='span-12 lg:span-3' />
-
-          <div className='span-12'>
-            <Alert type="info" additionalStyles='p-4'>
-              
-              <div className='card-layouts spacing'>
-                <Card
-                  type='card-link' 
-                  title='Card Link Layout'
-                  description='The description of a card link element'
-                  additStyles='span-12 lg:span-6 p-4' noBackground
-                  linkText='Card link' onClickLink={() => {}}
-                  hoverTheme
-                >
-                  <div>Card link content</div>
-                  <div>Card link content</div>
-                </Card>
-                
-                <Card
-                  type='card-link' 
-                  title='Card Link Layout'
-                  description='The description of a card link element'
-                  additStyles='span-12 lg:span-6 p-4'
-                  linkText='Card link' onClickLink={() => {}}
-                  hoverTheme
-                >
-                  <div>Card link content</div>
-                  <div>Card link content</div>
-                </Card>
-              </div>
-
-            </Alert>
-
-          </div>
         </div>
       </div>
+
+
+      {/* Alerts */}
+      <div className='spacing pb-8'>
+        <h4 className='span-12 pb-2 pt-1 label-colors'>
+          Alerts
+        </h4>
+
+        <div className='span-12 lg:span-6'>
+          <Alert type="info">
+            This is an alert notification element.
+          </Alert>
+        </div>
+        
+        <div className='span-12 lg:span-6'>
+          <Alert type="warning">
+            This is an alert notification element.
+          </Alert>
+        </div>
+        
+        <div className='span-12 lg:span-6'>
+          <Alert type="error">
+            This is an alert notification element.
+          </Alert>
+        </div>
+        
+        <div className='span-12 lg:span-6'>
+          <Alert type="ok">
+            This is an alert notification element.
+          </Alert>
+        </div>
+        
+        <div className='span-12 lg:span-3' />
+        <div className='span-12 lg:span-6'>
+          <Alert type="gray">
+            This is an alert notification element.
+          </Alert>
+        </div>
+        <div className='span-12 lg:span-3' />
+
+        <div className='span-12'>
+          <Alert type="info" additionalStyles='p-4'>
+            <div className='card-layouts spacing'>
+              <Card
+                type='card-link' 
+                title='Card Link Layout'
+                description='The description of a card link element'
+                additStyles='span-12 lg:span-6 p-4' noBackground
+                linkText='Card link' onClickLink={() => {}}
+                hoverTheme
+              >
+                <div>Card link content</div>
+                <div>Card link content</div>
+              </Card>
+              
+              <Card
+                type='card-link' 
+                title='Card Link Layout'
+                description='The description of a card link element'
+                additStyles='span-12 lg:span-6 p-4'
+                linkText='Card link' onClickLink={() => {}}
+                hoverTheme
+              >
+                <div>Card link content</div>
+                <div>Card link content</div>
+              </Card>
+            </div>
+          </Alert>
+        </div>
+      </div>
+
+
+      {/* Hash Links */}
+      <div className='span-12 pb-2'>
+        <h4 className='span-12 pb-2 pt-1 label-colors'>
+          Hash Links w/Labels
+        </h4>
+        <div className='span-12 lg:span-6'>
+          <HashLink 
+            url='/Documentation/Forms/Select' 
+            label='Documentation Page (Router Nav)' 
+            type='router' 
+          />
+        </div>
+        <div className='span-12 lg:span-6'>
+          <HashLink 
+            url='https://react-hook-form.com/' 
+            label='React-Hook-Forms (Page Nav)' 
+            type='page' 
+          />
+        </div>
+        <div className='span-12 lg:span-6'>
+          <HashLink 
+            url='/Documentation/Forms/Select' 
+            label='Document Page (useNavigate)' 
+            type='useNavigate' 
+          />
+        </div>
+        <div className='span-12 lg:span-6'>
+          <HashLink 
+            url='/Documentation/Forms/Select' 
+            label='Documentation Page (Custom Navigate Function)' 
+            customNavigate={(url, label) => {console.log(`custom navigate function!`, {url, label})}}
+          />
+        </div>
+      </div>
+
+      <div className='span-12 pb-2'>
+        <h4 className='span-12 pb-2 pt-1 label-colors'>
+          Hash Links Wrapper, w/custom Children
+        </h4>
+        <div className='span-12 lg:span-6'>
+          <HashLink url='/Documentation/Forms/Select' type='router'>
+            <Icon variant='CircleCheck' />
+            <Icon variant='Checkbox' />
+            Documentation Page (Router Nav)
+          </HashLink>
+        </div>
+        <div className='span-12 lg:span-6'>
+          <HashLink url='https://react-hook-form.com/' type='page'>
+            <Icon variant='CircleCheck' />
+            <Icon variant='Checkbox' />
+            React-Hook-Forms (Page Nav)
+            
+          </HashLink>
+        </div>
+        <div className='span-12 lg:span-6'>
+          <HashLink url='/Documentation/Forms/Select' type='useNavigate'>
+            <Icon variant='CircleCheck' />
+            <Icon variant='Checkbox' />
+            Documentation Page (UseNavigate)
+          </HashLink>
+        </div>
+        <div className='span-12 lg:span-6'>
+          <HashLink url='/Documentation/Forms/Select' customNavigate={(url, label) => {console.log(`custom navigate function!`, {url, label})}}>
+            <Icon variant='CircleCheck' />
+            <Icon variant='Checkbox' />
+            Documentation Page (Custom Navigate Function)
+          </HashLink>
+        </div>
+      </div>
+
+
+
+  {/* 
+    label
+      - type='router'
+      - type='page'
+      - type='useNavigate'
+      - customNavigate()
+
+    children
+      - type='router'
+      - type='page'
+      - type='useNavigate'
+      - customNavigate() 
+  */}
 
 
       <div className='pb-24' />

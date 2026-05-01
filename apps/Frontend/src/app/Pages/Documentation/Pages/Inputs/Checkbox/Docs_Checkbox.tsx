@@ -86,7 +86,7 @@ export const Docs_Checkbox = () => {
           A styled checkbox input with <Kw>themed</Kw> styles for every form state. 
           Easily customizable with multiple events you can use alongside 
           <HashLink url='https://react-hook-form.com/' opts={{ type: 'page' }}>
-          &nbsp; <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span> &nbsp;
+            &nbsp; <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span> &nbsp;
           </HashLink>
           or your own state hooks.
 

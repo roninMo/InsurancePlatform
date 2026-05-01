@@ -40,6 +40,7 @@ const NavbarComponent = ({}: NavbarProps) => {
         window.history.replaceState({...state, fromNavigate: false}, '');
         
         // TODO: Add a specific route map to define the page names for the browser history
+        // TODO: Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
         // Update the browser history's document title so we have some context when going backwards or forwards
         console.log('navigated, information: ', { pathname, hash, key, state });
         let pageName = '';
@@ -188,7 +189,7 @@ const NavbarComponent = ({}: NavbarProps) => {
   return (
     <NavbarAndDropdown role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-xl'>
         {/* <ScrollRestoration /> This is for instant scroll behavior */}
-        <Container className='w-full row justify-between items-center relative z-10 bg-div px-3'>
+        <Container className='w-full row justify-between items-center relative bg-div px-3'>
 
           <NavLinkContainer id={navbarLinks} className='NavLinks rowStart items-center gap-8'>
             <HomeIcon id="HomeLink" className='rowStart items-center gap-3'>
@@ -203,7 +204,7 @@ const NavbarComponent = ({}: NavbarProps) => {
               onMouseEnter={(e) => hoveringOverDropdown(true, e)}
               onMouseLeave={(e) => hoveringOverDropdown(false, e)}
               ref={navbarRef}
-              className='links rowStart gap-0 *:p-6 *:px-4 *:transition-all *:text-base *:cursor-pointer bg-white z-30 opacity-100'
+              className='links rowStart gap-0 *:p-6 *:px-4 *:transition-all *:text-base *:cursor-pointer opacity-100'
             >
               <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
               <HashLink label="Demos" url="/Demos" styles='bg-div hover:bg-div-hover' />
