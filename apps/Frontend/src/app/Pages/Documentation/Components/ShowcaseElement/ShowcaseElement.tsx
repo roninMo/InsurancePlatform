@@ -101,7 +101,7 @@ const MemoizedCodeSnippet = ({ jsx, onCopyCodeSnippet }: MemoizedCodeSnippetProp
     <div className='-my-[7px] react-syntax-highlighter-margin-fix relative'>
       <CodeRenderer language='tsx' code={jsx} showLineNumbers />
       <JsxCopySnippet onClick={onCopyCodeSnippet} className='p-2 m-4 showcase-jsx-copy-snippet'>
-        <Icon variant='CodeBracket' styles='size-6 icon-default-color' />
+        <Icon variant='CodeBracket' styles='size-6 i-default-color' />
       </JsxCopySnippet>
     </div>
   ), [jsx]);

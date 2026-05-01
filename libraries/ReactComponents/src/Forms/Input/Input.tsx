@@ -218,8 +218,8 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
           onMouseEnter={() => tooltipContent && show?.(tooltipContent)} 
           onMouseLeave={() => hide?.()} 
         >
-          { error ? <Icon variant='Error' styles='mr-3 size-4 error-text' /> 
-          :         <Icon variant='InfoBox' styles='mr-3 size-4 cursor-pointer' /> }
+          { error ? <Icon variant='OutlineWarning' styles='mr-3 input-sub-icon i-err-color' /> 
+          :         <Icon variant='OutlineInfo' styles='mr-3 input-sub-icon' /> }
         </ErrorAndTooltipIcon>
 
         {/* Increment buttons - type="number" */}

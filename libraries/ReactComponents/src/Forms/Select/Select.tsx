@@ -242,8 +242,8 @@ export const Select = ({
             onMouseLeave={() => hide?.()} 
             className={`row gap-1 items-center justify-end`
           }>
-            { getError() ? <Icon variant='Error' styles='size-4 error-text' />
-            :                        <Icon variant='InfoBox' styles='size-4 cursor-pointer' /> }
+            {getError() ? <Icon variant='OutlineWarning' styles='input-sub-icon i-err-color' />
+                        : <Icon variant='OutlineInfo' styles='input-sub-icon i-default-color' /> }
             <Icon variant='SelectArrow' styles={`select-i-arrow ${getError() ? 'error-text' : ''}`} />
           </TooltipIcons>
         </CurrentlySelected>

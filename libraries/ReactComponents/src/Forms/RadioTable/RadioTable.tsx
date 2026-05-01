@@ -104,7 +104,7 @@ const RadioTableItem = memo(({
       ${isSelected ? 'radio-t-i-selected z-10' : ''}
       ${error && isSelected    ? 'radio-t-i-selected-error' :     error    ? 'radio-t-i-error' : ''} 
       ${disabled && isSelected ? 'radio-t-i-selected-disabled' :  disabled ? 'radio-t-i-disabled' : ''}
-      ${!isSelected && !disabled ? 'hover:theme-fa' : ''}
+      ${!isSelected && !disabled ? 'hover:theme-fa active:duration-500' : ''}
   `}>
     <Radio 
       type='radio' name={name} 

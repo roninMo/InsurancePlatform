@@ -1,16 +1,12 @@
-import { JSX } from "react";
-
-import { Icon_AtSymbol } from "./Default/AtSymbol/AtSymbol";
+// #region Icon imports
+import { Icon_AtSymbol } from "./Default/AtSymbol/Icon_AtSymbol";
 import { Icon_AttachFile } from "./Default/AttachFile/Icon_AttachFile";
 import { Icon_Calendar } from "./Default/Calendar/Icon_Calendar";
-import { Icon_Checkbox } from "./Default/Checkbox/Icon_Checkbox";
 import { Icon_CodeBracket } from "./Default/CodeBracket/CodeBracket";
 import { Icon_DarkTheme } from "./Default/DarkTheme/Icon_DarkTheme";
 import { Icon_Database } from "./Default/Database/Icon_Database";
 import { Icon_DropdownArrow } from "./Default/DropdownArrow/Icon_DropdownArrow";
 import { Icon_Envelope } from "./Default/Envelope/Icon_Envelope";
-import { Icon_Error } from "./Default/Error/Icon_Error";
-import { Icon_InfoBox } from "./Default/InfoBox/Icon_InfoBox";
 import { Icon_LightTheme } from "./Default/LightTheme/Icon_LightTheme";
 import { Icon_Link } from "./Default/Link/Link";
 import { Icon_LinkedIn } from "./SocialMedia/LinkedIn/Icon_LinkedIn";
@@ -65,9 +61,7 @@ import { Icon_DataDog } from "./Tech/Analytics/DataDog/Icon_DataDog";
 import { Icon_Loading } from "./Default/Loading/Icon_Loading";
 import { Icon_Demandjump } from "./Companies/Demandjump/Icon_Demandjump";
 import { Icon_DocText } from "./Default/DocText/Icon_DocText";
-import { Icon_CircleCheck } from "./Default/CircleCheck/Icon_CircleCheck";
-import { Icon_CircleError } from "./Default/CircleError/Icon_CircleError";
-import { Icon_CirclePause } from "./Default/CirclePause/Icon_CirclePause";
+import { Icon_OutlinePause } from "./Default/OutlinePause/Icon_OutlinePause";
 import { Icon_Eye } from "./Default/Eye/Icon_Eye";
 import { Icon_EyeSlash } from "./Default/EyeSlash/Icon_EyeSlash";
 import { Icon_CreditCard } from "./Default/CreditCard/Icon_CreditCard";
@@ -76,12 +70,28 @@ import { Icon_ChevronUp } from "./Default/ChevronUp/Icon_ChevronUp";
 import { Icon_Canvas } from "./Default/Canvas/Icon_Canvas";
 import { Icon_CloudUpload } from "./Default/CloudUpload/Icon_CloudUpload";
 import { Icon_Upload } from "./Default/Upload/Icon_Upload";
-// TODO: LazyLoading
+import { Icon_CircleInfo } from "./Alerts/Icon_CircleInfo";
+import { Icon_CircleOkay } from "./Alerts/Icon_CircleOkay";
+import { Icon_CircleQuestion } from "./Alerts/Icon_CircleQuestion";
+import { Icon_CircleWarning } from "./Alerts/Icon_CircleWarning";
+import { Icon_OutlineError } from "./Alerts/Icon_OutlineError";
+import { Icon_OutlineInfo } from "./Alerts/Icon_OutlineInfo";
+import { Icon_OutlineOkay } from "./Alerts/Icon_OutlineOkay";
+import { Icon_OutlineQuestion } from "./Alerts/Icon_OutlineQuestion";
+import { Icon_OutlineWarning } from "./Alerts/Icon_OutlineWarning";
+import { Icon_CircleError } from "./Alerts/Icon_CircleError";
+// #endregion
 
-export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
+
+export type IconTypes = DefaultIconTypes 
+| AlertIconTypes 
+| MediaIconTypes 
+| TechIconTypes 
+| CompanyIconTypes;
 
 // Used in the svg element classes
 export interface IconAttributes {
+  /** The override for the default icon themes */
   styles?: string;
 }
 
@@ -92,150 +102,105 @@ interface IconProps {
 }
 
 
-
-
-//------------------------------------//
-// Icon Component                     //
-//------------------------------------//
-export type DefaultIconTypes = 
-  'AtSymbol' |
-  'AttachFile' |
-  'Calendar' |
-  'Canvas' |
-  'Checkbox' |
-  'ChevronDown' |
-  'ChevronUp' |
-  'CircleCheck' |
-  'CircleError' |
-  'CirclePause' |
-  'Close' |
-  'Cloud' |
-  'CloudUpload' |
-  'CodeBracket' |
-  'Computer' |
-  'CreditCard' |
-  'DarkTheme' |
-  'Database' |
-  'DocText' |
-  'DemandJump' |
-  'DropdownArrow' |
-  'Envelope' |
-  'Error' |
-  'Eye' |
-  'EyeSlash' |
-  'InfoBox' |
-  'LightTheme' |
-  'Link' |
-  'Loading' |
-  'LinkedIn' |
-  'Phone' |
-  'Plus' |
-  'Profile' |
-  'SelectArrow' |
-  'Smile' |
-  'Sort' |
-  'System' |
-  'Tag' |
-  'Trash' |
-  'Upload' |
-  'VennDiagram' 
-;
-
+// TODO: LazyLoading option?
 export const Icon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : 'icon-default-theme';
-  const defaultErrorStyles = styles ? styles : 'icon-default-theme icon-error-color';
-  const defaultOkayStyles = styles ? styles : 'icon-default-theme icon-ok-color';
+  // Default Icon styles
+  let iconStyles = 'icon-default'; 
+  if (infoStyleMap?.[variant])    iconStyles = 'i-default-theme i-info-color';
+  if (warningStyleMap?.[variant]) iconStyles = 'i-default-theme i-warn-color';
+  if (errorStyleMap?.[variant])   iconStyles = 'i-default-theme i-err-color';
+  if (okayStyleMap?.[variant])    iconStyles = 'i-default-theme i-ok-color';
+  iconStyles = styles ? styles : iconStyles;
   // console.log(`\nrendered ${variant} icon, styles: `, iconStyles);
   
-  
-  // Default icons
-  if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
-  if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
-  if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
-  if (variant == 'Canvas')          return (<Icon_Canvas styles={iconStyles} />);
-  if (variant == 'Checkbox')        return (<Icon_Checkbox styles={defaultOkayStyles} />);
-  if (variant == 'ChevronDown')     return (<Icon_ChevronDown styles={iconStyles} />);
-  if (variant == 'ChevronUp')       return (<Icon_ChevronUp styles={iconStyles} />);
-  if (variant == 'CircleCheck')     return (<Icon_CircleCheck styles={iconStyles} />);
-  if (variant == 'CircleError')     return (<Icon_CircleError styles={iconStyles} />);
-  if (variant == 'CirclePause')     return (<Icon_CirclePause styles={iconStyles} />);
-  if (variant == 'Close')           return (<Icon_Close styles={iconStyles} />);
-  if (variant == 'Cloud')           return (<Icon_Cloud styles={iconStyles} />);
-  if (variant == 'CloudUpload')     return (<Icon_CloudUpload styles={iconStyles} />);
-  if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
-  if (variant == 'Computer')        return (<Icon_Computer styles={iconStyles} />);
-  if (variant == 'CreditCard')      return (<Icon_CreditCard styles={iconStyles} />);
-  if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
-  if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
-  if (variant == 'DocText')         return (<Icon_DocText styles={iconStyles} />);
-  if (variant == 'DemandJump')      return (<Icon_Demandjump styles={iconStyles} />);
-  if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
-  if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
-  if (variant == 'Error')           return (<Icon_Error styles={defaultErrorStyles} />);
-  if (variant == 'Eye')             return (<Icon_Eye styles={iconStyles} />);
-  if (variant == 'EyeSlash')        return (<Icon_EyeSlash styles={iconStyles} />);
-  if (variant == 'InfoBox')         return (<Icon_InfoBox styles={iconStyles} />);
-  if (variant == 'Instagram')       return (<Icon_Instagram styles={iconStyles} />);
-  if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);
-  if (variant == 'Link')            return (<Icon_Link styles={iconStyles} />);
-  if (variant == 'Loading')         return (<Icon_Loading styles={iconStyles} />);
-  if (variant == 'Plus')            return (<Icon_Plus styles={iconStyles} />);
-  if (variant == 'Phone')           return (<Icon_Phone styles={iconStyles} />);
-  if (variant == 'Profile')         return (<Icon_Profile styles={iconStyles} />);
-  if (variant == 'SelectArrow')     return (<Icon_SelectArrow styles={iconStyles} />);
-  if (variant == 'Smile')           return (<Icon_Smile styles={iconStyles} />);
-  if (variant == 'Sort')            return (<Icon_Sort styles={iconStyles} />);
-  if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
-  if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
-  if (variant == 'Trash')           return (<Icon_Trash styles={defaultErrorStyles} />);
-  if (variant == 'Upload')          return (<Icon_Upload styles={defaultErrorStyles} />);
-  if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
+  // Rendered Icons
+  const DefaultIcon = defaultIconMap[variant];
+  if (DefaultIcon) return <DefaultIcon styles={iconStyles} />;
 
-  // Social Media Icons
-  const mediaIcon = MediaIcon({variant, styles});
-  if (mediaIcon) return mediaIcon;
+  const AlertIcon = alertIconMap[variant];
+  if (AlertIcon) return <AlertIcon styles={iconStyles} />;
+
+  const MediaIcon = mediaIconMap[variant];
+  if (MediaIcon) return <MediaIcon styles={iconStyles} />;
   
-  // Tech Icons
-  const techIcon = TechIcon({variant, styles});
-  if (techIcon) return techIcon;
+  const TechIcon = techIconMap[variant];
+  if (TechIcon) return <TechIcon styles={iconStyles} />;
   
-  // Company Icons
-  const companyIcon = CompanyIcon({variant, styles});
-  if (companyIcon) return companyIcon;
-  
+  const CompanyIcon = companyIconMap[variant];
+  if (CompanyIcon) return <CompanyIcon styles={iconStyles} />;
 
   return (<></>);
 }
 
 
+//------------------------------------//
+// Default Icons                      //
+//------------------------------------//
+export type DefaultIconTypes = 
+| 'AtSymbol' 
+| 'AttachFile' 
+| 'Calendar' 
+| 'Canvas' 
+| 'ChevronDown' 
+| 'ChevronUp' 
+| 'Close' 
+| 'Cloud' 
+| 'CloudUpload' 
+| 'CodeBracket' 
+| 'Computer' 
+| 'CreditCard' 
+| 'DarkTheme' 
+| 'Database' 
+| 'DocText' 
+| 'DemandJump' 
+| 'DropdownArrow' 
+| 'Envelope' 
+| 'Eye' 
+| 'EyeSlash' 
+| 'LightTheme' 
+| 'Link' 
+| 'Loading' 
+| 'LinkedIn' 
+| 'OutlinePause' 
+| 'Phone' 
+| 'Plus' 
+| 'Profile' 
+| 'SelectArrow' 
+| 'Smile' 
+| 'Sort' 
+| 'System' 
+| 'Tag' 
+| 'Trash' 
+| 'Upload' 
+| 'VennDiagram';
+
+
+//------------------------------------//
+// Alert Icons                        //
+//------------------------------------//
+export type AlertIconTypes = 
+| 'CircleQuestion'
+| 'CircleWarning'
+| 'CircleError'
+| 'CircleOkay'
+| 'CircleInfo'
+
+| 'OutlineQuestion'
+| 'OutlineWarning'
+| 'OutlineError'
+| 'OutlineOkay'
+| 'OutlineInfo';
 
 
 //------------------------------------//
 // Media Icons                        //
 //------------------------------------//
 export type MediaIconTypes =
-  'Facebook' |
-  'Github' |
-  'Instagram' |
-  'Twitter' |
-  'Youtube'
-;
-
-export const MediaIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : 'icon-default-theme';
-  let Icon: JSX.Element | undefined = undefined;
-
-
-  // Social media icons
-  if (variant == 'Facebook')        Icon = (<Icon_Facebook styles={iconStyles} />);
-  else if (variant == 'Github')     Icon = (<Icon_Github styles={iconStyles} />);
-  else if (variant == 'LinkedIn')   Icon = (<Icon_LinkedIn styles={iconStyles} />);
-  else if (variant == 'Twitter')    Icon = (<Icon_Twitter styles={iconStyles} />);
-  else if (variant == 'Youtube')    Icon = (<Icon_Youtube styles={iconStyles} />);
-  return Icon;
-}
-
-
+| 'Facebook' 
+| 'Github' 
+| 'Instagram' 
+| 'Twitter' 
+| 'Youtube';
 
 
 //------------------------------------//
@@ -263,58 +228,145 @@ export type TechIconTypes =
   'CI/CD Pipelines' | 'Azure Devops' | 'Atlassian'
 ;
 
-export const TechIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : 'icon-default-theme';
-  let Icon: JSX.Element | undefined = undefined;
 
+//------------------------------------//
+// Company Icons            //
+//------------------------------------//
+export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo';
+
+
+
+
+//------------------------------------//
+// Icon Mappings                      //
+//------------------------------------//
+// Icon style map
+const infoStyleMap: Partial<Record<IconTypes, boolean>> = {
+  'CircleQuestion': true,
+  'OutlineQuestion': true, 
+};
+
+const warningStyleMap: Partial<Record<IconTypes, boolean>> = {
+  'CircleWarning': true,
+  'OutlineWarning': true,
+};
+
+const errorStyleMap: Partial<Record<IconTypes, boolean>> = {
+  'CircleError': true,
+  'OutlineError': true,
+  'Trash': true,
+};
+
+const okayStyleMap: Partial<Record<IconTypes, boolean>> = {
+  'CircleOkay': true,
+  'OutlineOkay': true,
+};
+
+
+// #region Icon Maps
+const defaultIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
+  'AtSymbol':        ({ styles }) => <Icon_AtSymbol styles={styles} />,
+  'AttachFile':      ({ styles }) => <Icon_AttachFile styles={styles} />,
+  'Calendar':        ({ styles }) => <Icon_Calendar styles={styles} />,
+  'Canvas':          ({ styles }) => <Icon_Canvas styles={styles} />,
+  'ChevronDown':     ({ styles }) => <Icon_ChevronDown styles={styles} />,
+  'ChevronUp':       ({ styles }) => <Icon_ChevronUp styles={styles} />,
+  'Close':           ({ styles }) => <Icon_Close styles={styles} />,
+  'Cloud':           ({ styles }) => <Icon_Cloud styles={styles} />,
+  'CloudUpload':     ({ styles }) => <Icon_CloudUpload styles={styles} />,
+  'CodeBracket':     ({ styles }) => <Icon_CodeBracket styles={styles} />,
+  'Computer':        ({ styles }) => <Icon_Computer styles={styles} />,
+  'CreditCard':      ({ styles }) => <Icon_CreditCard styles={styles} />,
+  'DarkTheme':       ({ styles }) => <Icon_DarkTheme styles={styles} />,
+  'Database':        ({ styles }) => <Icon_Database styles={styles} />,
+  'DocText':         ({ styles }) => <Icon_DocText styles={styles} />,
+  'DemandJump':      ({ styles }) => <Icon_Demandjump styles={styles} />,
+  'DropdownArrow':   ({ styles }) => <Icon_DropdownArrow styles={styles} />,
+  'Envelope':        ({ styles }) => <Icon_Envelope styles={styles} />,
+  'Eye':             ({ styles }) => <Icon_Eye styles={styles} />,
+  'EyeSlash':        ({ styles }) => <Icon_EyeSlash styles={styles} />,
+  'Instagram':       ({ styles }) => <Icon_Instagram styles={styles} />,
+  'LightTheme':      ({ styles }) => <Icon_LightTheme styles={styles} />,
+  'Link':            ({ styles }) => <Icon_Link styles={styles} />,
+  'Loading':         ({ styles }) => <Icon_Loading styles={styles} />,
+  'OutlinePause':    ({ styles }) => <Icon_OutlinePause styles={styles} />,
+  'Plus':            ({ styles }) => <Icon_Plus styles={styles} />,
+  'Phone':           ({ styles }) => <Icon_Phone styles={styles} />,
+  'Profile':         ({ styles }) => <Icon_Profile styles={styles} />,
+  'SelectArrow':     ({ styles }) => <Icon_SelectArrow styles={styles} />,
+  'Smile':           ({ styles }) => <Icon_Smile styles={styles} />,
+  'Sort':            ({ styles }) => <Icon_Sort styles={styles} />,
+  'System':          ({ styles }) => <Icon_System styles={styles} />,
+  'Tag':             ({ styles }) => <Icon_Tag styles={styles} />,
+  'Trash':           ({ styles }) => <Icon_Trash styles={styles} />,
+  'Upload':          ({ styles }) => <Icon_Upload styles={styles} />,
+  'VennDiagram':     ({ styles }) => <Icon_VennDiagram styles={styles} />,
+};
+
+const alertIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
+  'CircleQuestion':     ({ styles }) => <Icon_CircleQuestion styles={styles} />,
+  'CircleWarning':    ({ styles }) => <Icon_CircleWarning styles={styles} />,
+  'CircleError':    ({ styles }) => <Icon_CircleError styles={styles} />,
+  'CircleOkay':     ({ styles }) => <Icon_CircleOkay styles={styles} />,
+  'CircleInfo':     ({ styles }) => <Icon_CircleInfo styles={styles} />,
+
+  'OutlineQuestion':    ({ styles }) => <Icon_OutlineQuestion styles={styles} />,
+  'OutlineWarning':     ({ styles }) => <Icon_OutlineWarning styles={styles} />,
+  'OutlineError':     ({ styles }) => <Icon_OutlineError styles={styles} />,
+  'OutlineOkay':    ({ styles }) => <Icon_OutlineOkay styles={styles} />,
+  'OutlineInfo':    ({ styles }) => <Icon_OutlineInfo styles={styles} />,
+};
+
+const mediaIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
+  'Facebook':   ({ styles }) => <Icon_Facebook styles={styles} />,
+  'Github':     ({ styles }) => <Icon_Github styles={styles} />,
+  'LinkedIn':   ({ styles }) => <Icon_LinkedIn styles={styles} />,
+  'Twitter':    ({ styles }) => <Icon_Twitter styles={styles} />,
+  'Youtube':    ({ styles }) => <Icon_Youtube styles={styles} />,
+};
+
+const techIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   // Automation
-  if (variant == 'Atlassian')                Icon = (<Icon_Atlassian styles={iconStyles} />);
-  else if (variant == 'AWS CDK')             Icon = (<Icon_AwsCdk styles={iconStyles} />);
-  else if (variant == 'Azure Devops')        Icon = (<Icon_AzureDevops styles={iconStyles} />);
-  else if (variant == 'Bamboo')              Icon = (<Icon_Bamboo styles={iconStyles} />);
-  else if (variant == 'CI/CD Pipelines')     Icon = (<Icon_Database styles={iconStyles} />);
-  else if (variant == 'Docker')              Icon = (<Icon_Docker styles={iconStyles} />);
-  else if (variant == 'Kubernetes')          Icon = (<Icon_Kubernetes styles={iconStyles} />);
+  'Atlassian':           ({ styles }) => <Icon_Atlassian styles={styles} />,
+  'AWS CDK':             ({ styles }) => <Icon_AwsCdk styles={styles} />,
+  'Azure Devops':        ({ styles }) => <Icon_AzureDevops styles={styles} />,
+  'Bamboo':              ({ styles }) => <Icon_Bamboo styles={styles} />,
+  'CI/CD Pipelines':     ({ styles }) => <Icon_Database styles={styles} />,
+  'Docker':              ({ styles }) => <Icon_Docker styles={styles} />,
+  'Kubernetes':          ({ styles }) => <Icon_Kubernetes styles={styles} />,
   
   // Backend
-  else if (variant == 'ApolloGraphQL')       Icon = (<Icon_ApolloGraphQl styles={iconStyles} />);
-  else if (variant == 'Express')             Icon = (<Icon_Express styles={iconStyles} />);
-  else if (variant == 'MongoDB')             Icon = (<Icon_Mongo styles={iconStyles} />);
-  else if (variant == 'Net')                 Icon = (<Icon_Net styles={iconStyles} />);
-  else if (variant == 'Node')                Icon = (<Icon_Node styles={iconStyles} />);
-  else if (variant == 'Orleans')             Icon = (<Icon_Orleans styles={iconStyles} />);
-  else if (variant == 'Postgres')            Icon = (<Icon_Postgres styles={iconStyles} />);
+  'ApolloGraphQL':       ({ styles }) => <Icon_ApolloGraphQl styles={styles} />,
+  'Express':             ({ styles }) => <Icon_Express styles={styles} />,
+  'MongoDB':             ({ styles }) => <Icon_Mongo styles={styles} />,
+  'Net':                 ({ styles }) => <Icon_Net styles={styles} />,
+  'Node':                ({ styles }) => <Icon_Node styles={styles} />,
+  'Orleans':             ({ styles }) => <Icon_Orleans styles={styles} />,
+  'Postgres':            ({ styles }) => <Icon_Postgres styles={styles} />,
 
   // CLoud
-  else if (variant == 'AWS')                 Icon = (<Icon_AWS styles={iconStyles} />);
-  else if (variant == 'Azure')               Icon = (<Icon_Azure styles={iconStyles} />);
-  else if (variant == 'GCP')                 Icon = (<Icon_GCP styles={iconStyles} />);
+  'AWS':                 ({ styles }) => <Icon_AWS styles={styles} />,
+  'Azure':               ({ styles }) => <Icon_Azure styles={styles} />,
+  'GCP':                 ({ styles }) => <Icon_GCP styles={styles} />,
 
   // Frontend
-  else if (variant == 'Angular')             Icon = (<Icon_Angular styles={iconStyles} />);
-  else if (variant == 'Axios')               Icon = (<Icon_Axios styles={iconStyles} />);
-  else if (variant == 'Jest')                Icon = (<Icon_Jest styles={iconStyles} />);
-  else if (variant == 'Playwright')          Icon = (<Icon_Playwright styles={iconStyles} />);
-  else if (variant == 'ReactHookForms')      Icon = (<Icon_ReactHookForms styles={iconStyles} />);
-  else if (variant == 'React')               Icon = (<Icon_React styles={iconStyles} />);
+  'Angular':             ({ styles }) => <Icon_Angular styles={styles} />,
+  'Axios':               ({ styles }) => <Icon_Axios styles={styles} />,
+  'Jest':                ({ styles }) => <Icon_Jest styles={styles} />,
+  'Playwright':          ({ styles }) => <Icon_Playwright styles={styles} />,
+  'ReactHookForms':      ({ styles }) => <Icon_ReactHookForms styles={styles} />,
+  'React':               ({ styles }) => <Icon_React styles={styles} />,
 
-  else if (variant == 'Redux')               Icon = (<Icon_Redux styles={iconStyles} />);
-  else if (variant == 'RxJs')                Icon = (<Icon_RxJs styles={iconStyles} />);
-  else if (variant == 'Vue')                 Icon = (<Icon_Bue styles={iconStyles} />);
-  else if (variant == 'DataDog')             Icon = (<Icon_DataDog styles={iconStyles} />);
-  return Icon;
+  'Redux':               ({ styles }) => <Icon_Redux styles={styles} />,
+  'RxJs':                ({ styles }) => <Icon_RxJs styles={styles} />,
+  'Vue':                 ({ styles }) => <Icon_Bue styles={styles} />,
+  'DataDog':             ({ styles }) => <Icon_DataDog styles={styles} />,
 }
 
-
-
-export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo';
-export const CompanyIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : 'icon-default-theme';
-  let Icon: JSX.Element | undefined = undefined;
-
-  if (variant == 'LibertyLogo')              Icon = (<Icon_LibertyLogo styles={iconStyles} />);
-  else if (variant == 'LibertyMutual')       Icon = (<Icon_LibertyMutual styles={iconStyles} />);
-  else if (variant == 'StateAuto')           Icon = (<Icon_StateAuto styles={iconStyles} />);
-  else if (variant == 'StateAutoLogo')       Icon = (<Icon_StateAutoLogo styles={iconStyles} />);
-  return Icon;
+const companyIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
+  'LibertyLogo':         ({ styles }) => <Icon_LibertyLogo styles={styles} />,
+  'LibertyMutual':       ({ styles }) => <Icon_LibertyMutual styles={styles} />,
+  'StateAuto':           ({ styles }) => <Icon_StateAuto styles={styles} />,
+  'StateAutoLogo':       ({ styles }) => <Icon_StateAutoLogo styles={styles} />,
 }
+// #endregion

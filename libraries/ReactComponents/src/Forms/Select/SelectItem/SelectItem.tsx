@@ -37,6 +37,8 @@ export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectV
     return value == currentSelectValue.value;
   };
 
+  console.log(`rerendered, currentVal ${currentSelectValue}`);
+
   return (
     <Container 
       id={`${name}-${value}`}
@@ -66,12 +68,28 @@ export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectV
     </Container>
   );
 }, (prevProps, nextProps) => {
-  // We're using a map on the selectedValues, 
-  // so just check if the selectItem object is a "new" object to handle shallow equality checks. 
+  let shouldRerender = false;
+
+  
+  // If they have keepDropdownOpenOnSelect set to true for a non multiSelect
+  const usingKeepDropdownOpen = !nextProps.multiSelect && prevProps.dropdownOpen && nextProps.dropdownOpen;
+  if (!nextProps.multiSelect && usingKeepDropdownOpen) {
+    const wasPreviouslySelected = prevProps.currentSelectValue.value == prevProps.item.value;
+    const wasJustSelected = nextProps.currentSelectValue.value == prevProps.item.value;
+
+    // Dropdown open/close handles the majority of the actual rerenders, and if the item's "checked" value is changed
+    if (wasPreviouslySelected || wasJustSelected) shouldRerender = true;
+  }
+
+  // scenario rerenders
+  if (shouldRerender) return false;
+
+  // Default Logic - just check if the memoized selectItem object is a "new" object to handle shallow equality checks. 
+  // TODO: should we save us from using memoized and just check if the items have been "checked"?
   return (
-    prevProps.item === nextProps.item && 
-    prevProps.multiSelect === nextProps.multiSelect && 
-    prevProps.dropdownOpen === nextProps.dropdownOpen
+    prevProps.item === nextProps.item 
+    && prevProps.multiSelect === nextProps.multiSelect 
+    && prevProps.dropdownOpen === nextProps.dropdownOpen 
   );
 });
 

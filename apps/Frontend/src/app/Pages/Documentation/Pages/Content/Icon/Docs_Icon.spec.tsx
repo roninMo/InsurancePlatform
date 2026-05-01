@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import DocsContainer from './Docs_Container';
+import DocsIcon from './Docs_Icon';
 
-describe('DocsContainer', () => {
+describe('DocsIcon', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<DocsContainer />);
+    const { baseElement } = render(<DocsIcon />);
     expect(baseElement).toBeTruthy();
   });
 });

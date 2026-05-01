@@ -85,7 +85,7 @@ export const Docs_Select = () => {
   return (
     <Container className='spacing'>
 
-      <h3 className="span-12 p-2">
+      <h3 className="span-12 p-2 docs-showcase-header">
         Select Component
       </h3>
 

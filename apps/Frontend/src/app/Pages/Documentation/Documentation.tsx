@@ -1,6 +1,5 @@
-import { useState, lazy } from 'react';
+import { useState } from 'react';
 import { Outlet } from "react-router-dom";
-import { SyntaxHighlighterProps } from 'react-syntax-highlighter';
 
 import { Navbar } from '../../Components/Navbar/Navbar';
 import { Sidebar, SubPageLinkProps } from "../../Components/Sidebar/Sidebar";
@@ -34,6 +33,11 @@ export const Documentation = () => {
       - Utils
         - Modal, Tooltip & Provider, HashLink, HeightTransWrapper
 
+    - Before you finish the intro pages and navLinks for the Documentation page,
+        switch to using type definitions for conditional props for all the components
+    - Then add an alternative to getSourceCode to retrieve lines of code, instead of just definitions
+      - We need combined snippets for union type definitions
+
     - This entails the docs content, component themes, variants, and options
       - Add the introduction pages and quickLinks for the docs sections and introduction
 
@@ -52,6 +56,10 @@ export const Documentation = () => {
       - each subroot/ should have QuickList to display their components
       - Inputs, content, utils component showcases
     
+      
+    - We need a specific route map to define the page names for the browser history
+    - Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
+
     - Add react hook forms soon alongside the option to add state to the value for custom scenarios
       - this changes all inputs, add custom opts for using useState to track value instead.
 
@@ -91,7 +99,7 @@ export const Documentation = () => {
           
           <Content className="w-full py-2">
             <NotificationContainer	className="p-2 rowStart gap-2 selected-box outline-css outline-focus">
-              <Icon variant="InfoBox" styles="size-5 primary-text" />
+              <Icon variant="CircleQuestion" styles="size-5 primary-text" />
               Notification
             </NotificationContainer>
             
@@ -132,7 +140,7 @@ export const Documentation = () => {
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;`+.;&nbsp;&nbsp;;&nbsp;&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;-.
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;'&nbsp;&nbsp;&nbsp;:&nbsp;:`-:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_.`*&nbsp;;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bug]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
+                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bue]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;`*-*'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </p>
 
@@ -196,8 +204,10 @@ export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
   {
     sectionLink: { label: "Content", url: "Content" },
     subLinks: [
+      { label: 'Alert', url: '/Documentation/Content/Alert' },
       { label: 'Card', url: '/Documentation/Content/Card' },
-      { label: 'Container', url: '/Documentation/Content/Container' },
+      { label: 'Icon', url: '/Documentation/Content/Icon' },
+      { label: 'Dropdown', url: '/Documentation/Content/Dropdown' },
     ]
   },
   // Utils Page and Subroutes
@@ -206,7 +216,8 @@ export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
     subLinks: [
       { label: 'DragAndDrop', url: '/Documentation/Utils/DragAndDrop' },
       { label: 'Modal', url: '/Documentation/Utils/Modal' },
-      { label: 'Notifications', url: '/Documentation/Utils/Notifications' },
+      { label: 'Tooltip', url: '/Documentation/Utils/Tooltip' },
+      { label: 'HashLink', url: '/Documentation/Utils/HashLink' },
     ]
   }
 ];

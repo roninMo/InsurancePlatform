@@ -38,6 +38,27 @@ const NavbarComponent = ({}: NavbarProps) => {
 
         // We've already rerendered from navigation, just clear the state
         window.history.replaceState({...state, fromNavigate: false}, '');
+        
+        // TODO: Add a specific route map to define the page names for the browser history
+        // TODO: Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
+        // Update the browser history's document title so we have some context when going backwards or forwards
+        console.log('navigated, information: ', { pathname, hash, key, state });
+        let pageName = '';
+        
+        const routeSegments = pathname.split('/').filter(Boolean);
+        const lastRoute = routeSegments.pop() || "Home"; // Fallback for root '/'
+
+        // Adds space before capital letters
+        const currentRoute = lastRoute.charAt(0).toUpperCase() + lastRoute.slice(1);
+        pageName = currentRoute.replace(/([A-Z])/g, ' $1').trim(); 
+        
+        let pageSection = '';
+        if (hash) {
+          let segments = hash.replace("#", "").split('-').map(section => section?.charAt(0).toUpperCase() + section.slice(1));
+          pageSection = ` - ${segments.join(' ')}`;
+        }
+        document.title = pageName + pageSection;
+        console.log('pageName: ', document.title);
       }, 10);
       
       return () => clearTimeout(timeout);
@@ -132,8 +153,8 @@ const NavbarComponent = ({}: NavbarProps) => {
   // #region Theme Logic
   // Handles the current theme that's rendered from the page via user preference and localStorage
   const [currentTheme, setCurrentTheme] = useState<string>(() => {
-    return localStorage.getItem('theme') || 
-          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    return localStorage.getItem('theme') || 'dark' // Dark theme is the default
+          // (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
   
   // Initialize the Theme and display settings
@@ -168,7 +189,7 @@ const NavbarComponent = ({}: NavbarProps) => {
   return (
     <NavbarAndDropdown role="navigation" id='Nav' className='bg-div border-styles border-b fixed z-30 w-full shadow-xl'>
         {/* <ScrollRestoration /> This is for instant scroll behavior */}
-        <Container className='w-full row justify-between items-center relative z-10 bg-div px-3'>
+        <Container className='w-full row justify-between items-center relative bg-div px-3'>
 
           <NavLinkContainer id={navbarLinks} className='NavLinks rowStart items-center gap-8'>
             <HomeIcon id="HomeLink" className='rowStart items-center gap-3'>
@@ -183,7 +204,7 @@ const NavbarComponent = ({}: NavbarProps) => {
               onMouseEnter={(e) => hoveringOverDropdown(true, e)}
               onMouseLeave={(e) => hoveringOverDropdown(false, e)}
               ref={navbarRef}
-              className='links rowStart gap-0 *:p-6 *:px-4 *:transition-all *:text-base *:cursor-pointer bg-white z-30 opacity-100'
+              className='links rowStart gap-0 *:p-6 *:px-4 *:transition-all *:text-base *:cursor-pointer opacity-100'
             >
               <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
               <HashLink label="Demos" url="/Demos" styles='bg-div hover:bg-div-hover' />

@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import Notify from './Notify';
+import DocsAlert from './Docs_Alert';
 
-describe('Notify', () => {
+describe('DocsAlert', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Notify />);
+    const { baseElement } = render(<DocsAlert />);
     expect(baseElement).toBeTruthy();
   });
 });

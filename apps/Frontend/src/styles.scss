@@ -26,10 +26,10 @@
   .placeholder-text { @apply text-slate-400   dark:text-slate-500; }
   .disabled-text    { @apply text-gray-500    dark:text-gray-400/70; }
   .warning-text     { @apply text-amber-600   dark:text-amber-400; }
-  .error-text       { @apply text-red-700     dark:text-red-500; }
-  .ok-text          { @apply text-emerald-600 dark:text-emerald-400; }
+  .error-text       { @apply text-red-700     dark:text-red-400; }
+  .ok-text          { @apply text-emerald-700 dark:text-emerald-400; }
 
-  .primary-text     { @apply text-blue-500 dark:text-blue-500; }
+  .primary-text     { @apply text-blue-600 dark:text-blue-500; }
   .link-text {
     @apply
       primary-text cursor-pointer transition-all duration-300
@@ -175,20 +175,22 @@
   //------------------------------------------//
   // #region Icon Styles
   .icon-default {
-    @apply icon-default-theme icon-default-color;
+    @apply i-default-theme i-default-color;
   }
 
-  .icon-default-theme {
+  .i-default-theme {
     @apply size-5 justify-center self-center;
   }
 
-  .icon-default-color {
+  .i-default-color {
     @apply text-blue-300 dark:text-slate-400;
   }
 
-  .icon-error-color { @apply text-red-500 dark:text-red-400; }
-  .icon-ok-color { @apply text-emerald-500 dark:text-emerald-400; }
-  .icon-disabled-color { @apply 
+  .i-info-color { @apply text-sky-500     dark:text-sky-500; }
+  .i-warn-color { @apply text-amber-600   dark:text-amber-400; }
+  .i-err-color  { @apply text-red-600     dark:text-red-400; }
+  .i-ok-color   { @apply text-emerald-500 dark:text-emerald-400; }
+  .i-d-color { @apply 
     disabled-text hover:disabled-text active:disabled-text
     dark:disabled-text dark:hover:disabled-text dark:active:disabled-text; 
   }
@@ -227,7 +229,7 @@
   .selected-box { 
     @apply 
       bg-opacity-20 dark:bg-opacity-20
-      bg-blue-600 dark:bg-blue-500
+      bg-blue-600 dark:bg-blue-600
       outline-focus 
   }
 
@@ -540,7 +542,7 @@
 
   .dropbox-icon {
     @apply 
-      icon-default-theme size-14
+      i-default-theme size-14
       text-slate-400 dark:text-slate-600
     ;
   }
@@ -601,9 +603,17 @@
   .input-preceding-el { 
     @apply rowStart; 
   }
-  
+
   .input-icon-def {
     @apply size-4 ml-3 transition-all hover:primary-text;
+  }
+
+  // The tooltip and error icon
+  .input-sub-icon {
+    @apply 
+      size-[1.45rem] 
+      transition-all cursor-pointer duration-300
+      hover:theme-f;
   }
 
   .input-password-vis {
@@ -903,7 +913,7 @@
       outline outline-1 -outline-offset-1 
       outline-slate-400/0 font-normal
 
-      transition-all duration-300 
+      transition-all duration-200 
 
       /* Round the edges and align the outlines */
       first:rounded-t-md last:rounded-b-md 
@@ -1214,7 +1224,7 @@
   .ta-b-attach-file-d {
     @apply 
       [&>p]:disabled-text dark:[&>p]:disabled-text
-      [&_svg]:icon-disabled-color dark:[&_svg]:icon-disabled-color
+      [&_svg]:i-d-color dark:[&_svg]:i-d-color
     ;
   }
 
@@ -1482,6 +1492,72 @@
   // Universal Components                     //
   //------------------------------------------//
   // #region Universal Component Themes
+
+  // #region Alert component styles
+  .alert {
+    @apply 
+      p-2 rowStart items-start gap-1.5 transition-all
+      outline-css
+    ;
+  }
+  
+  .alert-icon {
+    @apply size-[1.4rem] justify-center self-center opacity-90;
+  }
+
+  .alert-content {
+    @apply w-full p-0.5;
+  }
+  // #endregion
+
+
+  // #region Card / Container component styles
+  .card-container {
+    @apply 
+      p-2 col gap-2 
+      rounded-md transition-all
+    ;
+  }
+  .card-bg { @apply bg-default; }
+  .card-border { @apply outline-css outline-default transition-all; }
+  .card-hover {
+    &:hover {
+      @apply 
+        duration-200 outline-light 
+        backdrop-brightness-110 dark:backdrop-brightness-125
+      ;
+      // & .card-divider { @apply border-focus; }
+    }
+  }  .card-focus {
+    &:focus-within, &:focus {
+      @apply outline-focus;
+      // & .card-divider { @apply border-focus; }
+    }
+  }
+  
+  .card-header {
+    @apply text-base label-colors;
+  }
+  
+  .card-description {
+    @apply pb-1 text-colors;
+  }
+
+  .card-divider {
+    @apply w-full mb-2 border-b border-styles transition-all;
+  }
+  
+  .card-content {
+    @apply block;
+  }
+
+  .card-link {
+    @apply link-text font-semibold pt-2;
+  }
+  // #endregion
+
+
+  // #region Dropdown component styles
   .dropdown-icon {
     @apply 
       size-7 text-colors mt-1
@@ -1528,9 +1604,10 @@
       dark:hover:theme-focus-2
     ;
   }
+  // #endregion
 
 
-  // Hashbar
+  // #region Hashbar component styles
   .hashbar {
     @apply 
       h-0 min-h-[100%] /* Dependent on parent height */
@@ -1563,9 +1640,10 @@
       cursor-pointer transition-all duration-300 
     ;
   }
+  // #endregion
 
 
-  // Sidebar
+  // #region Sidebar component styles
   .sidebar {
     @apply
       h-0 min-h-[100%] /* Dependent on parent height */
@@ -1613,9 +1691,10 @@
   
   .sidebar-link-base:hover { @apply primary-text; }
   .sidebar-link-base:active { @apply link-text; }
+  // #endregion
 
 
-  // Tooltip
+  // #region Tooltip component styles
   .tooltip {
     @apply
       fixed top-0 left-0 max-h-64 pr-40
@@ -1691,8 +1770,48 @@
   }
 
   .tooltip-copied-icon {
-    @apply size-4 icon-ok-color mt-[1px];
+    @apply size-4 i-ok-color mt-[1px];
   }
+  // #endregion
+  // #endregion
+
+  // #region Modal component styles
+  .modal-base {
+    @apply 
+      fixed top-0 left-0 
+      min-w-full min-h-full z-40
+      row justify-center items-center 
+      transition-all;
+  }
+
+  .modal-container {
+    @apply 
+      col items-center gap-2
+      bg-div outline-css outline-default
+      transition-all;
+  }
+  
+  .modal-overlay { 
+    @apply bg-black bg-opacity-40 dark:bg-opacity-40; 
+  }
+
+  .modal-header {
+    @apply p-6 w-full row justify-between items-center;
+  }
+
+  .modal-icon {
+    @apply 
+      size-8 lg:size-10 cursor-pointer transition-all 
+      hover:text-blue-500 dark:hover:text-blue-500;
+  }
+
+  .modal-content {
+    @apply 
+    mx-8 mb-8 pr-4 
+    overflow-auto overflow-x-hidden 
+    scrollbar-theme transition-all;
+  }
+
   // #endregion
 
 
@@ -1764,6 +1883,28 @@
   .tab-active {
     @apply border-blue-500 dark:border-blue-500;
   }
+
+  // Error Page
+  .err-page-content {
+    @apply 
+      span-12 lg:span-8 
+      col gap-2 px-10
+      outline-css outline-default 
+      bg-div shadow-xl
+      animate-fade-in
+    ;
+  }
+
+  .err-page-lottie {
+    @apply self-center w-2/3;
+  }
+
+  .err-page-link {
+    @apply 
+      primary-text transition-all duration-200 cursor-pointer
+      hover:theme-fa hover:scale-110 
+      active:link-text active:scale-100 text-xl;
+  }
   // #endregion
 
 
@@ -1773,6 +1914,10 @@
   // Documentation Page Themes                //
   //------------------------------------------//
   // #region Documentation Page Themes
+  .docs-showcase-header {
+    @apply text-[2rem] font-semibold my-2.5 mb-4;
+  }
+
   .showcase-element-container {
     @apply
       p-4 
@@ -2037,10 +2182,15 @@
       @apply primary-text font-semibold;
     }
 
+    // DocLink States
     &:hover {
       & .doc-link-see, .doc-link-text {
         @apply primary-text;
       }
+    }
+
+    &:active {
+      @apply theme-fa;
     }
   }
 

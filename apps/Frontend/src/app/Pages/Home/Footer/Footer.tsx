@@ -51,6 +51,8 @@ export const Footer = () => {
             <HashLink label="Social Media"  url="/Contact" styles="footer-link" />
             <HashLink label="Form"          url="/Contact" styles="footer-link" />
           </div>
+
+          <HashLink url=''  />
         </FooterLinks>
       </FooterSection>
       

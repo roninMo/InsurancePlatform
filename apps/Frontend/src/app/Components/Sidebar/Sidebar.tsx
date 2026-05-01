@@ -73,11 +73,10 @@ const SidebarLinks = ({ sectionLink, subLinks, currentPage, setCurrentPage }: Si
       />
 
       { subLinks.map(({url, label}: SidebarLinkProps, index: number) =>
-        <HashLink url={url}>
+        <HashLink url={url} key={`sidebar-link(${index})-${label}`}>
           <div 
             onClick={(e) => handlePageSelected(label, e)}
             className={`px-4 pr-8 sidebar-link ${currentPage == label ? 'sidebar-link-selected' : ''}`}
-            key={`sidebar-link(${index})-${label}`}
           >
             { label }
           </div>
