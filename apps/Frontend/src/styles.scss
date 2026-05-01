@@ -188,7 +188,7 @@
 
   .i-info-color { @apply text-sky-500     dark:text-sky-500; }
   .i-warn-color { @apply text-amber-600   dark:text-amber-400; }
-  .i-err-color  { @apply text-red-500     dark:text-red-400; }
+  .i-err-color  { @apply text-red-600     dark:text-red-400; }
   .i-ok-color   { @apply text-emerald-500 dark:text-emerald-400; }
   .i-d-color { @apply 
     disabled-text hover:disabled-text active:disabled-text
@@ -603,9 +603,17 @@
   .input-preceding-el { 
     @apply rowStart; 
   }
-  
+
   .input-icon-def {
     @apply size-4 ml-3 transition-all hover:primary-text;
+  }
+
+  // The tooltip and error icon
+  .input-sub-icon {
+    @apply 
+      size-[1.45rem] 
+      transition-all cursor-pointer duration-300
+      hover:theme-f;
   }
 
   .input-password-vis {

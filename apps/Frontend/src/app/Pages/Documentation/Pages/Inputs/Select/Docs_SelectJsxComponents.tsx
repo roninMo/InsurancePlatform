@@ -13,8 +13,8 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
   const [selectedValue, setSelectedValue] = useState<SelectItem>({ value: '', label: '' });
   const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
-    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
-    { value: 'error', label: "Error", iconProps:                  { icon: "Error", placement: 'left' }},
+    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }},
+    { value: 'error', label: "Error", iconProps:                  { icon: "CircleError", placement: 'left' }},
     { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
     ...selectIcons
   ]);
@@ -73,8 +73,8 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
   // raw data object
   const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
-    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
-    { value: 'error', label: "Error", iconProps:                  { icon: "Error", placement: 'left' }},
+    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }},
+    { value: 'error', label: "Error", iconProps:                  { icon: "CircleError", placement: 'left' }},
     { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
     ...selectIcons
   ]);
@@ -146,7 +146,7 @@ const selectIcons: SelectItem[] = [
   { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
   { value: 'dropdownArrow', label: "Dropdown Arrow", iconProps: { icon: "DropdownArrow", placement: 'left' }},
   { value: 'envelope', label: "Envelope", iconProps:            { icon: "Envelope", placement: 'left' }},
-  { value: 'infoBox', label: "Info box", iconProps:             { icon: "InfoBox", placement: 'left' }},
+  { value: 'infoBox', label: "Info box", iconProps:             { icon: "CircleInfo", placement: 'left' }},
   { value: 'lightTheme', label: "Light Theme", iconProps:       { icon: "LightTheme", placement: 'left' }},
   { value: 'profile', label: "Profile", iconProps:              { icon: "Profile", placement: 'left' }},
   { value: 'SelectArrow', label: "Select Arrows", iconProps:    { icon: "SelectArrow", placement: 'left' }},

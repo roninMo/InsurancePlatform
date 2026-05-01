@@ -153,8 +153,8 @@ const NavbarComponent = ({}: NavbarProps) => {
   // #region Theme Logic
   // Handles the current theme that's rendered from the page via user preference and localStorage
   const [currentTheme, setCurrentTheme] = useState<string>(() => {
-    return localStorage.getItem('theme') || 
-          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    return localStorage.getItem('theme') || 'dark' // Dark theme is the default
+          // (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
   
   // Initialize the Theme and display settings
