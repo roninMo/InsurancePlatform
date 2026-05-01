@@ -26,10 +26,10 @@
   .placeholder-text { @apply text-slate-400   dark:text-slate-500; }
   .disabled-text    { @apply text-gray-500    dark:text-gray-400/70; }
   .warning-text     { @apply text-amber-600   dark:text-amber-400; }
-  .error-text       { @apply text-red-700     dark:text-red-500; }
-  .ok-text          { @apply text-emerald-600 dark:text-emerald-400; }
+  .error-text       { @apply text-red-700     dark:text-red-400; }
+  .ok-text          { @apply text-emerald-700 dark:text-emerald-400; }
 
-  .primary-text     { @apply text-blue-500 dark:text-blue-500; }
+  .primary-text     { @apply text-blue-600 dark:text-blue-500; }
   .link-text {
     @apply
       primary-text cursor-pointer transition-all duration-300
@@ -175,20 +175,22 @@
   //------------------------------------------//
   // #region Icon Styles
   .icon-default {
-    @apply icon-default-theme icon-default-color;
+    @apply i-default-theme i-default-color;
   }
 
-  .icon-default-theme {
+  .i-default-theme {
     @apply size-5 justify-center self-center;
   }
 
-  .icon-default-color {
+  .i-default-color {
     @apply text-blue-300 dark:text-slate-400;
   }
 
-  .icon-error-color { @apply text-red-500 dark:text-red-400; }
-  .icon-ok-color { @apply text-emerald-500 dark:text-emerald-400; }
-  .icon-disabled-color { @apply 
+  .i-info-color { @apply text-sky-500     dark:text-sky-500; }
+  .i-warn-color { @apply text-amber-600   dark:text-amber-400; }
+  .i-err-color  { @apply text-red-500     dark:text-red-400; }
+  .i-ok-color   { @apply text-emerald-500 dark:text-emerald-400; }
+  .i-d-color { @apply 
     disabled-text hover:disabled-text active:disabled-text
     dark:disabled-text dark:hover:disabled-text dark:active:disabled-text; 
   }
@@ -227,7 +229,7 @@
   .selected-box { 
     @apply 
       bg-opacity-20 dark:bg-opacity-20
-      bg-blue-600 dark:bg-blue-500
+      bg-blue-600 dark:bg-blue-600
       outline-focus 
   }
 
@@ -540,7 +542,7 @@
 
   .dropbox-icon {
     @apply 
-      icon-default-theme size-14
+      i-default-theme size-14
       text-slate-400 dark:text-slate-600
     ;
   }
@@ -903,7 +905,7 @@
       outline outline-1 -outline-offset-1 
       outline-slate-400/0 font-normal
 
-      transition-all duration-300 
+      transition-all duration-200 
 
       /* Round the edges and align the outlines */
       first:rounded-t-md last:rounded-b-md 
@@ -1214,7 +1216,7 @@
   .ta-b-attach-file-d {
     @apply 
       [&>p]:disabled-text dark:[&>p]:disabled-text
-      [&_svg]:icon-disabled-color dark:[&_svg]:icon-disabled-color
+      [&_svg]:i-d-color dark:[&_svg]:i-d-color
     ;
   }
 
@@ -1490,9 +1492,13 @@
       outline-css
     ;
   }
+  
+  .alert-icon {
+    @apply size-[1.4rem] justify-center self-center opacity-90;
+  }
 
   .alert-content {
-    @apply w-full;
+    @apply w-full p-0.5;
   }
   // #endregion
 
@@ -1756,7 +1762,7 @@
   }
 
   .tooltip-copied-icon {
-    @apply size-4 icon-ok-color mt-[1px];
+    @apply size-4 i-ok-color mt-[1px];
   }
   // #endregion
   // #endregion
@@ -1869,6 +1875,28 @@
   .tab-active {
     @apply border-blue-500 dark:border-blue-500;
   }
+
+  // Error Page
+  .err-page-content {
+    @apply 
+      span-12 lg:span-8 
+      col gap-2 px-10
+      outline-css outline-default 
+      bg-div shadow-xl
+      animate-fade-in
+    ;
+  }
+
+  .err-page-lottie {
+    @apply self-center w-2/3;
+  }
+
+  .err-page-link {
+    @apply 
+      primary-text transition-all duration-200 cursor-pointer
+      hover:theme-fa hover:scale-110 
+      active:link-text active:scale-100 text-xl;
+  }
   // #endregion
 
 
@@ -1878,6 +1906,10 @@
   // Documentation Page Themes                //
   //------------------------------------------//
   // #region Documentation Page Themes
+  .docs-showcase-header {
+    @apply text-[2rem] font-semibold my-2.5 mb-4;
+  }
+
   .showcase-element-container {
     @apply
       p-4 
@@ -2142,10 +2174,15 @@
       @apply primary-text font-semibold;
     }
 
+    // DocLink States
     &:hover {
       & .doc-link-see, .doc-link-text {
         @apply primary-text;
       }
+    }
+
+    &:active {
+      @apply theme-fa;
     }
   }
 

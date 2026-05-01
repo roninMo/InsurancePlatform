@@ -99,7 +99,7 @@ export const Documentation = () => {
           
           <Content className="w-full py-2">
             <NotificationContainer	className="p-2 rowStart gap-2 selected-box outline-css outline-focus">
-              <Icon variant="InfoBox" styles="size-5 primary-text" />
+              <Icon variant="CircleQuestion" styles="size-5 primary-text" />
               Notification
             </NotificationContainer>
             
@@ -140,7 +140,7 @@ export const Documentation = () => {
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;`+.;&nbsp;&nbsp;;&nbsp;&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;-.
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;'&nbsp;&nbsp;&nbsp;:&nbsp;:`-:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_.`*&nbsp;;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bug]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
+                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bue]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
                     <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;`*-*'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </p>
 
@@ -204,8 +204,10 @@ export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
   {
     sectionLink: { label: "Content", url: "Content" },
     subLinks: [
+      { label: 'Alert', url: '/Documentation/Content/Alert' },
       { label: 'Card', url: '/Documentation/Content/Card' },
-      { label: 'Container', url: '/Documentation/Content/Container' },
+      { label: 'Icon', url: '/Documentation/Content/Icon' },
+      { label: 'Dropdown', url: '/Documentation/Content/Dropdown' },
     ]
   },
   // Utils Page and Subroutes
@@ -214,7 +216,8 @@ export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
     subLinks: [
       { label: 'DragAndDrop', url: '/Documentation/Utils/DragAndDrop' },
       { label: 'Modal', url: '/Documentation/Utils/Modal' },
-      { label: 'Notifications', url: '/Documentation/Utils/Notifications' },
+      { label: 'Tooltip', url: '/Documentation/Utils/Tooltip' },
+      { label: 'HashLink', url: '/Documentation/Utils/HashLink' },
     ]
   }
 ];

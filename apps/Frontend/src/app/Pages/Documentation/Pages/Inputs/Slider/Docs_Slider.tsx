@@ -63,7 +63,7 @@ export const Docs_Slider = () => {
   return (
     <Container className='spacing'>
 
-      <h3 className="span-12 p-2">
+      <h3 className="span-12 p-2 docs-showcase-header">
         Slider Component
       </h3>
 

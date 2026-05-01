@@ -67,7 +67,7 @@ export const Docs_Dropbox = () => {
   return (
     <Container className='spacing'>
 
-      <h3 className="span-12 p-2">
+      <h3 className="span-12 p-2 docs-showcase-header">
         Dropbox Component
       </h3>
 

@@ -100,7 +100,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
               name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
               multiple={attachFile?.multiple} accept={attachFile?.accept} 
 
-              iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
+              iconStyles={`ta-d-icon ${disabled ? 'i-d-color' : ''}`} 
               required={required} disabled={disabled}
             />
           }
@@ -162,7 +162,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
               name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
               multiple={attachFile?.multiple} accept={attachFile?.accept} 
 
-              iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
+              iconStyles={`ta-d-icon ${disabled ? 'i-d-color' : ''}`} 
               required={required} disabled={disabled}
             >
               <p className="italic transition-all">Attach a file</p>
@@ -265,7 +265,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
                   name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
                   multiple={attachFile?.multiple} accept={attachFile?.accept} 
 
-                  iconStyles={`ta-d-icon ${disabled ? 'icon-disabled-color' : ''}`} 
+                  iconStyles={`ta-d-icon ${disabled ? 'i-d-color' : ''}`} 
                   required={required} disabled={disabled}
                 >
                   <p className="italic transition-all">Attach a file</p>
@@ -313,7 +313,7 @@ const ErrAndDescElements = memo(({ type, error, errorMessage, disabled, descript
 // additional action events to capture metadata during input captures. ex. Due dates, tags, etc.
 const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagElementProps) => {
   const getIconStyles = (styles?: string, defaultStyles?: string): string => 
-    (styles ? styles : defaultStyles || '') + ` ${disabled ? 'icon-disabled-color' : ''}`; 
+    (styles ? styles : defaultStyles || '') + ` ${disabled ? 'i-d-color' : ''}`; 
 
   //--------------------------------//
   // metadata tags                  //

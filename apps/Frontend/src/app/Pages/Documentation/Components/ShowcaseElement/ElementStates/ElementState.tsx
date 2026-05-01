@@ -19,7 +19,7 @@ export const ElementState = ({ type, isSelected = false, onClick }: ElementState
       {/* TODO: Make the bubble element states one element with no padding, and arrows on either side to transition between each */}
       {/* <Icon 
         variant={type == 'error' ? 'CircleError' : type == 'disabled' ? 'CirclePause' : 'CircleCheck'}
-        styles="icon-default-color size-4 mr-1" 
+        styles="i-default-color size-4 mr-1" 
       /> */}
       
       { type }

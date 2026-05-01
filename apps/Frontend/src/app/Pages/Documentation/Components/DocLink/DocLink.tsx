@@ -11,7 +11,7 @@ export interface DocLinkProps {
 
 export const DocLink = ({ url, label }: DocLinkProps) => {
   return (
-    <HashLink url={url}>
+    <HashLink url={url} styles=' '>
       <span className='doc-link keyword'>
         <SeeRef className='doc-link-see'> @See </SeeRef> 
         <span className='doc-link-text'> { label } </span>

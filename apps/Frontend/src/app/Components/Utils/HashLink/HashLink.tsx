@@ -108,7 +108,9 @@ export const HashLink = memo((props: HashLinkProps) => {
   // Navigation logic for when they aren't using type="router"
   const onClickToNavigate = () => {
     // Custom navigation logic
+    console.log('onClickToNavigate?');
     if (customNavigate) {
+      console.log('found custom navigation function');
       customNavigate(url, label);
       return;
     }
@@ -130,7 +132,7 @@ export const HashLink = memo((props: HashLinkProps) => {
   const linkStyles = styles ? styles : 'link-text';
 
   // Router Type navigation
-  if (type == 'router') return (
+  if (type == 'router' && !customNavigate) return (
     <Link to={url} state={mergedState} className={linkStyles}>
       { label ? label : children }
     </Link>

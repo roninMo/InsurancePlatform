@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
+import { Dropdown } from '../../../Components/Content/Dropdown/Dropdown';
 import { Button } from '@Project/ReactComponents';
 import { Modal } from '../../../Components/Utils/Modal/Modal';
-import { Dropdown } from '../../../Components/Content/Dropdown/Dropdown';
-import { InsuranceAppLinks, MockDatabaseLinks, QuickLinkProps, QuickLinks, QuickLinksProps, SpotifyDemoLinks, SSAutoSaveLinks } from './QuickLinks/QuickLinks';
 import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
-import styled from '@emotion/styled';
+import { InsuranceAppLinks, MockDatabaseLinks, QuickLinkProps, QuickLinks, QuickLinksProps, SpotifyDemoLinks, SSAutoSaveLinks } from './QuickLinks/QuickLinks';
 
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import BackgroundAnim from "../../../../assets/lottie/Background looping animation.json";
+import ErrorPageAnim from "../../../../assets/lottie/404 Sleep Cat.json";
 import downtown_city_night from '../../../../assets/images/downtown_city_night.png';
+
+import styled from '@emotion/styled';
 import styles from './WelcomeSection.module.scss';
 
 

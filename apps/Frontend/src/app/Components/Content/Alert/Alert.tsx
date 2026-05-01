@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import styles from './Alert.module.scss';
 
 
-export type AlertType = 'info' | 'warning' | 'error' | 'ok' | 'gray';
+export type AlertType = 'info' | 'warning' | 'error' | 'ok' | 'question';
 interface AlertPropsBase {
   type: AlertType;
   children: ReactNode;
@@ -16,28 +16,28 @@ export type AlertProps = AlertPropsBase;
 
 export const Alert = ({ type, children, additionalStyles = '' }: AlertProps) => {
   const getAlertTheme = (): string => {
-    if (type == 'info') return 'selected-box';
-    if (type == 'warning') return 'warning-box';
-    if (type == 'error') return 'error-box';
-    if (type == 'ok') return 'ok-box';
-    if (type == 'gray') return 'faded-box';
+    if (type == 'info') return 'selected-box [&_.alert-content]:primary-text';
+    if (type == 'warning') return 'warning-box [&_.alert-content]:warning-text';
+    if (type == 'error') return 'error-box [&_.alert-content]:error-text';
+    if (type == 'ok') return 'ok-box [&_.alert-content]:ok-text';
+    if (type == 'question') return 'faded-box [&_.alert-content]:placeholder-text';
     return '';
   }
 
-  const getTextTheme = (): string => {
-    if (type == 'info') return 'primary-text';
-    if (type == 'warning') return 'warning-text';
-    if (type == 'error') return 'error-text';
-    if (type == 'ok') return 'ok-text';
-    if (type == 'gray') return 'placeholder-text';
+  const getIconColor = (): string => {
+    if (type == 'info') return 'i-info-color';
+    if (type == 'warning') return 'i-warn-color';
+    if (type == 'error') return 'i-err-color';
+    if (type == 'ok') return 'i-ok-color';
+    if (type == 'question') return 'i-default-color';
     return '';
   }
 
   return (
     <Container className={`alert ${getAlertTheme()}`}>
-      <Icon variant={AlertIcons[type]} styles={`size-4 justify-center self-center ${getTextTheme()} opacity-90`} />
+      <Icon variant={AlertIcons[type]} styles={`alert-icon ${getIconColor()}`} />
 
-      <div className={`alert-content ${getTextTheme()} ${additionalStyles}`}>
+      <div className={`alert-content ${additionalStyles}`}>
         { children }
       </div>
     </Container>
@@ -50,9 +50,9 @@ const Container = styled.div``;
 
 // Alert Icon map
 const AlertIcons: Record<AlertType, IconTypes> = {
-  'info': 'InfoBox',
-  'warning': 'Error',
-  'error': 'Error',
-  'ok': 'Checkbox',
-  'gray': 'InfoBox',
+  'info':     'OutlineQuestion',
+  'warning':  'OutlineWarning',
+  'error':    'OutlineError',
+  'ok':       'OutlineOkay',
+  'question': 'OutlineQuestion',
 };

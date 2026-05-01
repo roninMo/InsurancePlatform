@@ -73,12 +73,12 @@ export const CustomContent = () => {
   const selectIconId = useId();
   const selectIcons: SelectItem[] = [
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
-    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
+    { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "OutlineOkay", placement: 'left' }},
     { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
     { value: 'dropdownArrow', label: "Dropdown Arrow", iconProps: { icon: "DropdownArrow", placement: 'left' }},
     { value: 'envelope', label: "Envelope", iconProps:            { icon: "Envelope", placement: 'left' }},
-    { value: 'error', label: "Error", iconProps:                  { icon: "Error", placement: 'left' }},
-    { value: 'infoBox', label: "Info box", iconProps:             { icon: "InfoBox", placement: 'left' }},
+    { value: 'error', label: "Error", iconProps:                  { icon: "OutlineError", placement: 'left' }},
+    { value: 'infoBox', label: "Info box", iconProps:             { icon: "OutlineQuestion", placement: 'left' }},
     { value: 'lightTheme', label: "Light Theme", iconProps:       { icon: "LightTheme", placement: 'left' }},
     { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
     { value: 'profile', label: "Profile", iconProps:              { icon: "Profile", placement: 'left' }},
@@ -790,7 +790,7 @@ export const CustomContent = () => {
         
         <div className='span-12 lg:span-3' />
         <div className='span-12 lg:span-6'>
-          <Alert type="gray">
+          <Alert type="question">
             This is an alert notification element.
           </Alert>
         </div>
@@ -829,7 +829,7 @@ export const CustomContent = () => {
 
 
       {/* Hash Links */}
-      <div className='span-12 pb-2'>
+      <div className='spacing pb-2'>
         <h4 className='span-12 pb-2 pt-1 label-colors'>
           Hash Links w/Labels
         </h4>
@@ -863,41 +863,103 @@ export const CustomContent = () => {
         </div>
       </div>
 
-      <div className='span-12 pb-2'>
+      <div className='spacing pb-2'>
         <h4 className='span-12 pb-2 pt-1 label-colors'>
           Hash Links Wrapper, w/custom Children
         </h4>
         <div className='span-12 lg:span-6'>
-          <HashLink url='/Documentation/Forms/Select' type='router'>
-            <Icon variant='CircleCheck' />
-            <Icon variant='Checkbox' />
-            Documentation Page (Router Nav)
+          <HashLink 
+            url='/Documentation/Forms/Select' 
+            type='router' 
+            styles='rowStart gap-2 primary-text [&_p]:link-text'
+          >
+            <Icon variant='OutlineOkay' />
+            <p>Documentation Page (Router Nav)</p>
           </HashLink>
         </div>
         <div className='span-12 lg:span-6'>
-          <HashLink url='https://react-hook-form.com/' type='page'>
-            <Icon variant='CircleCheck' />
-            <Icon variant='Checkbox' />
-            React-Hook-Forms (Page Nav)
+          <HashLink 
+            url='https://react-hook-form.com/' 
+            type='page' 
+            styles='rowStart gap-2 primary-text [&_p]:link-text'
+          >
+            <Icon variant='OutlineOkay' />
+            <p>React-Hook-Forms (Page Nav)</p>
             
           </HashLink>
         </div>
         <div className='span-12 lg:span-6'>
-          <HashLink url='/Documentation/Forms/Select' type='useNavigate'>
-            <Icon variant='CircleCheck' />
-            <Icon variant='Checkbox' />
-            Documentation Page (UseNavigate)
+          <HashLink 
+            url='/Documentation/Forms/Select' 
+            type='useNavigate' 
+            styles='rowStart gap-2 primary-text [&_p]:link-text'
+          >
+            <Icon variant='OutlineOkay' />
+            <p>Documentation Page (UseNavigate)</p>
           </HashLink>
         </div>
         <div className='span-12 lg:span-6'>
-          <HashLink url='/Documentation/Forms/Select' customNavigate={(url, label) => {console.log(`custom navigate function!`, {url, label})}}>
-            <Icon variant='CircleCheck' />
-            <Icon variant='Checkbox' />
-            Documentation Page (Custom Navigate Function)
+          <HashLink 
+            url='/Documentation/Forms/Select' 
+            customNavigate={(url, label) => {console.log(`custom navigate function!`, {url, label})}}
+            styles='rowStart gap-2 primary-text [&_p]:link-text'
+          >
+            <Icon variant='OutlineOkay' />
+            <p>Documentation Page (Custom Navigate Function)</p>
           </HashLink>
         </div>
       </div>
 
+      <div className='spacing pb-2'>
+        <h4 className='span-12 pb-2 pt-1 label-colors'>
+          New/Old Icons
+        </h4>
+        <div className='span-12 col gap-2'>
+            <h4 className='pt-8'>New Icons</h4>
+            <div className='rowStart gap-2'>
+              CircleQuestion
+              <Icon variant='CircleQuestion' />
+            </div>
+            <div className='rowStart gap-2'>
+              CircleWarning
+              <Icon variant='CircleWarning' />
+            </div>
+            <div className='rowStart gap-2'>
+              CircleError
+              <Icon variant='CircleError' />
+            </div>
+            <div className='rowStart gap-2'>
+              CircleOkay
+              <Icon variant='CircleOkay' />
+            </div>
+            <div className='rowStart gap-2'>
+              CircleInfo
+              <Icon variant='CircleInfo' />
+            </div>
+            
+            <div className='rowStart gap-2'>
+              OutlineQuestion
+              <Icon variant='OutlineQuestion' styles='size-[1.4rem] i-info-color' />
+            </div>
+            <div className='rowStart gap-2'>
+              OutlineWarning
+              <Icon variant='OutlineWarning' styles='size-[1.4rem] i-warn-color' />
+            </div>
+            <div className='rowStart gap-2'>
+              OutlineError
+              <Icon variant='OutlineError' styles='size-[1.4rem] i-err-color' />
+            </div>
+            <div className='rowStart gap-2'>
+              OutlineOkay
+              <Icon variant='OutlineOkay' styles='size-[1.4rem] i-ok-color' />
+            </div>
+            <div className='rowStart gap-2'>
+              OutlineInfo
+              <Icon variant='OutlineInfo' styles='size-[1.4rem] i-default-color' />
+            </div>
+            
+        </div>
+      </div>
 
 
   {/* 

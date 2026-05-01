@@ -1,15 +1,12 @@
 // #region Icon imports
-import { Icon_AtSymbol } from "./Default/AtSymbol/AtSymbol";
+import { Icon_AtSymbol } from "./Default/AtSymbol/Icon_AtSymbol";
 import { Icon_AttachFile } from "./Default/AttachFile/Icon_AttachFile";
 import { Icon_Calendar } from "./Default/Calendar/Icon_Calendar";
-import { Icon_Checkbox } from "./Default/Checkbox/Icon_Checkbox";
 import { Icon_CodeBracket } from "./Default/CodeBracket/CodeBracket";
 import { Icon_DarkTheme } from "./Default/DarkTheme/Icon_DarkTheme";
 import { Icon_Database } from "./Default/Database/Icon_Database";
 import { Icon_DropdownArrow } from "./Default/DropdownArrow/Icon_DropdownArrow";
 import { Icon_Envelope } from "./Default/Envelope/Icon_Envelope";
-import { Icon_Error } from "./Default/Error/Icon_Error";
-import { Icon_InfoBox } from "./Default/InfoBox/Icon_InfoBox";
 import { Icon_LightTheme } from "./Default/LightTheme/Icon_LightTheme";
 import { Icon_Link } from "./Default/Link/Link";
 import { Icon_LinkedIn } from "./SocialMedia/LinkedIn/Icon_LinkedIn";
@@ -64,9 +61,7 @@ import { Icon_DataDog } from "./Tech/Analytics/DataDog/Icon_DataDog";
 import { Icon_Loading } from "./Default/Loading/Icon_Loading";
 import { Icon_Demandjump } from "./Companies/Demandjump/Icon_Demandjump";
 import { Icon_DocText } from "./Default/DocText/Icon_DocText";
-import { Icon_CircleCheck } from "./Default/CircleCheck/Icon_CircleCheck";
-import { Icon_CircleError } from "./Default/CircleError/Icon_CircleError";
-import { Icon_CirclePause } from "./Default/CirclePause/Icon_CirclePause";
+import { Icon_OutlinePause } from "./Default/OutlinePause/Icon_OutlinePause";
 import { Icon_Eye } from "./Default/Eye/Icon_Eye";
 import { Icon_EyeSlash } from "./Default/EyeSlash/Icon_EyeSlash";
 import { Icon_CreditCard } from "./Default/CreditCard/Icon_CreditCard";
@@ -75,13 +70,28 @@ import { Icon_ChevronUp } from "./Default/ChevronUp/Icon_ChevronUp";
 import { Icon_Canvas } from "./Default/Canvas/Icon_Canvas";
 import { Icon_CloudUpload } from "./Default/CloudUpload/Icon_CloudUpload";
 import { Icon_Upload } from "./Default/Upload/Icon_Upload";
+import { Icon_CircleInfo } from "./Alerts/Icon_CircleInfo";
+import { Icon_CircleOkay } from "./Alerts/Icon_CircleOkay";
+import { Icon_CircleQuestion } from "./Alerts/Icon_CircleQuestion";
+import { Icon_CircleWarning } from "./Alerts/Icon_CircleWarning";
+import { Icon_OutlineError } from "./Alerts/Icon_OutlineError";
+import { Icon_OutlineInfo } from "./Alerts/Icon_OutlineInfo";
+import { Icon_OutlineOkay } from "./Alerts/Icon_OutlineOkay";
+import { Icon_OutlineQuestion } from "./Alerts/Icon_OutlineQuestion";
+import { Icon_OutlineWarning } from "./Alerts/Icon_OutlineWarning";
+import { Icon_CircleError } from "./Alerts/Icon_CircleError";
 // #endregion
 
 
-export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
+export type IconTypes = DefaultIconTypes 
+| AlertIconTypes 
+| MediaIconTypes 
+| TechIconTypes 
+| CompanyIconTypes;
 
 // Used in the svg element classes
 export interface IconAttributes {
+  /** The override for the default icon themes */
   styles?: string;
 }
 
@@ -94,18 +104,22 @@ interface IconProps {
 
 // TODO: LazyLoading option?
 export const Icon = ({ variant, styles = ''}: IconProps) => {
-  const defaultIconStyles = styles ? styles : 'icon-default-theme';
-  const defaultErrorStyles = styles ? styles : 'icon-default-theme icon-error-color';
-  const defaultOkayStyles = styles ? styles : 'icon-default-theme icon-ok-color';
+  // Default Icon styles
+  let iconStyles = 'icon-default'; 
+  if (infoStyleMap?.[variant])    iconStyles = 'i-default-theme i-info-color';
+  if (warningStyleMap?.[variant]) iconStyles = 'i-default-theme i-warn-color';
+  if (errorStyleMap?.[variant])   iconStyles = 'i-default-theme i-err-color';
+  if (okayStyleMap?.[variant])    iconStyles = 'i-default-theme i-ok-color';
+  iconStyles = styles ? styles : iconStyles;
   // console.log(`\nrendered ${variant} icon, styles: `, iconStyles);
-
-  let iconStyles = defaultIconStyles;
-  if (okayStyleMap?.[variant]) iconStyles = defaultOkayStyles;
-  else if (errorStyleMap?.[variant]) iconStyles = defaultErrorStyles;
   
+  // Rendered Icons
   const DefaultIcon = defaultIconMap[variant];
   if (DefaultIcon) return <DefaultIcon styles={iconStyles} />;
-  
+
+  const AlertIcon = alertIconMap[variant];
+  if (AlertIcon) return <AlertIcon styles={iconStyles} />;
+
   const MediaIcon = mediaIconMap[variant];
   if (MediaIcon) return <MediaIcon styles={iconStyles} />;
   
@@ -119,116 +133,74 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
 }
 
 
-/*
-  - Filled circle icons
-    - question (?)
-    - warning (!)
-    - error (x) - Search for this icon
-    - okay (checkmark)
-    - info (i) - Search for this icon
-
-
-  - Outlined circle icons
-    - question (?)
-    - warning (!)
-    - error (x)
-    - okay (checkmark)
-    - info (i)
-
-
-  Naming Conventions
-    - CircleQuestion
-    - CircleWarning 
-    - CircleError
-    - CircleOkay
-    - CircleInfo
-
-    - OutlineQuestion
-    - OutlineWarning
-    - OutlineError
-    - OutlineOkay
-    - OutlineInfo
-
-
-  Remove Old Icons
-    - InfoBox (CircleQuestion)
-
-
-  New Icons:
-    Icon_CircleQuestion
-    Icon_CircleWarning
-    Icon_CircleError
-    Icon_CircleOkay
-    Icon_CircleInfo
-
-    Icon_OutlineQuestion
-    Icon_OutlineWarning
-    Icon_OutlineError
-    Icon_OutlineOkay
-    Icon_OutlineInfo
-
-
-
-*/
-
 //------------------------------------//
 // Default Icons                      //
 //------------------------------------//
 export type DefaultIconTypes = 
-  'AtSymbol' |
-  'AttachFile' |
-  'Calendar' |
-  'Canvas' |
-  'Checkbox' |
-  'ChevronDown' |
-  'ChevronUp' |
-  'CircleCheck' |
-  'CircleError' |
-  'CirclePause' |
-  'Close' |
-  'Cloud' |
-  'CloudUpload' |
-  'CodeBracket' |
-  'Computer' |
-  'CreditCard' |
-  'DarkTheme' |
-  'Database' |
-  'DocText' |
-  'DemandJump' |
-  'DropdownArrow' |
-  'Envelope' |
-  'Error' |
-  'Eye' |
-  'EyeSlash' |
-  'InfoBox' |
-  'LightTheme' |
-  'Link' |
-  'Loading' |
-  'LinkedIn' |
-  'Phone' |
-  'Plus' |
-  'Profile' |
-  'SelectArrow' |
-  'Smile' |
-  'Sort' |
-  'System' |
-  'Tag' |
-  'Trash' |
-  'Upload' |
-  'VennDiagram' 
-;
+| 'AtSymbol' 
+| 'AttachFile' 
+| 'Calendar' 
+| 'Canvas' 
+| 'ChevronDown' 
+| 'ChevronUp' 
+| 'Close' 
+| 'Cloud' 
+| 'CloudUpload' 
+| 'CodeBracket' 
+| 'Computer' 
+| 'CreditCard' 
+| 'DarkTheme' 
+| 'Database' 
+| 'DocText' 
+| 'DemandJump' 
+| 'DropdownArrow' 
+| 'Envelope' 
+| 'Eye' 
+| 'EyeSlash' 
+| 'LightTheme' 
+| 'Link' 
+| 'Loading' 
+| 'LinkedIn' 
+| 'OutlinePause' 
+| 'Phone' 
+| 'Plus' 
+| 'Profile' 
+| 'SelectArrow' 
+| 'Smile' 
+| 'Sort' 
+| 'System' 
+| 'Tag' 
+| 'Trash' 
+| 'Upload' 
+| 'VennDiagram';
+
+
+//------------------------------------//
+// Alert Icons                        //
+//------------------------------------//
+export type AlertIconTypes = 
+| 'CircleQuestion'
+| 'CircleWarning'
+| 'CircleError'
+| 'CircleOkay'
+| 'CircleInfo'
+
+| 'OutlineQuestion'
+| 'OutlineWarning'
+| 'OutlineError'
+| 'OutlineOkay'
+| 'OutlineInfo';
 
 
 //------------------------------------//
 // Media Icons                        //
 //------------------------------------//
 export type MediaIconTypes =
-  'Facebook' |
-  'Github' |
-  'Instagram' |
-  'Twitter' |
-  'Youtube'
-;
+| 'Facebook' 
+| 'Github' 
+| 'Instagram' 
+| 'Twitter' 
+| 'Youtube';
 
 
 //------------------------------------//
@@ -269,14 +241,26 @@ export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | '
 // Icon Mappings                      //
 //------------------------------------//
 // Icon style map
-const okayStyleMap: Partial<Record<IconTypes, boolean>> = {
-  'Checkbox': true
-}
+const infoStyleMap: Partial<Record<IconTypes, boolean>> = {
+  'CircleQuestion': true,
+  'OutlineQuestion': true, 
+};
+
+const warningStyleMap: Partial<Record<IconTypes, boolean>> = {
+  'CircleWarning': true,
+  'OutlineWarning': true,
+};
 
 const errorStyleMap: Partial<Record<IconTypes, boolean>> = {
-  'Error': true,
+  'CircleError': true,
+  'OutlineError': true,
   'Trash': true,
-}
+};
+
+const okayStyleMap: Partial<Record<IconTypes, boolean>> = {
+  'CircleOkay': true,
+  'OutlineOkay': true,
+};
 
 
 // #region Icon Maps
@@ -285,12 +269,8 @@ const defaultIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> =
   'AttachFile':      ({ styles }) => <Icon_AttachFile styles={styles} />,
   'Calendar':        ({ styles }) => <Icon_Calendar styles={styles} />,
   'Canvas':          ({ styles }) => <Icon_Canvas styles={styles} />,
-  'Checkbox':        ({ styles }) => <Icon_Checkbox styles={styles} />,
   'ChevronDown':     ({ styles }) => <Icon_ChevronDown styles={styles} />,
   'ChevronUp':       ({ styles }) => <Icon_ChevronUp styles={styles} />,
-  'CircleCheck':     ({ styles }) => <Icon_CircleCheck styles={styles} />,
-  'CircleError':     ({ styles }) => <Icon_CircleError styles={styles} />,
-  'CirclePause':     ({ styles }) => <Icon_CirclePause styles={styles} />,
   'Close':           ({ styles }) => <Icon_Close styles={styles} />,
   'Cloud':           ({ styles }) => <Icon_Cloud styles={styles} />,
   'CloudUpload':     ({ styles }) => <Icon_CloudUpload styles={styles} />,
@@ -303,14 +283,13 @@ const defaultIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> =
   'DemandJump':      ({ styles }) => <Icon_Demandjump styles={styles} />,
   'DropdownArrow':   ({ styles }) => <Icon_DropdownArrow styles={styles} />,
   'Envelope':        ({ styles }) => <Icon_Envelope styles={styles} />,
-  'Error':           ({ styles }) => <Icon_Error styles={styles} />,
   'Eye':             ({ styles }) => <Icon_Eye styles={styles} />,
   'EyeSlash':        ({ styles }) => <Icon_EyeSlash styles={styles} />,
-  'InfoBox':         ({ styles }) => <Icon_InfoBox styles={styles} />,
   'Instagram':       ({ styles }) => <Icon_Instagram styles={styles} />,
   'LightTheme':      ({ styles }) => <Icon_LightTheme styles={styles} />,
   'Link':            ({ styles }) => <Icon_Link styles={styles} />,
   'Loading':         ({ styles }) => <Icon_Loading styles={styles} />,
+  'OutlinePause':    ({ styles }) => <Icon_OutlinePause styles={styles} />,
   'Plus':            ({ styles }) => <Icon_Plus styles={styles} />,
   'Phone':           ({ styles }) => <Icon_Phone styles={styles} />,
   'Profile':         ({ styles }) => <Icon_Profile styles={styles} />,
@@ -322,6 +301,20 @@ const defaultIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> =
   'Trash':           ({ styles }) => <Icon_Trash styles={styles} />,
   'Upload':          ({ styles }) => <Icon_Upload styles={styles} />,
   'VennDiagram':     ({ styles }) => <Icon_VennDiagram styles={styles} />,
+};
+
+const alertIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
+  'CircleQuestion':     ({ styles }) => <Icon_CircleQuestion styles={styles} />,
+  'CircleWarning':    ({ styles }) => <Icon_CircleWarning styles={styles} />,
+  'CircleError':    ({ styles }) => <Icon_CircleError styles={styles} />,
+  'CircleOkay':     ({ styles }) => <Icon_CircleOkay styles={styles} />,
+  'CircleInfo':     ({ styles }) => <Icon_CircleInfo styles={styles} />,
+
+  'OutlineQuestion':    ({ styles }) => <Icon_OutlineQuestion styles={styles} />,
+  'OutlineWarning':     ({ styles }) => <Icon_OutlineWarning styles={styles} />,
+  'OutlineError':     ({ styles }) => <Icon_OutlineError styles={styles} />,
+  'OutlineOkay':    ({ styles }) => <Icon_OutlineOkay styles={styles} />,
+  'OutlineInfo':    ({ styles }) => <Icon_OutlineInfo styles={styles} />,
 };
 
 const mediaIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {

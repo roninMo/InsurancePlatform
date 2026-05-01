@@ -79,7 +79,7 @@ export const Docs_Radio = () => {
   return (
     <Container className='spacing'>
 
-      <h3 className="span-12 p-2">
+      <h3 className="span-12 p-2 docs-showcase-header">
         Radio Group Component
       </h3>
 

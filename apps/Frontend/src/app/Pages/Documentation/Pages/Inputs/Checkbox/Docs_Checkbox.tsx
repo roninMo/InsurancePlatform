@@ -77,7 +77,7 @@ export const Docs_Checkbox = () => {
   return (
     <Container className='spacing'>
 
-      <h3 className="span-12 p-2">
+      <h3 className="span-12 p-2 docs-showcase-header">
         Checkbox Component
       </h3>
 
