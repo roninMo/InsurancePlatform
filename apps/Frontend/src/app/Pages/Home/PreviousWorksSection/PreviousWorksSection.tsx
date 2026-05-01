@@ -6,8 +6,7 @@ import DemandJump from '../../../../assets/images/Demandjump.jpg';
 import StateAuto from '../../../../assets/images/StateAuto.png';
 import LibertyMutual from '../../../../assets/images/LibertyMutual.png';
 import styles from './PreviousWorksSection.module.scss';
-import { Button, Icon } from '@Project/ReactComponents';
-import { Modal } from '../../../Components/Utils/Modal/Modal';
+import { Ht } from '@Project/ReactComponents';
 
 export interface PreviousWorkSectionProps {
   additionalStyles?: string;
@@ -23,28 +22,23 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
         <div className='col p-2 pt-12'>
           <h1 className='py-3 text-4xl text-shadow-sm'>Explore some of my projects and past work experience</h1>
           
-          <div className={`height-trans ${activeTab == 'demos' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-            <div className='height-trans-content text-2xl'>
-              Here's a list of demos I've created to test my skills with designing best practices 
-              and challenging tasks deployed here just for you. 
-              From FullStack applications with complex backend logic to random challenging projects, they're all here.
-            </div>
-          </div>
-
-          <div className={`height-trans pb-10 ${activeTab == 'experience' ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-              <div className='height-trans-content text-2xl'>
-                Here's some of the past places I've gotten the pleasure to be a part of.
-              </div>
-            </div>
+          <Ht show={activeTab == 'demos'} cStyles='text-2xl'>
+            test Here's a list of demos I've created to test my skills with designing best practices 
+            and challenging tasks deployed here just for you. 
+            From FullStack applications with complex backend logic to random challenging projects, they're all here.
+          </Ht>
+          <Ht show={activeTab == 'experience'} styles='pb-10' cStyles='text-2xl'>
+            Here's some of the past places I've gotten the pleasure to be a part of.
+          </Ht>
         </div>
 
         {/* Previous works */}
         <div className='spacing gap-0 mt-10 p-2 px-4 pt-12 lg:px-6 bg-default rounded-lg shadow-xl'>
           <div className='span-12 place-self-start row justify-start items-center gap-4'>
-            <ProjectTab onClick={() => setActiveTab('demos')} className={`project-tab ${activeTab == 'demos' && 'tab-active'}`}>
+            <ProjectTab onClick={() => setActiveTab('demos')} className={`tab-default ${activeTab == 'demos' && 'tab-active'}`}>
               Demos
             </ProjectTab>
-            <ProjectTab onClick={() => setActiveTab('experience')} className={`project-tab ${activeTab == 'experience' && 'tab-active'}`}>
+            <ProjectTab onClick={() => setActiveTab('experience')} className={`tab-default ${activeTab == 'experience' && 'tab-active'}`}>
               Work Experience
             </ProjectTab>
           </div>
@@ -67,6 +61,7 @@ export const PreviousWorksSection = ({ additionalStyles }: PreviousWorkSectionPr
                   endDate={props.endDate}
                   
                   languagesAndTech={props.languagesAndTech}
+                  summary={props.summary}
                   learnMoreContent={props.learnMoreContent}
                   teamImageUrl={props.teamImageUrl}
                   

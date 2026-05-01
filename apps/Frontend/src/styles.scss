@@ -16,14 +16,15 @@
   //------------------------------------------//
   // Text Colors                              //
   //------------------------------------------//
+  // #region Text Colors
   .input-colors   { @apply text-slate-800     dark:text-slate-200; }
   .label-colors   { @apply text-slate-800     dark:text-slate-300; }
   .header-colors  { @apply text-slate-800     dark:text-slate-100; }
-  .svg-colors     { @apply  text-slate-500    dark:text-slate-400; }
+  .svg-colors     { @apply text-slate-500    dark:text-slate-400; }
   .text-colors    { @apply text-slate-900     dark:text-slate-400; }
   
   .placeholder-text { @apply text-slate-400   dark:text-slate-500; }
-  .disabled-text    { @apply text-gray-500    dark:text-gray-400; }
+  .disabled-text    { @apply text-gray-500    dark:text-gray-400/70; }
   .warning-text     { @apply text-amber-600   dark:text-amber-400; }
   .error-text       { @apply text-red-700     dark:text-red-500; }
   .ok-text          { @apply text-emerald-600 dark:text-emerald-400; }
@@ -31,12 +32,17 @@
   .primary-text     { @apply text-blue-500 dark:text-blue-500; }
   .link-text {
     @apply
-      primary-text cursor-pointer transition duration-300
+      primary-text cursor-pointer transition-all duration-300
       hover:theme-focus-2 dark:hover:theme-focus
 
       focus:underline dark:focus:underline
       hover:underline dark:hover:underline;
   }
+
+  .text-bg-dark-colors {
+    @apply text-white dark:text-slate-300;
+  }
+  // #endregion
 
 
 
@@ -44,18 +50,23 @@
   //------------------------------------------//
   // Element Text Colors                      //
   //------------------------------------------//
+  // #region Element text colors
   h1, h2, h3, h4, h5, h6  { @apply header-colors; }
   div, p, span            { @apply text-colors; }
   label                   { @apply label-colors; }
-  input, select, textarea { @apply input-colors placeholder:placeholder-text }
   svg                     { @apply svg-colors; }
+  input, select, textarea { 
+    @apply input-colors placeholder:placeholder-text;
+  }
+  // #endregion
 
 
 
 
   //------------------------------------------//
-  // Background Colors                        //
+  // Background Element Colors                //
   //------------------------------------------//
+  // #region Background Element Colors
   html, body {
     min-height: 100vh;
     @apply bg-default;
@@ -66,36 +77,60 @@
   .theme-focus-1  { @apply hover:brightness-110  active:brightness-90; }
   .theme-focus-2  { @apply hover:brightness-125  active:brightness-90; }
 
+  .theme-fa { @apply hover:theme-f active:theme-a; }
+  .theme-f { @apply brightness-90   dark:brightness-125; }
+  .theme-a { @apply brightness-110  dark:brightness-90; }
+
 
   // default background colors
   .bg-default   { @apply bg-white     dark:bg-slate-800; }
-  .bg-div       { @apply bg-slate-300 dark:bg-slate-900; }
-  .bg-div-light { @apply bg-slate-400 dark:bg-slate-700; }
+  .bg-div       { @apply bg-slate-100 dark:bg-slate-900; }
+  .bg-div-light { @apply bg-slate-200 dark:bg-slate-700; }
   .bg-primary   { @apply bg-blue-600  dark:bg-blue-500; }
+  
+  // hover states
+  .bg-div-hover { @apply bg-slate-200 dark:bg-slate-800; }
   
   // Input specific background theme
   .bg-disabled { @apply  bg-gray-300  dark:bg-gray-700; }
 
+
+  .btn-disabled { 
+    @apply 
+      bg-disabled 
+      outline-gray-400 dark:outline-gray-600
+      text-slate-600 dark:text-slate-500;
+  }
+
   // Button colors
-  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue;  }
-  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue;  }
-  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue;  }
-  .btn-text         { @apply input-colors; }
+  .btn-primary      { @apply btn-primary-colors     hover:btn-primary-hover     focus:btn-outline-blue  active:btn-primary-active;  }
+  .btn-gray         { @apply btn-gray-colors        hover:btn-gray-hover        focus:btn-outline-blue  active:btn-gray-active;  }
+  .btn-gray-focus   { @apply btn-gray-focus-colors  hover:btn-gray-focus-hover  focus:btn-outline-blue  active:btn-gray-focus-active;  }
+  .btn-text         { @apply text-slate-200 dark:text-slate-200; }
 
   .btn-outline-white  { @apply outline-slate-200 dark:outline-slate-200; }
   .btn-outline-blue   { @apply   outline-focus; }
 
-  .btn-primary-colors { @apply bg-indigo-600 dark:bg-indigo-500 outline-indigo-600 dark:outline-indigo-600; }
-  .btn-primary-hover { @apply bg-indigo-500 dark:bg-indigo-400; }
+  .btn-primary-colors { @apply bg-blue-600 dark:bg-indigo-500 outline-blue-500 dark:outline-indigo-600; }
+  .btn-primary-hover { @apply  bg-blue-500 dark:bg-indigo-400 outline-blue-600 dark:outline-indigo-300/25; }
+  .btn-primary-active { @apply bg-blue-700 dark:bg-indigo-600; }
   
-  .btn-gray-colors { @apply bg-div-light outline-slate-400 dark:outline-slate-700; }
-  .btn-gray-hover { @apply bg-slate-300 dark:bg-slate-600; }
+  .btn-gray-colors { @apply bg-slate-200 dark:bg-slate-700 outline-slate-300 dark:outline-slate-600/50; }
+  .btn-gray-hover { @apply  bg-slate-300 dark:bg-slate-600 outline-slate-400/50 dark:outline-slate-500/50; }
+  .btn-gray-active { @apply bg-slate-400 dark:bg-slate-700; }
   
-  .btn-gray-focus-colors { @apply bg-default outline-white dark:outline-slate-800; }
-  .btn-gray-focus-hover { @apply bg-slate-200 dark:bg-slate-700; }
+  .btn-gray-focus-colors { @apply bg-white     dark:bg-slate-800 outline-slate-300 dark:outline-slate-700/50; }
+  .btn-gray-focus-hover { @apply  bg-slate-200 dark:bg-slate-700 outline-slate-300/75 dark:outline-slate-600/50; }
+  .btn-gray-focus-active { @apply bg-slate-300 dark:bg-slate-800; }
 
-  // hover states
-  .bg-div-hover { @apply bg-slate-200 dark:bg-slate-800; }
+  // disabled state classes
+  .btn-disabled { @apply btn-disabled-colors btn-disabled-outline btn-disabled-text; }
+  .btn-disabled-colors  { @apply    bg-disabled; }
+  .btn-disabled-outline { @apply  outline-gray-400 dark:outline-gray-600; }
+  .btn-disabled-text    { @apply  text-slate-600   dark:text-slate-500; }
+
+
+  // #endregion
 
 
 
@@ -103,6 +138,7 @@
   //------------------------------------------//
   // Outline and Border                       //
   //------------------------------------------//
+  // #region Outline and Border Styles
   // Default outline styles
   .outline-init   { @apply outline rounded-md outline-1 -outline-offset-1; }
   .outline-styles { @apply outline-default focus:outline-focus; }
@@ -113,25 +149,58 @@
   }
 
   .outline-default  { @apply outline-blue-300   dark:outline-slate-700; }
+  .outline-light    { @apply outline-blue-200   dark:outline-slate-600; }
   .outline-focus    { @apply outline-blue-500   dark:outline-indigo-500; }
   .outline-warning  { @apply outline-amber-600  dark:outline-amber-400; }
   .outline-error    { @apply outline-red-500    dark:outline-red-600; }
-  .oultine-ok       { @apply outline-emerald-600 dark:outline-emerald-400; }
+  .outline-ok       { @apply outline-emerald-600 dark:outline-emerald-400; }
+
   
   // Border styles
   .border-styles    { @apply border-default focus:border-focus; }
   .border-default   { @apply border-blue-300    dark:border-slate-700; }
+  .border-div       { @apply border-slate-300   dark:border-slate-900; }
   .border-focus     { @apply border-blue-500    dark:border-indigo-500; }
+  .border-disabled  { @apply border-gray-300    dark:border-gray-600; }
   .border-warning   { @apply border-amber-500   dark:border-amber-400; }
   .border-error     { @apply border-red-400     dark:border-red-500; }
   .border-ok        { @apply border-emerald-600 dark:border-emerald-400; }
-  
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Icons                                    //
+  //------------------------------------------//
+  // #region Icon Styles
+  .icon-default {
+    @apply icon-default-theme icon-default-color;
+  }
+
+  .icon-default-theme {
+    @apply size-5 justify-center self-center;
+  }
+
+  .icon-default-color {
+    @apply text-blue-300 dark:text-slate-400;
+  }
+
+  .icon-error-color { @apply text-red-500 dark:text-red-400; }
+  .icon-ok-color { @apply text-emerald-500 dark:text-emerald-400; }
+  .icon-disabled-color { @apply 
+    disabled-text hover:disabled-text active:disabled-text
+    dark:disabled-text dark:hover:disabled-text dark:active:disabled-text; 
+  }
+  // #endregion
+
 
 
 
   //------------------------------------------//
   // Text Sizes                               //
   //------------------------------------------//
+  // #region Text Sizes
   /* TODO: media query fonts sm:text-sm/5 */
   label                   { @apply text-sm font-medium; }
   span                    { @apply text-xs; }
@@ -145,26 +214,7 @@
   h4                      { @apply text-[1.25rem]; }
   h5                      { @apply text-[1rem]; }
   h6                      { @apply text-sm; }
-
-
-
-
-  //------------------------------------------//
-  // Input Specific Styling                   //
-  //------------------------------------------//
-  label { @apply cursor-text; }
-  input, select, textarea {
-    @apply 
-      bg-default autofill-backgrounds
-      outline-css outline-styles px-3 py-2
-      transition;
-  }
-
-  textarea {
-    @apply scrollbar-theme transition;
-    resize: none;
-
-  }
+  // #endregion
 
 
 
@@ -172,53 +222,58 @@
   //------------------------------------------//
   // Selected Themes                          //
   //------------------------------------------//
+  // #region Selected Themes
   /* For containers that need highlighting when selected  */
   .selected-box { 
     @apply 
-      bg-opacity-20 dark:bg-opacity-10
-    bg-blue-600 dark:bg-blue-500
+      bg-opacity-20 dark:bg-opacity-20
+      bg-blue-600 dark:bg-blue-500
       outline-focus 
+  }
+
+  .faded-box { 
+    @apply 
+      bg-opacity-20 dark:bg-opacity-40
+      bg-div
+      outline-default 
   }
 
   .warning-box {
     @apply 
       bg-opacity-10 dark:bg-opacity-10
-    bg-amber-500 dark:bg-amber-400
-    outline-amber-500 dark:outline-amber-400;
+      bg-amber-500 dark:bg-amber-400
+      outline-amber-500 dark:outline-amber-400;
   }
 
   .ok-box {
     @apply
       bg-opacity-10 dark:bg-opacity-10
-    bg-emerald-500 dark:bg-emerald-400
-    outline-emerald-500 dark:outline-emerald-400;
+      bg-emerald-500 dark:bg-emerald-400
+      outline-emerald-500 dark:outline-emerald-400;
   }
   
   .error-box {
     @apply
       bg-opacity-30 dark:bg-opacity-10
-    bg-red-500 dark:bg-red-500
-    outline-red-500 dark:outline-red-600;
+      bg-red-500 dark:bg-red-500
+      outline-red-500 dark:outline-red-600;
   }
   
-  .input-error {
+  .disabled-box { 
     @apply 
-      input-colors placeholder:error-text
-      outline-error
+      bg-opacity-20 dark:bg-opacity-20
+      bg-gray-600  dark:bg-gray-400
+      outline-blue-300 dark:outline-slate-600
   }
+  // #endregion
 
-  .input-disabled {
-    @apply 
-      disabled-text placeholder:disabled-text
-      bg-disabled
-    outline-gray-400  dark:outline-gray-600;
-  }
 
 
 
   //------------------------------------------//
   // Layout Themes                            //
   //------------------------------------------//
+  // #region Layout Themes
   .row        { @apply flex flex-row; }
   .col        { @apply flex flex-col; }
   .rowStart   { @apply flex flex-row justify-start; }
@@ -245,59 +300,475 @@
   .text-shadow-md   { text-shadow: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1); }
   .text-shadow-lg   { text-shadow: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1); }
   .text-shadow-none { text-shadow: none; }
-
-
-  //------------------------------------------//
-  // Utility                                  //
-  //------------------------------------------//
-  .transition { @apply transition-all duration-200; }
-  .op-init    { @apply transition duration-300 opacity-0; }
-  .op-render  { @apply opacity-100; }
-
-  // Faded borders for creating overlays and subtle shading for background
-  .opacity-bg-0    { @apply bg-opacity-0    dark:bg-opacity-0; }
-  .opacity-bg-10   { @apply bg-opacity-10   dark:bg-opacity-10; }
-  .opacity-bg-20   { @apply bg-opacity-20   dark:bg-opacity-20; }
-  .opacity-bg-30   { @apply bg-opacity-30   dark:bg-opacity-30; }
-  .opacity-bg-40   { @apply bg-opacity-40   dark:bg-opacity-40; }
-  .opacity-bg-50   { @apply bg-opacity-50   dark:bg-opacity-50; }
-  .opacity-bg-60   { @apply bg-opacity-60   dark:bg-opacity-60; }
-  .opacity-bg-70   { @apply bg-opacity-70   dark:bg-opacity-70; }
-  .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
-  .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
-  .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
-
-  .svg-theme {
-    @apply svg-init text-colors hover:primary-text;
+  
+  
+  // Unique Grid layout themes 
+  // The grid height transition hack (child div needs overflow:hidden)
+  .height-trans {
+    @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-400 {
+    @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-500 {
+    @apply grid transition-[grid-template-rows] duration-[500ms] ease-in-out;
+  } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
+  
+  .height-trans-opacity {
+    @apply grid;
+    transition:
+      grid-template-rows 0.3s ease,
+      opacity 0.3s ease,
+      visibility 0s linear 0.3s;
   }
 
-  .svg-init {
-    @apply transition cursor-pointer;
+  // Dual Column Layout hack. Aligns all values in a specific column based on the longest child element.
+  .dual-column-3 { // recreate for number of columns what needs to use 1fr for content fills 
+    @apply grid grid-cols-[min-content_min-content_1fr];
   }
+  
+  .height-trans-content {
+    @apply overflow-hidden;
+  }
+  .height-trans-op-content {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  
+  // The browser skips the rendering work (layout and painting) for 
+  // that element's children as long as it's not on screen or is hidden. Place this on the children of the grid layout
+  .content-auto {
+    content-visibility: auto;
+  } // Skips Rendering, Preserves State, Instant-Wake-Up when visible ex: height-trans (grid-rows-[1fr]) 
+  // #endregion
 
 
 
 
   //------------------------------------------//
-  // Hack for native autofill text color      //
+  // Input Specific Styling                   //
   //------------------------------------------//
-  // This removes native input backgrounds and lets us customize
-  .autofill-backgrounds {
+  // #region Input Specific Styles
+  label { @apply cursor-text; }
+  input, select, textarea {
     @apply 
-      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
-      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
+      bg-default autofill-backgrounds
+      outline-css outline-styles px-3 py-2
+      transition-all;
+  }
+
+  textarea {
+    @apply scrollbar-theme transition-all;
+    resize: none;
+  }
+  
+  // remove the native increment button stylings, they suck
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+
+	// Button element classes
+	// #region Button component styles
+	.button-base {
+		@apply
+			m-auto inline-flex items-center 
+			cursor-pointer transition-all
+			font-semibold text-nowrap
+			shadow-md outline-css 
+      focus:outline-focus;
+
+    &:disabled {
+      @apply btn-disabled disabled:bg-disabled;
+    }
+	}
+	
+	.btn-al-d  { @apply px-2.5 py-1.5; }
+	.btn-al-md { @apply px-3 py-2; }
+	.btn-al-lg { @apply px-3.5 py-2.5; }
+	.btn-al-xl { @apply px-5 py-3; }
+	
+	.btn-el-primary { @apply btn-primary text-white; }
+	.btn-el-gray { @apply btn-gray text-slate-600 dark:text-slate-200; }
+	.btn-el-gray-focus { @apply btn-gray-focus text-slate-600 dark:text-slate-200; }
+  .btn-rainbow {
+    background: linear-gradient(
+      to right, 
+      #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000
+    );
+
+    text-shadow: 
+    -1px -1px 0 rgba(0,0,0,0.4),  
+     1px -1px 0 rgba(0,0,0,0.4),
+    -1px  1px 0 rgba(0,0,0,0.4),
+     1px  1px 0 rgba(0,0,0,0.4),
+     0px  0px 4px rgba(0,0,0,0.4); /* Adds a soft outer glow for extra depth */;
+
+    background-size: 200% 100%;
+    cursor: pointer;
+  }
+	// #endregion
+
+
+  // Checkbox element classes
+  // #region Checkbox component styles
+  .checkbox-c { 
+    @apply pt-4 pb-6 px-1 transition-all font-normal; 
+
+    &:disabled {
+      @apply cursor-text;
+      & .checkbox-label { @apply text-colors; }
+      & .checkbox-desc { @apply disabled-text; }
+    }
+  }
+
+  .checkbox-c-d { 
+    @apply checkbox-c rowStart items-start gap-2;
+  }
+
+  .checkbox-c-i { 
+    @apply checkbox-c rowStart items-start gap-2;
+  }
+
+  .checkbox-c-l { 
+    @apply 
+      checkbox-c colStart gap-1 
+      border-b first:border-t border-default
     ;
   }
 
-  // Radio button styles
+  .checkbox-label { @apply label-colors font-semibold; }
+  .checkbox-desc { @apply text-colors; }
+
+  // Checkbox
+  /* normal: check before:content-['✓'] */
+  /* normal:x-mark before:content-['✗'] */
+  /* bold:   check before:content-['✔\fe0e'] */
+  /* bold:  x-mark before:content-['✘'] */
+  .checkbox {
+    @apply
+      mb-auto appearance-none cursor-pointer
+      outline-css rounded-[4px] size-5 transition-all 
+      text-center p-[1px] text-slate-100 
+      checked:before:content-['✔\fe0e'] checked:leading-[1.15rem]
+      disabled:checked:before:content-['–'] disabled:leading-[1rem]
+      
+      bg-default 
+      outline-slate-400 dark:outline-slate-600 
+      
+      /* checked */
+      checked:bg-blue-500       dark:checked:bg-indigo-500 
+      checked:outline-blue-400  dark:checked:outline-indigo-400 
+
+      /* disabled */
+      disabled:text-slate-400 dark:disabled:text-slate-300/90
+      disabled:bg-gray-300 dark:disabled:bg-gray-700
+      disabled:outline-gray-400 dark:disabled:outline-gray-600
+
+      /* disabled checked */
+      disabled:checked:bg-gray-300
+      disabled:checked:outline-slate-400/80
+      dark:disabled:checked:bg-gray-500
+      dark:disabled:checked:outline-slate-400
+    ;
+  }
+
+  .checkbox-c-error { @apply last:border-error; }
+  .checkbox-error {
+    @apply 
+      checked:before:content-['✘']
+      checked:leading-[1.06rem]
+      checked:bg-red-500/65 dark:checked:bg-red-600/90
+      checked:outline-red-500 dark:checked:outline-red-400
+    ;
+  }
+  // #endregion
+
+
+  // Dropbox element classes
+  // #region Dropbox component styles
+  .dropbox-c {
+    @apply w-full col gap-2;
+      
+    // Add disabled styles for the dropbox content
+    @apply group-has-[:disabled]:[&_.dropbox-icon]:disabled-text;
+    @apply group-has-[:disabled]:[&_.dropbox-up-link]:disabled-text;
+    @apply group-has-[:disabled]:[&_.dropbox-text]:input-colors;
+  }
+
+  .dropbox {
+    @apply 
+      w-full col items-center gap-2 py-10
+      cursor-pointer transition-all duration-300
+      border-2 rounded-md border-styles border-dashed
+      hover:theme-fa
+    ;
+  }
+
+  .dropbox-drag-hover { 
+    & .dropbox { 
+      @apply 
+        border-focus
+      ; 
+    }
+  }
+
+  .dropbox-disabled {
+    @apply border-disabled;
+  }
+
+  .dropbox-err {
+    @apply border-error;
+  }
+
+  // prevent nested elements from interfering w/dragEnter 
+  // .dropbox-drag-hover * {
+  //   @apply pointer-events-none; // still doesn't work
+  // }
+
+  .dropbox-label { 
+    @apply pb-0;
+  }
+
+  .dropbox-icon {
+    @apply 
+      icon-default-theme size-14
+      text-slate-400 dark:text-slate-600
+    ;
+  }
+
+  .dropbox-text-c {
+    @apply rowStart items-center pt-2;
+  }
+
+  .dropbox-up-link-base { @apply font-semibold transition-all; }
+  .dropbox-up-link   { @apply link-text dropbox-up-link-base; }
+  .dropbox-up-link-d { @apply disabled-text dropbox-up-link-base; }
+
+  .dropbox-text-base { @apply transition-all; }
+  .dropbox-text   { @apply text-colors dropbox-text-base; }
+  .dropbox-text-d { @apply disabled-text dropbox-text-base; }
+
+  // #endregion
+
+
+  // Input element classes
+  // #region Input component styles
+  .input-base {
+    @apply 
+      col-start-1 row-start-1 w-full 
+      outline-css shadow-md
+      
+      disabled:input-disabled;
+  }
+
+  .input-error {
+    @apply error-text placeholder:error-text outline-error;
+  }
+
+  .input-disabled {
+    @apply 
+      disabled-text placeholder:disabled-text
+      bg-disabled
+      outline-gray-400  dark:outline-gray-600;
+  }
+
+  .input-label {
+    @apply label-colors;
+  }
+
+  .input-container {
+    @apply mt-2 grid grid-cols-1; // group
+  }
+
+  .input-icon-spacing { @apply pl-9; }
+
+
+  .input-preceding-el-c {
+    @apply 
+    col-start-1 row-start-1 justify-start self-center
+    pointer-events-none;
+  }
+
+  .input-preceding-el { 
+    @apply rowStart; 
+  }
+  
+  .input-icon-def {
+    @apply size-4 ml-3 transition-all hover:primary-text;
+  }
+
+  .input-password-vis {
+    @apply pointer-events-auto cursor-pointer;
+  }
+
+  .input-subsequent-el-c { 
+    @apply 
+      grid col-start-1 row-start-1 justify-end self-center 
+      pointer-events-none;
+  }
+
+  .input-subsequent-el { 
+    @apply row flex-grow justify-items-end items-center;
+  }
+
+  .input-inc-btns-spacing {
+    @apply mr-4;
+  }
+
+  // number input increment button stylings
+  .input-inc-btn-t { @apply rounded-t-md rounded-b-none; }
+  .input-inc-btn-b { @apply rounded-b-md rounded-t-none; }
+  .inc-btn-base {
+    @apply 
+      px-2.5 py-[3px]
+    ;
+
+    /* Use directional nudges for the specific buttons: */
+    &.input-inc-btn-t:active .input-inc-i {
+      @apply -translate-y-[0.05rem];
+    }
+    &.input-inc-btn-b:active .input-inc-i {
+      @apply translate-y-[0.05rem];
+    }
+
+    /* Grow and squash the icon */
+    &:hover .input-inc-i {
+      @apply label-colors scale-125; 
+    }
+
+    &:active .input-inc-i {
+      @apply placeholder-text scale-100; 
+    }
+  }
+
+  .input-inc-i {
+    @apply size-3 text-colors transition-all;
+  }
+  
+  .increment-btns {
+    @apply 
+      col items-center pointer-events-auto transition-all;
+  }
+
+  .increment-btns-states {
+    @apply 
+      outline-css outline-transparent
+      group-focus-within:outline-focus /* Only when the parent is focused */
+      
+      group-focus-within:[&:focus-within]:outline-transparent /* increment button focus */
+    ;
+  }
+  .input-btns-error { 
+    @apply 
+      outline-css outline-error
+      group-focus-within:outline-focus /* Only when the parent is focused */
+
+      group-focus-within:[&:focus-within]:outline-transparent /* increment button focus */
+    ; 
+  }
+
+
+  // input currency button
+  .input-curr {
+    @apply 
+      pl-3 py-2 pr-7
+      appearance-none /* remove select's native styles */
+      input-base  /* this isn't necessary unless spacing or to add a shadow */ 
+      pointer-events-auto cursor-pointer
+      
+      border-focus /* do these only when focused on the parent */
+      enabled:[&:not(:focus)]:group-focus-within:border-l-[3px]
+      enabled:[&:not(:focus)]:group-focus-within:border-focus
+    ;
+  }
+  .input-curr-error { 
+    @apply 
+      outline-error /* Add an outline error when it isn't focused */
+      focus:outline-focus /* focus outline */
+      [&:not(:focus)]:group-focus-within:outline-none /* no outline when parent is focused */
+    ; 
+  }
+
+  .input-curr-i {
+    @apply 
+      size-5 cursor-pointer transition-all
+      absolute top-[7px] right-[6px];
+    
+    &:focus {
+      @apply rotate-180;
+    }
+  }
+
+  // input search sort button
+  .input-sort-btn {
+    @apply
+      flex items-center gap-x-1.5 shrink-0 
+      transition-all cursor-pointer pointer-events-auto
+      
+      rounded-r-md px-3 py-2 
+      font-semibold 
+      text-white
+      btn-primary dark:btn-gray
+      
+      border-default
+      enabled:[&:not(:focus)]:group-focus-within:border-l-[3px]
+      enabled:[&:not(:focus)]:group-focus-within:border-focus
+
+      outline-css
+      enabled:focus:outline-focus
+    ;
+  }
+  .input-sort-error { 
+    @apply 
+      outline-error dark:outline-error 
+      group-focus-within:outline-transparent
+      focus:outline-focus
+    ; 
+  }
+  
+  .input-sort-i {
+    @apply size-5 text-slate-100 dark:text-slate-400;
+  }
+
+
+  // Input tooltip
+  .input-tooltip-icon {
+    @apply pointer-events-auto;
+  }
+
+  // Input loading bar
+  .input-loading-bar-cont {
+    @apply 
+      col-start-1 row-start-1 relative 
+      overflow-hidden rounded-md pointer-events-none;
+  }
+
+  .input-loading-bar {
+    @apply loading-bar-css bg-primary;
+  }
+  // #endregion
+
+
+  // Radio Group element classes
+  // #region Radio Group component styles
   .radio-button {
     @apply 
-      p-[6px] mt-[2px] appearance-none mr-1 rounded-lg cursor-pointer transition-all duration-200
+      p-[6px] mt-[2px] 
+      appearance-none rounded-lg mr-1 
+      cursor-pointer transition-all duration-200
 
       /* Adjusted border to create the selected radio circle icon */
       border-2 checked:outline checked:outline-[5px] checked:-outline-offset-[5px]
       disabled:checked:outline-[5px] disabled:checked:-outline-offset-[5px] 
-      
 
       /******************** 
       * Light Theme       *
@@ -340,40 +811,535 @@
     ;
   }
 
-  // the scrollbar for dark themes
-  .scrollbar-theme {
-    &::-webkit-scrollbar {
-      width: 0.74rem;
-      // border-bottom-right-radius: 0.375rem;
-      // border-top-right-radius: 0.375rem;
-      border-radius: 0.375rem;
-      background-color: rgb(30 41 59 / var(--tw-bg-opacity));
-    }
+  .radio-button-error {
+    @apply 
+      /* Radio Selected Circle (Outer) */
+      checked:outline-red-500/90 
+      dark:checked:outline-red-500
+      dark:checked:outline-[5px]
+      dark:checked:-outline-offset-[5.5px]
+
+      /* Radio Selected Circle (Inner) */
+      checked:bg-slate-100/25
+      dark:checked:bg-slate-200
+  }
+
+  .radio-group {
+    @apply w-full colStart justify-start gap-2;
+  }
+
+  /* Most of our error/disabled tags are here, just referencing nested classes to ease handling the nested variant classes */
+  .radio-group-error {
+    @apply 
+      [&_.radio-button]:radio-button-error
+      last:[&_.radio-item-c-l]:border-error
+    ;
+  }
+  
+  .radio-group-disabled {
+    @apply 
+      [&_.radio-t-label]:text-colors
+      [&_.radio-t-desc]:disabled-text
+    ;
+  }
+  
+	// radio item container variants
+  .radio-item-c {
+    @apply cursor-pointer transition-all font-normal pb-1;
+  }
+
+  .radio-item-c-d {
+    @apply radio-item-c
+      rowStart items-start gap-2 mr-6
+      [&_.radio-text]:radio-text-d
+    ;
+  }
+  .radio-item-c-c {
+    @apply radio-item-c
+      rowStart items-start gap-2
+      [&_.radio-text]:radio-text-c
+    ;
+  }
+  .radio-item-c-ci {
+    @apply radio-item-c-c
+      [&_.radio-text]:radio-text-ci
+    ;
+  }
+  .radio-item-c-l {
+    @apply radio-item-c
+      pb-6 pt-2 mr-6 w-full 
+      row justify-between items-start gap-2
+      border-b border-styles 
       
-    &::-webkit-scrollbar-track {
-      border-radius: 0.375rem;
-      background-color: rgb(51 65 85 / var(--tw-bg-opacity));
-      
+      /* Align the button to the right for lists */
+      [&_.radio-button]:ml-4 
+      [&_.radio-button]:order-1
+
+      /* radio text styles for the list variant */
+      [&_.radio-text]:radio-text-l
+    ;
+  }
+
+  .radio-text { @apply block; }
+  .radio-t-label { @apply label-colors text-sm font-semibold; }
+  .radio-t-desc { @apply text-colors; }
+  .radio-text-d { @apply colStart items-start; }
+  .radio-text-c { @apply colStart items-start; }
+  .radio-text-ci { @apply rowStart; }
+  .radio-text-l { @apply colStart items-start gap-2; }
+  // #endregion
+
+
+  // Radio Table element classes
+  // #region Radio Table component styles
+  .radio-table {
+    @apply m-0;
+  }
+
+  .radio-table-i {
+    @apply 
+      p-4 px-6 rowStart items-start gap-2 
+      bg-default border border-default 
+      outline outline-1 -outline-offset-1 
+      outline-slate-400/0 font-normal
+
+      transition-all duration-300 
+
+      /* Round the edges and align the outlines */
+      first:rounded-t-md last:rounded-b-md 
+      [&:not(:first-child)]:-mt-[1px]
+    ;
+  }
+
+  .radio-t-i-error {
+    @apply m-0;
+  }
+  
+  .radio-t-i-disabled {
+    @apply 
+      bg-disabled bg-opacity-40 dark:bg-opacity-20
+      [&_.radio-t-i-desc]:disabled-text
+    ;
+  }
+  
+  .radio-t-i-selected {
+    @apply z-10 selected-box;
+  }
+
+  .radio-t-i-selected-error {
+    @apply z-10 radio-t-i-error error-box;
+  }
+  
+  .radio-t-i-selected-disabled {
+    @apply z-10 radio-t-i-disabled disabled-box 
+    bg-opacity-75 dark:bg-opacity-60;
+  }
+
+  .radio-t-i-label { @apply label-colors text-sm font-semibold; }
+  .radio-t-i-desc { @apply text-colors; }
+  // #endregion
+
+
+  // Select element classes
+  // #region Select component styles
+  .select-container {  @apply w-full relative; }
+  .select-label {  @apply block pb-2; }
+
+  .select-base {
+    @apply 
+      min-w-full cursor-pointer transition-all
+      bg-default shadow-md
+      outline-css outline-styles;
+
+    &:disabled {
+      @apply bg-disabled outline-slate-400 dark:outline-slate-600;
+
+      & .currently-selected {
+        @apply 
+          disabled-text cursor-default
+        ;
+      }
     }
-      
-    &::-webkit-scrollbar-thumb {
-      border-radius: 0.375rem;
-      background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
-    }
+  }
+  .select-focus { @apply outline-focus; }
+  .select-error { @apply outline-error; }
+
+	// currently selected
+  .currently-selected {
+    @apply 
+      rowBetween items-center gap-2 p-2
+      transition-all ease-in duration-200
+    ;
+  }
+
+	// select dropdown
+  .select-dropdown {
+    @apply 
+      w-full absolute left-0 mt-1 z-20
+      col flex-grow
+      cursor-pointer transition-all ease-in
+
+      bg-default shadow-lg
+      outline-css outline-styles
+    ;
+  }
+  
+  .select-dd-scroll {
+    @apply
+      overflow-x-hidden overflow-y-scroll scroll-smooth
+      max-h-48 scrollbar-theme 
+  }
+  
+  .select-dd-open { @apply opacity-100; }
+  .select-dd-closed { @apply opacity-0 pointer-events-none; }
+  .select-dd-error { @apply /*outline-error*/ error-text; }
+  .select-dd-disabled { @apply hidden overflow-y-hidden opacity-0; }
+
+
+  .select-i-arrow {
+    @apply 
+      size-5 
+      rotate-0 hover:rotate-180
+    ;
+  }
+
+  .select-desc {
+    @apply text-sm text-colors;
   }
 
 
+  // Select Item
+  .select-item {
+    @apply 
+      rowBetween gap-2 items-center p-2 pr-4
+      transition-all duration-200 ease-in
+      hover:btn-primary-colors
+      border-b border-default border-opacity-30 dark:border-opacity-20
+
+      active:select-item-active;
+    ;
+  }
+  .select-item-selected { @apply select-item btn-primary-colors opacity-bg-80; }
+  .select-item-active { @apply btn-primary-colors brightness-75; }
+
+  .select-item-text { @apply transition-all text-colors group-hover:btn-text; }
+  .select-item-text-selected { @apply transition-all btn-text; }
+
+  .select-item-i { @apply size-4 text-colors hover:input-colors transition-all; }
+  .select-item-i-active { @apply theme-focus-2; }
+  // #endregion
 
 
-  //------------------------------------------//
-  // Hack for native autofill text color      //
-  //------------------------------------------//
+	// Slider element classes
+	// #region Slider component styles
+  .slider-c {
+    @apply w-full row justify-between items-start gap-8;
+  }
+
+  // The slider background
+	.slider-base {
+		@apply
+      cursor-pointer transition-all
+      min-w-max 
+      rowStart p-[1px] mt-5
+      outline-init rounded-full; 
+
+    @apply has-[:not(:checked)]:slider-off;
+    @apply has-[:checked]:slider-on;
+
+    // focus state for default slider state
+    @apply focus-within:outline-focus;
+
+    &:focus-within .slider-switch {
+      @apply ring-blue-500 dark:ring-indigo-500;
+    }
+    
+    .slider-input:checked + .slider-switch {
+      @apply translate-x-5;
+    }
+	}
+	.slider-on {
+		@apply  
+			bg-blue-500       dark:bg-blue-600 
+			outline-blue-600  dark:outline-blue-500;
+	}
+	.slider-off {
+		@apply 
+			bg-slate-300      dark:bg-slate-800 
+			outline-slate-400 dark:outline-slate-600;
+	}
+	
+  // The slider button
+	.slider-switch {
+    @apply 
+    size-5 mr-5 z-10 rounded-full shadow-sm 
+    transition-all duration-200 ease-out
+    
+    ring-1 
+    bg-white dark:bg-slate-200
+    ring-slate-400 dark:ring-slate-700;
+	}
+
+  .slider-input { @apply sr-only; }
+  .slider-label { @apply label-colors; }
+  .slider-desc { @apply text-colors; }
+
+  // Validation styles
+  .slider-error {
+    & .slider-base {
+      @apply outline-error focus-within:outline-focus;
+    }
+  }
+
+  .slider-disabled {
+    & .slider-label { @apply text-colors; }
+    & .slider-desc { @apply disabled-text; }
+
+    & .slider-base {
+      @apply 
+        bg-gray-300 dark:bg-slate-600 
+        outline-gray-400 dark:outline-slate-500
+        pointer-events-none
+      ;
+
+      // This stops the 'has-[:checked]' from winning
+      background-image: none;
+    }
+
+    & .slider-switch {
+      @apply 
+        bg-gray-100 dark:bg-slate-400
+        ring-slate-300 dark:ring-slate-500
+      ;
+    }
+  }
+	// #endregion
+
+
+  // Textarea element classes
+  // #region Textarea component styles 
+  // textarea - d: default, b: box, p: post
+  .ta-base {    
+    @apply 
+      w-full p-0 h-24 text-base 
+      cursor-text transition-all
+      disabled:disabled-text
+
+      // Remove some of the outline styling on inputs
+      ta-db-base
+    ;
+  }
+
+  .ta-d-base {  @apply bg-div pt-1; }
+  .ta-b-base {  @apply h-16 pl-4; }
+
+  .ta-p-base { 
+    @apply p-2 pt-3 pl-4;
+  }
+
+  // default and box
+  .ta-db-base { @apply 
+    outline-0 focus:outline-0 
+    /* scrollbar */
+    [&::-webkit-scrollbar-corner]:bg-transparent 
+    [&::-webkit-resizer]:bg-div;
+  }
+
+
+  // Default variant styles
+  .ta-d-label {
+    @apply py-2 text-slate-800 dark:text-slate-500 font-normal;
+  }
+  
+  .ta-d-avatar {
+    @apply bg-div-light rounded-full p-1.5 mt-1; 
+  }
+
+  .ta-d-btn-links {
+    @apply 
+    w-full row justify-between align-top 
+    py-2 transition-all
+
+    border-t border-default 
+    // group-focus-within:border-focus
+    ;
+  }
+
+  .ta-d-btn-links-focus {
+    @apply group-focus-within:border-default;
+  }
+  
+  .ta-d-btn-links-error { // The bottom border of the default variant
+    @apply border-error group-focus-within:border-focus;
+  }
+  
+
+
+  // Box variant styles
+  .ta-b-c {
+    @apply 
+      col w-full transition-all
+      bg-default outline-css rounded-lg 
+      focus-within:outline-focus;
+  }
+
+	.ta-b-label {
+		@apply p-4 text-colors font-normal;
+	}
+	
+	.ta-b-btn-links {
+		@apply 
+			p-2 row justify-between items-center 
+			border-styles border-t;
+	}
+	
+	.ta-b-attach-file {
+		@apply 
+			rowStart gap-2 py-1
+			*:transition-all 
+	}
+  
+  .ta-b-attach-file-ha {
+    &:hover {
+      & p, & svg {
+        @apply text-slate-800 dark:text-slate-200 cursor-pointer;
+      }
+    }
+    
+    @apply
+      group-active:[&>p]:text-slate-600 dark:group-active:[&>p]:text-slate-400
+      group-active:[&_svg]:text-slate-600 dark:group-active:[&_svg]:text-slate-400;
+  }
+  
+  .ta-b-attach-file-d {
+    @apply 
+      [&>p]:disabled-text dark:[&>p]:disabled-text
+      [&_svg]:icon-disabled-color dark:[&_svg]:icon-disabled-color
+    ;
+  }
+
+
+  // Post variant styles
+  .ta-p-c {
+    @apply 
+      col w-full transition-all
+      outline-css rounded-lg 
+      focus-within:outline-focus;
+  }
+
+	.ta-p-label {
+		@apply text-slate-800 dark:text-slate-500 font-normal;
+	}
+  
+	.ta-p-btn-links {
+		@apply 
+			p-2 row justify-between items-center
+      border-styles transition-all
+    ;
+	}
+
+  .ta-p-preview-c {
+    @apply p-2 pb-10;
+  }
+
+
+  // Descriptions, Errors, Icons, and Buttons
+  .ta-icon-base { @apply size-5 cursor-pointer transition-all; }
+  .ta-d-icon { @apply ta-icon-base svg-colors hover:text-slate-700 dark:hover:text-slate-200; }
+  .ta-b-icon { @apply ta-icon-base svg-colors; }
+  .ta-p-icon { @apply ta-icon-base placeholder-text hover:input-colors; }
+	
+  // Error and Description container
+	.ta-d-d-c { @apply pl-10; }
+	.ta-d-b-c { @apply p-2 pl-1; }
+	.ta-d-p-c { @apply p-2 pl-1; }
+
+  .ta-d { @apply text-colors dark:text-slate-500; }
+  .ta-d-disabled { @apply disabled-text }
+
+  .ta-submit-btn {
+    &:disabled {
+      @apply btn-disabled label-colors;
+    }
+  }
+
+  .focus-bar {
+    @apply 
+      w-0 -mb-[1px] z-10 transition-all 
+      border-b border-default
+
+      group-focus-within:animate-focus-bar
+      group-focus-within:w-full
+      group-focus-within:border-focus
+      group-focus-within:duration-200
+    ;
+
+    transform-origin: left; // important for it's animation
+  }
+  
+  .focus-bar-err { 
+    @apply w-full animate-focus-bar border-error; 
+  }
+
+
+	// MetadataTag styles
+	.metadata-tag-styles {
+		@apply
+			row justify-end gap-2 p-2  
+			*:row *:gap-2 *:p-3 *:py-2
+      animate-fade-in
+    ;
+	}
+
+  .ta-pill-actions {
+    @apply 
+      rounded-full shadow-sm
+      cursor-pointer transition-all
+      text-colors outline-css 
+
+      /* background */
+      bg-div-light 
+      bg-opacity-35 dark:bg-opacity-50
+      
+      hover:bg-opacity-50 dark:hover:bg-opacity-100
+      [&_.metadata-tag-icon-b]:hover:text-colors
+      
+      active:bg-opacity-20 dark:active:bg-opacity-50
+      
+      /* outline */
+      outline-slate-300 dark:outline-slate-700
+      active:outline-focus
+    ;
+  }
+  
+  .metadata-tag-icon-base { @apply size-5 cursor-pointer transition-all; }
+	.metadata-tag-icon-b {
+		@apply 
+			metadata-tag-icon-base 
+			placeholder-text 
+      
+      ;
+	}
+	
+	.metadata-tag-icon-p {
+		@apply 
+    metadata-tag-icon-base 
+    svg-colors hover:input-colors 
+    active:primary-text dark:active:text-colors
+    ;
+	}
+  // #endregion
+
+
+  // Utility input specific classes
+  // Hack for native autofill text color
   input:-webkit-autofill, 
   input:-webkit-autofill:hover, 
   input:-webkit-autofill:focus, 
   input:-webkit-autofill:active { 
     -webkit-text-fill-color: theme('colors.slate.800') !important;
-    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; /* The only way to beat FieldText !important is with this infinite hack */
+    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s; 
+    /* The only way to beat FieldText !important is with this infinite hack */
   }
 
   .dark input:-webkit-autofill, 
@@ -382,6 +1348,127 @@
   .dark input:-webkit-autofill:active { 
     -webkit-text-fill-color: theme('colors.slate.100') !important;
   }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Utility                                  //
+  //------------------------------------------//
+  // #region Utility Themes
+  .trans { // TODO: calling this utility function does not work as intended, use transition-all
+    // @apply transition-all duration-200; 
+    
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, outline-color, outline-width, outline-offset;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+
+  .op-init    { @apply trans duration-300 opacity-0; }
+  .op-render  { @apply opacity-100; }
+
+  // Faded borders for creating overlays and subtle shading for background
+  .opacity-bg-0    { @apply bg-opacity-0    dark:bg-opacity-0; }
+  .opacity-bg-10   { @apply bg-opacity-10   dark:bg-opacity-10; }
+  .opacity-bg-20   { @apply bg-opacity-20   dark:bg-opacity-20; }
+  .opacity-bg-30   { @apply bg-opacity-30   dark:bg-opacity-30; }
+  .opacity-bg-40   { @apply bg-opacity-40   dark:bg-opacity-40; }
+  .opacity-bg-50   { @apply bg-opacity-50   dark:bg-opacity-50; }
+  .opacity-bg-60   { @apply bg-opacity-60   dark:bg-opacity-60; }
+  .opacity-bg-70   { @apply bg-opacity-70   dark:bg-opacity-70; }
+  .opacity-bg-80   { @apply bg-opacity-80   dark:bg-opacity-80; }
+  .opacity-bg-90   { @apply bg-opacity-90   dark:bg-opacity-90; }
+  .opacity-bg-100  { @apply bg-opacity-100  dark:bg-opacity-100; }
+
+  .svg-theme {
+    @apply svg-init text-colors hover:primary-text;
+  }
+
+  .svg-init {
+    @apply transition-all cursor-pointer;
+  }
+
+
+  // This removes native input backgrounds and lets us customize
+  .autofill-backgrounds {
+    @apply 
+      autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.100)]
+      dark:autofill:shadow-[inset_0_0_0px_1000px_theme(colors.slate.800)]
+    ;
+  }
+
+
+  // the scrollbar themes
+  .scrollbar-none {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  
+  .scrollbar-theme {
+    @apply scrollbar-theme-light;
+    @apply dark:scrollbar-theme-dark;
+    &::-webkit-scrollbar {
+      width: 0.74rem;
+    }
+  }
+
+  .scrollbar-theme-thin {
+    @apply scrollbar-theme-light;
+    @apply dark:scrollbar-theme-dark;
+    &::-webkit-scrollbar {
+      width: 0.54rem;
+    }
+  }
+  
+  .scrollbar-theme-base {
+    &::-webkit-scrollbar {
+      width: 0.74rem;
+      // border-bottom-right-radius: 0.375rem;
+      // border-top-right-radius: 0.375rem;
+      border-radius: 0.375rem;
+    }
+
+    &::-webkit-scrollbar-track { border-radius: 0.375rem; }
+    &::-webkit-scrollbar-thumb { border-radius: 0.375rem; }
+  }
+
+  .scrollbar-theme-light {
+    @apply scrollbar-theme-base;
+
+    // Make same as the dropdown container's background
+    &::-webkit-scrollbar {
+      background-color: white;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: rgb(226 232 240 / var(--tw-bg-opacity));
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(148 163 184 / var(--tw-bg-opacity));
+    }
+  }
+
+  .scrollbar-theme-dark {
+    @apply scrollbar-theme-base;
+
+    // Make same as the dropdown container's background
+    &::-webkit-scrollbar {
+      background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(148 163 184 / var(--tw-text-opacity)) /* #94a3b8 */;
+    }
+  }
+  // #endregion
 
 
 }
@@ -392,8 +1479,251 @@
 /* Project and Component Layers  */
 @layer components {
   //------------------------------------------//
+  // Universal Components                     //
+  //------------------------------------------//
+  // #region Universal Component Themes
+  .dropdown-icon {
+    @apply 
+      size-7 text-colors mt-1
+      cursor-pointer transition-all duration-300
+      hover:theme-focus-2 
+    ;
+  }
+
+  .dropdown-link-container {
+    @apply
+      spacing gap-1 transition-all
+      p-1 outline-css outline-styles
+    ;
+  }
+
+  .dropdown-header {
+    @apply text-xl lg:text-2xl header-colors font-medium cursor-pointer;
+  }
+
+  .dropdown-subheader {
+    @apply text-lg lg:text-xl label-colors font-medium cursor-pointer;
+  }
+
+  .dropdown-link-icon { 
+    @apply size-4 cursor-pointer transition-all hover:theme-focus-2;
+  }
+
+  .dropdown-link-text {
+    @apply
+      cursor-pointer transition-all duration-300 
+      hover:theme-focus-2 dark:hover:theme-focus-2
+      
+      focus:underline dark:focus:underline
+      hover:underline dark:hover:underline;
+  }
+
+  .dropdown-env { 
+    @apply
+      px-[5px] py-[4px] italic font-medium 
+      bg-slate-200 dark:bg-slate-900
+      outline-css outline-default
+      transition-all duration-300 opacity-75 dark:opacity-75
+      hover:opacity-100 dark:hover:opacity-100
+      dark:hover:theme-focus-2
+    ;
+  }
+
+
+  // Hashbar
+  .hashbar {
+    @apply 
+      h-0 min-h-[100%] /* Dependent on parent height */
+      overflow-hidden overflow-y-auto scrollbar-none
+      border-l border-default
+    ;
+  }
+  
+  .hashbar-link-header {
+    @apply 
+      hashbar-link-base
+      text-base text-colors font-normal 
+    ;
+  }
+
+  .hashbar-link {
+    @apply 
+      hashbar-link-base
+      text-sm placeholder-text 
+      
+      my-[0.1rem]
+      border-l border-default
+      hover:border-l-2 hover:border-focus
+    ;
+  }
+  
+  .hashbar-link-base {
+    @apply 
+      py-[0.15rem] whitespace-nowrap
+      cursor-pointer transition-all duration-300 
+    ;
+  }
+
+
+  // Sidebar
+  .sidebar {
+    @apply
+      h-0 min-h-[100%] /* Dependent on parent height */
+      overflow-hidden overflow-y-auto scrollbar-theme-thin 
+      bg-div border-r border-default
+    ;
+  }
+  
+  .sidebar-link-header {
+    @apply 
+      sidebar-link-base
+      text-lg font-medium
+      label-colors 
+    ;
+  }
+  
+  .sidebar-link {
+    @apply
+      sidebar-link-base
+      text-base font-normal
+      text-colors
+      
+      border-l border-default
+      hover:border-l-2 hover:border-focus
+    ;
+
+    // &:hover {
+    //   @apply border-l-2 border-focus;
+    //   & .footer-link { @apply primary-text; }
+    // }
+    
+    // &:active .footer-link { @apply link-text; }
+  }
+
+  .sidebar-link-selected {
+    @apply border-l-2 border-focus primary-text;
+  }
+  
+  .sidebar-link-base {
+    @apply
+      py-[0.35rem] whitespace-nowrap
+      cursor-pointer transition-all duration-300 
+    ;
+  }
+  
+  .sidebar-link-base:hover { @apply primary-text; }
+  .sidebar-link-base:active { @apply link-text; }
+
+
+  // Tooltip
+  .tooltip {
+    @apply
+      fixed top-0 left-0 max-h-64 pr-40
+      overflow-x-hidden scrollbar-theme
+      z-50 pointer-events-none
+
+      bg-default shadow-xl
+      outline-css outline-default 
+      transition-colors duration-200
+      // This causes blurriness because the gpu often resorts to bilinear filtering
+      // (which can cause blurriness) when it is or is left in the waiting state
+      // -will-change-transform
+    ;
+
+    // Focus on accurate sharp 2d rasterization
+    backface-visibility: hidden;
+
+    // This forces the browser to treat the tooltip as a hardware-accelerated layer, 
+    // which can make the movement smoother while it's interpolating.
+    transform: translateZ(0); // - use with rounded translate numbers
+  }
+  
+  // Hidden / Visible
+  .tooltip-h { @apply opacity-0; }
+  .tooltip-v { @apply animate-fade-in; }
+  
+  // Used to allow height trans to work before adding scrollable content
+  .tooltip-scroll-none { @apply overflow-y-hidden; }
+  .tooltip-scroll-auto { @apply overflow-y-auto; }
+
+  .tooltip-t {
+    @apply p-2 px-3;
+  }
+
+  .tooltip-js {
+    @apply p-2 pr-0 max-h-96;
+  }
+
+  .tooltip-c {
+    @apply tooltip-t;
+  }
+
+  .tooltip-c-vars { @apply mr-2; }
+  .tooltip-c-class {
+    @apply tooltip-c-vars min-w-[45vw];
+  }
+  .tooltip-c-type {
+    @apply tooltip-c-vars min-w-[14rem];
+  }
+
+  .tooltip-content {
+    @apply col gap-2;
+  }
+
+  .tooltip-copy-base {
+    @apply
+      px-2 py-1.5
+      text-xs italic
+      outline-css;
+  }
+
+  .tooltip-copy-text {
+    @apply tooltip-copy-base
+      pr-3 outline-default
+      placeholder-text font-semibold;
+  }
+
+  .tooltip-copied-notification {
+    @apply tooltip-copy-base
+      rowStart inline-flex gap-1
+      opacity-0
+      ok-box ok-text;
+  }
+
+  .tooltip-copied-icon {
+    @apply size-4 icon-ok-color mt-[1px];
+  }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Footer Page Themes                       //
+  //------------------------------------------//
+  // #region Footer Page Themes
+  .footer-link-styles {
+    @apply 
+    hover:primary-text active:link-text 
+    text-base cursor-pointer transition-all;
+  }
+
+  .footer-link-header {
+    @apply footer-link-styles label-colors font-medium;
+  }
+
+  .footer-link { 
+    @apply footer-link-styles text-colors;
+  }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
   // Home Page Themes                         //
   //------------------------------------------//
+  // #region Home Page Themes
   .home-bg-init {
     @apply span-12 pt-24 bg-slate-800 dark:bg-slate-800;
   }
@@ -411,11 +1741,17 @@
   }
 
 
+  .tab-container {
+    @apply
+      rowStart items-center gap-4 pt-6
+      border-b border-default rounded-t-md
+      
+    ;
+  }
 
-
-  .project-tab {
+  .tab-default {
     @apply 
-      py-3 px-2 transition cursor-pointer duration-200
+      py-3 px-2 transition-all cursor-pointer duration-200
       text-xl label-colors hover:primary-text
 
       border-b-2 border-transparent 
@@ -426,70 +1762,294 @@
   }
 
   .tab-active {
-    @apply border-blue-500 dark:border-blue-500
-      ;
+    @apply border-blue-500 dark:border-blue-500;
   }
+  // #endregion
+
+
 
 
   //------------------------------------------//
-  // Footer Page Themes                       //
+  // Documentation Page Themes                //
   //------------------------------------------//
-  .footer-link-styles {
-    @apply 
-    hover:primary-text active:link-text 
-    text-base cursor-pointer transition;
-  }
-
-  .footer-link-header {
-    @apply footer-link-styles label-colors font-medium;
-  }
-
-  .footer-link { 
-    @apply footer-link-styles text-colors;
-  }
-
-
-  //------------------------------------------//
-  // Components                               //
-  //------------------------------------------//
-  .dropdown-icon {
-    @apply 
-      size-7 text-colors
-      cursor-pointer transition duration-300
-      hover:theme-focus-2 
+  // #region Documentation Page Themes
+  .showcase-element-container {
+    @apply
+      p-4 
+      faded-box outline-css
     ;
   }
 
-  .dropdown-link-container {
-    @apply
-      spacing gap-1 transition
-      p-1 outline-css outline-styles
-    ;
+  .showcase-text {
+    @apply text-colors text-lg;
   }
 
-  .dropdown-link-icon { 
-    @apply size-4 cursor-pointer transition hover:theme-focus-2;
-  }
-
-  .dropdown-link-text {
+  .showcase-jsx-copy-snippet {
     @apply
-      cursor-pointer transition duration-300 
-      hover:theme-focus-2 dark:hover:theme-focus-2
+      absolute z-10 top-0 right-0 
+      cursor-pointer transition-all
       
-      focus:underline dark:focus:underline
-      hover:underline dark:hover:underline;
-  }
-
-  .dropdown-env { 
-    @apply
-      px-[5px] py-[4px] italic font-medium 
-      bg-slate-200 dark:bg-slate-900
       outline-css outline-default
-      transition duration-300 opacity-75 dark:opacity-75
-      hover:opacity-100 dark:hover:opacity-100
-      dark:hover:theme-focus-2
+      hover:selected-box
     ;
   }
+
+  .showcase-jsx-sk-bg {
+    @apply p-2 skeleton-bg rounded-lg transition-all opacity-35;
+  }
+
+  .showcase-state-ref-c {
+    @apply p-4 pl-8 pt-8 pb-2 span-12 lg:span-8;
+  }
+  
+  .showcase-state-ref-states-c {
+    @apply p-4 pl-8 span-12 lg:span-8 rowStart gap-2;
+  }
+
+  // Showcase Element State Buttons (default, error, disabled)
+  .element-state { 
+    @apply 
+      cursor-pointer transition-all duration-300
+      px-2 py-1.5 outline-css rounded-full 
+      text-sm font-semibold italic 
+      placeholder-text outline-default
+      
+      hover:primary-text hover:outline-focus
+      active:theme-focus
+    ; 
+  }
+
+  .element-state-selected { 
+    @apply primary-text outline-focus; 
+  }
+
+  // For true / false / other states @see Docs_Select
+  .element-state-v-green {
+    & .element-state {
+      @apply hover:ok-text hover:outline-ok;
+    }
+
+    & .element-state-selected {
+      @apply ok-text outline-ok;
+    }
+  }
+  
+  .element-state-v-red {
+    & .element-state {
+      @apply hover:error-text hover:outline-error;
+    }
+
+    & .element-state-selected {
+      @apply error-text outline-error;
+    }
+  }
+
+  .element-state-v-gray {
+    & .element-state {
+      @apply hover:text-colors hover:outline-light;
+    }
+
+    & .element-state-selected {
+      @apply text-colors outline-light;
+    }
+  }
+
+  // SubTables
+  .subtable-dropdown {
+    @apply 
+      mx-4 mt-2 mb-12 p-0
+      outline-css outline-styles;
+  }
+
+
+  // ParamItem
+  .param-item-table {
+    @apply 
+      bg-slate-100 dark:bg-slate-900
+      bg-opacity-70
+      outline-css outline-styles
+    
+      /* Quick selector for first three (this is not necessary, but we're using a weird grid layout) */
+      [&>*:nth-child(-n+3)]:bg-slate-300/75
+      [&>*:nth-child(-n+3)]:bg-opacity-90
+      
+      [&>*:nth-child(-n+3)]:dark:bg-slate-800
+      [&>*:nth-child(-n+3)]:dark:bg-opacity-60
+    ;
+  }
+
+  .param-item-base {
+    @apply 
+      p-3 rowStart items-center
+      border-t border-slate-400/75 dark:border-slate-700
+      shadow-sm dark:shadow-md
+      
+      /* Table border rounding */
+      [&:nth-child(1)]:rounded-tl-md /* top left corner */
+      [&:nth-child(3)]:rounded-tr-md /* top right corner */
+      [&:nth-last-child(3)]:rounded-bl-md /* bottom left corner */
+      [&:nth-last-child(1)]:rounded-br-md /* bottom right corner */
+    ; 
+  }
+
+  .param-item-name { 
+    @apply 
+      py-0.5 px-1.5 
+      text-blue-500 dark:text-blue-400/80
+      
+      bg-opacity-40 dark:bg-opacity-20
+      bg-gray-300/75 dark:bg-blue-500
+      
+      outline-css rounded-none
+      outline-slate-300 dark:outline-slate-700/50
+    ; 
+  }
+
+  .param-item-type { 
+    @apply param-item-base px-4; 
+  }
+
+  .param-item-desc { 
+    @apply param-item-base; 
+  }
+  
+  .param-item-desc-text { 
+    @apply text-colors; 
+  }
+  
+  .param-item-spacing { 
+    @apply py-3 border-t border-default; 
+  }
+  
+  .param-item-context {
+    @apply text-green-600 dark:text-green-600;
+  }
+  
+  .param-item-variant-opt {
+    @apply ok-box dark:bg-opacity-[7.5%];
+  }
+  
+  .keep-grid-flow {
+    @apply h-0 w-0 m-0 p-0;
+  }
+
+
+  // ParamType
+  .param-type {
+    @apply
+      py-[0.15rem] px-1.5
+      text-sm font-semibold
+      
+      bg-opacity-100 dark:bg-opacity-30
+      bg-gray-300/75 dark:bg-gray-600
+
+      outline-css rounded-none
+      outline-slate-300 dark:outline-slate-700/50
+    ;
+  }
+
+  .param-type-string {
+    @apply text-purple-500 dark:text-purple-500/90;
+  }
+  
+  .param-type-number {
+    @apply text-blue-600 dark:text-blue-500;
+  }
+  
+  .param-type-boolean {
+    @apply text-rose-700/80 dark:text-red-600/90;
+  }
+  
+  .param-type-function {
+    @apply text-sky-600/60 dark:text-sky-400/90;
+  }
+
+  .param-type-custom {
+    @apply text-emerald-700/60 dark:text-green-500/90;
+  }
+
+
+  // Param Table Tooltip
+  .pt-tooltip {
+    @apply p-4 col gap-4 max-w-[45rem];
+  }
+
+  .pt-header {
+    @apply block;
+  }
+
+  .pt-desc {
+    @apply block leading-6;
+  }
+
+  .pt-type {
+    @apply 
+      px-1 py-2 bg-div-light 
+      outline-css rounded-none outline-light 
+      label-colors font-semibold
+    ;
+  }
+  
+  .pt-type-desc {
+    @apply text-colors *:text-sm *:font-semibold;
+  }
+
+
+  // Keyword
+  .keyword {
+    @apply 
+      inline
+      px-[6px] py-[2px] ml-[4px] mr-[2px] 
+      transition-all duration-200
+      outline-css rounded-none 
+      
+      bg-div-light
+      outline-slate-400 dark:outline-slate-600 
+      hover:theme-f;
+
+    /* ensure the pseudo element respects line breaks */
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  
+  .keyword-text {
+    @apply text-sm font-semibold label-colors;
+  }
+
+  // SeeRef
+  .see-ref {
+    @apply block;
+  }
+
+  // DocLink
+  .doc-link {
+    @apply py-[4px] pl-[2px];
+
+    & .doc-link-see, .doc-link-text {
+      @apply text-sm transition-all;
+    }
+
+    & .doc-link-see {
+      @apply label-colors font-semibold;
+    }
+
+    & .doc-link-text {
+      @apply primary-text font-semibold;
+    }
+
+    &:hover {
+      & .doc-link-see, .doc-link-text {
+        @apply primary-text;
+      }
+    }
+  }
+
+  .doc-link-see { @apply inline; }
+  .doc-link-text { @apply inline; }
+  // #endregion
+
+
+
 
 }
 
@@ -500,27 +2060,7 @@
   //------------------------------------------//
   // Utilities                                //
   //------------------------------------------//
-  // The grid height transition hack (child div needs overflow:hidden
-  .height-trans {
-    @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
-  } // transition between grid-rows-[0fr] and [1fr] for transition
-  
-  .height-trans-opacity {
-    @apply grid;
-    transition:
-      grid-template-rows 0.3s ease,
-      opacity 0.3s ease,
-      visibility 0s linear 0.3s;
-  }
-  
-  .height-trans-content {
-    @apply overflow-hidden;
-  }
-  .height-trans-op-content {
-    visibility: visible;
-    transition-delay: 0s;
-  }
-
+  // #region Utility Themes
   // Theme transition class
   .disable-transitions,
   .disable-transitions *,
@@ -535,14 +2075,48 @@
 
   /* This is intended for the animation bars */
   .loading-bar-css {
-    @apply absolute bottom-0 left-0 p-[1px] w-2/3 bg-primary;
+    @apply 
+      p-[1px] w-2/3 bg-primary 
+      absolute bottom-0 left-0 
+      group-focus-within:p-[2px]
+    ;
   } // Parent needs "relative overflow-hidden"
 
-  .loading-text { @apply animate-skeleton-text dark:animate-skeleton-text-dark; }
-  .loading-bar { @apply animate-skeleton-bar dark:animate-skeleton-bar-dark; }
+  // Give the webpage a default dark mode to prevent refresh flashes
+  html.dark {
+    background-color: #1e293b; /* Your exact Tailwind dark:bg color */
+    color-scheme: dark;
+  }
+
+  // Id ScrollRestoration fixes with this app's navbar
+  [id] {
+    scroll-margin-top: 4.5rem;
+  }
+
+  // themes for ascii images
+  .ascii-text {
+    @apply whitespace-pre-wrap text-base font-semibold;
+    letter-spacing: 0.4rem;
+  }
+  // #endregion
+
+
+
+
+  //------------------------------------------//
+  // Animation Themes                         //
+  //------------------------------------------//
+  // #region Combined Light and Dark themes for animations
+  .loading-text { @apply animate-loading-text dark:animate-loading-text-dark; }
+  .loading-bar  { @apply animate-skeleton-bar dark:animate-skeleton-bar-dark; }
+
+  .skeleton-bg  { @apply animate-skeleton-bg dark:animate-skeleton-bg-dark; }
+  .skeleton-txt { @apply animate-skeleton-text dark:animate-skeleton-text-dark; }
+  // #endregion
 }
 
-/* Selectors quick ref
+
+/* Tailwind Selectors quick ref
   - children of a specific html tag '[&>p]:'
   - all descendants of a tag '[&_p]:'
   - specific classes '[&_.tooltip]:'

@@ -1,61 +1,24 @@
-import {MouseEvent, useEffect, useState} from 'react';
-import { NavigateOptions, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
+import { memo, MouseEvent, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import { ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@Project/ReactComponents';
-import styled from '@emotion/styled';
-
-import styles from './Navbar.module.scss';
 import { HashLink } from '../Utils/HashLink/HashLink';
+
+import styled from '@emotion/styled';
+import styles from './Navbar.module.scss';
 
 
 export interface NavbarProps {}
 
-export const Navbar = ({}: NavbarProps) => {
+const NavbarComponent = ({}: NavbarProps) => {
   const navigate = useNavigate();
-
-  // Handles the current theme that's rendered from the page via user preference and localStorage
-  const [currentTheme, setCurrentTheme] = useState<string>(localStorage.getItem('theme') || '');
-
-  // Scroll behavior logic
-  const { hash, key, pathname, state } = useLocation();
-
-
-  //------------------------------------------------//
-  // Theme                                          //
-  //------------------------------------------------//
-  // Initialize the Theme and display settings
-  useEffect(() => {
-    if (!currentTheme) {
-      const userPreferenceTheme: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      localStorage.setItem('theme', userPreferenceTheme);
-    }
-    
-    setTheme(currentTheme);
-
-  }, [currentTheme]);
-
-  const setTheme = (newTheme: string) => {
-    localStorage.setItem('theme', newTheme);
-
-    // Prevent transitions from affecting theme changes
-    document.body.classList.add('disable-transitions');
-
-    // toggle dark mode
-    // document.body.classList.toggle('dark');
-    if (newTheme === 'dark') document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-
-    // 3. Force a browser reflow/repaint
-    // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
-    window.getComputedStyle(document.body).opacity;
-    document.body.classList.remove('disable-transitions');
-
-    setCurrentTheme(newTheme);
-  }
-
 
   //------------------------------------------------------------------------------------//
   // React Router Hash Link ScrollRestoration Logic when navigate is used with an id    //
   //------------------------------------------------------------------------------------//
+  // #region ScrollRestoration Logic 
+  const { hash, key, pathname, state } = useLocation();
+
+  // TODO: handle scroll restoration with loader redirects on browser route lists
   useEffect(() => {
     const didNavigate = state?.fromNavigate;
     // console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
@@ -81,25 +44,125 @@ export const Navbar = ({}: NavbarProps) => {
     }
 
   }, [pathname, /* hash, */ key]); // when the page is updated, or the user navigates to another id on the page
-  
-  
+  // #endregion
+
+
   //------------------------------------------------//
   // Navbar Dropdown                                //
   //------------------------------------------------//
+  // #region Dropdown
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [isDropdownAllowed, setIsDropdownAllowed] = useState<boolean>(false); // delay
+  const navbarRef = useRef(null);
   const navbarDropdownId = 'navbar-dropdown';
   const navbarLinks = 'navbar-links';
+  
+  // Just close the navbar once the mouse has left the page 
+  // This handles weird scenarios when it's left open when you move up to the search or off the page
+  useEffect(() => {
+    const onMouseLeftPage = () => setShowDropdown(false);
+    document.addEventListener('mouseleave', onMouseLeftPage);
 
-  const hoveringOverDropdown = (hovering: boolean, event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    const element: any = event?.target as HTMLElement;
-    const isWithinDropdown = element.closest(`#${navbarDropdownId}`);
-    // const isWithinLinks = element.closest(`#${navbarLinks}`);
+    // Remove event listeners when this component is unrendered
+    return () => document.removeEventListener('mouseleave', onMouseLeftPage);
+  }, []);
+
+
+  // Prevent the dropdown from opening right after they navigate so they have time to navigate
+  useEffect(() => {
+    // Don't prevent dropdown functionality if they clicked a same page link
+    const didNavigate = state?.fromNavigate;
+    const previousPath = state?.previousPathname;
+    if (didNavigate && previousPath == pathname) {
+      return;
+    }
     
-    // Since it's an element hidden behind the navbar, only this is needed
-    if (!hovering && isWithinDropdown) setShowDropdown(false);
-    else setShowDropdown(true);
-    // setShowDropdown(true);
+    // Delay opening the dropdown for a second and let the user mouse it's mouse
+    setIsDropdownAllowed(false);
+    const timeout = setTimeout(() => {
+      setIsDropdownAllowed(true);
+      const dropdownElement: any = navbarRef.current;
+      const isHovering = dropdownElement.matches(':hover');
+      // console.log(`dropdownElement, hovering: ${isHovering}`, dropdownElement);
+      if (!isHovering && showDropdown) setShowDropdown(false);
+      else if (isHovering) setShowDropdown(true);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [key]);
+
+  const hoveringOverDropdown = (entering: boolean, event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    if (!isDropdownAllowed) return;
+    if (!event.target) return;
+
+    const element: any = event.target as HTMLElement;
+    const dropdown = element.closest(`#${navbarDropdownId}`);
+    const navLinks = element.closest(`#${navbarLinks}`);
+
+    // It will find these both on enter, and return the element they're within when leaving the element
+    const HoveringDropdown = !!dropdown;
+    const HoveringNavLinks = !!navLinks;
+
+    // TODO: add debugging or custom logging to only be enabled in dev.
+    if (false) { 
+      if (entering) console.log('\n');
+      console.log(`${entering ? 'entering' : 'leaving'}::elements: `, { 
+        HoveringDropdown, HoveringNavLinks, 
+        elements: {dropdown, navLinks} 
+      });
+    }
+
+    // If the dropdown isn't open, only check if they're hovering over the links
+    if (!showDropdown && HoveringNavLinks) {
+      setShowDropdown(true);
+      return;
+    }
+
+    // Otherwise, check if it's leaving the dropdown
+    else if (!entering && HoveringDropdown) {
+      setShowDropdown(false);
+      return;
+    }
   }
+  // #endregion
+
+
+  //------------------------------------------------//
+  // Theme                                          //
+  //------------------------------------------------//
+  // #region Theme Logic
+  // Handles the current theme that's rendered from the page via user preference and localStorage
+  const [currentTheme, setCurrentTheme] = useState<string>(() => {
+    return localStorage.getItem('theme') || 
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
+  
+  // Initialize the Theme and display settings
+  useLayoutEffect(() => {
+    updateTheme(currentTheme);
+  }, []);
+
+  const updateTheme = (newTheme: string) => {
+    localStorage.setItem('theme', newTheme);
+
+    // Prevent transitions from affecting theme changes
+    document.body.classList.add('disable-transitions');
+    
+    // Toggle dark mode
+    if (newTheme === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+    
+    // Force a browser reflow/repaint (cheaply) - do not use a double RequestAnimationFrame
+    void(document.documentElement.offsetHeight); // Reading any computed style property (like 'opacity' or 'offsetHeight') forces the browser to apply the style changes immediately
+    
+    // Add back transition logic for the elements.
+    document.body.classList.remove('disable-transitions');
+  }
+
+  const setAndUpdateTheme = (newTheme: string) => {
+    setCurrentTheme(newTheme);
+    updateTheme(newTheme);
+  }
+  // #endregion
 
 
   return (
@@ -109,7 +172,7 @@ export const Navbar = ({}: NavbarProps) => {
 
           <NavLinkContainer id={navbarLinks} className='NavLinks rowStart items-center gap-8'>
             <HomeIcon id="HomeLink" className='rowStart items-center gap-3'>
-              <HashLink url="/" styles='rowStart gap-2 p-2 transition duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
+              <HashLink url="/" styles='rowStart gap-2 p-2 transition-all duration-300 theme-focus cursor-pointer bg-default outline-css rounded-lg outline-focus'>
                 <Icon variant='CodeBracket' styles='size-6 text-blue-600 dark:text-indigo-400' />
               </HashLink>
               <h4 className='label-colors'>Portfolio</h4>
@@ -119,7 +182,8 @@ export const Navbar = ({}: NavbarProps) => {
               id='Links' 
               onMouseEnter={(e) => hoveringOverDropdown(true, e)}
               onMouseLeave={(e) => hoveringOverDropdown(false, e)}
-              className='rowStart gap-0 *:p-6 *:px-4 *:transition *:text-base *:cursor-pointer'
+              ref={navbarRef}
+              className='links rowStart gap-0 *:p-6 *:px-4 *:transition-all *:text-base *:cursor-pointer bg-white z-30 opacity-100'
             >
               <HashLink label="Home" url="/" styles='bg-div hover:bg-div-hover' />
               <HashLink label="Demos" url="/Demos" styles='bg-div hover:bg-div-hover' />
@@ -132,29 +196,29 @@ export const Navbar = ({}: NavbarProps) => {
 
           <Profile className='rowStart items-center gap-4'>
             <div> Account </div>
-            <div id='HomeLink' className='p-2 outline-css rounded-full transition duration-300 cursor-pointer
+            <div id='HomeLink' className='p-2 outline-css rounded-full transition-all duration-300 cursor-pointer
                 bg-default outline-default theme-focus' >
               <Icon variant='Profile' styles='size-6 text-slate-600 dark:text-slate-500' />
             </div>
 
-            <div className='' onClick={() => setTheme(currentTheme === 'light' ? 'dark' : 'light')}>
+            <div className='' onClick={() => setAndUpdateTheme(currentTheme === 'light' ? 'dark' : 'light')}>
               { currentTheme == 'light' ? 
-                <Icon variant='LightTheme' styles='size-10 cursor-pointer input-colors hover:text-blue-500 transition' /> : 
-                <Icon variant='DarkTheme' styles='size-10 cursor-pointer placeholder-text hover:text-blue-400 transition' />
+                <Icon variant='LightTheme' styles='size-10 cursor-pointer input-colors hover:text-blue-500 transition-all' /> : 
+                <Icon variant='DarkTheme' styles='size-10 cursor-pointer placeholder-text hover:text-blue-400 transition-all' />
               }
             </div>
           </Profile>
         </Container>
 
 
-        <Dropdown
+        <NavbarDropdown
           id={navbarDropdownId}
           onMouseEnter={(e) => hoveringOverDropdown(true, e)}
           onMouseLeave={(e) => hoveringOverDropdown(false, e)}
-          className={`absolute w-full bg-div border-styles border-y shadow-xl transition
+          className={`absolute w-full bg-div border-styles border-y shadow-xl transition-all
             height-trans-opacity ${showDropdown ? 'opacity-100 grid-rows-[1fr]' : 'opacity-0 grid-rows-[0fr]'}
         `}>
-          <div className={`height-trans-content visible ${showDropdown && 'height-trans-op-content'}`}>
+          <div className={`height-trans-content content-auto ${showDropdown && 'height-trans-op-content'}`}>
             <Links className='row justify-center gap-8 pr-14 pb-10 pt-4 *:mx-4 *:my-2 *:col *:gap-3'>
               <div>
                 <HashLink label="Home"            url="/" styles="footer-link-header" />
@@ -189,12 +253,15 @@ export const Navbar = ({}: NavbarProps) => {
               </div>
             </Links>
           </div>
-        </Dropdown>
-          
-          
+        </NavbarDropdown>
+        
+        
     </NavbarAndDropdown>
   );
 }
+
+// this should be wrapped in a memo to make it a nuclear component, check if the effects and events for the dropdown, scroll, and theme still work
+export const Navbar = memo(NavbarComponent); 
 
 
 // Styled Components
@@ -204,4 +271,4 @@ const NavLinkContainer = styled.div``;
 const HomeIcon = styled.div``;
 const Links = styled.div``;
 const Profile = styled.div``;
-const Dropdown = styled.div``;
+const NavbarDropdown = styled.div``;

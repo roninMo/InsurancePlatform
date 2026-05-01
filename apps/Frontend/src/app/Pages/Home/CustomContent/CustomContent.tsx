@@ -1,30 +1,34 @@
-import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId } from 'react';
-
+import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId, useContext, useMemo } from 'react';
 import { Card } from '../../../Components/Content/Card/Card';
-import { CheckboxItem, Checkbox, CheckboxProps } from '../../../Components/Forms/Checkbox/Checkbox';
-import { defaultBoxMetadataTags, defaultPostMetadataTags, MetadataTagProps, Textarea } from '../../../Components/Forms/Textarea';
-import { RadioTable } from '../../../Components/Forms/RadioTable/RadioTable';
-import { Slider } from '../../../Components/Forms/Slider/Slider';
 import { 
   Button, 
+  defaultBoxMetadataTags, 
+  defaultPostMetadataTags, 
+  Checkbox,
+  CheckboxItem,
+  CheckboxProps,
+  Dropbox, 
   Input, 
   InputProps_Email, 
   RadioGroup, 
   RadioGroupProps,
   RadioItem, 
+  RadioTable, 
   Select, 
-  SelectItemValues, 
-  TextInputTypes, 
+  SelectItem, 
+  Slider, 
+  Textarea, 
+  TextInputTypes,
+  TooltipService, 
 } from '@Project/ReactComponents';
 
 import styles from './CustomContent.module.scss';
 
 
-export interface CustomContentProps {
-
-};
-
 export const CustomContent = () => {
+  const tooltipContext = useContext(TooltipService);
+  const genericTooltipContent = useMemo(() => ({ text: 'Tooltip text...'}), []);
+
   // #region Input Elements
   // Input
   const inputId = useId();
@@ -34,10 +38,10 @@ export const CustomContent = () => {
   const [inputErrorMessage, SetInputErrorMessage] = useState<string>();
 
   const inputTypeId = useId();
-  const [inputType, setInputType] = useState<SelectItemValues>({ value: 'search', label: 'Select an input type...'});
+  const [inputType, setInputType] = useState<SelectItem>({ value: 'search', label: 'Select an input type...'});
   const types: TextInputTypes[] = ['text', 'email', 'password', 'phone', 'creditCard', 'currency', 'policyNumber', 'search'];
-  const inputTypes: SelectItemValues[] = types.map(type => ({ value: type, label: type }));
-  const inputTypeChanged = (selected: SelectItemValues, index: number) => {
+  const inputTypes: SelectItem[] = types.map(type => ({ value: type, label: type }));
+  const inputTypeChanged = (selected: SelectItem, index: number) => {
     setInput("");
     SetInputError(false);
     SetInputErrorMessage("");
@@ -64,7 +68,7 @@ export const CustomContent = () => {
 
   // SelectIcons
   const selectIconId = useId();
-  const selectIcons: SelectItemValues[] = [
+  const selectIcons: SelectItem[] = [
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
     { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "Checkbox", placement: 'left' }},
     { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
@@ -80,10 +84,10 @@ export const CustomContent = () => {
     { value: 'system', label: "System", iconProps:                { icon: "System", placement: 'left' }},
     { value: 'trash', label: "Trash", iconProps:                  { icon: "Trash", placement: 'left' }},
   ];
-  const [currentIcon, setCurrentIcon] = useState<SelectItemValues>({ value: '', label: ''});
+  const [currentIcon, setCurrentIcon] = useState<SelectItem>({ value: '', label: ''});
   const [selectIconError, setSelectIconError] = useState<boolean>(false);
   const [selectIconErrorMessage, setSelectIconErrorMessage] = useState<string>();
-  const selectIconChanged = (selected: SelectItemValues, index: number) => {
+  const selectIconChanged = (selected: SelectItem, index: number) => {
     setCurrentIcon(selected);
     // console.log('select: new value: ', {currentIcon, index, selectIcons});
   }
@@ -136,8 +140,8 @@ export const CustomContent = () => {
   const [favoriteFood, setFavoriteFood] = useState<RadioItem>({ value: '', label: ''});
   const [radioItemError, setRadioItemError] = useState<boolean>(false);
   const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
-  const selectedFavoriteFood = (selected: RadioItem, index: number, currentValue: RadioItem) => {
-    setFavoriteFood(selected);
+  const selectedFavoriteFood = (item: RadioItem, currentValue: RadioItem, e?: ChangeEvent<HTMLInputElement>) => {
+    setFavoriteFood(item);
     // console.log(`radioButton: `, {selected, index, currentValue});
   }
 
@@ -149,25 +153,39 @@ export const CustomContent = () => {
     'ramen': { ...favoriteFoods[2], checked: false },
     'broccoliPotatoesAndChicken': { ...favoriteFoods[3], checked: false },
   });
+  const [checkedFoods2, setCheckedFoods2] = useState<{ [key: string]: CheckboxItem }>({
+    'none': { ...favoriteFoodsNoDescriptions[0], checked: false },
+    'peanutButterJelly': { ...favoriteFoodsNoDescriptions[1], checked: false },
+    'ramen': { ...favoriteFoodsNoDescriptions[2], checked: false },
+    'broccoliPotatoesAndChicken': { ...favoriteFoodsNoDescriptions[3], checked: false },
+  });
+  
   const [checkedError, setCheckedError] = useState<boolean>();
   const [checkedErrorMessage, setCheckedErrorMessage] = useState<string>();
-  const checkedFavoriteFood = (item: CheckboxItem, event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+  const checkedFavoriteFood = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
     // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
     setCheckedFoods({ ...checkedFoods, [item.value]: {...item, checked: !item.checked} });
   }
+  const checkedFavoriteFood2 = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
+    // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
+    setCheckedFoods2({ ...checkedFoods2, [item.value]: {...item, checked: !item.checked} });
+  }
 
   // Slider component
-  const sliderId = useId();
   const [slider, setSlider] = useState<boolean>(false);
   const [sliderError, setSliderError] = useState<boolean>(false);
   const [sliderErrorMessage, setSliderErrorMessage] = useState<string>('');
   const onChangeSlider = () => setSlider(!slider);
   // #endregion
 
+  const [taError, SetTaError] = useState<boolean>(false);
+  const [taDisabled, SetTaDisabled] = useState<boolean>(false);
+  const toggleTaError = () => SetTaError(!taError);
+  const toggleTaDisabled = () => SetTaDisabled(!taDisabled);
+
 
   const RadioGroupProps: RadioGroupProps = {
     variant: 'default',
-    id: radioButtonId,
     name: 'radioButton',
     label: 'Favorite Foods',
     description: 'What is your favorite food?',
@@ -186,7 +204,6 @@ export const CustomContent = () => {
   const CheckboxProps: CheckboxProps = {
     name: 'checked favorite foods',
     variant: 'default',
-    id: checkboxId,
     items: checkedFoods,
     onSelect: checkedFavoriteFood,
 
@@ -194,6 +211,15 @@ export const CustomContent = () => {
     errorMessage: checkedErrorMessage,
     disabled: false,
     required: false,
+  }
+
+  // Dropbox component
+  const [files, setFiles] = useState<FileList | null>(null);
+  const [fileUploadError, setFileUploadError] = useState<boolean>(false);
+  const [fileUploadDisabled, setFileUploadDisabled] = useState<boolean>(false);
+  const handleFiles = (files: FileList | null) => {
+    setFiles(files);
+    console.log('files uploaded: ', files);
   }
 
 
@@ -210,13 +236,12 @@ export const CustomContent = () => {
             description=""
             value={input}
             placeholder="Input text..."
-            id={inputId}
             onChange={inputChanged}
             error={inputError} 
             errorMessage={inputErrorMessage} 
             disabled={disabled}
-            tooltip
-            tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
         </div>
 
@@ -233,88 +258,120 @@ export const CustomContent = () => {
           />
         </div>
 
-        <div className='span-12 md:span-8 lg:span-4 p-2'>
+        <div className='span-12 md:span-8 lg:span-4 p-6 pt-2'>
           <Select 
             name="inputType"
             label="Input Type"
             value={inputType}
             values={inputTypes}
             onSelect={inputTypeChanged}
-            id={inputTypeId}
           />
         </div>
         
       </div>
 
-
       {/* Input and Textarea */}
       <div className='spacing p-2 bg-div outline-css outline-styles'>
-        {/* List of the different input types (For quick testing) */}
+        {/* List of the different input types */}
         <div className='colStart p-4 pb-8  span-12 md:span-6 lg:span-4 *:w-full *:py-2'>
           <h4 className='label-colors'>Inputs</h4>
           <Input 
             type="text" name="TextInputShowcase"
             label="Text Input" description=""
             value="Hello " placeholder="Input Text..."
-            id="TextInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="email" name="EmailInputShowcase"
             label="Email Input" description=""
             value="example@email.com" placeholder="Input Email..."
-            id="EmailInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="password" name="PasswordInputShowcase"
             label="Password Input" description=""
             value="password" placeholder="Input Password..."
-            id="PasswordInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="phone" name="PhoneInputShowcase"
             label="Phone Input" description=""
             value="(123)-456-7890" placeholder="Input Phone..."
-            id="PhoneInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="creditCard" name="CreditCardInputShowcase"
             label="CreditCard Input" description=""
             value="0000 0000 0000 0000" placeholder="Input Credit Card..."
-            id="CreditCardInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="currency" name="CurrencyInputShowcase"
             label="Currency Input" description=""
             value="$100.00" placeholder="Input Credit Card..."
-            id="CurrencyInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="policyNumber" name="PolicyNumberInputShowcase"
             label="Policy Number Input" description=""
             value="90012345-AB" placeholder="Input Policy Number..."
-            id="PolicyNumberInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
 
           <Input 
             type="search" name="SearchInputShowcase"
             label="Search Input" description=""
             value="" placeholder="Search for Something..."
-            id="SearchInputShowcase" 
-            tooltip tooltipText='tooltip text...'
+            tooltipContext={tooltipContext}
+            tooltipContent={genericTooltipContent}
           />
+
+          {/* Drag and drop component */}
+          <div className='mt-2 col gap-4'>
+            <Dropbox 
+              name="fileUpload"
+              label="Upload files"
+              description='The description of the dropbox.'
+              value={files}
+              handleFiles={handleFiles}
+              // multiple
+              // accept='image/*'
+              customIcon='Canvas'
+
+              error={fileUploadError}
+              errorMessage='An error occurred.'
+              disabled={fileUploadDisabled}
+              required
+            />
+
+            <div className=''>
+              <Button 
+                displayText={fileUploadError ? 'Unset Error' : 'Set Error'}
+                color={fileUploadError ? 'gray-focus' : 'gray'}
+                onClick={() => setFileUploadError(!fileUploadError)}
+                additionalStyles='mr-4'
+              />
+              
+              <Button 
+                displayText={fileUploadDisabled ? 'Enable' : 'Disable'}
+                color={fileUploadDisabled ? 'gray-focus' : 'gray'}
+                onClick={() => setFileUploadDisabled(!fileUploadDisabled)}
+              />
+            </div>
+          </div>
         </div>
 
         {/* List of the different textarea types */}
@@ -330,8 +387,9 @@ export const CustomContent = () => {
               placeholder="input text..."
               submitButtonText='Post'
               { ...textareaProps }
-              error={false}
-              errorMessage="invalid input"
+              error={taError}
+              errorMessage="An error occurred."
+              disabled={taDisabled}
             />
           </div>
           
@@ -344,8 +402,9 @@ export const CustomContent = () => {
               submitButtonText='Create'
               { ...textareaProps }
               metadataTags={defaultBoxMetadataTags}
-              error={false}
-              errorMessage="invalid input"
+              error={taError}
+              errorMessage="An error occurred."
+              disabled={taDisabled}
             />
           </div>
           
@@ -358,8 +417,9 @@ export const CustomContent = () => {
               submitButtonText='Post'
               { ...textareaProps }
               metadataTags={defaultPostMetadataTags}
-              error={false}
-              errorMessage="invalid input"
+              error={taError}
+              errorMessage="An error occurred."
+              disabled={taDisabled}
             />
           </div>
         </div>
@@ -376,6 +436,7 @@ export const CustomContent = () => {
         <div className='span-4 pb-8 px-4 p-2'>
           <Input 
             { ...InputProps_Email } 
+            tooltipContext={tooltipContext}
             value={email}
             id={emailId}
             onChange={emailChanged}
@@ -394,7 +455,6 @@ export const CustomContent = () => {
             value={currentIcon}
             values={selectIcons}
             onSelect={selectIconChanged}
-            id={selectIconId}
             placeholder='Select a value'
 
             error={selectIconError}
@@ -428,8 +488,7 @@ export const CustomContent = () => {
             variant='inline' 
             name='radioTable-1'
             radioItems={favoriteFoods}
-            // error
-            // errorMessage='an error occurred'
+            onSelect={selectedFavoriteFood}
           />
         </div>
         <div className='span-12 lg:span-6 md:span-10 p-4 pb-4'>
@@ -438,6 +497,8 @@ export const CustomContent = () => {
             variant='block' 
             name='radioTable-2'
             radioItems={favoriteFoods}
+            onSelect={selectedFavoriteFood}
+            disabled
           />
         </div>
       </div>
@@ -458,14 +519,11 @@ export const CustomContent = () => {
                 description="A slider component"
                 value={slider}
                 onChange={onChangeSlider}
-                id={sliderId}
 
                 error={sliderError}
                 errorMessage={sliderErrorMessage}
                 required={false}
                 disabled={false}
-
-                aria="input slider ref"
                 key={`inputSlider-${index}`}
               />
             )}
@@ -491,24 +549,28 @@ export const CustomContent = () => {
           <h4 className='pb-2 pt-1 label-colors'>Default and Inline style Checkboxes</h4>
         </div>
         
-        <div className='span-12 lg:span-6 p-4 mx-4 bg-default text-colors rounded-md'>
-            <Checkbox 
-              {...CheckboxProps}
-              variant='default'
-              name="checkbox-2"
-              label="What are your favorite foods?"
-              description="Select from the list of our favorite foods."
-            />
-        </div>
-        
-        <div className='span-12 lg:span-6 p-4 pb-4 bg-default text-colors rounded-md'>
-            <Checkbox 
-              {...CheckboxProps}
-              variant='inline'
-              name="checkbox-3"
-              label="What are your favorite foods?"
-              description="Select from the list of our favorite foods."
-            />
+        <div className='spacing lg:span-10 xl:span-8 p-4 mx-4'>
+          <div className='span-12 p-4 bg-default text-colors rounded-md'>
+              <Checkbox 
+                {...CheckboxProps}
+                items={checkedFoods2}
+                onSelect={checkedFavoriteFood2}
+                variant='inline'
+                name="checkbox-2"
+                label="What are your favorite foods?"
+                description="Select from the list of our favorite foods."
+              />
+          </div>
+
+          <div className='span-12 p-4 bg-default text-colors rounded-md'>
+              <Checkbox 
+                {...CheckboxProps}
+                variant='default'
+                name="checkbox-3"
+                label="What are your favorite foods?"
+                description="Select from the list of our favorite foods."
+              />
+          </div>
         </div>
       </div>
 
@@ -685,7 +747,7 @@ export const CustomContent = () => {
       </div>
 
 
-      <div className='pb-24'></div>
+      <div className='pb-24' />
     </>
   );
 }

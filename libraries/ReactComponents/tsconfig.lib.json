@@ -8,6 +8,7 @@
       "@nx/react/typings/image.d.ts",
       "vite/client"
     ],
+    "lib": ["dom"], // document reference - Add "dom" here
     "rootDir": "src",
     "jsx": "react-jsx",
     "module": "esnext",
@@ -38,5 +39,5 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "../../apps/Frontend/src/app/Components/Utils/ReactSyntaxHighlighterInit.tsx"]
 }

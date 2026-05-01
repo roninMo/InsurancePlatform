@@ -14,7 +14,7 @@ export const Tech = ({ type, label, iconStyles, additionalStyles, noDiv }: TechP
   const techIconStyles = 'size-6';
 
   return (
-    <div className={`rowStart items-center inline-flex gap-1 p-2 transition hover:scale-110
+    <div className={`rowStart items-center inline-flex gap-1 p-2 trans hover:scale-110
       text-base lg:text-lg font-semibold label-colors ${additionalStyles}`
     }>
       <Icon variant={type} styles={iconStyles ? iconStyles : techIconStyles} />

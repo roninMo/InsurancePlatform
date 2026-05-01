@@ -1,5 +1,7 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
@@ -8,6 +10,7 @@ export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libraries/ReactComponents',
   plugins: [
+    nxViteTsPaths(), // when you serve an app that uses this library, vite watches this library and reloads the app when there are saved changes
     react(),
     dts({
       entryRoot: 'src',

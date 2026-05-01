@@ -4,55 +4,53 @@ import { Icon, IconTypes } from '../../Common/Icons/Icon';
 import styles from './Button.module.scss';
 
 
+export type ButtonSizes = 'default' | 'md' | 'lg' | 'xl' | 'none';
+export type ButtonColors = 'primary' | 'gray' | 'gray-focus' | 'none';
 export interface ButtonProps {
-  displayText: string;
+  displayText?: string;
   onClick?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   disabled?: boolean;
+  type?: "submit" | "reset" | "button" | undefined;
+
+  size?: ButtonSizes;
+  color?: ButtonColors;
+  additionalStyles?: string | undefined;
 
   icon?: IconTypes;
   iconStyles?: string;
-  size?: 'default' | 'md' | 'lg' | 'xl' | 'none';
-  color?: 'primary' | 'gray' | 'gray-focus' | 'none';
-  additionalStyles?: string | undefined;
 }
 
-export function Button({ 
-  displayText,  onClick,  disabled,  
-  icon, iconStyles, 
-  size = 'default', color = 'primary', additionalStyles 
-}: ButtonProps) {
+export const Button = ({ 
+  displayText,  onClick,  disabled, type = 'button',
+  size = 'default', color = 'primary', 
+  additionalStyles, icon, iconStyles, 
+}: ButtonProps) => {
 
   return (
     <button 
-      type="button" 
+      type={type} 
       onClick={(e) => onClick ? onClick(e) : null}
       disabled={disabled}
-      className={` 
-        inline-flex items-center 
-        shadow-md dark:shadow-none transition 
-        outline-css font-semibold text-nowrap m-auto
-        
-        ${  size == 'default' ? 'px-2.5  py-1.5' 
-          : size == 'md'      ? 'px-3    py-2 ' 
-          : size == 'lg'      ? 'px-3.5  py-2.5'
-          : size == 'xl'      ? 'px-5    py-3'
+      className={`button-base 
+        ${  size == 'default' ? 'btn-al-d' 
+          : size == 'md'      ? 'btn-al-md' 
+          : size == 'lg'      ? 'btn-al-lg'
+          : size == 'xl'      ? 'btn-al-xl'
           : ''
         } 
 
-        ${  color == 'primary'    ? 'btn-primary text-white' 
-          : color == 'gray'       ? 'btn-gray text-black dark:text-white' 
-          : color == 'gray-focus' ? 'btn-gray-focus text-black dark:text-white' 
+        ${  color == 'primary'    ? 'btn-el-primary' 
+          : color == 'gray'       ? 'btn-el-gray' 
+          : color == 'gray-focus' ? 'btn-el-gray-focus' 
           : '' 
-        } 
+        }
 
         ${additionalStyles}
       `}
     >
       
-      {icon && <Icon variant={icon} styles={iconStyles ? iconStyles : undefined}></Icon>}
-      {displayText}
+      {icon && <Icon variant={icon} styles={iconStyles ? iconStyles : undefined} />}
+      {displayText && displayText}
     </button>
   );
 }
-
-export default Button;

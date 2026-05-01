@@ -14,15 +14,29 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        'fade-in': 'fade-in 0.2s ease-out forwards',
+        'fade-in': 'fade-in 0.4s ease-out forwards',
         'fade-in-slow': 'fade-in 0.64s ease-out forwards',
         'fade-out': 'fade-out 0.3s ease-in forwards',
+        'fade-pulse':   'fade-pulse   1.7s ease-out',
+        'fade-pulse-i': 'fade-pulse-i 1.7s ease-out',
 
+        // Loading animations for inputs
+        'focus-bar': 'focus-bar 0.15s ease-in forwards',
         'loading-bar': 'loading-bar 1.25s ease-in-out infinite',
+        'loading-text': 'skeleton-text 1.25s ease-in-out infinite',
+        'loading-text-dark': 'skeleton-text-dark 1.25s ease-in-out infinite',
+
+        'rainbow': 'rainbow 3s linear infinite',
+
+        // Skeleton loaders
+        'skeleton-bg': 'skeleton-bg 0.75s ease-in-out infinite',
+        'skeleton-bg-dark': 'skeleton-bg-dark 0.75s ease-in-out infinite',
+        
+        'skeleton-text': 'skeleton-text 0.75s ease-in-out infinite',
+        'skeleton-text-dark': 'skeleton-text-dark 0.75s ease-in-out infinite',
+
         'skeleton-bar': 'skeleton-bar 1.25 ease-in-out infinite',
         'skeleton-bar-dark': 'skeleton-bar-dark 1.25 ease-in-out infinite',
-        'skeleton-text': 'skeleton-text 1.25s ease-in-out infinite',
-        'skeleton-text-dark': 'skeleton-text-dark 1.25s ease-in-out infinite',
       },
 
 
@@ -31,7 +45,50 @@ module.exports = {
         'fade-in-slow': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'fade-out':     { '0%': { opacity: '1' }, '100%': { opacity: '0' } },
 
+        // Displays element for a second and then fades out. Think indiana jones for display messages
+        'fade-pulse':   {
+          '0%':   { opacity: '0' },
+          '10%':  { opacity: '0' },
+          '35%':  { opacity: '1' },
+
+          '75%':  { opacity: '1' },
+          '90%':  { opacity: '0' },
+          '100%': { opacity: '0' },
+        },
+
+        // Hides an element and then shows it again. Use with fade-pulse
+        'fade-pulse-i': {
+          '0%':   { opacity: '1' },
+          '5%':   { opacity: '0' },
+          '90%':  { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+
+        // Input border fill animations for focused inputs
+        'focus-bar': { 
+          '0%':   { transform: 'scaleX(0)' }, 
+          '100%': { transform: 'scaleX(1)' } 
+        }, 
+
+        // Input Loading anim - div bar placed by borders for state displays
         'loading-bar': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' } }, // w-2/3
+        
+
+        'rainbow': {
+          '0%': { 'background-position':   '0% 0%' },
+          '100%': { 'background-position': '-200% 0%' },
+        },
+
+        // Skeleton loaders
+        'skeleton-bg': {
+          '0%, 100%': { background: '#1e293b' }, // slate-800 (darker)
+          '50%': { background: '#94a3b8' },      // slate-400 (lighter)
+        },
+        'skeleton-bg-dark': {
+          '0%, 100%': { background: '#475569' }, // slate-600 (darker)
+          '50%': { background: '#94a3b8' },      // slate-400 (lighter)
+        },
+        
         'skeleton-bar': { 
           '0%': { borderBottom: '#1e293b', transform: 'translateX(-100%)' }, // slate-800 (darker)
           '50%': { borderBottom: '#94a3b8' },      // slate-400 (lighter)
@@ -42,6 +99,7 @@ module.exports = {
           '50%': { borderBottom: '#94a3b8' },      // slate-400 (lighter)
           '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(150%)' }
         },
+        
         'skeleton-text': {
           '0%, 100%': { color: '#1e293b' }, // slate-800 (darker)
           '50%': { color: '#94a3b8' },      // slate-400 (lighter)

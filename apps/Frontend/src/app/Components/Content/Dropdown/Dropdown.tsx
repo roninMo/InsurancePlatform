@@ -1,24 +1,31 @@
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
-import { IconTypes, Icon } from "@Project/ReactComponents";
+import { Ht, Icon, IconTypes } from "@Project/ReactComponents";
 import styled from "@emotion/styled";
 import styles from './Dropdown.module.scss';
 
 
 export interface DropdownProps {
   label: string;
+
+  // Dropdown
+  openByDefault?: boolean;
   styles?: string;
+  additionalStyles?: string;
+
+  // Component Styles
+  labelStyles?: string;
   icon?: IconTypes;
   iconStyles?: string;
 
-  openByDefault?: boolean;
+  // optional state tracking
   hasBeenOpened?: boolean;
   setHasBeenOpened?: Dispatch<SetStateAction<boolean>>;
 
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 export const Dropdown = ({ 
-  label, styles, icon, iconStyles, openByDefault,
+  label, styles, additionalStyles, labelStyles, icon, iconStyles, openByDefault,
   hasBeenOpened, setHasBeenOpened, children 
 }: DropdownProps) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
@@ -44,18 +51,16 @@ export const Dropdown = ({
   }
 
   return (
-    <div className='col gap-2 w-full'>
-      <Header className="w-full rowStart items-center gap-1" onClick={() => toggleDropdown()}>
-        <Icon variant={icon ? icon : 'DropdownArrow'} styles={iconStyles ? iconStyles : defaultIconStyles} />
-        <p className={styles ? styles : 'text-xl lg:text-2xl header-colors font-medium'}>
+    <div className={styles ? styles : `col gap-2 w-full animate-fade-in ${additionalStyles}`}>
+      <Header className="w-full rowStart items-center gap-1 " onClick={() => toggleDropdown()}>
+        <Icon variant={icon ? icon : 'DropdownArrow'} styles={`${defaultIconStyles} ${iconStyles}`} />
+        <p className={labelStyles ? labelStyles : 'dropdown-header'}>
           { label }
         </p>
       </Header>
 
-      <Container className={`height-trans ${dropdownOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-        <div className='height-trans-content'>
-          { children }
-        </div>
+      <Container show={dropdownOpen}>
+        { children }
       </Container>
     </div>
   );
@@ -64,4 +69,4 @@ export const Dropdown = ({
 
 // Styled Components
 const Header = styled.div``;
-const Container = styled.div``;
+const Container = styled(Ht)``;

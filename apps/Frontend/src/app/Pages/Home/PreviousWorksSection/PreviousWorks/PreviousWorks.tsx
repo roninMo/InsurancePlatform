@@ -49,7 +49,7 @@ export const PreviousWorks = ({
       <Container 
       className={`col gap-2
         bg-div outline-css outline-default rounded-lg shadow-lg
-        transition duration-300 
+        trans duration-300 
         
         opacity-0 animate-fade-in-slow
         hover:selected-box active:selected-box 

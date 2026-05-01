@@ -1,0 +1,639 @@
+import { useContext, useMemo, useState } from 'react';
+import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
+import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
+import { getSourceCode, TooltipService } from "@Project/ReactComponents";
+
+import { ParamItem, ParamTable, getParamsTableItems } from '../../../Components/ParamTable/ParamTable';
+import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
+import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
+import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
+
+import { Kw } from '../../../Components/Keyword/Keyword';
+import { DocLink } from '../../../Components/DocLink/DocLink';
+import { TextInputTypes } from '@Project/ReactComponents';
+import styled from '@emotion/styled';
+
+import InputCodeSnippets from './Docs_InputJsxComponents?raw';
+import TextareaCodeSnippets from '../Textarea/Docs_TextareaJsxComponents?raw';
+import { 
+  Example_CreditCardInput,
+  Example_CurrencyInput,
+  Example_EmailInput,
+  Example_NumberInput,
+  Example_PasswordInput,
+  Example_PhoneInput,
+  Example_PolicyNumberInput,
+  Example_SearchInput,
+  Example_TextInput,
+} from './Docs_InputJsxComponents';
+
+
+export const Docs_Input = () => {
+  //--------------------------------//
+  // Tab Functionality              //
+  //--------------------------------//
+  const [currentTab, setCurrentTab] = useState<TextInputTypes>('text');
+  const tabs: TextInputTypes[] = ['text', 'number', 'email', 'password', 'search', 'policyNumber', 'phone', 'creditCard', 'currency'];
+  const tabLabels: string[] = ['Text', 'Number', 'Email', 'Password', 'Search', 'Policy Number', 'Phone', 'Credit Card', 'Currency'];
+
+  const showTabContent = (tab: TextInputTypes) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
+  const tabStyles = (tab: TextInputTypes) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
+
+  const onClickTab = (tab: TextInputTypes) => {
+    setCurrentTab(tab);
+    // updateParamContexts(tab);
+  }
+
+  //--------------------------------//
+  // Param Table State              //
+  //--------------------------------//
+  const paramTableItems = useMemo(() => {
+    const baseParamList: string[] = defaultParams || [];
+    const contextParams: ParamContext[] = []; // paramContextsList[currentTab]; // We're using subtableParams instead
+    const subTableParams: Record<string, string[]> =  { ...childParamsList, ...childParamsVarList[currentTab] };
+    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, subTableParams, paramTypeElements, paramDescriptionElements);
+    
+    // Variant specific params
+    const variantParams: string[] = variantParamsList[currentTab] || [];
+    const variantContextParams = paramContextsList[currentTab];
+    if (variantParams?.length > 0) {
+      const spacing: (ParamItem | 'spacing')[] = ['spacing'];
+      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, subTableParams, paramTypeElements, paramDescriptionElements);
+      // TODO: call getParamsTableItems once [...base, 'spacing', ...variants]
+      params.push(...spacing, ...variantParamItems);
+    }
+
+    return params;
+  }, [currentTab]);
+
+
+  //--------------------------------//
+  // Input State Management         //
+  //--------------------------------//
+  // #region States
+  const [textError, setTextError] = useState<string>('');
+  const [textDisabled, setTextDisabled] = useState<boolean>(false);
+  
+  const [numberError, setNumberError] = useState<string>('');
+  const [numberDisabled, setNumberDisabled] = useState<boolean>(false);
+  
+  const [emailError, setEmailError] = useState<string>('');
+  const [emailDisabled, setEmailDisabled] = useState<boolean>(false);
+  
+  const [passwordError, setPasswordError] = useState<string>('');
+  const [passwordDisabled, setPasswordDisabled] = useState<boolean>(false);
+  
+  const [searchError, setSearchError] = useState<string>('');
+  const [searchDisabled, setSearchDisabled] = useState<boolean>(false);
+  
+  const [phoneError, setPhoneError] = useState<string>('');
+  const [phoneDisabled, setPhoneDisabled] = useState<boolean>(false);
+  
+  const [policyError, setPolicyError] = useState<string>('');
+  const [policyDisabled, setPolicyDisabled] = useState<boolean>(false);
+  
+  const [creditError, setCreditError] = useState<string>('');
+  const [creditDisabled, setCreditDisabled] = useState<boolean>(false);
+  
+  const [currencyError, setCurrencyError] = useState<string>('');
+  const [currencyDisabled, setCurrencyDisabled] = useState<boolean>(false);
+  // #endregion
+
+  const { show, hide } = useContext(TooltipService);
+
+
+  return (
+    <Container className='spacing'>
+      <h3 className="span-12 p-2">
+        Input Component
+      </h3>
+
+      <div className='span-12'>
+        <p className='p-2 showcase-text'>
+          The <Kw>Input</Kw> component is designed with functionality and customization 
+          to fit your needs for the varying form types. It comes with <Kw>tooltips</Kw>, 
+          <Kw>loading bars</Kw> for server side autosaving, event hooks, error handling, and <Kw>input masking</Kw>. 
+          Each type has varying icons and functionality so you know whether the input is for 
+          
+          <Kw>text</Kw>, <Kw>email</Kw>, <Kw>phone</Kw>, <Kw>policy</Kw>, <Kw>number</Kw>, 
+          <Kw>credit</Kw>, <Kw>currency</Kw>, or <Kw>search</Kw>.
+        </p>
+      </div>
+      
+      <div className='span-12'>
+        <p className='p-2 showcase-text'>
+          For a more interactive input component with additional buttons and customization, use &nbsp;
+          <span 
+            onMouseEnter={() => show({ code: getSourceCode(TextareaCodeSnippets, "Example_BoxTextareaInput"), type: "component" })} 
+            onClick={hide}
+            onMouseLeave={hide}
+          >
+            <DocLink label='Textarea' url='/Documentation/Forms/Textarea' />
+          </span>
+          
+          . It allows you to add metadata tags with click events to allow you to 
+          create specific state from the input for your needs.
+          
+        </p>
+      </div>
+
+      {/* Showcase Input Element Variants */}
+      <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
+        { tabs.map((tab: TextInputTypes, index: number) => 
+          <div onClick={() => onClickTab(tab)} className={tabStyles(tab)} key={`showcase-input-tab-${tab}-${index}`} >
+            {/* { tab && tab.charAt(0) ? tab.charAt(0).toUpperCase() + tab.slice(1) : ''} */}
+            { tabLabels[index] }
+          </div>
+        )}
+      </Tabs>
+      
+      {/* Variants */}
+      <Variants className='span-12 py-2'>
+        {/* Currency */}
+        { currentTab == 'currency' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_CurrencyInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={currencyError} setError={setCurrencyError}
+              disabled={currencyDisabled} setDisabled={setCurrencyDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_CurrencyInput error={currencyError} disabled={currencyDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+
+        {/* Credit Card */}
+        { currentTab == 'creditCard' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_CreditCardInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={creditError} setError={setCreditError}
+              disabled={creditDisabled} setDisabled={setCreditDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_CreditCardInput error={creditError} disabled={creditDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        {/* Phone Number */}
+        { currentTab == 'phone' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_PhoneInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={phoneError} setError={setPhoneError}
+              disabled={phoneDisabled} setDisabled={setPhoneDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_PhoneInput error={phoneError} disabled={phoneDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        {/* Policy Number */}
+        { currentTab == 'policyNumber' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_PolicyNumberInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={policyError} setError={setPolicyError}
+              disabled={policyDisabled} setDisabled={setPolicyDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_PolicyNumberInput error={policyError} disabled={policyDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+
+        {/* Search */}
+        { currentTab == 'search' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_SearchInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={searchError} setError={setSearchError}
+              disabled={searchDisabled} setDisabled={setSearchDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_SearchInput error={searchError} disabled={searchDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        {/* Password */}
+        { currentTab == 'password' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_PasswordInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={passwordError} setError={setPasswordError}
+              disabled={passwordDisabled} setDisabled={setPasswordDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_PasswordInput error={passwordError} disabled={passwordDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        {/* Email */}
+        { currentTab == 'email' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_EmailInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={emailError} setError={setEmailError}
+              disabled={emailDisabled} setDisabled={setEmailDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_EmailInput error={emailError} disabled={emailDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        {/* Number */}
+        { currentTab == 'number' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_NumberInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={numberError} setError={setNumberError}
+              disabled={numberDisabled} setDisabled={setNumberDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_NumberInput error={numberError} disabled={numberDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+        
+        {/* Text Input */}
+        { currentTab == 'text' && 
+          <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_TextInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <ShowcaseExample_StateRef 
+              error={textError} setError={setTextError}
+              disabled={textDisabled} setDisabled={setTextDisabled}
+              elementStateTypes={[]} 
+            >
+              <Example_TextInput error={textError} disabled={textDisabled} />
+            </ShowcaseExample_StateRef>
+          </ShowcaseElement>
+        }
+      </Variants>
+
+
+      <div className='span-12 py-2 pt-10' id="param-table">
+        <Dropdown label='Input Parameters' openByDefault>
+          <ParamTable 
+            params={paramTableItems} 
+            additionalStyles='mt-4' 
+          />
+        </Dropdown>
+      </div>
+
+      <div className='span-12 py-2 pt-4' id="event-handler-table">
+        <Dropdown label='Event Handlers' openByDefault>
+          <p className='p-2 pl-1 showcase-text'>
+            The event handlers you can use with this component. Pass in your own event functions to interact with the element.
+          </p>
+          <EventParamTable additionalStyles='mt-4' />
+        </Dropdown>
+      </div>
+    </Container>
+  );
+}
+
+
+// Styled Components
+const Container = styled.div``;
+const Tabs = styled.div``;
+const Variants = styled.div``;
+
+
+//---------------------------------------------//
+// Component param table logic                 //
+//---------------------------------------------//
+// Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
+const defaultParams: string[] = [ 
+  'type', 'name', 'label', 'description', 'value', 'placeholder', 
+  'spacing', 'error', 'errorMessage', 'disabled', 'required', 
+  'spacing', 'autocomplete', 'tooltip', 'opts',
+];
+
+const variantParamsList: Record<TextInputTypes, string[]> = {
+  'text': [],
+  'number':       [], // ['incrementButtons'],
+  'email':        [], // ['showEmailIcon'],
+  'password':     [], // ['visibilityIcon'],
+  'search':       [], // ['sortButton', 'sortType'],
+  'policyNumber': [], // ['showPolicyNumberIcon', 'policyNumberMask'],
+  'phone':        [], // ['showPhoneIcon', 'phoneNumberMask'],
+  'creditCard':   [], // ['showCreditCardIcon', 'creditCarkMask'],
+  'currency':     [], // ['showMoneySign', 'currencyTypeDropdown'],
+}
+
+// The input's doc page uses a subtable to display variant specific parameters dynamically
+const childParamsList: Record<string, string[]> = {
+  'tooltip': [
+    'context', 'content',
+  ],
+}
+const childParamsVarList: Record<TextInputTypes, Record<string, string[]>> = {
+  'text':         { "opts": [] },
+  'number':       { 'opts': ['incrementButtons'] },
+  'email':        { 'opts': ['showEmailIcon'] },
+  'password':     { 'opts': ['visibilityIcon'] },
+  'search':       { 'opts': ['sortButton', 'sortType'] },
+  'policyNumber': { 'opts': ['showPolicyNumberIcon', 'policyNumberMask'] },
+  'phone':        { 'opts': ['showPhoneIcon', 'phoneNumberMask'] },
+  'creditCard':   { 'opts': ['showCreditCardIcon', 'creditCarkMask'] },
+  'currency':     { 'opts': ['showMoneySign', 'currencyTypeDropdown'] },
+};
+
+
+const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
+  "text": [],
+  "number": [
+    { name: 'type="number"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'incrementButtons', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+  "email": [
+    { name: 'type="email"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'showEmailIcon', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+  "password": [
+    { name: 'type="password"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'visibilityIcon', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+  "search": [
+    { name: 'type="search"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'sortButton', 
+      contextParam: false,
+      variantOption: true,
+    },
+    { name: 'sortType', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+  "policyNumber": [
+    { name: 'type="policyNumber"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'showPolicyNumberIcon', 
+      contextParam: false,
+      variantOption: true,
+    },
+    { name: 'policyNumberMask', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+  "phone": [
+    { name: 'type="phone"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'showPhoneIcon', 
+      contextParam: false,
+      variantOption: true,
+    },
+    { name: 'phoneNumberMask', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+  "creditCard": [
+    { name: 'type="creditCard"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'showCreditCardIcon', 
+      contextParam: false,
+      variantOption: true,
+    },
+    { name: 'creditCarkMask', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+  "currency": [
+    { name: 'type="currency"', 
+      contextParam: true,
+      variantOption: false,
+			overwrite: 'type'
+    },
+    { name: 'showMoneySign', 
+      contextParam: false,
+      variantOption: true,
+    },
+    { name: 'currencyTypeDropdown', 
+      contextParam: false,
+      variantOption: true,
+    },
+  ],
+};
+
+
+//----------------------------------------------//
+// Param table static element references        //
+//----------------------------------------------//
+// Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
+const paramTypeElements: Record<string, React.FC> = {
+  // Default params
+  'type': () => <ParamType type='TextInputTypes' tooltip={{ code: Code_TextInputTypes, type: 'type' }} />,
+  'name': () => <ParamType type='string' tooltip={{ code: dParArg('name', 'input-form-ref') }} />,
+  'label': () => <ParamType type='string' tooltip={{ code: dParArg('label', 'Input Label') }}  />,
+  'description': () => <ParamType type='string' tooltip={{ code: dParArg('description', 'The description of the input.') }} />,
+  'value': () => <ParamType type='string' tooltip={{ code: dParArg('value', 'inputValue', 'var') }} />,
+  'placeholder': () => <ParamType type='string' tooltip={{ code: dParArg('placeholder', 'placeholder text...') }} />,
+  'error': () => <ParamType type='boolean' tooltip={{ code: dParArg('error', 'error', 'var') }} />,
+  'errorMessage': () => <ParamType type='string' tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'disabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
+  'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
+  'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' tooltip={{ code: Code_TextInputAutoCompleteTypes, type: 'type' }} />,
+  'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOpts, type: 'interface' }} />,
+
+  'tooltip': () => <ParamType type="TooltipOptions" />,
+  'context': () => <ParamType type="TooltipContextActions" tooltip={{ code: Code_TooltipContextActions, type: 'interface' }} />,
+  'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
+
+  // Variant params
+  'incrementButtons': () => <ParamType type='boolean' tooltip={{ code: dParArg('incrementButtons', 'incrementButtons', 'var') }} />,
+  'showEmailIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showEmailIcon', 'showEmailIcon', 'var') }} />,
+  'visibilityIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('visibilityIcon', 'visibilityIcon', 'var') }} />,
+
+  'sortButton': () => <ParamType type='boolean' tooltip={{ code: dParArg('sortButton', 'sortButton', 'var') }} />,
+  'sortType': () => <ParamType type='SearchSortType' tooltip={{ code: Code_SearchSortType, type: 'type' }} />,
+  
+  'showPolicyNumberIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPolicyNumberIcon', 'showPolicyNumberIcon', 'var') }} />,
+  'policyNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('policyMask', 'AB 0123456789') }} />,
+
+  'showPhoneIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPhoneIcon', 'showPhoneIcon', 'var') }} />,
+  'phoneNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('phoneMask', '(123)-456-7890') }} />,
+  
+  'showCreditCardIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showCreditCardIcon', 'showCreditCardIcon', 'var') }} />,
+  'creditCarkMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('creditCardMask', '0000-0000-0000-0000') }} />,
+
+  'showMoneySign': () => <ParamType type='boolean' tooltip={{ code: dParArg('showMoneySign', 'showMoneySign', 'var') }} />,
+  'currencyTypeDropdown': () => <ParamType type='boolean' tooltip={{ code: dParArg('currencyTypeDropdown', 'currencyTypeDropdown', 'var') }} />,
+};
+
+// Code Snippet imports
+import SourceInputSnippets from '@lib-rc/Forms/Input/Input.tsx?raw';
+const Code_TextInputTypes = getSourceCode(SourceInputSnippets, 'TextInputTypes', 'type');
+const Code_TextInputAutoCompleteTypes = getSourceCode(SourceInputSnippets, 'TextInputAutoCompleteTypes', 'type');
+const Code_InputVariantOpts = getSourceCode(SourceInputSnippets, 'InputVariantOpts', 'interface');
+const Code_SearchSortType = getSourceCode(SourceInputSnippets, 'SearchSortType', 'type');
+
+import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'TooltipContextActions', 'interface');
+
+import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
+const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
+
+
+const paramDescriptionElements: Record<string, React.FC> = {
+  // Default params
+  'type' : () =>
+    <div className='param-item-desc-text'>
+      The variant of the input component you're using. The types are text, number, email, password, search, policyNumber, phone, creditCard, and currency.
+    </div>,
+  'name' : () =>
+    <div className='param-item-desc-text'>
+      The name of the input. Acts as a key for form data during submissions.
+    </div>,
+  'label' : () =>
+    <div className='param-item-desc-text'>
+      The label of the input. 
+    </div>,
+  'description' : () =>
+    <div className='param-item-desc-text'>
+      The description for this input element.
+    </div>,
+  'value' : () =>
+    <div className='param-item-desc-text'>
+      The value of the input. Use your own state management for handling editing this value.
+    </div>,
+  'placeholder' : () =>
+    <div className='param-item-desc-text'>
+      The input element's placeholder text. Rendered when the input is empty.
+    </div>,
+
+  'error' : () =>
+    <div className='param-item-desc-text'>
+      Whether there's validation errors for this input.
+    </div>,
+  'errorMessage' : () =>
+    <div className='param-item-desc-text'>
+      The validation error message for this input.
+    </div>,
+  'disabled' : () =>
+    <div className='param-item-desc-text'>
+      Whether the input is disabled.
+    </div>,
+  'required' : () =>
+    <div className='param-item-desc-text'>
+      Is this input required during submission?
+    </div>,
+  'autocomplete' : () =>
+    <div className='param-item-desc-text'>
+      The autocomplete text for this input.
+    </div>,
+
+  'tooltip' : () =>
+    <div className='param-item-desc-text'>
+      Should this component have a tooltip?
+    </div>,
+  'context': () =>
+    <div className='param-item-desc-text'>
+      A reference to the tooltip context for rendering the tooltip on this component.
+    </div>,
+  'content': () =>
+    <div className='param-item-desc-text'>
+      The props to pass to the tooltip to render it's content.
+    </div>,
+
+
+  'opts' : () =>
+    <div className='param-item-desc-text'>
+      All the input's variant specific params stashed in a subtable. Select a variant, and they'll be displayed below. 
+      Each variant only accepts these specific props to declutter the prop list and intellisense when you're coding.
+    </div>,
+
+  // Variant params
+  'incrementButtons' : () => 
+  <div className='param-item-desc-text'>
+    Whether to enable the increment and decrement buttons for the number input
+  </div>,
+
+  'showEmailIcon' : () => 
+  <div className='param-item-desc-text'>
+    Do you want an email icon on the left hand side of the input?
+  </div>,
+
+  'visibilityIcon' : () => 
+  <div className='param-item-desc-text'>
+    Whether to add the toggle password visibility icon to the input element.
+  </div>,
+
+  'sortButton' : () => 
+  <div className='param-item-desc-text'>
+    Adds sorting functionality to the search results that come from this input
+  </div>,
+  'sortType' : () => 
+  <div className='param-item-desc-text'>
+    What kind of sorting functionality do you want for the search?
+  </div>,
+
+  'showPolicyNumberIcon' : () => 
+  <div className='param-item-desc-text'>
+    Do you want the policy number icon on the left hand side of the input?
+  </div>,
+  'policyNumberMask' : () => 
+  <div className='param-item-desc-text'>
+    Adds an input mask for your policy number input.
+  </div>,
+
+  'showPhoneIcon' : () => 
+  <div className='param-item-desc-text'>
+    Do you want a phone icon on the left hand side of the input?
+  </div>,
+  'phoneNumberMask' : () => 
+  <div className='param-item-desc-text'>
+    Adds an input mask for your phone number.
+  </div>,
+
+  'showCreditCardIcon' : () => 
+  <div className='param-item-desc-text'>
+    Do you want a credit card icon on the left hand side of the input?
+  </div>,
+  'creditCarkMask' : () => 
+  <div className='param-item-desc-text'>
+    Adds an input mask for your credit card.
+  </div>,
+
+  'showMoneySign' : () => 
+  <div className='param-item-desc-text'>
+    Do you want a money sign on the left hand side of the input?
+  </div>,
+  'currencyTypeDropdown' : () => 
+  <div className='param-item-desc-text'>
+    Adds a currency type select to the input, changing the money sign for this element.
+  </div>,
+};

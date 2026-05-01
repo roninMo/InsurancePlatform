@@ -64,10 +64,21 @@ import { Icon_Cloud } from "./Default/Cloud/Icon_Cloud";
 import { Icon_DataDog } from "./Tech/Analytics/DataDog/Icon_DataDog";
 import { Icon_Loading } from "./Default/Loading/Icon_Loading";
 import { Icon_Demandjump } from "./Companies/Demandjump/Icon_Demandjump";
+import { Icon_DocText } from "./Default/DocText/Icon_DocText";
+import { Icon_CircleCheck } from "./Default/CircleCheck/Icon_CircleCheck";
+import { Icon_CircleError } from "./Default/CircleError/Icon_CircleError";
+import { Icon_CirclePause } from "./Default/CirclePause/Icon_CirclePause";
+import { Icon_Eye } from "./Default/Eye/Icon_Eye";
+import { Icon_EyeSlash } from "./Default/EyeSlash/Icon_EyeSlash";
+import { Icon_CreditCard } from "./Default/CreditCard/Icon_CreditCard";
+import { Icon_ChevronDown } from "./Default/ChevronDown/Icon_ChevronDown";
+import { Icon_ChevronUp } from "./Default/ChevronUp/Icon_ChevronUp";
+import { Icon_Canvas } from "./Default/Canvas/Icon_Canvas";
+import { Icon_CloudUpload } from "./Default/CloudUpload/Icon_CloudUpload";
+import { Icon_Upload } from "./Default/Upload/Icon_Upload";
 // TODO: LazyLoading
 
 export type IconTypes = DefaultIconTypes | MediaIconTypes | TechIconTypes | CompanyIconTypes;
-const defaultIconStyles = `size-5 justify-center self-center`;
 
 // Used in the svg element classes
 export interface IconAttributes {
@@ -90,17 +101,28 @@ export type DefaultIconTypes =
   'AtSymbol' |
   'AttachFile' |
   'Calendar' |
+  'Canvas' |
   'Checkbox' |
+  'ChevronDown' |
+  'ChevronUp' |
+  'CircleCheck' |
+  'CircleError' |
+  'CirclePause' |
   'Close' |
   'Cloud' |
+  'CloudUpload' |
   'CodeBracket' |
   'Computer' |
+  'CreditCard' |
   'DarkTheme' |
   'Database' |
+  'DocText' |
   'DemandJump' |
   'DropdownArrow' |
   'Envelope' |
   'Error' |
+  'Eye' |
+  'EyeSlash' |
   'InfoBox' |
   'LightTheme' |
   'Link' |
@@ -115,30 +137,43 @@ export type DefaultIconTypes =
   'System' |
   'Tag' |
   'Trash' |
+  'Upload' |
   'VennDiagram' 
 ;
 
 export const Icon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
-  const defaultErrorStyles = defaultIconStyles + ` text-red-500 dark:text-red-400`;
-  const defaultOkayStyles = defaultIconStyles + ` text-emerald-500 dark:text-emerald-400`;
+  const iconStyles = styles ? styles : 'icon-default-theme';
+  const defaultErrorStyles = styles ? styles : 'icon-default-theme icon-error-color';
+  const defaultOkayStyles = styles ? styles : 'icon-default-theme icon-ok-color';
+  // console.log(`\nrendered ${variant} icon, styles: `, iconStyles);
   
   
   // Default icons
   if (variant == 'AtSymbol')        return (<Icon_AtSymbol styles={iconStyles} />);
   if (variant == 'AttachFile')      return (<Icon_AttachFile styles={iconStyles} />);
   if (variant == 'Calendar')        return (<Icon_Calendar styles={iconStyles} />);
-  if (variant == 'Checkbox')        return (<Icon_Checkbox styles={styles ? styles : defaultOkayStyles} />);
+  if (variant == 'Canvas')          return (<Icon_Canvas styles={iconStyles} />);
+  if (variant == 'Checkbox')        return (<Icon_Checkbox styles={defaultOkayStyles} />);
+  if (variant == 'ChevronDown')     return (<Icon_ChevronDown styles={iconStyles} />);
+  if (variant == 'ChevronUp')       return (<Icon_ChevronUp styles={iconStyles} />);
+  if (variant == 'CircleCheck')     return (<Icon_CircleCheck styles={iconStyles} />);
+  if (variant == 'CircleError')     return (<Icon_CircleError styles={iconStyles} />);
+  if (variant == 'CirclePause')     return (<Icon_CirclePause styles={iconStyles} />);
   if (variant == 'Close')           return (<Icon_Close styles={iconStyles} />);
   if (variant == 'Cloud')           return (<Icon_Cloud styles={iconStyles} />);
+  if (variant == 'CloudUpload')     return (<Icon_CloudUpload styles={iconStyles} />);
   if (variant == 'CodeBracket')     return (<Icon_CodeBracket styles={iconStyles} />);
   if (variant == 'Computer')        return (<Icon_Computer styles={iconStyles} />);
+  if (variant == 'CreditCard')      return (<Icon_CreditCard styles={iconStyles} />);
   if (variant == 'DarkTheme')       return (<Icon_DarkTheme styles={iconStyles} />);
   if (variant == 'Database')        return (<Icon_Database styles={iconStyles} />);
+  if (variant == 'DocText')         return (<Icon_DocText styles={iconStyles} />);
   if (variant == 'DemandJump')      return (<Icon_Demandjump styles={iconStyles} />);
   if (variant == 'DropdownArrow')   return (<Icon_DropdownArrow styles={iconStyles} />);
   if (variant == 'Envelope')        return (<Icon_Envelope styles={iconStyles} />);
-  if (variant == 'Error')           return (<Icon_Error styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'Error')           return (<Icon_Error styles={defaultErrorStyles} />);
+  if (variant == 'Eye')             return (<Icon_Eye styles={iconStyles} />);
+  if (variant == 'EyeSlash')        return (<Icon_EyeSlash styles={iconStyles} />);
   if (variant == 'InfoBox')         return (<Icon_InfoBox styles={iconStyles} />);
   if (variant == 'Instagram')       return (<Icon_Instagram styles={iconStyles} />);
   if (variant == 'LightTheme')      return (<Icon_LightTheme styles={iconStyles} />);
@@ -152,7 +187,8 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (variant == 'Sort')            return (<Icon_Sort styles={iconStyles} />);
   if (variant == 'System')          return (<Icon_System styles={iconStyles} />);
   if (variant == 'Tag')             return (<Icon_Tag styles={iconStyles} />);
-  if (variant == 'Trash')           return (<Icon_Trash styles={styles ? styles : defaultErrorStyles} />);
+  if (variant == 'Trash')           return (<Icon_Trash styles={defaultErrorStyles} />);
+  if (variant == 'Upload')          return (<Icon_Upload styles={defaultErrorStyles} />);
   if (variant == 'VennDiagram')     return (<Icon_VennDiagram styles={iconStyles} />);
 
   // Social Media Icons
@@ -186,16 +222,16 @@ export type MediaIconTypes =
 ;
 
 export const MediaIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
+  const iconStyles = styles ? styles : 'icon-default-theme';
   let Icon: JSX.Element | undefined = undefined;
 
 
   // Social media icons
   if (variant == 'Facebook')        Icon = (<Icon_Facebook styles={iconStyles} />);
-  if (variant == 'Github')          Icon = (<Icon_Github styles={iconStyles} />);
-  if (variant == 'LinkedIn')        Icon = (<Icon_LinkedIn styles={iconStyles} />);
-  if (variant == 'Twitter')         Icon = (<Icon_Twitter styles={iconStyles} />);
-  if (variant == 'Youtube')         Icon = (<Icon_Youtube styles={iconStyles} />);
+  else if (variant == 'Github')     Icon = (<Icon_Github styles={iconStyles} />);
+  else if (variant == 'LinkedIn')   Icon = (<Icon_LinkedIn styles={iconStyles} />);
+  else if (variant == 'Twitter')    Icon = (<Icon_Twitter styles={iconStyles} />);
+  else if (variant == 'Youtube')    Icon = (<Icon_Youtube styles={iconStyles} />);
   return Icon;
 }
 
@@ -228,11 +264,11 @@ export type TechIconTypes =
 ;
 
 export const TechIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
+  const iconStyles = styles ? styles : 'icon-default-theme';
   let Icon: JSX.Element | undefined = undefined;
 
   // Automation
-  if (variant == 'Atlassian')           Icon = (<Icon_Atlassian styles={iconStyles} />);
+  if (variant == 'Atlassian')                Icon = (<Icon_Atlassian styles={iconStyles} />);
   else if (variant == 'AWS CDK')             Icon = (<Icon_AwsCdk styles={iconStyles} />);
   else if (variant == 'Azure Devops')        Icon = (<Icon_AzureDevops styles={iconStyles} />);
   else if (variant == 'Bamboo')              Icon = (<Icon_Bamboo styles={iconStyles} />);
@@ -273,7 +309,7 @@ export const TechIcon = ({ variant, styles = ''}: IconProps) => {
 
 export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo';
 export const CompanyIcon = ({ variant, styles = ''}: IconProps) => {
-  const iconStyles = styles ? styles : defaultIconStyles;
+  const iconStyles = styles ? styles : 'icon-default-theme';
   let Icon: JSX.Element | undefined = undefined;
 
   if (variant == 'LibertyLogo')              Icon = (<Icon_LibertyLogo styles={iconStyles} />);

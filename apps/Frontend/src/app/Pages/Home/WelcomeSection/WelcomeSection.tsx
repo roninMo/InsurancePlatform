@@ -1,5 +1,4 @@
-import { useState, useId, MouseEvent, useRef, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
 import { Button } from '@Project/ReactComponents';
 import { Modal } from '../../../Components/Utils/Modal/Modal';
 import { Dropdown } from '../../../Components/Content/Dropdown/Dropdown';
@@ -16,7 +15,6 @@ import styles from './WelcomeSection.module.scss';
 
 export const WelcomeSection = () => {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
-  const navigate = useNavigate();
 
   //--------------------------------------------//
   // Background Animation                       //
@@ -138,15 +136,15 @@ export const WelcomeSection = () => {
           <div className='rowStart gap-4 pt-2'> 
             <Button displayText='Get Started'
               onClick={() => openNavMenu()}
-              size='lg'
+              size='md'
               color='primary'
               additionalStyles='text-base rounded-lg'
             />
 
-            <HashLink url="/Documentation" opts={{ type: 'useNavigate' }}>
+            <HashLink url="/Documentation/Forms/Input" opts={{ type: 'useNavigate' }}>
               <Button displayText='Documentation'
                 onClick={() => {}}
-                size='lg'
+                size='md'
                 color='primary'
                 additionalStyles='text-base rounded-lg'
               />
@@ -161,28 +159,28 @@ export const WelcomeSection = () => {
         <div className='col gap-4 w-[70vw] h-[65vh] px-4 ='>
             
             {/* Mock Database */}
-            <Dropdown label="Mock Database" openByDefault hasBeenOpened={openedMockDB} setHasBeenOpened={setOpenedMockDB} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Mock Database" openByDefault hasBeenOpened={openedMockDB} setHasBeenOpened={setOpenedMockDB} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={mockDBLinks} initialRender={openedMockDB} />
               </div>
             </Dropdown>
 
             {/* Insurance Platform */}
-            <Dropdown label="Insurance Platform" openByDefault hasBeenOpened={openedInsPlat} setHasBeenOpened={setOpenedInsPlat} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Insurance Platform" openByDefault hasBeenOpened={openedInsPlat} setHasBeenOpened={setOpenedInsPlat} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={insPlatLinks} initialRender={openedInsPlat} />
               </div>
             </Dropdown>
 
             {/* Spotify Demo */}
-            <Dropdown label="Spotify Demo" hasBeenOpened={openedSpotify} setHasBeenOpened={setOpenedSpotify} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="Spotify Demo" hasBeenOpened={openedSpotify} setHasBeenOpened={setOpenedSpotify} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={spotifyLinks} initialRender={openedSpotify} />
               </div>
             </Dropdown>
 
             {/* ServerSide AutoSave */}
-            <Dropdown label="ServerSide Autosave" hasBeenOpened={openedSSAS} setHasBeenOpened={setOpenedSSAS} styles='text-base lg:text-lg header-colors font-medium' >
+            <Dropdown label="ServerSide Autosave" hasBeenOpened={openedSSAS} setHasBeenOpened={setOpenedSSAS} labelStyles='text-base lg:text-lg header-colors font-medium' >
               <div className="pl-8">
                 <QuickLinks links={SSASLinks} initialRender={openedSSAS} />
               </div>

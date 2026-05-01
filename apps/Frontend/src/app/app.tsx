@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { RouterProvider, ScrollRestoration, useLocation } from 'react-router-dom';
 import { router } from './routes';
 
@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import styled from '@emotion/styled';
 import { UserTokenInformation } from '@Project/Classes';
 import { jwtDecode } from 'jwt-decode';
+import { TooltipProvider } from '@Project/ReactComponents';
 
 
 const AppSpacing = styled.div``;
@@ -70,13 +71,19 @@ export function App() {
   };
 
 
+  // Universal Tooltip
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+
+
 
   return (
     <AppSpacing className="bg-default">
       <LoginContext.Provider value={{accessToken, userTokenInformation, setUserTokenInformation}}>
         
         {/* Application */}
-        <RouterProvider router={router} />
+        <TooltipProvider>
+          <RouterProvider router={router} />
+        </TooltipProvider>
 
         {/* TODO: Add a component used in the app to save the user's previous session, and policy submission information for when they open the site again, to navigate back to where they left off */}
         {/* TODO: Add a sidebar for displaying and debugging save state, that captures both saved and retrieved information that's sent to the backend when autosaved during submissions and during retrieval */}
@@ -107,7 +114,8 @@ export function App() {
             A way to create fake databases. Creating individual tables, their values, and relations
               - Created data gets sent to the backend for constructing mock databases dynamically. Attach
                   databases to each account, and retrieve values from the backend when logging in.
-                  The data is transient, but the table structures can be cached in localStorage
+                  The data is transient, but the table structures can be cached in localStorage.
+                  Handle themed values for specific contextual data to return from types for interactive data
           
             Popovers
             - Sidebar (Tables of the current database)
@@ -148,6 +156,25 @@ export function App() {
         {/* An additional settings page to determine whether to use mock data for the insurance page, or a backend */}
         {/* Backends for handling data, and try out clustering */}
 
+
+        {/* 
+          For the devlog,
+            - vite map function to opt components into logging their render times
+            - create a state with a component hierarchy to display what devlogs are being captured
+              - dev popover that displays the hierarchy of pages -> components -> nested unique component's being logged
+              - additional option to change the hierarchy to components, that targets all logs from a component used anywhere
+              - Allow the devs to toggle what's being logged in the console, and a list of what's captured
+                - from render times and other react specific diagnostics
+                - to specific logs added to each component
+							- capture the e.type, and e.nativeEvent functions in dev logs
+
+          There should also be a way to capture and display state updates
+            - check with redux tools, and see if there's anything additional we need
+              - either added logic similar to it with additional data
+              - input specific state, especially when we get to trying out autosaving form data
+        
+        */}
+
       </LoginContext.Provider>
     </AppSpacing>
   );
@@ -155,3 +182,92 @@ export function App() {
 
 
 export default App;
+
+
+// cSpell:disable
+/*
+
+          M.                                         .:M
+           MMMM.                                   .:MMMM
+           MMMMMMMM                             .:MMMMMMM
+           :MMHHHMMMMHMM.  .:MMMMMMMMM:.      .:MMHHMHMM:
+            :MMHHIIIHMMMM.:MMHHHHIIIHHMMMM. .:MMHIHIIHHM:
+             MMMHIIIIHHMMMIIHHMHHIIIIIHHMMMMMMHHHIIIIHHM:
+             :MMHIIIIIHMMMMMMMHHIIIIIIHHHMMMMMHHII:::IHM.
+              MH:I:::IHHMMMMMHHII:::IIHHMMMHHHMMM:I:IHMM
+              :MHI:HHIHMMHHIIHII::.::IIHMMHHIHHMMM::HMM:
+               MI::HHMMIIM:IIHII::..::HM:MHHII:::IHHMM:
+               MMMHII::..:::IHMMHHHMHHMMI:::...::IHM:
+               :MHHI::....::::HMMMMMMHHI::.. ..:::HM:
+                :MI:.:MH:.....:HMMMMHHMIHMMHHI:HH.:M
+                M:.I..MHHHHHMMMIHMMMMHMMHHHHHMMH:.:M.
+                M:.H..H  I:HM:MHMHI:IM:I:MM::  MMM:M:
+                :M:HM:.M I:MHMIIMMIIHM I:MM::.:MMI:M.
+                'M::MM:IMH:MMII MMHIMHI :M::IIHMM:MM
+                 MH:HMMHIHMMMMMMHMMIMHIIHHHHIMMHHMM
+                  MI:MMMMHI:::::IMM:MHI:::IMMMMHIM
+                  :IMHIHMMMMMM:MMMMMHHHHMMMHI:M
+                    HI:IMIHMMMM:MMMMMMHHHMI:.:M      .....
+        ............M::..:HMMMMIMHIIHMMMMHII:M:::''''
+            ....:::MHI:.:HMMMMMMMMHHHMHHI::M:::::::''''''
+           ''   ...:MHI:.::MMHHHMHMIHMMMMHH.MI..........
+              ''  ...MHI::.::MHHHHIHHMM:::IHM           '''
+                 '  IMH.::..::HMMHMMMH::..:HM:
+                   :M:.H.IHMIIII::IIMHMMM:H.MH
+                    IMMMH:HI:MMIMI:IHI:HIMIHM:
+                  .MMI:.HIHMIMI:IHIHMMHIHI:MIM.
+                 .MHI:::HHIIIIIHHI:IIII::::M:IM.
+                .MMHII:::IHIII::::::IIIIIIHMHIIM
+                MHHHI::.:IHHII:::.:::IIIIHMHIIHM:
+               MHHHII::..::MII::.. ..:IIIHHHII:IM.
+              .MHHII::....:MHII::.  .:IHHHI::IIHMM.
+              MMHHII::.....:IHMI:. ..:IHII::..:HHMM
+              MHHII:::......:IIHI...:IHI::.....::HM:
+             :MMH:::........ ...::..::....  ...:IHMM
+             IMHIII:::..........     .........::IHMM.
+             :MHIII::::......          .......::IHMM:
+              MHHIII::::...             ......::IHMM:
+              IMHHIII:::...             .....::IIHMM,
+              :MHHIII:::I:::...     ....:::I:::IIHMM
+               MMHHIII::IHI:::...........:::IIH:IHMM
+               :MMHHII:IIHHI::::::.....:::::IH:IHMIM
+                MMMHHII:IIHHI:::::::::::::IHI:IIHM:M.
+                MMMHHIII::IHHII:::::::::IHI:IIIHMM:M:
+                :MMHHHIII::IIIHHII::::IHI..IIIHHM:MHM
+                :MMMHHII:..:::IHHMMHHHHI:IIIIHHMM:MIM
+                .MMMMHHII::.:IHHMM:::IIIIIIHHHMM:MI.M
+              .MMMMHHII::.:IHHMM:::IIIIIIHHHMM:MI.M
+            .MMMMHHMHHII:::IHHMM:::IIIIIHHHHMM:MI.IM.
+           .MMHMMMHHHII::::IHHMM::I&&&IHHHHMM:MMH::IM.
+          .MMHHMHMHHII:::.::IHMM::IIIIHHHMMMM:MMH::IHM
+          :MHIIIHMMHHHII:::IIHMM::IIIHHMMMMM::MMMMHHHMM.
+          MMHI:IIHMMHHHI::::IHMM:IIIIHHHMMMM:MMMHI::IHMM.
+          MMH:::IHMMHHHHI:::IHMM:IIIHHHHMMMM:MMHI:.:IHHMM.
+          :MHI:::IHMHMHHII::IHMM:IIIHHHMMMMM:MHH::.::IHHM:
+          'MHHI::IHMMHMHHII:IHMM:IIHHHHMMMM:MMHI:...:IHHMM.
+           :MHII:IIHMHIHHIIIIHMM:IIHHHHMMMM:MHHI:...:IIHMM:
+           'MHIII:IHHMIHHHIIHHHMM:IHHHMMMMM:MHHI:..::IIHHM:
+            :MHHIIIHHMIIHHHIHHHMM:HHHHMMMMM:MHII::::IIIHHMM
+             MHHIIIIHMMIHHHIIHHMM:HHHHMMMM:MMHHIIHIIIIIHHMM.
+             'MHHIIIHHMIIHHIIIHMM:HHHMMMMH:MHHMHII:IIIHHHMM:
+              'MHHIIIHMMIHHHIHHMM:HHHMMMHH:MMIMMMHHHIIIHHMM:
+               'MHHIIHHMIHHHHHMMM:HHHMMMH:MIMMMMMMMMMMHIHHM:
+                'MHIIIHMMIHHHHHMM:HHHMMMH:IMMMMMHHIHHHMMHHM'
+                 :MHHIIHMIHHHHHMM:HHHMMMM:MMHMMHIHMHI:IHHHM
+                  MHHIIHM:HHHHHMM:HHHMMMM:MMMHIHHIHMM:HHIHM
+                   MHHIHM:IHHHHMM:HHHHMM:MMHMIIHMIMMMHMHIM:
+                   :MHIHMH:HHHHMM:HHHHMM:MMHIIHMIIHHMMHIHM:
+                    MMHHMH:HHHHMM:HHHHMM:MHHIHMMIIIMMMIIHM'
+                    'MMMMH:HHHHMM:HHHMM:MHHHIMMHIIII::IHM:
+                     :MMHM:HHHHMM:HHHMM:MHIHIMMHHIIIIIHM:
+                      MMMM:HHHHMM:HHHHM:MHHMIMMMHHHIHHM:MMMM.
+                      :MMM:IHHHMM:HHHMM:MHHMIIMMMHHMM:MMMMMMM:
+                      :MMM:IHHHM:HHHHMM:MMHHHIHHMMM:MMMMMMMMMM
+                       MHM:IHHHM:HHHMMM:MMHHHHIIIMMIIMMMMMMMMM
+                       MHM:HHHHM:HHHMMM:HMMHHHHHHHHHMMMMMMMMM:
+                    .MI:MM:MHHMM:MHMMHMHHMMMMHHHHHHHMMMMMMMMM'
+                   :IM:MMIM:M:MM:MH:MM:MH:MMMMMHHHHHMMMMMMMM'
+                   :IM:M:IM:M:HM:IMIHM:IMI:MMMMMHHHMMMMMM:'
+                    'M:MHM:HM:MN:HMIHM::M'   '::MMMMMMM:'
+                       'M'HMM'M''M''HM'I'
+*/
