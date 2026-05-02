@@ -221,7 +221,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceRadioSnippets from '@lib-rc/Forms/RadioTable/RadioTable.tsx?raw';
+import SourceRadioSnippets from '@lib-rc/Forms/RadioGroup/RadioGroup.tsx?raw';
 const Code_onSelect = 'onSelect: (item: RadioItem, currentValue: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;';
 const Code_onMouseEnter = 'onMouseEnter: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
 const Code_onMouseLeave = 'onMouseLeave: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';

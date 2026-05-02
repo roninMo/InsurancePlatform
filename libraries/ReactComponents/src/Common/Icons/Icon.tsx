@@ -230,7 +230,7 @@ export type TechIconTypes =
 
 
 //------------------------------------//
-// Company Icons            //
+// Company Icons                      //
 //------------------------------------//
 export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo';
 

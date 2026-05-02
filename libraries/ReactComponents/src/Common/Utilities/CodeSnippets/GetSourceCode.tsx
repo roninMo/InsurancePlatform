@@ -27,8 +27,8 @@ export type SourceRetrievalTypes = 'component' | 'type' | 'interface';
 export const getSourceCode = (
   fileImportSource: string,
   nameOrRange: string | [number, number],
-  type: SourceRetrievalTypes
-): string | null => {
+  type: SourceRetrievalTypes = 'component'
+): string => {
   // Retrieve specified lines of code
   if (Array.isArray(nameOrRange)) {
     const [start, end] = nameOrRange;
@@ -48,7 +48,7 @@ export const getSourceCode = (
             t.startsWith(`const ${name} `) || t.startsWith(`export const ${name} `);
   });
 
-  if (startIdx === -1) return null;
+  if (startIdx === -1) return 'Component Source not found.';
 
   // Find the closing brace
   let endIdx = startIdx;
@@ -82,9 +82,23 @@ export const getSourceCode = (
   else {
     for (let i = startIdx + 1; i < lines.length; i++) {
       const line = lines[i].trim();
-      if (line.startsWith('export ') || line.startsWith('type ') || line.startsWith('interface ') || line.startsWith('// #region')) break;
+      if (
+        line.startsWith('export ') || line.startsWith('import ') || 
+        line.startsWith('type ') || line.startsWith('interface ') ||
+        line.startsWith('const ') || line.startsWith('function ') ||
+        line.startsWith('class ')
+      ) break;
       endIdx = i;
     }
+
+    // Code from definition to next declaration
+    let snippetWithSpacing = lines.slice(startIdx, endIdx + 1).join('\n');
+
+    // Remove trailing // comments, #regions, or extra whitespace between the end of type and the next declaration
+    const lastSemicolon = snippetWithSpacing.lastIndexOf(';');
+    if (lastSemicolon !== -1) snippetWithSpacing = snippetWithSpacing.substring(0, lastSemicolon + 1);
+
+    return snippetWithSpacing.trim();
   }
 
   const sourceCode = lines.slice(startIdx, endIdx + 1).join('\n').trim();

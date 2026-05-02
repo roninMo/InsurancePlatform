@@ -169,7 +169,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Upload files') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the dropbox.') }} />,
   'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionalStyles', 'stylesClass') }} />,
-  'customIcon': () => <ParamType type="IconTypes" tooltip={{ code: dParArg('customIcon', 'Canvas') }} />,
+  'customIcon': () => <ParamType type="IconTypes" tooltip={{ code: Code_IconTypes }} />,
   'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'iconStylesClass') }} />,
   
   'value': () => <ParamType type="string" tooltip={{ code: dParArg('value', 'files', 'var') }} />,
@@ -180,6 +180,8 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippet imports
+import IconSourceSnippets from '@lib-rc/Common/Icons/Icon.tsx?raw';
+const Code_IconTypes = getSourceCode(IconSourceSnippets, [135, 236]);
 const Code_HandleFiles = 'handleFiles: (files: FileList | null) => void;';
 
 

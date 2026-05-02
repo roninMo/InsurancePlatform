@@ -1,7 +1,7 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { getFullTypeSource, getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
+import { getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -327,8 +327,8 @@ import HashLinkSnippets from '../../../../../Components/Utils/HashLink/HashLink.
 const Code_VariantProps = getSourceCode(HashLinkSnippets, 'VariantProps', 'type');
 const Code_NavTypeProps = getSourceCode(HashLinkSnippets, 'NavTypeProps', 'type');
 const Code_HashLinkPropsBase = getSourceCode(HashLinkSnippets, 'HashLinkPropsBase', 'interface');
-const Code_HashLinkProps = getFullTypeSource(HashLinkSnippets, 'HashLinkProps');
-// const Code_HashLinkProps = getSourceCode(HashLinkSnippets, 'HashLinkProps', 'type');
+// const Code_HashLinkProps = getFullTypeSource(HashLinkSnippets, 'HashLinkProps');
+const Code_HashLinkProps = getSourceCode(HashLinkSnippets, 'HashLinkProps', 'type');
 
 // check for any type after the =
 // check for any type after & or |
