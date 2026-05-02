@@ -37,7 +37,6 @@ export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectV
     return value == currentSelectValue.value;
   };
 
-  console.log(`rerendered, currentVal ${currentSelectValue}`);
 
   return (
     <Container 

@@ -1,7 +1,7 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
+import { getFullTypeSource, getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -303,9 +303,12 @@ const paramTypeElements: Record<string, React.FC> = {
   'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
 
   'dropdownOptions': () => <ParamType type="SelectOpts" />,
-  'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'true | false | undefined', 'var'), type: 'interface' }} />,
-  'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
-  'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'true | false | undefined', 'var'), type: 'interface' }} />,
+  'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: Code_VariantProps, type: 'interface' }} />,
+  'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: Code_NavTypeProps, type: 'interface' }} />,
+  'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: Code_HashLinkProps, type: 'interface' }} />,
+  // 'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'true | false | undefined', 'var'), type: 'interface' }} />,
+  // 'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
+  // 'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'true | false | undefined', 'var'), type: 'interface' }} />,
 
 };
 
@@ -319,6 +322,19 @@ const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'Toolti
 
 import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
 const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
+
+import HashLinkSnippets from '../../../../../Components/Utils/HashLink/HashLink.tsx?raw';
+const Code_VariantProps = getSourceCode(HashLinkSnippets, 'VariantProps', 'type');
+const Code_NavTypeProps = getSourceCode(HashLinkSnippets, 'NavTypeProps', 'type');
+const Code_HashLinkPropsBase = getSourceCode(HashLinkSnippets, 'HashLinkPropsBase', 'interface');
+const Code_HashLinkProps = getFullTypeSource(HashLinkSnippets, 'HashLinkProps');
+// const Code_HashLinkProps = getSourceCode(HashLinkSnippets, 'HashLinkProps', 'type');
+
+// check for any type after the =
+// check for any type after & or |
+// check for any type after : or ?:
+// are there any other places I need to check for my own defined types?
+// loop through every found match, and add them after the first definition
 
 
 const paramDescriptionElements: Record<string, React.FC> = {

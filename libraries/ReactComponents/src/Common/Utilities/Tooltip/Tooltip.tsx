@@ -371,7 +371,7 @@ export const Tooltip = (props: TooltipProps) => {
 
                 <div ref={copiedSnippetRef} className='row-start-1 col-start-1 tooltip-copied-notification'>
                   Copied to clipboard
-                  <Icon variant='Checkbox' styles='tooltip-copied-icon' />
+                  <Icon variant='CircleOkay' styles='tooltip-copied-icon' />
                 </div>
               </div>
             </AnimContent>
