@@ -797,7 +797,7 @@ export const CustomContent = () => {
         <div className='span-12 lg:span-3' />
 
         <div className='span-12'>
-          <Alert type="info" additionalStyles='p-4'>
+          <Alert type="info" additCStyles='p-4'>
             <div className='card-layouts spacing'>
               <Card
                 type='card-link' 

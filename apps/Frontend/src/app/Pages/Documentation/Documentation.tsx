@@ -25,6 +25,8 @@ export const Documentation = () => {
   
     x Update any props like input's variant options to be memoized, and flatten any others that shouldn't be an object. 
       - Update the input props to be flattened, and dynamically add variant params based on the input's variant prop
+      - add universal conditional type for adding things like "styles" for overrides, or "additionalStyles" for adding to the base
+        - and then go back through your code and find where we add additionalStyles as undefined, and add default params for these scenarios
 
 
     - Finish the documentation pages
@@ -35,7 +37,7 @@ export const Documentation = () => {
 
     - Before you finish the intro pages and navLinks for the Documentation page,
         switch to using type definitions for conditional props for all the components
-    - Then add an alternative to getSourceCode to retrieve lines of code, instead of just definitions
+    x Then add an alternative to getSourceCode to retrieve lines of code, instead of just definitions
       - We need combined snippets for union type definitions
 
     - This entails the docs content, component themes, variants, and options

@@ -63,6 +63,9 @@ export const Docs_Select = () => {
   const [error, setError] = useState<string>('');
   const [disabled, setDisabled] = useState<boolean>(false);
 
+  const [msError, setMsError] = useState<string>('');
+  const [msDisabled, setMsDisabled] = useState<boolean>(false);
+
   const [dropdownSettings, setDropdownSettings] = useState<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean }>({});
   const [msDropdownSettings, setMsDropdownSettings] = useState<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean }>({});
 
@@ -156,13 +159,13 @@ export const Docs_Select = () => {
         { currentTab == 'MultiSelect' && 
           <ShowcaseElement jsx={getSourceCode(SelectCodeSnippets, "Example_MultiSelectInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
-              error={error} setError={setError}
-              disabled={disabled} setDisabled={setDisabled}
+              error={msError} setError={setMsError}
+              disabled={msDisabled} setDisabled={setMsDisabled}
               elementStateTypes={[]} additionalStateStyles='pb-0'
             >
               <Example_MultiSelectInput 
-                error={error} 
-                disabled={disabled} 
+                error={msError} 
+                disabled={msDisabled} 
                 closeOnLeave={msDropdownSettings.closeOnLeave}
                 keepOpenOnSlct={msDropdownSettings.keepOpenOnSlct}
                 preventOpenOnTab={msDropdownSettings.preventOpenOnTab}
