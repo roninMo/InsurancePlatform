@@ -27,39 +27,40 @@ export interface ParamTableProps {
 	params?: PTableItem[]; // This is reliant on that the html items come in threes
 	variant?: 'default' | 'subTable';
 	additionalStyles?: string;
+	tableStyles?: string;
 }
 
-export const ParamTable = ({ params, variant = 'default', additionalStyles }: ParamTableProps) => {
+export const ParamTable = ({ params, variant = 'default', additionalStyles, tableStyles }: ParamTableProps) => {
 	const { show, hide } = useContext(TooltipService);
 	const tooltipContent: TooltipContentProps = useMemo(() => ({ children: ParamTableTooltip }), []);
 	const tableItemId = useId();
-	
 
   return (
-		<Container 
-			show styles={variant == "subTable" ? 'param-subtable' : ''}
-			cStyles={`param-item-table dual-column-3 ${additionalStyles}`}
-		>
-			{/* Table Header */}
-			<label className="param-item-base">Name</label>
-			<label className="param-item-type">Type</label>
-			<div className='param-item-desc justify-between'>
-				<label className="">Description</label>
+		<Container show dynamic styles={additionalStyles}>
+			<Table className={`param-item-table dual-column-3 ${tableStyles}`}>
+				{/* Table Header */}
+				<label className="param-item-base">Name</label>
+				<label className="param-item-type">Type</label>
+				<div className='param-item-desc justify-between'>
+					<label className="">Description</label>
+					{ variant != 'subTable' && 
+						<div
+							onMouseEnter={() => show(tooltipContent)}
+							onMouseLeave={() => hide()}
+							className='mr-0.5'>
+							<Icon variant='OutlineInfo' styles='param-table-icon' />
+						</div>
+					}
+				</div>
 
-				{ variant != 'subTable' && 
-					<div
-						onMouseEnter={() => show(tooltipContent)}
-						onMouseLeave={() => hide()}
-						className='mr-0.5'>
-						<Icon variant='InfoBox' styles='icon-default' />
-					</div>
-				}
-			</div>
-
-			{/* Param Items */}
-			{ params?.map((item: PTableItem, index: number) => 
-				<ParamTableItem item={item} key={`paramTableItem-${tableItemId}-${index}`} />
-			)}
+				{/* Param Items */}
+				{ params?.map((item: PTableItem, index: number) => 
+					<ParamTableItem 
+						item={item} 
+						key={`paramTableItem-${tableItemId}-${index}`} 
+					/>
+				)}
+			</Table>
 		</Container>
   );
 }
@@ -212,8 +213,16 @@ export const getParamsTableItems = (
 		const nestedParams: PTableItem[] = [];
 		if (paramName in nestedParamsList) {
 			nestedParamsList[paramName].forEach((nestedParam: string) => {
+				// If it's a param table spacing declaration
+				if (nestedParam == 'spacing') {
+					nestedParams.push(nestedParam);
+					return;
+				}
+				
+				// If we don't have the param's information, just early out to avoid blank table items
 				if (!(nestedParam in paramHash)) return;
 
+				// Otherwise, add the nested item
 				let nestedItem: ParamItem = { ...paramHash[nestedParam] };
 				const context: ParamContext | undefined = contextMap.get(nestedParam);
 				addParamContext(nestedItem, context);

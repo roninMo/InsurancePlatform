@@ -10,10 +10,11 @@ export interface HeightTransProps {
   // custom height trans classes used for specific scenarios.
   heightTransClass?: string;
   heightTransContentClass?: string;
+  dynamic?: boolean;
 }
 
 // Wrapper for adding smooth open close content transitions to keep dynamic content from popping on the screen.
-export const Ht = ({ show, cStyles, styles, children, heightTransClass, heightTransContentClass }: HeightTransProps) => {
+export const Ht = ({ show, cStyles, styles, children, heightTransClass, heightTransContentClass, dynamic }: HeightTransProps) => {
   const htClass = heightTransClass ? heightTransClass : 'height-trans';
   const htcClass = heightTransContentClass ? heightTransContentClass : 'height-trans-content';
 
@@ -21,6 +22,7 @@ export const Ht = ({ show, cStyles, styles, children, heightTransClass, heightTr
     <div className={`
       ${htClass} ${show ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} 
       ${styles ? styles : ''}
+      ${dynamic ? 'dynamic-trans' : ''}
     `}>
       <div className={`${htcClass} ${cStyles ? cStyles : ''}`}>
         { children }

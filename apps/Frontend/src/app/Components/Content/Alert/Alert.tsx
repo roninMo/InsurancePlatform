@@ -9,13 +9,13 @@ export type AlertType = 'info' | 'warning' | 'error' | 'ok' | 'question';
 interface AlertPropsBase {
   type: AlertType;
   children: ReactNode;
-  additionalStyles?: string;
+  additStyles?: string;
   additCStyles?: string;
 }
 
 export type AlertProps = AlertPropsBase;
 
-export const Alert = ({ type, children, additionalStyles = '', additCStyles = '' }: AlertProps) => {
+export const Alert = ({ type, children, additStyles = '', additCStyles = '' }: AlertProps) => {
   const getAlertTheme = (): string => {
     if (type == 'info') return 'selected-box [&_.alert-content]:primary-text';
     if (type == 'warning') return 'warning-box [&_.alert-content]:warning-text';
@@ -38,7 +38,7 @@ export const Alert = ({ type, children, additionalStyles = '', additCStyles = ''
     <Container className={`alert ${getAlertTheme()} ${additCStyles}`}>
       <Icon variant={AlertIcons[type]} styles={`alert-icon ${getIconColor()}`} />
 
-      <div className={`alert-content ${additionalStyles}`}>
+      <div className={`alert-content ${additStyles}`}>
         { children }
       </div>
     </Container>

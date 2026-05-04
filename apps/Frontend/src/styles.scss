@@ -80,6 +80,9 @@
   .theme-fa { @apply hover:theme-f active:theme-a; }
   .theme-f { @apply brightness-90   dark:brightness-125; }
   .theme-a { @apply brightness-110  dark:brightness-90; }
+  
+  .theme-f2 { @apply brightness-95   dark:brightness-110; }
+  .theme-a2 { @apply brightness-105  dark:brightness-95; }
 
 
   // default background colors
@@ -89,7 +92,8 @@
   .bg-primary   { @apply bg-blue-600  dark:bg-blue-500; }
   
   // hover states
-  .bg-div-hover { @apply bg-slate-200 dark:bg-slate-800; }
+  .bg-default-hover { @apply bg-slate-100 dark:bg-slate-700; }
+  .bg-div-hover     { @apply bg-slate-200 dark:bg-slate-800; }
   
   // Input specific background theme
   .bg-disabled { @apply  bg-gray-300  dark:bg-gray-700; }
@@ -310,6 +314,12 @@
     @apply grid transition-[grid-template-rows] duration-300 ease-in-out;
   } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
   
+  // only supported by modern browsers (Chrome 129+, Edge 129+)
+  .dynamic-trans {
+    @apply transition-all duration-300;
+    interpolate-size: allow-keywords;
+  }
+
   .height-trans-400 {
     @apply grid transition-[grid-template-rows] duration-[400ms] ease-in-out;
   } // transition between grid-rows-[0fr] and [1fr] for smooth transitions
@@ -1525,12 +1535,14 @@
   .card-hover {
     &:hover {
       @apply 
-        duration-200 outline-light 
-        backdrop-brightness-110 dark:backdrop-brightness-125
+        duration-200 
+        outline-light theme-f2
       ;
       // & .card-divider { @apply border-focus; }
     }
-  }  .card-focus {
+  }  
+  
+  .card-focus {
     &:focus-within, &:focus {
       @apply outline-focus;
       // & .card-divider { @apply border-focus; }
@@ -1946,7 +1958,9 @@
   }
 
   .showcase-state-ref-c {
-    @apply w-full p-4 pl-8 pt-8 pb-2 span-12 lg:span-8;
+    @apply 
+      span-12 lg:span-8
+      p-4 pl-8 pt-8 pb-2;
   }
   
   .showcase-state-ref-states-c {
@@ -2049,11 +2063,13 @@
       
       outline-css rounded-none
       outline-slate-300 dark:outline-slate-700/50
+
+      text-nowrap
     ; 
   }
 
   .param-item-type { 
-    @apply param-item-base px-4; 
+    @apply param-item-base px-4 text-nowrap; 
   }
 
   .param-item-desc { 
@@ -2078,6 +2094,13 @@
   
   .keep-grid-flow {
     @apply h-0 w-0 m-0 p-0;
+  }
+
+  .param-table-icon {
+    @apply 
+      icon-default size-6
+      transition-all cursor-pointer duration-300
+      hover:theme-f
   }
 
 
@@ -2109,6 +2132,10 @@
   
   .param-type-function {
     @apply text-sky-600/60 dark:text-sky-400/90;
+  }
+
+  .param-type-html {
+    @apply text-orange-600/80 dark:text-orange-400/90;
   }
 
   .param-type-custom {
@@ -2161,6 +2188,10 @@
   
   .keyword-text {
     @apply text-sm font-semibold label-colors;
+  }
+
+  .keyword-interactive {
+    @apply keyword cursor-pointer active:theme-a;
   }
 
   // SeeRef

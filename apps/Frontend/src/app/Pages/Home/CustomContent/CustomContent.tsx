@@ -642,15 +642,15 @@ export const CustomContent = () => {
             Containers
           </h4>
 
-          <Card type='default' additStyles='span-12 lg:span-4 p-4' >
+          <Card type='default' additStyles='span-12 lg:span-4 p-4' hoverTheme>
             Default layout
           </Card>
 
-          <Card type='default' additStyles='span-12 lg:span-4 p-4' noBorder noBackground>
+          <Card type='default' additStyles='span-12 lg:span-4 p-4' noBorder noBackground hoverTheme>
             Default layout
           </Card>
 
-          <Card type='default' additStyles='span-12 lg:span-4 p-4' noBackground>
+          <Card type='default' additStyles='span-12 lg:span-4 p-4' noBackground hoverTheme>
             Default layout
           </Card>
         </div>

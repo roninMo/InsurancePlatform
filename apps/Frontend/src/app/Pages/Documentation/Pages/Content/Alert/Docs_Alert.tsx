@@ -81,13 +81,12 @@ export const Docs_Alert = () => {
           The alert component is for displaying themed notifications for the projects I'm working on. It accepts any content, 
           and functions like a normal div element, allowing you to create a quick notification, or dynamic content while using
           the themes for specific states based on the type of notification you need. The alert types are 
-          <Kw>info</Kw>, 
-          <Kw>warning</Kw>, 
-          <Kw>error</Kw>, 
-          <Kw>ok</Kw>, or
-          <Kw>question</Kw>.
+          <Kw onClick={() => updateAlertType('info')} styles="keyword-interactive">info</Kw>, 
+          <Kw onClick={() => updateAlertType('warning')} styles="keyword-interactive">warning</Kw>, 
+          <Kw onClick={() => updateAlertType('error')} styles="keyword-interactive">error</Kw>, 
+          <Kw onClick={() => updateAlertType('ok')} styles="keyword-interactive">ok</Kw>, or
+          <Kw onClick={() => updateAlertType('question')} styles="keyword-interactive">question</Kw>.
 
-          
         </div>
       </div>
 
@@ -95,11 +94,11 @@ export const Docs_Alert = () => {
         <p className='p-2 showcase-text'>
           If you're just looking for a container to add content dynamically or in a uniform and themed manner, use &nbsp;
           <span 
-            onMouseEnter={() => show({ code: getSourceCode(CardCodeSnippets, "Example_CardComponent"), type: "component" })} 
+            onMouseEnter={() => show({ code: getSourceCode(CardCodeSnippets, "Example_Card"), type: "component" })} 
             onClick={hide}
             onMouseLeave={hide}
           >
-            <DocLink label='Card' url='/Documentation/Forms/Card' />
+            <DocLink label='Card' url='/Documentation/Content/Card' />
           </span>
           
           . You can either add content with specific layouts, or just use the container to add content with themed styles.

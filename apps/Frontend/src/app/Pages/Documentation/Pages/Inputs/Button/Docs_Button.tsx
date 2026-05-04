@@ -41,16 +41,16 @@ export const Docs_Button = () => {
   // Param Table State              //
   //--------------------------------//
   const paramTableItems = useMemo(() => {
-    const baseParamList: string[] = defaultParams || [];
+    const baseParamList: string[] = buttonParamsList || [];
     const contextParams: ParamContext[] = paramContextsList[currentTab]; 
-    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, {}, paramTypeElements, paramDescriptionElements);
+    const params: (ParamItem | 'spacing')[] = getParamsTableItems(baseParamList, contextParams, {}, buttonParamTypeElements, buttonParamDescElements);
     
     // Variant specific params
     const variantParams: string[] = variantParamsList[currentTab] || [];
     const variantContextParams = paramContextsList[currentTab];
     if (variantParams?.length > 0) {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
-      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
+      const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, buttonParamTypeElements, buttonParamDescElements);
       params.push(...spacing, ...variantParamItems);
     }
 
@@ -179,7 +179,7 @@ const Variants = styled.div``;
 // Component param table logic                 //
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
-const defaultParams: string[] = [ 
+export const buttonParamsList: string[] = [ 
   'displayText', 'onClick', 'disabled',
   'spacing', 'size', 'color', 'additionalStyles',
   'spacing', 'icon', 'iconStyles',
@@ -210,7 +210,7 @@ const paramContextsList: Record<string, ParamContext[]> = {
 // Param table static element references        //
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
-const paramTypeElements: Record<string, React.FC> = {
+export const buttonParamTypeElements: Record<string, React.FC> = {
   'displayText': () => <ParamType type="string" tooltip={{ code: dParArg('displayText', 'Click me') }} />, 
   'onClick': () => <ParamType type="MouseEvent" tooltip={{ code: Code_onClickBtn, type: 'type' }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }}/>,
@@ -230,7 +230,7 @@ const Code_ButtonSzs = getSourceCode(SourceBtnSnippets, 'ButtonSizes', 'type');
 const Code_ButtonClrs = getSourceCode(SourceBtnSnippets, 'ButtonColors', 'type');
 
 
-const paramDescriptionElements: Record<string, React.FC> = {
+export const buttonParamDescElements: Record<string, React.FC> = {
   'displayText': () =>
     <div className='param-item-desc-text'>
       The button text.

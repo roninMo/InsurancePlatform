@@ -44,11 +44,12 @@ type CardContentProps = CardPropsBase
   // (contentStyles || additContentStyles)?: string;
 };
 
+export type ButtonLocation = 'bottomLeft' | 'bottomRight' | 'top';
 export type CardButtonProps = CardContentProps & {
   type: 'card-button';
   buttonProps: ButtonProps;
-  buttonLocation: 'bottomLeft' | 'bottomRight' | 'top';
-  focusTheme?: boolean; // add focus to the border when the button is clicked?
+  buttonLocation: ButtonLocation;
+  focusTheme?: boolean;
 }
 
 export type CardLinkProps = CardContentProps & {
@@ -151,12 +152,14 @@ export const Card = (props: CardProps) => {
   const { focusTheme } = props as any;
 
   const getContainerStyles = (): string => {
-    let classes = styles ? styles : `card-container ${additStyles}`;
-    if (!noBackground) classes += ` card-bg`;
-    if (!noBorder) classes += ` card-border`;
-    if (hoverTheme) classes += ` card-hover`;
-    if (focusTheme) classes += ` card-focus`;
-    return classes;
+    return styles ? styles : `
+      card-container
+      ${noBackground ?  '' : 'card-bg'}
+      ${noBorder ?      '' : 'card-border'}
+      ${hoverTheme ? 'card-hover' : ''}
+      ${focusTheme ? 'card-focus' : ''}
+      ${additStyles}
+    `;
   }
 
 
