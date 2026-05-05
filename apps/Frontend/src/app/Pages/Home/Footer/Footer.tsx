@@ -69,8 +69,8 @@ export const Footer = () => {
             <Icon variant='Facebook' styles='size-6 svg-init text-colors hover:text-blue-600  dark:hover:text-blue-600' />
           </a>
           <a href="#" className="p-2">
-            <span className="sr-only">Instagram</span>
-            <Icon variant='Instagram' styles='size-6 svg-init instagram-gray hover:text-rose-400 dark:hover:text-rose-400' />
+            <span className="sr-only">LinkedIn</span>
+            <Icon variant='LinkedIn' styles='size-6 svg-init text-colors hover:text-blue-700/90 dark:hover:text-blue-500' />
           </a>
           <a href="#" className="p-2">
             <span className="sr-only">X</span>
@@ -78,7 +78,11 @@ export const Footer = () => {
           </a>
           <a href="#" className="p-2">
             <span className="sr-only">GitHub</span>
-            <Icon variant='Github' styles='size-6 svg-init text-colors hover:text-green-500  dark:hover:text-green-500' />
+            <Icon variant='Github' styles='size-6 svg-init text-colors hover:text-green-500  dark:hover:text-green-500/80' />
+          </a>
+          <a href="#" className="p-2">
+            <span className="sr-only">Instagram</span>
+            <Icon variant='Instagram' styles='size-6 svg-init instagram-gray hover:text-rose-600/90 dark:hover:text-rose-500' />
           </a>
           <a href="#" className="p-2">
             <span className="sr-only">YouTube</span>

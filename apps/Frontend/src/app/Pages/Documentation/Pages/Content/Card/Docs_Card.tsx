@@ -1,6 +1,6 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
-import { getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
+import { getSourceCode, getValuesFromType, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 import { buttonParamDescElements, buttonParamsList, buttonParamTypeElements } from '../../Inputs/Button/Docs_Button';
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
@@ -180,12 +180,27 @@ const defaultParams: string[] = [
 
 // Variant's contextual params
 const variantParamsList: Record<string, string[]> = {
-  'card': ['noDivider'],
+  'default': ['styles', 'additStyles'],
+  'card': [
+    'noDivider',
+    'spacing', 'styles', 'additStyles',
+    'headerStyles', 'additHeaderStyles',
+    'descStyles', 'additDescStyles',
+    'contentStyles', 'additContentStyles',
+  ],
   'card-button': [
-    'noDivider', 'buttonProps', 'buttonLocation', 'focusTheme'
+    'noDivider', 'buttonProps', 'buttonLocation', 'focusTheme',
+    'spacing', 'styles', 'additStyles',
+    'headerStyles', 'additHeaderStyles',
+    'descStyles', 'additDescStyles',
+    'contentStyles', 'additContentStyles',
   ],
   'card-link': [
-    'noDivider', 'linkText', 'onClickLink'
+    'noDivider', 'linkText', 'onClickLink',
+    'spacing', 'styles', 'additStyles',
+    'headerStyles', 'additHeaderStyles',
+    'descStyles', 'additDescStyles',
+    'contentStyles', 'additContentStyles',
   ]
 }
 
@@ -197,11 +212,18 @@ const childParamsList: Record<string, string[]> = {
 
 // variant specific context params
 const paramContextsList: Record<string, ParamContext[]> = {
+  "default": [
+    { name: 'styles', contextParam: false, variantOption: true }, 
+  ],
   "card": [ 
     { 
       overwrite: 'type', name: 'type="card"',
       contextParam: true, variantOption: false 
     }, 
+    { name: 'styles', contextParam: false, variantOption: true }, 
+    { name: 'headerStyles', contextParam: false, variantOption: true }, 
+    { name: 'descStyles', contextParam: false, variantOption: true }, 
+    { name: 'contentStyles', contextParam: false, variantOption: true }, 
     // { name: 'noDivider', contextParam: false, variantOption: true }, 
   ],
 
@@ -210,6 +232,10 @@ const paramContextsList: Record<string, ParamContext[]> = {
       overwrite: 'type', name: 'type="card-button"',
       contextParam: true, variantOption: false 
     }, 
+    { name: 'styles', contextParam: false, variantOption: true }, 
+    { name: 'headerStyles', contextParam: false, variantOption: true }, 
+    { name: 'descStyles', contextParam: false, variantOption: true }, 
+    { name: 'contentStyles', contextParam: false, variantOption: true }, 
     // { name: 'noDivider', contextParam: false, variantOption: true }, 
     // { name: 'buttonProps', contextParam: false, variantOption: true }, 
     // { name: 'buttonLocation', contextParam: false, variantOption: true }, 
@@ -221,12 +247,23 @@ const paramContextsList: Record<string, ParamContext[]> = {
       name: 'type', overwrite: 'type="card-link"',
       contextParam: true, variantOption: false 
     }, 
+    { name: 'styles', contextParam: false, variantOption: true }, 
+    { name: 'headerStyles', contextParam: false, variantOption: true }, 
+    { name: 'descStyles', contextParam: false, variantOption: true }, 
+    { name: 'contentStyles', contextParam: false, variantOption: true }, 
     // { name: 'noDivider', contextParam: false, variantOption: true }, 
     // { name: 'linkText', contextParam: false, variantOption: true }, 
     // { name: 'onClickLink', contextParam: false, variantOption: true }, 
   ],
 };
 
+// TODO: think of a way to add it's conditional styling params
+/*
+
+
+
+
+*/
 
 //----------------------------------------------//
 // Param table static element references        //
@@ -249,6 +286,19 @@ const paramTypeElements: Record<string, React.FC> = {
   // card-link
   'linkText': () => <ParamType type="string" tooltip={{ code: dParArg('linkText', 'Click me') }} />,
   'onClickLink': () => <ParamType type="MouseEvent" tooltip={{ code: Code_OnClickLink }} />,
+  
+
+  'styles': () => <ParamType type="string" tooltip={{ code: dParArg('styles', 'container-classes')}} />, 
+  'additStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additStyles', 'additional-classes')}} />,
+  
+  'headerStyles': () => <ParamType type="string" tooltip={{ code: dParArg('headerStyles', 'header-classes')}} />, 
+  'additHeaderStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additHeaderStyles', 'additional-classes')}} />,
+  
+  'descStyles': () => <ParamType type="string" tooltip={{ code: dParArg('DescStyles', 'description-classes')}} />, 
+  'additDescStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additDescStyles', 'addition-classes')}} />,
+  
+  'contentStyles': () => <ParamType type="string" tooltip={{ code: dParArg('contentStyles', 'content-classes')}} />, 
+  'additContentStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additContentStyles', 'additional-classes')}} />,
 };
 
 // Code Snippets
@@ -304,6 +354,50 @@ const paramDescriptionElements: Record<string, React.FC> = {
   'onClickLink': () => 
     <div className='param-item-desc-text'>
       The function used to handle the Link's functionality.
+    </div>,
+
+  // Conditional Styling Params
+  'styles': () => 
+    <div className='param-item-desc-text'>
+      The styles of the container. If you're using styles, additStyles is restricted, and vice versa. 
+      For the default type, this adds classes to the children's container.
+      use contentStyles for every other type.
+    </div>,
+  'additStyles': () => 
+    <div className='param-item-desc-text'>
+      Additional styles for the container. If you're using additStyles, styles is restricted, and vice versa. 
+      For the default type, this adds classes to the children's container.
+      use additContentStyles for every other type.
+    </div>,
+  'headerStyles': () => 
+    <div className='param-item-desc-text'>
+      The styles of the header. If you're using headerStyles, 
+      additHeaderStyles is restricted, and vice versa.
+    </div>,
+  'additHeaderStyles': () => 
+    <div className='param-item-desc-text'>
+      Additional styles for the header. If you're using headerStyles, 
+      headerStyles is restricted, and vice versa.
+    </div>,
+  'descStyles': () => 
+    <div className='param-item-desc-text'>
+      The styles of the description. If you're using descriptionStyles, 
+      additDescriptionStyles is restricted, and vice versa.
+    </div>,
+  'additDescStyles': () => 
+    <div className='param-item-desc-text'>
+      Additional styles for the description. If you're using additDescriptionStyles, 
+      descriptionStyles is restricted, and vice versa.
+    </div>,
+  'contentStyles': () => 
+    <div className='param-item-desc-text'>
+      The styles of the children. If you're using contentStyles, 
+      additContentStyles is restricted, and vice versa.
+    </div>,
+  'additContentStyles': () => 
+    <div className='param-item-desc-text'>
+      Additional styles for the children. If you're using additContentStyles, 
+      contentStyles is restricted, and vice versa.
     </div>,
 };
 

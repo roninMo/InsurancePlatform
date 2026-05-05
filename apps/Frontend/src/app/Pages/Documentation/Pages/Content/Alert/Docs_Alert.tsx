@@ -123,7 +123,7 @@ export const Docs_Alert = () => {
               <Example_Alert type={alertType} />
             </div>
 
-            <div className={`pb-32 showcase-state-ref-states-c`}>
+            <div className={`showcase-state-ref-states-c`}>
                 <ElementState type='info' onClick={() => updateAlertType('info')} isSelected={alertType == 'info'} />
                 <ElementState type='warning' onClick={() => updateAlertType('warning')} isSelected={alertType == 'warning'} />
                 <ElementState type='error' onClick={() => updateAlertType('error')} isSelected={alertType == 'error'} />

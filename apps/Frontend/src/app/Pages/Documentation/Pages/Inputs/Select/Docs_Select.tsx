@@ -128,7 +128,7 @@ export const Docs_Select = () => {
               />
             </ShowcaseExample_StateRef>
 
-            <div className={`pb-32 showcase-state-ref-states-c`}>
+            <div className={`pb-24 showcase-state-ref-states-c`}>
               {/* Close dropdown when mouse leaves the select? */}
               <div className={ dropdownSettings.closeOnLeave === true ?  'element-state-v-green' :
                 dropdownSettings.closeOnLeave === false ? 'element-state-v-red' : 'element-state-v-gray' }>
@@ -172,7 +172,7 @@ export const Docs_Select = () => {
               />
             </ShowcaseExample_StateRef>
 
-            <div className={`pb-32 showcase-state-ref-states-c`}>
+            <div className={`pb-24 showcase-state-ref-states-c`}>
               {/* Close dropdown when mouse leaves the select? */}
               <div className={ msDropdownSettings.closeOnLeave === true ?  'element-state-v-green' :
                 msDropdownSettings.closeOnLeave === false ? 'element-state-v-red' : 'element-state-v-gray' }>

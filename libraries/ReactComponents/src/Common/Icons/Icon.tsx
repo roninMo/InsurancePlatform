@@ -110,6 +110,7 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   if (warningStyleMap?.[variant]) iconStyles = 'i-default-theme i-warn-color';
   if (errorStyleMap?.[variant])   iconStyles = 'i-default-theme i-err-color';
   if (okayStyleMap?.[variant])    iconStyles = 'i-default-theme i-ok-color';
+  if (customStyleMap?.[variant])  iconStyles = customStyleMap[variant];
   iconStyles = styles ? styles : iconStyles;
   // console.log(`\nrendered ${variant} icon, styles: `, iconStyles);
   
@@ -152,15 +153,13 @@ export type DefaultIconTypes =
 | 'DarkTheme' 
 | 'Database' 
 | 'DocText' 
-| 'DemandJump' 
 | 'DropdownArrow' 
 | 'Envelope' 
 | 'Eye' 
 | 'EyeSlash' 
 | 'LightTheme' 
 | 'Link' 
-| 'Loading' 
-| 'LinkedIn' 
+| 'Loading'  
 | 'OutlinePause' 
 | 'Phone' 
 | 'Plus' 
@@ -197,9 +196,10 @@ export type AlertIconTypes =
 //------------------------------------//
 export type MediaIconTypes =
 | 'Facebook' 
+| 'LinkedIn'
+| 'Twitter' 
 | 'Github' 
 | 'Instagram' 
-| 'Twitter' 
 | 'Youtube';
 
 
@@ -214,6 +214,7 @@ export type CloudServiceProviders = 'AWS' | 'Azure' | 'GCP';
 export type AutomationTools = 'AWS CDK' |'Kubernetes' | 'Bamboo' | 'Docker';
 export type AutomationKeywords = 'CI/CD Pipelines' | 'Azure Devops' | 'Atlassian Stack';
 
+// TODO: union, less headache, just comment for readability?
 export type TechIconTypes = 
   'Angular' | 'React' | 'Vue' | 
   'Express' | 'Net' | 'Node' | 
@@ -232,7 +233,7 @@ export type TechIconTypes =
 //------------------------------------//
 // Company Icons                      //
 //------------------------------------//
-export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo';
+export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo' | 'DemandJump';
 
 
 
@@ -244,6 +245,7 @@ export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | '
 const infoStyleMap: Partial<Record<IconTypes, boolean>> = {
   'CircleQuestion': true,
   'OutlineQuestion': true, 
+  'Plus': true, 
 };
 
 const warningStyleMap: Partial<Record<IconTypes, boolean>> = {
@@ -255,11 +257,22 @@ const errorStyleMap: Partial<Record<IconTypes, boolean>> = {
   'CircleError': true,
   'OutlineError': true,
   'Trash': true,
+  'Close': true, 
 };
 
 const okayStyleMap: Partial<Record<IconTypes, boolean>> = {
   'CircleOkay': true,
   'OutlineOkay': true,
+  'Phone': true, 
+  'CodeBracket': true,
+};
+
+const customStyleMap: Partial<Record<IconTypes, string>> = {
+  'Facebook': 'icon-default-theme text-blue-600 dark:text-blue-600', 
+  'Github': 'icon-default-theme text-green-600  dark:text-green-500/80', 
+  'Instagram': 'icon-default-theme text-rose-600/90 dark:text-rose-500', 
+  'Twitter': 'icon-default-theme text-sky-400  dark:text-sky-400', 
+  'Youtube': 'icon-default-theme text-red-500  dark:text-red-500',
 };
 
 
@@ -280,7 +293,6 @@ const defaultIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> =
   'DarkTheme':       ({ styles }) => <Icon_DarkTheme styles={styles} />,
   'Database':        ({ styles }) => <Icon_Database styles={styles} />,
   'DocText':         ({ styles }) => <Icon_DocText styles={styles} />,
-  'DemandJump':      ({ styles }) => <Icon_Demandjump styles={styles} />,
   'DropdownArrow':   ({ styles }) => <Icon_DropdownArrow styles={styles} />,
   'Envelope':        ({ styles }) => <Icon_Envelope styles={styles} />,
   'Eye':             ({ styles }) => <Icon_Eye styles={styles} />,
@@ -364,6 +376,7 @@ const techIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
 }
 
 const companyIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
+  'DemandJump':          ({ styles }) => <Icon_Demandjump styles={styles} />,
   'LibertyLogo':         ({ styles }) => <Icon_LibertyLogo styles={styles} />,
   'LibertyMutual':       ({ styles }) => <Icon_LibertyMutual styles={styles} />,
   'StateAuto':           ({ styles }) => <Icon_StateAuto styles={styles} />,

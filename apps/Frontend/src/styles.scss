@@ -183,7 +183,9 @@
   }
 
   .i-default-theme {
-    @apply size-5 justify-center self-center;
+    @apply 
+      size-5 justify-center self-center 
+      cursor-pointer transition-all;
   }
 
   .i-default-color {
@@ -253,7 +255,7 @@
 
   .ok-box {
     @apply
-      bg-opacity-10 dark:bg-opacity-10
+      bg-opacity-20 dark:bg-opacity-10
       bg-emerald-500 dark:bg-emerald-400
       outline-emerald-500 dark:outline-emerald-400;
   }
@@ -1525,10 +1527,7 @@
 
   // #region Card / Container component styles
   .card-container {
-    @apply 
-      p-2 col gap-2 
-      rounded-md transition-all
-    ;
+    @apply p-2 rounded-md transition-all;
   }
   .card-bg { @apply bg-default; }
   .card-border { @apply outline-css outline-default transition-all; }
@@ -1558,11 +1557,11 @@
   }
 
   .card-divider {
-    @apply w-full mb-2 border-b border-styles transition-all;
+    @apply w-full mb-4 mt-2 border-b border-styles transition-all;
   }
   
   .card-content {
-    @apply block;
+    @apply col gap-2;
   }
 
   .card-link {
@@ -1964,7 +1963,7 @@
   }
   
   .showcase-state-ref-states-c {
-    @apply p-4 pl-8 span-12 lg:span-8 rowStart gap-2;
+    @apply p-4 pl-8 pb-6 span-12 lg:span-8 rowStart gap-2;
   }
 
   // Showcase Element State Buttons (default, error, disabled)

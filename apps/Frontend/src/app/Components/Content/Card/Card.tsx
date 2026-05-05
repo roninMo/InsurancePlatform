@@ -13,7 +13,7 @@ export type CardType =
 ;
 
 // Card Props
-export type CardPropsBase = ContainerStyles & ContentStyles & {
+export type CardPropsBase = ContainerStyles & {
   type: CardType;
   noBackground?: boolean; // Removed styling from the base styles
 
@@ -25,9 +25,16 @@ export type CardPropsBase = ContainerStyles & ContentStyles & {
 }
 
 
+type DefaultCardProps = CardPropsBase & {
+  type: 'default';
+  children: ReactNode; // this variant just uses styles/additStyles
+};
+
+
 type CardContentProps = CardPropsBase 
   & HeaderStyles 
   & DescriptionStyles 
+  & ContentStyles
 & {
   type: 'card' | 'card-button' | 'card-link';
   noDivider?: boolean;
@@ -62,7 +69,7 @@ export type CardProps =
   | CardButtonProps   // card-button
   | CardLinkProps     // card-link
   | CardContentProps  // card & ^
-  | CardPropsBase     // default (intellisense routing)
+  | DefaultCardProps     // default (intellisense routing)
 ;
 
 
@@ -146,8 +153,7 @@ type ContentStyles =
 export const Card = (props: CardProps) => {
   const { 
     type, styles, additStyles, 
-    noBackground, noBorder, hoverTheme,
-    children 
+    noBackground, noBorder, hoverTheme, 
   } = props as CardPropsBase;
   const { focusTheme } = props as any;
 
@@ -166,11 +172,15 @@ export const Card = (props: CardProps) => {
   //--------------------------------//
   // Default (Container)            //
   //--------------------------------//
-  if (type == 'default') return (
-    <Container className={getContainerStyles()}>
-      { children }
-    </Container>
-  );
+  if (type == 'default') {
+    const { children } = props as DefaultCardProps;
+
+    return (
+      <Container className={getContainerStyles()}>
+        { children }
+      </Container>
+    );
+  }
 
 
   //--------------------------------//
@@ -178,7 +188,7 @@ export const Card = (props: CardProps) => {
   //--------------------------------//
   else {
     const { 
-      title, description, noDivider, 
+      title, description, noDivider, children, 
       headerStyles, additHeaderStyles = '', 
       descStyles, additDescStyles = '', 
       contentStyles, additContentStyles = '' 

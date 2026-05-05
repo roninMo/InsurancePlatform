@@ -14,6 +14,7 @@ export * from './Utilities/RecordUtils/UpdateRecord';
 // React Syntax Highlighter Code Renderer
 export { CodeRenderer } from './Utilities/CodeSnippets/CodeRenderer';
 export * from './Utilities/CodeSnippets/GetSourceCode';
+export * from './Utilities/CodeSnippets/GetTypeValues';
 
 
 // Tooltip
