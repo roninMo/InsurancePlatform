@@ -116,6 +116,7 @@ Context options
 			- edit value comp (modal on edit selection)
 		- edit page
 			- edit table components ^
+			- * a history button on this page that allows you 
 			
 			
 	- Backend routes
@@ -132,6 +133,29 @@ Context options
 		- edit Table Param
 		- delete Table Param
 		- update Table Param
+
+		- alongside any of the creation, edit, or deletion routes, add internal history tracking
+			- keeps track of what values were changed, that captures the current options whenever the database is changed:
+				- generateMockData config
+				- custom MockData 
+			- Allows you to go back to specific version while retaining the same data that the user previously had with minimal storage space used
+			- DBHistoryTable
+				- id
+				- databaseId
+				- updateIndex / version
+				- editAction ( "table1 param value's type changed" )
+				- custom MockData - if there's custom mockData, capture it
+			- Focus on 
+				- the current table structure
+				- the current param's mock data generation config
+			- Ideally
+				- travel back through each index to specific history states
+				- keep track of the table structures and mock gen config as you go 	
+				- do not generate mock data until the index is reached? TODO: or find a better way to access (cache current index on serve?)
+				- send the user the current state for the specific history index requested
+
+				
+		- get History Actions Param
 		
 		- if changes end up affecting the values, pass back updates tables
 		

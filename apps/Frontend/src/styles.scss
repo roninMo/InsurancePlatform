@@ -1808,8 +1808,12 @@
     @apply bg-black bg-opacity-40 dark:bg-opacity-40; 
   }
 
-  .modal-header {
+  .modal-header-c {
     @apply p-6 w-full row justify-between items-center;
+  }
+  
+  .modal-header {
+    @apply text-xl lg:text-2xl header-colors;
   }
 
   .modal-icon {
@@ -1820,7 +1824,7 @@
 
   .modal-content {
     @apply 
-    mx-8 mb-8 pr-4 
+    mx-8 mb-8 pr-6
     overflow-auto overflow-x-hidden 
     scrollbar-theme transition-all;
   }

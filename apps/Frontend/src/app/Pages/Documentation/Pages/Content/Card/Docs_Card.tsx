@@ -73,7 +73,6 @@ export const Docs_Card = () => {
 
   return (
     <Container className='spacing'>
-
       <h3 className="span-12 p-2 docs-showcase-header">
         Card Component
       </h3>
@@ -158,7 +157,6 @@ export const Docs_Card = () => {
           />
         </Dropdown>
       </div>
-      
     </Container>
   );
 }
@@ -257,13 +255,6 @@ const paramContextsList: Record<string, ParamContext[]> = {
   ],
 };
 
-// TODO: think of a way to add it's conditional styling params
-/*
-
-
-
-
-*/
 
 //----------------------------------------------//
 // Param table static element references        //

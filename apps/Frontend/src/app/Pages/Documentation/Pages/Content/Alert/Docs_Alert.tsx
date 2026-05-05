@@ -71,7 +71,6 @@ export const Docs_Alert = () => {
 
   return (
     <Container className='spacing'>
-
       <h3 className="span-12 p-2 docs-showcase-header">
         Alert Component
       </h3>
@@ -150,7 +149,6 @@ export const Docs_Alert = () => {
           />
         </Dropdown>
       </div>
-      
     </Container>
   );
 }

@@ -158,39 +158,34 @@ export const WelcomeSection = () => {
 
 
       {/* Get Started Modal */}
-      <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen}>
-        <div className='col gap-4 w-[70vw] h-[65vh] px-4 ='>
-            
-            {/* Mock Database */}
-            <Dropdown label="Mock Database" openByDefault openListener={setOpenedMockDB} labelStyles='text-base lg:text-lg header-colors font-medium' >
-              <div className="pl-8">
-                <QuickLinks links={mockDBLinks} initialRender={openedMockDB} />
-              </div>
-            </Dropdown>
+      <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen} containerStyles='col gap-4 w-[70vw] h-[65vh] px-4'>
+        {/* Mock Database */}
+        <Dropdown label="Mock Database" openByDefault openListener={setOpenedMockDB} labelStyles='text-base lg:text-lg header-colors font-medium' >
+          <div className="pl-8">
+            <QuickLinks links={mockDBLinks} initialRender={openedMockDB} />
+          </div>
+        </Dropdown>
 
-            {/* Insurance Platform */}
-            <Dropdown label="Insurance Platform" openByDefault openListener={setOpenedInsPlat} labelStyles='text-base lg:text-lg header-colors font-medium' >
-              <div className="pl-8">
-                <QuickLinks links={insPlatLinks} initialRender={openedInsPlat} />
-              </div>
-            </Dropdown>
+        {/* Insurance Platform */}
+        <Dropdown label="Insurance Platform" openByDefault openListener={setOpenedInsPlat} labelStyles='text-base lg:text-lg header-colors font-medium' >
+          <div className="pl-8">
+            <QuickLinks links={insPlatLinks} initialRender={openedInsPlat} />
+          </div>
+        </Dropdown>
 
-            {/* Spotify Demo */}
-            <Dropdown label="Spotify Demo" openListener={setOpenedSpotify} labelStyles='text-base lg:text-lg header-colors font-medium' >
-              <div className="pl-8">
-                <QuickLinks links={spotifyLinks} initialRender={openedSpotify} />
-              </div>
-            </Dropdown>
+        {/* Spotify Demo */}
+        <Dropdown label="Spotify Demo" openListener={setOpenedSpotify} labelStyles='text-base lg:text-lg header-colors font-medium' >
+          <div className="pl-8">
+            <QuickLinks links={spotifyLinks} initialRender={openedSpotify} />
+          </div>
+        </Dropdown>
 
-            {/* ServerSide AutoSave */}
-            <Dropdown label="ServerSide Autosave" openListener={setOpenedSSAS} labelStyles='text-base lg:text-lg header-colors font-medium' >
-              <div className="pl-8">
-                <QuickLinks links={SSASLinks} initialRender={openedSSAS} />
-              </div>
-            </Dropdown>
-
-
-        </div>
+        {/* ServerSide AutoSave */}
+        <Dropdown label="ServerSide Autosave" openListener={setOpenedSSAS} labelStyles='text-base lg:text-lg header-colors font-medium' >
+          <div className="pl-8">
+            <QuickLinks links={SSASLinks} initialRender={openedSSAS} />
+          </div>
+        </Dropdown>
       </Modal>
 
       {/* <FadeToBackground className='-mt-10 py-14 

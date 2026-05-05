@@ -40,10 +40,14 @@ const getTypeStyles = (type: ParamTypes) => {
 	if (type == 'number') return 'param-type-number';
 	if (type == 'boolean') return 'param-type-boolean';
 	if (type == 'any') return 'param-type-boolean';
-	if (type == 'function' || type == 'ChangeEvent' || type == 'FocusEvent' || type == 'MouseEvent') return 'param-type-function';
+
+	if (type == 'function' || type == '() => void' || 
+			type == 'ChangeEvent' || type == 'FocusEvent' || type == 'MouseEvent') return 'param-type-function';
+
 	if (type == 'ReactNode' || type == 'React.FC' || type == 'FC' ||
 			type == 'HTMLElement' || type == 'HTMLDivElement' || type == 'HTMLInputElement' || type == 'HTMLButtonElement'
 	) return 'param-type-html';
+
 	return 'param-type-custom';
 	// return 'text-slate-900 dark:text-slate-400';
 }

@@ -69,7 +69,6 @@ export const Docs_Dropdown = () => {
 
   return (
     <Container className='spacing'>
-
       <h3 className="span-12 p-2 docs-showcase-header">
         Dropdown Component
       </h3>
@@ -147,10 +146,6 @@ const childParamsList: Record<string, string[]> = {
 // variant specific context params
 const paramContextsList: Record<string, ParamContext[]> = {
   "default": [ 
-    { 
-      overwrite: 'type', name: 'type="card"',
-      contextParam: true, variantOption: false 
-    }, 
     { name: 'styles', contextParam: false, variantOption: true }, 
     { name: 'labelStyles', contextParam: false, variantOption: true }, 
     { name: 'iconStyles', contextParam: false, variantOption: true }, 

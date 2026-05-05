@@ -11,14 +11,14 @@ export interface ModalProps {
   onCloseModal?: () => void;
 
   label?: string;
-  overlay?: boolean;
+  noOverlay?: boolean;
   closeModalButton?: boolean;
 
   // Styles
-  labelStyles?: string;
+  containerStyles?: string;
   overlayStyles?: string;
+  labelStyles?: string;
   closeIconStyles?:string;
-  additionalStyles?: string;
 
   // Rendered content
   children?: ReactNode;
@@ -26,8 +26,9 @@ export interface ModalProps {
 
 export const Modal = ({
   isModalOpen, setModalOpen, onCloseModal,
-  label, additionalStyles,
-  overlay = true, overlayStyles,
+  label, labelStyles, 
+  containerStyles,
+  noOverlay, overlayStyles,
   closeModalButton = true, closeIconStyles,
   children
 }: ModalProps) => {
@@ -84,23 +85,25 @@ export const Modal = ({
       <Overlay
         id={renderedModalId}
         onClick={(e) => userClicked(e)}
-        className={`modal-base ${overlay ? 'modal-overlay' : ''} ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} ${overlayStyles}
+        className={`modal-base 
+          ${noOverlay ? '' : 'modal-overlay'}  ${overlayStyles}
+          ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} 
       `}>
-        <Container id={closeModalId} className={`modal-container ${isModalOpen ? 'opacity-100' : 'opacity-0'} ${additionalStyles}`}>
-          <Header className='modal-header'>
-            <label className='text-xl lg:text-2xl header-colors'>
+        <Container id={closeModalId} className={`modal-container 
+          ${isModalOpen ? 'opacity-100' : 'opacity-0'} 
+        `}>
+          <Header className='modal-header-c'>
+            <label className={`${labelStyles ? labelStyles : 'modal-header'}`}>
               { label }
             </label>
 
             <div onClick={() => closeModal()}>
-              { closeModalButton &&
-                <Icon variant='Close' styles={closeIconStyles ? closeIconStyles : 'modal-icon'} />
-              }
+              { closeModalButton && <Icon variant='Close' styles={closeIconStyles ? closeIconStyles : 'modal-icon'} /> }
             </div>
           </Header>
 
           {/* User Content */}
-          <div className="modal-content">
+          <div className={`modal-content ${containerStyles}`}>
             { children }
           </div>
         </Container>

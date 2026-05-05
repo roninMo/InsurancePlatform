@@ -32,8 +32,21 @@ export const Documentation = () => {
     - Finish the documentation pages
       - Content
         - Alert, Card, Icon, Dropdown
+          - add an alert dismiss button
       - Utils
         - Modal, Tooltip & Provider, HashLink, HeightTransWrapper
+
+      - Then add a notifications component that function's like an interactive dropdown for inboxes, system notifications, chat messages
+        - Create the initial layout for the dropdown popup that renders the list elements, 
+            - and have it templated <T, K> where T = NotificationItemData, K = NotificationItem; learn how to pass dynamic props like this?
+          - Then create notificationItems for 
+            - A chat system with users and messages
+            - A mockDb system notification system that allows for a specific layout and prompt, 
+              - with an additional content section for things like
+                - certain notifications for db specific actions
+                - when a db is created, edited, so on.
+                - with the ability to take something like the update history, and pass it into a variant of this for descriptive history state
+            - A system notification system similar to above, but for account specific things 
 
     - Before you finish the intro pages and navLinks for the Documentation page,
         switch to using type definitions for conditional props for all the components
