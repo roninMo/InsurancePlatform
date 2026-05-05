@@ -9,10 +9,9 @@ export interface DropdownPropsBase {
   label: string;
   openByDefault?: boolean;
   icon?: IconTypes;
-
-  // optional state tracking
-  hasBeenOpened?: boolean;
-  setHasBeenOpened?: Dispatch<SetStateAction<boolean>>;
+  
+  // retrieves whether this dropdown is opened
+  openListener?: Dispatch<SetStateAction<boolean>>;
 
   children: ReactNode;
 }
@@ -67,35 +66,29 @@ type IconStyleProps =
 
 export const Dropdown = ({ 
   label, openByDefault, icon, 
-  hasBeenOpened, setHasBeenOpened, 
-  children,  
+  openListener, children,  
   
   styles, additStyles, 
   labelStyles, additLabelStyles, 
   iconStyles, additIconStyles, 
 }: DropdownProps) => {
-  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [internalOpen, setInternalOpen] = useState<boolean>(false);
 
   // OpenByDefault and listeners logic
   useEffect(() => {
-    if (openByDefault) {
-      setDropdownOpen(true);
+    if (!openByDefault) return;
 
-      if (setHasBeenOpened) {
-        if (hasBeenOpened == undefined) setHasBeenOpened(true);
-        else if (hasBeenOpened == false) setHasBeenOpened(true);
-      }
-    }
+    setInternalOpen(true);
+    if (openListener) openListener(true);
   }, []);
 
+  // toggle the dropdown and relay the current open state to any listeners
   const toggleDropdown = () => {
-    const opened = !dropdownOpen;
-    setDropdownOpen(opened);
-    
-    if (opened && (!hasBeenOpened && setHasBeenOpened)) { 
-      setHasBeenOpened(true);
-    }
+    const updatedOpenState = !internalOpen;
+    setInternalOpen(updatedOpenState);
+    if (openListener) openListener(updatedOpenState);
   }
+
 
   return (
     <div className={styles ? styles : `col gap-2 w-full animate-fade-in ${additStyles}`}>
@@ -104,7 +97,7 @@ export const Dropdown = ({
           variant={icon ? icon : 'DropdownArrow'} 
           styles={`
             ${iconStyles ? iconStyles : `dropdown-icon ${additIconStyles}`} 
-            ${dropdownOpen ? '' : '-rotate-90'}
+            ${internalOpen ? '' : '-rotate-90'}
           `} 
         />
         <div className={labelStyles ? labelStyles : `dropdown-header ${additLabelStyles}`}>
@@ -112,7 +105,7 @@ export const Dropdown = ({
         </div>
       </Header>
 
-      <Container show={dropdownOpen}>
+      <Container show={internalOpen}>
         { children }
       </Container>
     </div>

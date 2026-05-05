@@ -72,7 +72,7 @@ export const Docs_Icon = () => {
     <Container className='spacing'>
 
       <h3 className="span-12 p-2 docs-showcase-header">
-        Alert Component
+        Icon Component
       </h3>
 
       <div className='span-12'>
@@ -107,8 +107,8 @@ export const Docs_Icon = () => {
       </Variants>
 
 
-      <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Select Parameters' openByDefault>
+      <div className='span-12 py-2' id="param-table">
+        <Dropdown label='Icon Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 

@@ -75,7 +75,7 @@ export const Docs_Card = () => {
     <Container className='spacing'>
 
       <h3 className="span-12 p-2 docs-showcase-header">
-        Alert Component
+        Card Component
       </h3>
 
       <div className='span-12'>
@@ -151,7 +151,7 @@ export const Docs_Card = () => {
 
 
       <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Select Parameters' openByDefault>
+        <Dropdown label='Card Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 
@@ -359,15 +359,15 @@ const paramDescriptionElements: Record<string, React.FC> = {
   // Conditional Styling Params
   'styles': () => 
     <div className='param-item-desc-text'>
-      The styles of the container. If you're using styles, additStyles is restricted, and vice versa. 
-      For the default type, this adds classes to the children's container.
-      use contentStyles for every other type.
+      The styles of the container. If you're using styles, 
+      additStyles is restricted, and vice versa. 
+      For the default type, this adds classes to the children's container. Use contentStyles for every other type.
     </div>,
   'additStyles': () => 
     <div className='param-item-desc-text'>
-      Additional styles for the container. If you're using additStyles, styles is restricted, and vice versa. 
-      For the default type, this adds classes to the children's container.
-      use additContentStyles for every other type.
+      Additional styles for the container. If you're using additStyles, 
+      styles is restricted, and vice versa. 
+      For the default type, this adds classes to the children's container. Use additContentStyles for every other type.
     </div>,
   'headerStyles': () => 
     <div className='param-item-desc-text'>
@@ -376,17 +376,17 @@ const paramDescriptionElements: Record<string, React.FC> = {
     </div>,
   'additHeaderStyles': () => 
     <div className='param-item-desc-text'>
-      Additional styles for the header. If you're using headerStyles, 
+      Additional styles for the header. If you're using additHeaderStyles, 
       headerStyles is restricted, and vice versa.
     </div>,
   'descStyles': () => 
     <div className='param-item-desc-text'>
       The styles of the description. If you're using descriptionStyles, 
-      additDescriptionStyles is restricted, and vice versa.
+      additDescStyles is restricted, and vice versa.
     </div>,
   'additDescStyles': () => 
     <div className='param-item-desc-text'>
-      Additional styles for the description. If you're using additDescriptionStyles, 
+      Additional styles for the description. If you're using additDescStyles, 
       descriptionStyles is restricted, and vice versa.
     </div>,
   'contentStyles': () => 
