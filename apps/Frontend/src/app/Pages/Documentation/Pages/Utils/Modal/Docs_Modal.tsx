@@ -86,7 +86,7 @@ export const Docs_Modal = () => {
         <p className='p-2 showcase-text'>
           If you're just looking for a popup on hover for descriptions and contextual information, try &nbsp;
           <span 
-            onMouseEnter={() => show({ code: getSourceCode(TooltipCodeSnippets, "Example_Tooltip"), type: "component" })} 
+            onMouseEnter={() => show({ code: getSourceCode(TooltipCodeSnippets, "Example_TextTooltip"), type: "component" })} 
             onClick={hide}
             onMouseLeave={hide}
           >

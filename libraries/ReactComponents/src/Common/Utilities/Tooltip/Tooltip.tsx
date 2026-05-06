@@ -14,12 +14,14 @@ export type TooltipProps = TooltipBase & TooltipContentProps;
 export type TooltipContentProps = TextTooltipProps | CodeTooltipProps | CustomTooltipProps;
 export interface TextTooltipProps {
   text: string;
+  styles?: string;
 }
 
+type CodeType = 'component' | 'type' | 'interface' | 'example' | (string & {});
 export interface CodeTooltipProps {
   code: string;
   showLineNumbers?: boolean;
-  type?: 'component' | 'type' | 'interface' | 'example';
+  type?: CodeType;
 }
 
 export interface CustomTooltipProps {
@@ -38,7 +40,7 @@ export const Tooltip = (props: TooltipProps) => {
   const { showTooltip, additionalStyles } = props;
   const { code, showLineNumbers, type = 'example' } = props as CodeTooltipProps;
 
-  const [isVisible, setIsVisible] = useState<boolean>(false); // transitions don't work otherwise + transform gpu rendering
+  const [isVisible, setIsVisible] = useState<boolean>(false); // transitions don't work otherwise, & transform gpu rendering
   useEffect(() => { setIsVisible(!!showTooltip) }, [showTooltip]); 
 
   // Wait until react has done it's initial paint of the application
@@ -329,7 +331,7 @@ export const Tooltip = (props: TooltipProps) => {
   
   // Union types suck, and nested useStates in wrapped components are breaking transition rerenders
   const { children } = props as CustomTooltipProps;
-  const { text } = props as TextTooltipProps;
+  const { text, styles } = props as TextTooltipProps;
   const NestedComponents: React.FC = children;
   
   // variants
@@ -345,7 +347,7 @@ export const Tooltip = (props: TooltipProps) => {
     <div 
       ref={tooltipRef} 
       className={`
-        tooltip ${additionalStyles}
+        tooltip ${additionalStyles} ${styles}
         ${variant == 'text' ? 'tooltip-t' : variant == 'code' ? 'tooltip-js' : 'tooltip-c'}
         ${isVisible ? 'tooltip-v' : 'tooltip-h'}
         ${isRenderDelayDone ? 'tooltip-scroll-auto' : 'tooltip-scroll-none'}
@@ -385,8 +387,8 @@ export const Tooltip = (props: TooltipProps) => {
           </OpenAnimation>
         </CodeVariant>
 
-      : variant == 'text' ?
-        <> {text} </>
+      : variant == 'text' ? 
+      <> {text} </>
       
       : variant == 'custom' ?
       <> { NestedComponents && <NestedComponents /> } </>

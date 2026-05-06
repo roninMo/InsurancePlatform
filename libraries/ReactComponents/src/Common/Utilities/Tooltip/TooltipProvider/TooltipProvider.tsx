@@ -27,7 +27,7 @@ export const TooltipProvider = ({ children }: { children: React.ReactNode }) => 
   }), []);
 
 
-  // Now, only components inside THIS provider re-render when state changes
+  // Only components inside this provider re-render when state changes
   return (
     <TooltipService.Provider value={actions}>
       {children}

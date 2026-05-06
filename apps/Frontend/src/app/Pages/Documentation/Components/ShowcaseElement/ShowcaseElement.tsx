@@ -18,10 +18,11 @@ export interface ShowcaseElementProps {
   jsx: string;
   styles: string;
   children: ReactNode; // Used as the rendered component
+  startingTab?: 'component' | 'jsx'; // Default is 'component'
 }
 
-export const ShowcaseElement = ({ jsx, styles, children }: ShowcaseElementProps) => {
-  const [activeTab, setActiveTab] = useState<showcaseTabType>('component');
+export const ShowcaseElement = ({ jsx, styles, children, startingTab = 'component' }: ShowcaseElementProps) => {
+  const [activeTab, setActiveTab] = useState<showcaseTabType>(startingTab);
   const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
 
   // Quick Render delay for jsx code
