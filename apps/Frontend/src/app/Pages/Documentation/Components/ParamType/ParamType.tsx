@@ -56,10 +56,12 @@ const getTypeStyles = (type: ParamTypes) => {
 export const dParArg = (
   param: string, 
   value: string, 
-  type: 'str' | 'var' | 'bool' = 'str' // str: param="value", var: param={value}
+  type: 'str' | 'var' | 'bool' = 'str', // str: param="value", var: param={value}
+	comment?: string
 ): string => {
-  if (type == 'str') 	return `${param}="${value}"`;
-  if (type == 'var') 	return `${param}={${value}}`;
-	if (type == 'bool')	return `${param}`;
+	const addComment = comment ? ` // ${comment}` : '';
+  if (type == 'str') 	return `${param}="${value}"${addComment}`;
+  if (type == 'var') 	return `${param}={${value}}${addComment}`;
+	if (type == 'bool')	return `${param}${addComment}`;
   return '';
 };

@@ -13,8 +13,9 @@ import styled from '@emotion/styled';
 import TooltipCodeSnippets from '../Tooltip/Docs_TooltipJsxComponents?raw';
 import ModalCodeSnippets from './Docs_ModalJsxComponents?raw';
 import { 
-  Example_Modal,
-  Example_ModalOpener, 
+  Example_ContentModal,
+  Example_ModalOpener,
+  Example_PopupModal, 
 } from './Docs_ModalJsxComponents';
 
 
@@ -24,8 +25,8 @@ export const Docs_Modal = () => {
   //--------------------------------//
   const { show, hide } = useContext(TooltipService);
   const [currentTab, setCurrentTab] = useState<string>('default');
-  const tabs: string[] = ['default'];
-  const tabLabels: string[] = ['Default'];
+  const tabs: string[] = ['default', 'popup'];
+  const tabLabels: string[] = ['Default', 'Popup'];
 
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
@@ -65,6 +66,7 @@ export const Docs_Modal = () => {
   // Input State Management         //
   //--------------------------------//
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isPopupModalOpen, setIsPopupModalOpen] = useState<boolean>(false);
 
 
   return (
@@ -106,9 +108,16 @@ export const Docs_Modal = () => {
       {/* Variants */}
       <Variants className='span-12 py-2' id="showcase-variants">
         { currentTab == 'default' && 
-          <ShowcaseElement jsx={getSourceCode(ModalCodeSnippets, "Example_DefaultModal")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement jsx={getSourceCode(ModalCodeSnippets, "Example_ContentModal")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <div className='span-12 p-8'>
               <Example_ModalOpener isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            </div>
+          </ShowcaseElement>
+        }
+        { currentTab == 'popup' && 
+          <ShowcaseElement jsx={getSourceCode(ModalCodeSnippets, "Example_PopupModal")} styles="spacing gap-0 opacity-0 animate-fade-in">
+            <div className='span-12 p-8'>
+              <Example_ModalOpener isModalOpen={isPopupModalOpen} setIsModalOpen={setIsPopupModalOpen} />
             </div>
           </ShowcaseElement>
         }
@@ -125,7 +134,8 @@ export const Docs_Modal = () => {
       </div>
       
       {/* Rendered Modal */}
-      <Example_Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+      <Example_ContentModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+      <Example_PopupModal isModalOpen={isPopupModalOpen} setIsModalOpen={setIsPopupModalOpen} />
     </Container>
   );
 }
@@ -142,9 +152,10 @@ const Variants = styled.div``;
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'isModalOpen', 'setModalOpen', 'onCloseModal',
-  'spacing', 'label', 'noOverlay', 'closeModalButton',
-  'spacing', 'containerStyles', 'overlayStyles', 'labelStyles', 'closeIconStyles',
+  'label', 'setModalOpen', 'onCloseModal', 'isModalOpen', 
+  'spacing', 'containerStyles', 'overlayStyles', 'headerStyles', 
+  'spacing', 'alignmentStyles', 'dimensionStyles', 'removeContentShadow',
+  'spacing', 'closeModalButton', 'closeIconStyles', 'closeIcon',
   'spacing', 'children',
 ];
 
@@ -169,18 +180,22 @@ const paramContextsList: Record<string, ParamContext[]> = {
 //----------------------------------------------//
 // Static FC component functions do not take up memory or increase load times, they're static and diffing is nominal
 const paramTypeElements: Record<string, React.FC> = {
-  'isModalOpen': () => <ParamType type="boolean" tooltip={{ code: dParArg('isModalOpen', 'isModalOpen', 'var') }} />,
+  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Modal Header') }} />,
   'setModalOpen': () => <ParamType type="SetState" tooltip={{ code: Code_SetModalOpen }} />,
   'onCloseModal': () => <ParamType type="function" tooltip={{ code: Code_onCloseModal }} />,
+  'isModalOpen': () => <ParamType type="boolean" tooltip={{ code: dParArg('isModalOpen', 'isModalOpen', 'var') }} />,
 
-  'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Modal Header') }} />,
-  'noOverlay': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('noOverlay', 'noOverlay', 'var') }} />,
+  'containerStyles': () => <ParamType type="string" optional tooltip={{ code: dParArg('containerStyles', 'container-classes') }} />,
+  'overlayStyles': () => <ParamType type="string" optional tooltip={{ code: dParArg('overlayStyles', 'overlay-classes') }} />,
+  'headerStyles': () => <ParamType type="string" optional tooltip={{ code: dParArg('headerStyles', 'label-classes') }} />,
+  
+  'alignmentStyles': () => <ParamType type="string" optional tooltip={{ code: dParArg('alignmentStyles', 'alignment-classes') }} />,
+  'dimensionStyles': () => <ParamType type="string" optional tooltip={{ code: dParArg('dimensionStyles', 'dimensions-classes') }} />,
+  'removeContentShadow': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('removeContentShadow', 'removeContentShadow', 'var') }} />,
+
   'closeModalButton': () => <ParamType type="boolean" optional tooltip={{ code: 'closeModalButton={closeModalButton} // Default = true' }} />,
-
-  'containerStyles': () => <ParamType type="string" tooltip={{ code: dParArg('containerStyles', 'container-classes') }} />,
-  'overlayStyles': () => <ParamType type="string" tooltip={{ code: dParArg('overlayStyles', 'overlay-classes') }} />,
-  'labelStyles': () => <ParamType type="string" tooltip={{ code: dParArg('labelStyles', 'label-classes') }} />,
-  'closeIconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('closeIconStyles', 'closeIcon-classes') }} />,
+  'closeIconStyles': () => <ParamType type="string" optional tooltip={{ code: dParArg('closeIconStyles', 'closeIcon-classes') }} />,
+  'closeIcon': () => <ParamType type="IconTypes" optional tooltip={{ code: dParArg('closeIcon', 'Close', 'str', 'The default value is "Close", but if you want a custom icon, add it here.') }} />,
 
   'children': () => <ParamType type="ReactNode" tooltip={{ text: 'The content within the rendered modal jsx.' }} />,
 };
@@ -189,14 +204,11 @@ const paramTypeElements: Record<string, React.FC> = {
 const Code_SetModalOpen = 'setModalOpen: Dispatch<SetStateAction<boolean>>;';
 const Code_onCloseModal = 'onCloseModal?: () => void;';
 
-import SourceButtonSnippets from '@lib-rc/Forms/Button/Button.tsx?raw';
-const Code_ButtonProps = getSourceCode(SourceButtonSnippets, 'ButtonProps', 'interface');
-
 
 const paramDescriptionElements: Record<string, React.FC> = {
-  'isModalOpen': () =>
+  'label': () =>
     <div className='param-item-desc-text'>
-      State for when the modal is open. Controlled by the parent to allow you to control it's open state
+      The label of the modal component.
     </div>,
   'setModalOpen': () =>
     <div className='param-item-desc-text'>
@@ -207,18 +219,11 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Optional additional functionality for when the user closes the modal.
     </div>,
-  'label': () =>
+  'isModalOpen': () =>
     <div className='param-item-desc-text'>
-      The label of the modal component.
+      State for when the modal is open. Controlled by the parent to allow you to control it's open state
     </div>,
-  'noOverlay': () =>
-    <div className='param-item-desc-text'>
-      Set to true if you don't want an overlay that darkens the content outside of the modal. 
-    </div>,
-  'closeModalButton': () =>
-    <div className='param-item-desc-text'>
-      If you want a button to close the modal within the modal. Clicking outside of the modal also closes the modal by default.
-    </div>,
+
   'containerStyles': () =>
     <div className='param-item-desc-text'>
       The styles of the modal's container. Used to change the theme's background and outline, margin, etc.
@@ -227,14 +232,39 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       If you want custom styles to change the classes of the overlay.
     </div>,
-  'labelStyles': () =>
+  'headerStyles': () =>
     <div className='param-item-desc-text'>
-      Whether you want to override the label's styles.
+      Whether you want to override the header's styles.
+    </div>,
+
+  'alignmentStyles': () =>
+    <div className='param-item-desc-text'>
+      If left empty it centers by default. If you want to define a specific alignment for the modal, add flex alignment classes here.
+      These are added to the topmost element in the modal, parent to the container. 
+    </div>,
+  'dimensionStyles': () =>
+    <div className='param-item-desc-text'>
+      If you want to define specific dimensions for the modal, use this prop.
+    </div>,
+  'removeContentShadow': () =>
+    <div className='param-item-desc-text'>
+      By default, the modal has a subtle shadow on the content's overflow boundaries for help with the bounds when scrolling. 
+      Feel free to disable it if you don't prefer it.
+    </div>,
+
+  'closeModalButton': () =>
+    <div className='param-item-desc-text'>
+      If you want a button to close the modal within the modal. Clicking outside of the modal also closes the modal by default.
     </div>,
   'closeIconStyles': () =>
     <div className='param-item-desc-text'>
       Whether you want to override the close icon's styles.
     </div>,
+  'closeIcon': () =>
+    <div className='param-item-desc-text'>
+      The icon variant you want to use instead of the default close icon.
+    </div>,
+
   'children': () =>
     <div className='param-item-desc-text'>
       The components placed inside the modal. Functions like a normal div component, just pass what's placed inside the modal.

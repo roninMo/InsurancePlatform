@@ -1,35 +1,36 @@
 import { Dispatch, MouseEvent, ReactNode, SetStateAction, useEffect, useId, useState } from 'react';
-import { Icon } from '@Project/ReactComponents';
+import { Icon, IconTypes } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './Modal.module.scss';
 
 
 export interface ModalProps {
-  isModalOpen: boolean;
+  label?: string;
   setModalOpen: Dispatch<SetStateAction<boolean>>;
   onCloseModal?: () => void;
-
-  label?: string;
-  noOverlay?: boolean;
-  closeModalButton?: boolean;
-
-  // Styles
-  containerStyles?: string;
-  overlayStyles?: string;
-  labelStyles?: string;
-  closeIconStyles?:string;
-
+  isModalOpen: boolean;
+  
+  containerStyles?: string; // Container Background / Border styles
+  overlayStyles?: string; // Custom overlay styles
+  headerStyles?: string; // Header font styles
+  alignmentStyles?: string; // Classes added to the topmost container - used to position the actual modal container (ex: flex item-center justify-center)
+  dimensionStyles?: string; // Preset or custom dimensions - @note adjusting the padding here may affect the container's alignment
+  removeContentShadow?: boolean; // The scrollbar container's inverse shadow for help w/visually scrolling
+  
+  closeModalButton?: boolean; // Default = true
+  closeIconStyles?: string; // Icon styling for the close button
+  closeIcon?: IconTypes; // Optional custom close icon
+  
   // Rendered content
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 export const Modal = ({
-  isModalOpen, setModalOpen, onCloseModal,
-  label, labelStyles, 
-  containerStyles,
-  noOverlay, overlayStyles,
-  closeModalButton = true, closeIconStyles,
+  label, setModalOpen, onCloseModal, isModalOpen, 
+  containerStyles, overlayStyles, headerStyles, 
+  alignmentStyles, dimensionStyles, removeContentShadow, 
+  closeModalButton = true, closeIconStyles, closeIcon = 'Close',
   children
 }: ModalProps) => {
   const [isModalRendered, setIsModalRendered] = useState<boolean>(false);
@@ -86,27 +87,31 @@ export const Modal = ({
         id={renderedModalId}
         onClick={(e) => userClicked(e)}
         className={`modal-base 
-          ${noOverlay ? '' : 'modal-overlay'}  ${overlayStyles}
           ${isModalOpen ? 'animate-fade-in' : 'bg-transparent'} 
+          ${overlayStyles ? overlayStyles : 'modal-overlay'}
+          ${alignmentStyles ? alignmentStyles : 'modal-alignment'}
       `}>
-        <Container id={closeModalId} className={`modal-container 
+        <ModalContainer id={closeModalId} className={`modal-container
           ${isModalOpen ? 'opacity-100' : 'opacity-0'} 
+          ${containerStyles}
         `}>
+          { (label || closeModalButton) && 
           <Header className='modal-header-c'>
-            <label className={`${labelStyles ? labelStyles : 'modal-header'}`}>
+            <label className={`${headerStyles ? headerStyles : 'modal-header'}`}>
               { label }
             </label>
 
-            <div onClick={() => closeModal()}>
-              { closeModalButton && <Icon variant='Close' styles={closeIconStyles ? closeIconStyles : 'modal-icon'} /> }
-            </div>
+            <CloseButton onClick={() => closeModal()}>
+              { closeModalButton && <Icon variant={closeIcon} styles={closeIconStyles ? closeIconStyles : 'modal-icon'} /> }
+            </CloseButton>
           </Header>
+          }
 
           {/* User Content */}
-          <div className={`modal-content ${containerStyles}`}>
+          <Container className={`modal-content ${dimensionStyles} ${removeContentShadow ? '' : 'modal-content-shadow'}`}>
             { children }
-          </div>
-        </Container>
+          </Container>
+        </ModalContainer>
       </Overlay>
   );
 
@@ -117,3 +122,5 @@ export const Modal = ({
 const Overlay = styled.div``;
 const Container = styled.div``;
 const Header = styled.div``;
+const CloseButton = styled.div``;
+const ModalContainer = styled.div``;

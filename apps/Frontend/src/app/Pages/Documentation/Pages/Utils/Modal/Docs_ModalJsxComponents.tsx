@@ -1,7 +1,6 @@
-import { Button } from "@Project/ReactComponents"
 import { Dispatch, SetStateAction } from "react";
 import { Modal } from "../../../../../Components/Utils/Modal/Modal";
-import { Docs_Card } from "../../Content/Card/Docs_Card";
+import { Button } from "@Project/ReactComponents";
 import { Docs_Input } from "../../Inputs/Input/Docs_Input";
 
 
@@ -25,7 +24,7 @@ export const Example_ModalOpener = ({ isModalOpen, setIsModalOpen }: {
   )
 }
 
-export const Example_Modal = ({ isModalOpen, setIsModalOpen }: {
+export const Example_ContentModal = ({ isModalOpen, setIsModalOpen }: {
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -40,13 +39,46 @@ export const Example_Modal = ({ isModalOpen, setIsModalOpen }: {
       isModalOpen={isModalOpen} 
       setModalOpen={setIsModalOpen} 
       onCloseModal={modalClosed}
-
-      containerStyles='col gap-4 w-[70vw] h-[65vh]'
+      dimensionStyles='w-[70vw] h-[65vh]'
     >
-      <div className="p-4">
-        {/* fix the padding error here. To align the modal, container styles shouldn't override padding,
-        so add a nested element in the modal that applies the styles from the modal prop */}
-        <Docs_Input />
+      <Docs_Input />
+    </Modal>
+  )
+}
+
+export const Example_PopupModal = ({ isModalOpen, setIsModalOpen }: {
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
+  
+  const modalClosed = () => {
+    console.log('The user closed the modal.');
+  }
+
+  return (
+    <Modal 
+      isModalOpen={isModalOpen} 
+      setModalOpen={setIsModalOpen} 
+      onCloseModal={modalClosed}
+
+      closeModalButton={false}
+      alignmentStyles="flex justify-center items-start pt-8"
+      dimensionStyles='min-h-14 min-w-96 px-8'
+    >
+      <div className="col justify-between gap-4">
+        <label className="text-base font-normal">
+          An example popup notification.
+        </label>
+
+        <div className="row justify-end">
+          <div>
+            <Button 
+              displayText="Close"
+              color="primary"
+              onClick={() => setIsModalOpen(false)}
+            />
+          </div>
+        </div>
       </div>
     </Modal>
   )

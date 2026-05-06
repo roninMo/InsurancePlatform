@@ -158,7 +158,7 @@ export const WelcomeSection = () => {
 
 
       {/* Get Started Modal */}
-      <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen} containerStyles='col gap-4 w-[70vw] h-[65vh] px-4'>
+      <Modal label="Quick Links" isModalOpen={navModalOpen} setModalOpen={setNavModalOpen} dimensionStyles='col gap-4 w-[70vw] h-[65vh] px-4'>
         {/* Mock Database */}
         <Dropdown label="Mock Database" openByDefault openListener={setOpenedMockDB} labelStyles='text-base lg:text-lg header-colors font-medium' >
           <div className="pl-8">
