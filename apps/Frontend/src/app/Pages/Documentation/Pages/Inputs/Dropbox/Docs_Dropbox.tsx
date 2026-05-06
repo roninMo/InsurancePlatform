@@ -13,7 +13,7 @@ import { Kw } from '../../../Components/Keyword/Keyword';
 import { HashLink } from '../../../../../Components/Utils/HashLink/HashLink';
 import styled from '@emotion/styled';
 
-import DropboxCodeSnippets from './Docs_DropboxJsxComponents.tsx?raw';
+import DropboxCodeSnippets from './Docs_DropboxJsxComponents?raw';
 import { 
   Example_Dropbox,
 } from './Docs_DropboxJsxComponents';
@@ -180,7 +180,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippet imports
-import IconSourceSnippets from '@lib-rc/Common/Icons/Icon.tsx?raw';
+import IconSourceSnippets from '@lib-rc/Common/Icons/Icon?raw';
 const Code_IconTypes = getSourceCode(IconSourceSnippets, [135, 236]);
 const Code_HandleFiles = 'handleFiles: (files: FileList | null) => void;';
 

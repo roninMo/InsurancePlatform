@@ -12,8 +12,8 @@ import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
 import styled from "@emotion/styled";
 
-import InputCodeSnippets from '../Input/Docs_InputJsxComponents.tsx?raw';
-import TextareaCodeSnippets from './Docs_TextareaJsxComponents.tsx?raw';
+import InputCodeSnippets from '../Input/Docs_InputJsxComponents?raw';
+import TextareaCodeSnippets from './Docs_TextareaJsxComponents?raw';
 import { 
   Example_BoxTextareaInput, 
   Example_DefaultTextareaInput, 
@@ -275,12 +275,12 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceTextareaSnippets from '@lib-rc/Forms/Textarea/Textarea.tsx?raw';
+import SourceTextareaSnippets from '@lib-rc/Forms/Textarea/Textarea?raw';
 const Code_TextAreaTypes = getSourceCode(SourceTextareaSnippets, 'TextareaTypes', 'type');
 const Code_MetaDataTags = getSourceCode(SourceTextareaSnippets, 'MetadataTagProps', 'interface');
 const Code_OnSubmit = 'onSubmit: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;';
 
-import SourceDropboxSnippets from '@lib-rc/Forms/Dropbox/Dropbox.tsx?raw';
+import SourceDropboxSnippets from '@lib-rc/Forms/Dropbox/Dropbox?raw';
 const Code_FileUploadProps = getSourceCode(SourceDropboxSnippets, 'FileUploadProps', 'interface');
 
 

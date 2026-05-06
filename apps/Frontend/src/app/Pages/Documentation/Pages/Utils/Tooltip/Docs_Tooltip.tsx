@@ -277,8 +277,8 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceTooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
-import SourceTooltipProviderSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+import SourceTooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip?raw';
+import SourceTooltipProviderSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider?raw';
 const Code_CodeTypes = getSourceCode(SourceTooltipSnippets, 'CodeTypes', 'type');
 
 

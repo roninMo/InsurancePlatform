@@ -175,7 +175,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippet imports
-import SourceChckbxSnippets from '@lib-rc/Forms/Slider/Slider.tsx?raw';
+import SourceChckbxSnippets from '@lib-rc/Forms/Slider/Slider?raw';
 const Code_SliderVariant = getSourceCode(SourceChckbxSnippets, 'SliderVariants', 'type');
 const Code_OnChange = 'onChange: (e: ChangeEvent<HTMLInputElement>) => void;';
 

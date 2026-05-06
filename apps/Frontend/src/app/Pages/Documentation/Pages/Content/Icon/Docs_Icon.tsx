@@ -10,7 +10,7 @@ import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
 import styled from '@emotion/styled';
 
-import IconCodeSnippets from './Docs_IconJsxComponents.tsx?raw';
+import IconCodeSnippets from './Docs_IconJsxComponents?raw';
 import { 
   Example_Icon, 
 } from './Docs_IconJsxComponents';
@@ -208,7 +208,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceIconSnippets from '@lib-rc/Common/Icons/Icon.tsx?raw';
+import SourceIconSnippets from '@lib-rc/Common/Icons/Icon?raw';
 import { Card } from '../../../../../Components/Content/Card/Card';
 const Code_IconTypes = getSourceCode(SourceIconSnippets, 'IconTypes', 'type');
 

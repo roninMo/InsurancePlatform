@@ -224,7 +224,7 @@ export const buttonParamTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippet imports
-import SourceBtnSnippets from '@lib-rc/Forms/Button/Button.tsx?raw';
+import SourceBtnSnippets from '@lib-rc/Forms/Button/Button?raw';
 const Code_onClickBtn = 'onClick: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;';
 const Code_ButtonSzs = getSourceCode(SourceBtnSnippets, 'ButtonSizes', 'type');
 const Code_ButtonClrs = getSourceCode(SourceBtnSnippets, 'ButtonColors', 'type');

@@ -206,7 +206,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceAlertSnippets from '../../../../../Components/Content/Alert/Alert.tsx?raw';
+import SourceAlertSnippets from '../../../../../Components/Content/Alert/Alert?raw';
 const Code_AlertTypes = getSourceCode(SourceAlertSnippets, 'AlertType', 'type');
 
 

@@ -22,20 +22,19 @@ import styles from './Documentation.module.scss';
 
 export const Documentation = () => {
   /* TODO: From where we left off
-  
-    x Update any props like input's variant options to be memoized, and flatten any others that shouldn't be an object. 
-      - Update the input props to be flattened, and dynamically add variant params based on the input's variant prop
-      - add universal conditional type for adding things like "styles" for overrides, or "additionalStyles" for adding to the base
-        - and then go back through your code and find where we add additionalStyles as undefined, and add default params for these scenarios
-
 
     - Finish the documentation pages
       - Content
-        - Alert, Card, Icon, Dropdown
           - add an alert dismiss button
       - Utils
-        - Modal, Tooltip & Provider, HashLink, HeightTransWrapper
+        - HashLink docs page
+      - /Docs - /Intro, /Forms, /Content, /Utils -> intro page quick link components for navigation
+      - Forms
+        - add conditionally rendered variant props for the input component
+        - add RHF to all components, and change the state to a custom prop that overrides rhf
 
+
+      - TODO: This will probably be done during MockDatabase's construction  
       - Then add a notifications component that function's like an interactive dropdown for inboxes, system notifications, chat messages
         - Create the initial layout for the dropdown popup that renders the list elements, 
             - and have it templated <T, K> where T = NotificationItemData, K = NotificationItem; learn how to pass dynamic props like this?
@@ -47,14 +46,6 @@ export const Documentation = () => {
                 - when a db is created, edited, so on.
                 - with the ability to take something like the update history, and pass it into a variant of this for descriptive history state
             - A system notification system similar to above, but for account specific things 
-
-    - Before you finish the intro pages and navLinks for the Documentation page,
-        switch to using type definitions for conditional props for all the components
-    x Then add an alternative to getSourceCode to retrieve lines of code, instead of just definitions
-      - We need combined snippets for union type definitions
-
-    - This entails the docs content, component themes, variants, and options
-      - Add the introduction pages and quickLinks for the docs sections and introduction
 
 
     - Add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
@@ -70,8 +61,8 @@ export const Documentation = () => {
       - Introduction: list of boxes categorizing each subroot section 
       - each subroot/ should have QuickList to display their components
       - Inputs, content, utils component showcases
-    
-      
+
+
     - We need a specific route map to define the page names for the browser history
     - Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
 

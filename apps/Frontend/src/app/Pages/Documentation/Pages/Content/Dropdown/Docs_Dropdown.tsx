@@ -178,7 +178,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceDropdownSnippets from '../../../../../Components/Content/Dropdown/Dropdown.tsx?raw';
+import SourceDropdownSnippets from '../../../../../Components/Content/Dropdown/Dropdown?raw';
 const Code_IconTypes = getSourceCode(SourceDropdownSnippets, 'CardType', 'type');
 const Code_OpenListener = 'openListener?: Dispatch<SetStateAction<boolean>>;';
 

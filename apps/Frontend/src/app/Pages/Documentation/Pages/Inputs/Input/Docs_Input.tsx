@@ -495,16 +495,16 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippet imports
-import SourceInputSnippets from '@lib-rc/Forms/Input/Input.tsx?raw';
+import SourceInputSnippets from '@lib-rc/Forms/Input/Input?raw';
 const Code_TextInputTypes = getSourceCode(SourceInputSnippets, 'TextInputTypes', 'type');
 const Code_TextInputAutoCompleteTypes = getSourceCode(SourceInputSnippets, 'TextInputAutoCompleteTypes', 'type');
 const Code_InputVariantOpts = getSourceCode(SourceInputSnippets, 'InputVariantOpts', 'interface');
 const Code_SearchSortType = getSourceCode(SourceInputSnippets, 'SearchSortType', 'type');
 
-import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider?raw';
 const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'TooltipContextActions', 'interface');
 
-import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
+import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip?raw';
 const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
 
 

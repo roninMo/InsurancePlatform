@@ -316,17 +316,17 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceSelectSnippets from '@lib-rc/Forms/Select/SelectItem/SelectItem.tsx?raw';
+import SourceSelectSnippets from '@lib-rc/Forms/Select/SelectItem/SelectItem?raw';
 const Code_SelectItem = getSourceCode(SourceSelectSnippets, 'SelectItem', 'interface');
 const Code_onSelect = 'onSelect: (selected: SelectItem, index: number) => void;';
 
-import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider.tsx?raw';
+import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider?raw';
 const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'TooltipContextActions', 'interface');
 
-import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip.tsx?raw';
+import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip?raw';
 const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
 
-import HashLinkSnippets from '../../../../../Components/Utils/HashLink/HashLink.tsx?raw';
+import HashLinkSnippets from '../../../../../Components/Utils/HashLink/HashLink?raw';
 const Code_VariantProps = getSourceCode(HashLinkSnippets, 'VariantProps', 'type');
 const Code_NavTypeProps = getSourceCode(HashLinkSnippets, 'NavTypeProps', 'type');
 const Code_HashLinkPropsBase = getSourceCode(HashLinkSnippets, 'HashLinkPropsBase', 'interface');

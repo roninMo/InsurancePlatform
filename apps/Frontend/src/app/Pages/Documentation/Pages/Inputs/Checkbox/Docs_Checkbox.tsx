@@ -242,7 +242,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippet imports
-import SourceChckbxSnippets from '@lib-rc/Forms/Checkbox/Checkbox.tsx?raw';
+import SourceChckbxSnippets from '@lib-rc/Forms/Checkbox/Checkbox?raw';
 const Code_Variant = getSourceCode(SourceChckbxSnippets, 'CheckboxVariant', 'type');
 const Code_ChckbxItem = getSourceCode(SourceChckbxSnippets, 'CheckboxItem', 'interface');
 const Code_OnSelect = 'onSelect: (checked: CheckboxItem, event: ChangeEvent<HTMLElement>) => void;';

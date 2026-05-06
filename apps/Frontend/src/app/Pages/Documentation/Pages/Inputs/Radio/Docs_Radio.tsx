@@ -244,7 +244,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceRadioSnippets from '@lib-rc/Forms/RadioGroup/RadioGroup.tsx?raw';
+import SourceRadioSnippets from '@lib-rc/Forms/RadioGroup/RadioGroup?raw';
 const Code_onSelect = 'onSelect: (item: RadioItem, currentValue: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;';
 const Code_RadioVariant = getSourceCode(SourceRadioSnippets, 'RadioVariant', 'type');
 const Code_RadioItem = getSourceCode(SourceRadioSnippets, 'RadioItem', 'interface');

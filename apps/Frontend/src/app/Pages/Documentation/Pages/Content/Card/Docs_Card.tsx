@@ -293,12 +293,12 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceCardSnippets from '../../../../../Components/Content/Card/Card.tsx?raw';
+import SourceCardSnippets from '../../../../../Components/Content/Card/Card?raw';
 const Code_CardTypes = getSourceCode(SourceCardSnippets, 'CardType', 'type');
 const Code_ButtonLocation = getSourceCode(SourceCardSnippets, 'ButtonLocation', 'type');
 const Code_OnClickLink = 'onClickLink: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;';
 
-import SourceButtonSnippets from '@lib-rc/Forms/Button/Button.tsx?raw';
+import SourceButtonSnippets from '@lib-rc/Forms/Button/Button?raw';
 const Code_ButtonProps = getSourceCode(SourceButtonSnippets, 'ButtonProps', 'interface');
 
 
