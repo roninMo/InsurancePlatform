@@ -66,6 +66,7 @@ export const HashbarLinks = ({ sectionLink, subLinks }: SubPageLinkProps) => {
 // HashLinks map function for different pages TODO: Find a better way to do this?
 export type UrlToHashLinkMap = 
   '/Documentation'
+| '/Documentation/Introduction'
 | '/Documentation/Forms' 
 | '/Documentation/Forms/Button' 
 | '/Documentation/Forms/Checkbox' 
@@ -86,6 +87,7 @@ export type UrlToHashLinkMap =
 | ''; 
 const getPageHashLinks = (url: UrlToHashLinkMap): SubPageLinkProps[] => {
   if (url == '/Documentation') return [];
+  if (url == '/Documentation/Introduction') return IntroDocHashLinkList;
   if (url == '/Documentation/Forms' ) return [];
   if (url == '/Documentation/Forms/Button' ) return GenericDocHashLinkList;
   if (url == '/Documentation/Forms/Checkbox' ) return GenericDocHashLinkList;
@@ -120,6 +122,17 @@ export const GenericDocHashLinkList: SubPageLinkProps[] = [
       { label: 'Variants', url: '#showcase-variants' },
       { label: 'Parameters', url: '#param-table' },
       { label: 'Event Handlers ', url: '#event-handler-table' },
+    ]
+  },
+];
+export const IntroDocHashLinkList: SubPageLinkProps[] = [
+  // Inputs Page and Subroutes
+  {
+    sectionLink: { label: "Links", url: "" }, 
+    subLinks: [
+      { label: 'Forms', url: '#forms-quicklinks' },
+      { label: 'Content', url: '#content-quicklinks' },
+      { label: 'Utils', url: '#utils-quicklinks' },
     ]
   },
 ];

@@ -35,8 +35,7 @@ export const DocumentationPageRoutes: RouteObject = {
   path: "/Documentation",
   element: <Documentation/>,
   children: [
-    // Homepage redirect
-    {
+    { // Documentation base redirect
       index: true,
       // Do not use a navigate element, the navbar's functionality 
       // breaks and we shouldn't remount it during this process
@@ -44,7 +43,7 @@ export const DocumentationPageRoutes: RouteObject = {
     },
     {
       path: 'Introduction',
-      element: <Docs_Introduction />
+      element: <Docs_Introduction links="all" />
     },
 
     // Inputs
@@ -52,6 +51,12 @@ export const DocumentationPageRoutes: RouteObject = {
       path: 'Forms',
       element: <Docs_Forms/>,
       children: [
+        // Forms base redirect
+        { index: true, loader: () => redirect("Introduction") },
+        {
+          path: 'Introduction',
+          element: <Docs_Introduction links="forms" />
+        },
         { path: 'Button',  element: <Docs_Button /> },
         { path: 'Checkbox',  element: <Docs_Checkbox /> },
         { path: 'Dropbox',  element: <Docs_Dropbox /> },
@@ -69,6 +74,12 @@ export const DocumentationPageRoutes: RouteObject = {
       path: 'Content',
       element: <Docs_Content/>,
       children: [
+        // Forms base redirect
+        { index: true, loader: () => redirect("Introduction") },
+        {
+          path: 'Introduction',
+          element: <Docs_Introduction links="content" />
+        },
         { path: 'Alert',  element: <Docs_Alert /> },
         { path: 'Card',  element: <Docs_Card /> },
         { path: 'Icon',  element: <Docs_Icon /> },
@@ -81,6 +92,12 @@ export const DocumentationPageRoutes: RouteObject = {
       path: 'Utils',
       element: <Docs_Utils/>,
       children: [
+        // Utils base redirect
+        { index: true, loader: () => redirect("Introduction") },
+        {
+          path: 'Introduction',
+          element: <Docs_Introduction links="utils" />
+        },
         { path: 'DragAndDrop', element: <Docs_DragAndDrop /> },
         { path: 'Modal', element: <Docs_Modal /> },
         { path: 'Tooltip', element: <Docs_Tooltip /> },

@@ -25,27 +25,32 @@ export const Documentation = () => {
 
     - Finish the documentation pages
       - Content
-          - add an alert dismiss button
-      - Utils
-        - HashLink docs page
-      - /Docs - /Intro, /Forms, /Content, /Utils -> intro page quick link components for navigation
+        - add an alert dismiss button
       - Forms
         - add conditionally rendered variant props for the input component
         - add RHF to all components, and change the state to a custom prop that overrides rhf
 
 
-      - TODO: This will probably be done during MockDatabase's construction  
-      - Then add a notifications component that function's like an interactive dropdown for inboxes, system notifications, chat messages
-        - Create the initial layout for the dropdown popup that renders the list elements, 
-            - and have it templated <T, K> where T = NotificationItemData, K = NotificationItem; learn how to pass dynamic props like this?
-          - Then create notificationItems for 
-            - A chat system with users and messages
-            - A mockDb system notification system that allows for a specific layout and prompt, 
-              - with an additional content section for things like
-                - certain notifications for db specific actions
-                - when a db is created, edited, so on.
-                - with the ability to take something like the update history, and pass it into a variant of this for descriptive history state
-            - A system notification system similar to above, but for account specific things 
+    - @note for the hashLink scroll restoration. 
+        Once they navigate to a hash link and it auto scrolls to it's location on the page,
+        any scrolling the user did will snap to wherever they scrolled when the animation finishes
+
+    - we need to prevent user scrolling until that animation is done, 
+      - if they navigated to a hash link
+      - for as long as it takes to navigate
+      - try speeding up the animation, it feels kind of sluggish
+
+    - Another thing, if there isn't a hashLink, have it start at the start of the page
+
+    - Navbar Navigation Handler 
+      - We need a specific route map to define the page names for the browser history
+      - Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
+
+
+    - Add react hook forms soon alongside the option to add state to the value for custom scenarios
+      - this changes all inputs, add custom opts for using useState to track value instead.
+
+    - Eventually add aria specific stuff to custom components!
 
 
     - Add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
@@ -57,19 +62,21 @@ export const Documentation = () => {
     - Decide whether you want to find a place to add the tooltip on the textarea
 
 
-    - Documentation pages
-      - Introduction: list of boxes categorizing each subroot section 
-      - each subroot/ should have QuickList to display their components
-      - Inputs, content, utils component showcases
 
 
-    - We need a specific route map to define the page names for the browser history
-    - Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
+    - TODO: This will probably be done during MockDatabase's construction  
+    - Then add a notifications component that function's like an interactive dropdown for inboxes, system notifications, chat messages
+      - Create the initial layout for the dropdown popup that renders the list elements, 
+          - and have it templated <T, K> where T = NotificationItemData, K = NotificationItem; learn how to pass dynamic props like this?
+        - Then create notificationItems for 
+          - A chat system with users and messages
+          - A mockDb system notification system that allows for a specific layout and prompt, 
+            - with an additional content section for things like
+              - certain notifications for db specific actions
+              - when a db is created, edited, so on.
+              - with the ability to take something like the update history, and pass it into a variant of this for descriptive history state
+          - A system notification system similar to above, but for account specific things 
 
-    - Add react hook forms soon alongside the option to add state to the value for custom scenarios
-      - this changes all inputs, add custom opts for using useState to track value instead.
-
-    - Eventually add aria specific stuff to custom components!
 
 	*/
 
@@ -187,10 +194,10 @@ const PageContent = styled.div``;
 // Documentation Sidebar Links
 export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
   // Inputs Page and Subroutes
-  {
-    sectionLink: { label: "Get Started", url: "" },
-    subLinks: []
-  },
+  // {
+  //   sectionLink: { label: "Get Started", url: "" },
+  //   subLinks: []
+  // },
   {
     // TODO: Add redirects to create individual "home" page content for the quickLinks of each section
     sectionLink: { label: "Forms", url: "Forms" }, 

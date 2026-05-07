@@ -89,72 +89,43 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
     onSubmit, submitButtonText, submitButtonDisabled = false, 
   } = allProps;
 
+
   //--------------------------------//
-  // default style                  //
+  // Memoized content               //
   //--------------------------------//
-  const ButtonsAndLinksSection = useMemo(() => (
-    <ButtonsAndLinks className={`ta-d-btn-links`}>
-      <PrecedingInputElements className="rowStart items-center gap-4 pl-1 py-1 animate-fade-in">
+  // default, box style's ButtonsAndLinks section, and the post style's header section
+  const MemoizedContent = useMemo(() => {
+    if (type == 'default') return (
+      <ButtonsAndLinks className={`ta-d-btn-links`}>
+        <PrecedingInputElements className="ta-d-attach-file">
           { attachFile?.handleFiles && 
             <AttachFileElement 
               name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
               multiple={attachFile?.multiple} accept={attachFile?.accept} 
-
-              iconStyles={`ta-d-icon ${disabled ? 'i-d-color' : ''}`} 
               required={required} disabled={disabled}
+              iconStyles={`ta-d-icon 
+                ${disabled ? 'ta-d-attach-file-d' : 'ta-d-attach-file-ha'}`} 
             />
           }
 
           <MetadataTagElements type='post' metadataTags={metadataTags} id={name} disabled={disabled} />
-        {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
-      </PrecedingInputElements>
+          {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
+        </PrecedingInputElements>
 
-      { onSubmit && 
-        <SubsequentInputElements>
-          <Button 
-            displayText={submitButtonText || "Submit"} 
-            onClick={e => onSubmit && onSubmit(e)} 
-            disabled={disabled}
-            additionalStyles="ta-submit-btn px-3" 
-          />
-        </SubsequentInputElements>
-      }
-    </ButtonsAndLinks>
-  ), [disabled]);
-	
-  if (type === 'default') {
-    return (
-      <div className="w-full flex flex-col gap-2">
-        { label && 
-          <h4 className="ta-d-label">{ label }</h4> 
+        { onSubmit && 
+          <SubsequentInputElements>
+            <Button 
+              displayText={submitButtonText || "Submit"} 
+              onClick={e => onSubmit && onSubmit(e)} 
+                disabled={disabled || submitButtonDisabled}
+              additionalStyles="ta-submit-btn px-3" 
+            />
+          </SubsequentInputElements>
         }
-        <Container className="rowStart gap-2 justify-items-start items-start">
-          <Avatar className="ta-d-avatar">
-            <Icon variant='Profile' styles="size-4" />  
-          </Avatar>
-
-          <InputContainer className="w-full col group">
-            <InputComponent { ...allProps } />
-            <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
-            { ButtonsAndLinksSection }
-          </InputContainer>
-        </Container>
-        
-        <ErrAndDescElements 
-          type={type} description={description} 
-          error={error} errorMessage={errorMessage} 
-          disabled={disabled}
-        />
-      </div>
+      </ButtonsAndLinks>
     );
-  }
 
-
-  //--------------------------------//
-  // box style                      //
-  //--------------------------------//
-  else if (type == 'box') {
-    const ButtonsAndLinksSection = useMemo(() => (
+    if (type == 'box') return (
       <ButtonsAndLinks className="ta-b-btn-links">
         <div className={`ta-b-attach-file ${!disabled ? 'ta-b-attach-file-ha' : 'ta-b-attach-file-d'}`}>
           { attachFile?.handleFiles && 
@@ -182,36 +153,15 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
           </div>
         }
       </ButtonsAndLinks>
-    ), [disabled, submitButtonDisabled]);
-		
-    return (<>
-      <Container className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
-        { label && <h4 className="ta-b-label">{ label }</h4> }
-				<InputComponent { ...allProps } />
-        
-        {/* Pill action buttons */}
-        <MetadataTagElements type='box' metadataTags={metadataTags} id={name} disabled={disabled} />
+    );
 
-        <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
-        { ButtonsAndLinksSection }
-      </Container>
-      
-      <ErrAndDescElements 
-        type={type} description={description} 
-        error={error} errorMessage={errorMessage} 
-        disabled={disabled}
-      />
-    </>);
-  }
+    if (type == 'post') return (<></>);
+  }, [type, disabled, submitButtonDisabled]);
 
 
-  //--------------------------------//
-  // post style                     //
-  //--------------------------------//
-  else {
+    // Post Memoized content
     const [showPreview, setShowPreview] = useState<'write' | 'preview'>('write');
     const togglePreview = (type: 'write' | 'preview') => setShowPreview(type);
-		
     const PostSectionHeader = useMemo(() => (<>
       { label && <h4 className="py-2 ta-p-label">{ label }</h4> }
 
@@ -239,6 +189,70 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
       </ButtonsAndLinks>
     </>), [showPreview]);
 
+
+
+
+  //--------------------------------//
+  // default style                  //
+  //--------------------------------//
+	
+  if (type === 'default') {
+    return (
+      <div className="w-full flex flex-col gap-2">
+        { label && 
+          <h4 className="ta-d-label">{ label }</h4> 
+        }
+        <Container className="rowStart gap-2 justify-items-start items-start">
+          <Avatar className="ta-d-avatar">
+            <Icon variant='Profile' styles="size-4" />  
+          </Avatar>
+
+          <InputContainer className="w-full col group">
+            <InputComponent { ...allProps } />
+            <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
+            { MemoizedContent }
+          </InputContainer>
+        </Container>
+        
+        <ErrAndDescElements 
+          type={type} description={description} 
+          error={error} errorMessage={errorMessage} 
+          disabled={disabled}
+        />
+      </div>
+    );
+  }
+
+
+  //--------------------------------//
+  // box style                      //
+  //--------------------------------//
+  else if (type == 'box') {
+    return (<>
+      <Container className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
+        { label && <h4 className="ta-b-label">{ label }</h4> }
+				<InputComponent { ...allProps } />
+        
+        {/* Pill action buttons */}
+        <MetadataTagElements type='box' metadataTags={metadataTags} id={name} disabled={disabled} />
+
+        <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
+        { MemoizedContent }
+      </Container>
+      
+      <ErrAndDescElements 
+        type={type} description={description} 
+        error={error} errorMessage={errorMessage} 
+        disabled={disabled}
+      />
+    </>);
+  }
+
+
+  //--------------------------------//
+  // post style                     //
+  //--------------------------------//
+  else {
     return (
       <Container>
         { PostSectionHeader }

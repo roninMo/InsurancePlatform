@@ -151,7 +151,7 @@ export const Docs_Icon = () => {
 }
 
 
-const DisplayedIcon = memo(({ variant, styles }: {
+export const DisplayedIcon = memo(({ variant, styles }: {
   variant: IconTypes;
   styles?: string;
 }) => {
@@ -224,4 +224,3 @@ const paramDescriptionElements: Record<string, React.FC> = {
       If you want custom styles for the icon.
     </div>,
 };
-

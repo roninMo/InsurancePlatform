@@ -69,20 +69,26 @@ export const Docs_HashLink = () => {
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
-        Tooltip Component
+        HashLink Component
       </h3>
 
       <div className='span-12'>
         <div className='p-2 showcase-text'>
-          The <Kw>Tooltip</Kw> component is a highly efficient custom tooltip that works on hover with any component that utilizes the <Kw>TooltipService</Kw>. 
-          It's a useContext function that gives you access to show and hide functions for rendering the tooltip without causing any extra overhead, 
-          and doesn't rerender any other components in your application. The props passed into these function are also stable, and though they're objects they don't need to be memoized.
+          The <Kw>HashLink</Kw> component is a dynamic react router <Kw>Link</Kw> that's built to add hashLink navigation functionality 
+          and make it easier and more efficient to use the Link element. It has multiple <Kw>Types</Kw> for how you're navigating, 
+          and allows you to add a label or your own custom content that's wrapped within it.
         </div>
         
         <div className='p-2 showcase-text'>
-          The <Kw>Tooltip</Kw> is very dynamic, and will handle rendering and transitioning smoothly anywhere on the screen, 
-          to switching views on the fly if it goes out of bounds of the viewport,
-          and has it's own overflow logic with smoothed scrolling for content that doesn't fit within it's container.
+          By default the hashLink adds state to navigation that the application uses to handle scrolling to a hashLink like "/home#introduction"
+          during a navigation. The types are <Kw>router</Kw>, which is the default behavior. 
+          <Kw>page</Kw>, for navigating to a another site in a new tab, and adds nohttp referrer for safety.
+          Finally, there's <Kw>useNavigate</Kw> which adds additional&nbsp;
+          <span onClick={hide} onMouseLeave={hide} onMouseEnter={() => show({ code: Code_NavigateOptions, type: "interface" })} >
+            <DocLink label='options' url='/Documentation/Forms/Slider' />
+          </span>
+
+          &nbsp;you can use when navigating for handling window history and internal navigation logic.
         </div>
       </div>
 
@@ -152,7 +158,7 @@ export const Docs_HashLink = () => {
       </div>
 
       <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Tooltip Parameters' openByDefault>
+        <Dropdown label='HashLink Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 

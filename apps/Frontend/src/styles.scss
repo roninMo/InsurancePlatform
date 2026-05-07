@@ -78,11 +78,11 @@
   .theme-focus-2  { @apply hover:brightness-125  active:brightness-90; }
 
   .theme-fa { @apply hover:theme-f active:theme-a; }
-  .theme-f { @apply brightness-90   dark:brightness-125; }
-  .theme-a { @apply brightness-110  dark:brightness-90; }
+  .theme-f { @apply brightness-110 dark:brightness-125; }
+  .theme-a { @apply brightness-90  dark:brightness-90; }
   
-  .theme-f2 { @apply brightness-95   dark:brightness-110; }
-  .theme-a2 { @apply brightness-105  dark:brightness-95; }
+  .theme-f2 { @apply brightness-105  dark:brightness-110; }
+  .theme-a2 { @apply brightness-95   dark:brightness-95; }
 
 
   // default background colors
@@ -1152,7 +1152,7 @@
     ;
   }
 
-  .ta-d-base {  @apply bg-div pt-1; }
+  .ta-d-base {  @apply opacity-bg-0 pt-1; }
   .ta-b-base {  @apply h-16 pl-4; }
 
   .ta-p-base { 
@@ -1195,6 +1195,21 @@
     @apply border-error group-focus-within:border-focus;
   }
   
+  .ta-d-attach-file {
+    @apply rowStart items-center gap-4 pl-1 py-1 animate-fade-in;
+  }
+  
+  .ta-d-attach-file-ha {
+    &:hover {
+      @apply text-slate-800 dark:text-slate-200 cursor-pointer;
+    }
+    
+    @apply group-active:text-slate-600 dark:group-active:text-slate-400;
+  }
+  
+  .ta-d-attach-file-d {
+    @apply i-d-color dark:i-d-color;
+  }
 
 
   // Box variant styles
@@ -1229,13 +1244,13 @@
     }
     
     @apply
-      group-active:[&>p]:text-slate-600 dark:group-active:[&>p]:text-slate-400
+      group-active:[&_p]:text-slate-600 dark:group-active:[&_p]:text-slate-400
       group-active:[&_svg]:text-slate-600 dark:group-active:[&_svg]:text-slate-400;
   }
   
   .ta-b-attach-file-d {
     @apply 
-      [&>p]:disabled-text dark:[&>p]:disabled-text
+      [&_p]:disabled-text dark:[&_p]:disabled-text
       [&_svg]:i-d-color dark:[&_svg]:i-d-color
     ;
   }
@@ -2215,10 +2230,12 @@
     @apply keyword cursor-pointer active:theme-a;
   }
 
+
   // SeeRef
   .see-ref {
     @apply block;
   }
+
 
   // DocLink
   .doc-link {
@@ -2250,6 +2267,29 @@
 
   .doc-link-see { @apply inline; }
   .doc-link-text { @apply inline; }
+
+
+  // Doc-QuickLink
+  .doc-quicklink {
+    @apply  
+      z-10 rounded-lg
+      col gap-4 p-4 pt-5
+      cursor-pointer transition-all
+      
+      bg-div opacity-bg-50 
+      outline-css outline-styles
+      shadow-lg  *:pointer-events-none
+      bg-gradient-to-br from-slate-950/15 from-5% via-slate-600/15 via-55% to-transparent
+      
+      theme-fa hover:outline-focus 
+      hover:scale-105 active:scale-100 
+    ;
+  }
+
+  .doc-quicklink-gradient-light {
+    @apply 
+  }
+
   // #endregion
 
 
