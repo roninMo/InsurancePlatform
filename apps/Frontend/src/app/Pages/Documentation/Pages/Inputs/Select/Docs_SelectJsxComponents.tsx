@@ -94,12 +94,7 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
 
     // update the current list of selected values
     setSelectedValues(prevValue => {
-      const newValue = { ...prevValue, [selected.value]: updatedSelection };
-      console.log(`multiSelect::updated: ${prevValue[updatedSelection.value].label}: `, { 
-        value: updatedSelection,
-        values: newValue
-      });
-      return newValue;
+      return { ...prevValue, [selected.value]: updatedSelection };
     });
   }
   

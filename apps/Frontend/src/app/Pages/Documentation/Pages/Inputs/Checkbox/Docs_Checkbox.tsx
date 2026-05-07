@@ -82,21 +82,21 @@ export const Docs_Checkbox = () => {
       </h3>
 
       <div className='span-12'>
-        <p className='p-2 showcase-text'>
+        <div className='p-2 showcase-text'>
           A styled checkbox input with <Kw>themed</Kw> styles for every form state. 
           Easily customizable with multiple events you can use alongside 
-          <HashLink url='https://react-hook-form.com/' opts={{ type: 'page' }}>
+          <HashLink url='https://react-hook-form.com/' type='page'>
             &nbsp; <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span> &nbsp;
           </HashLink>
           or your own state hooks.
 
           The variants are <Kw>default</Kw>, <Kw>list</Kw>, and <Kw>inline</Kw>.
 
-        </p>
+        </div>
       </div>
 
       <div className='span-12'>
-        <p className='p-2 showcase-text'>
+        <div className='p-2 showcase-text'>
           If you're looking for an input that only allows selecting a single value, try&nbsp;
           <span 
             onClick={hide} onMouseLeave={hide}
@@ -116,7 +116,7 @@ export const Docs_Checkbox = () => {
           >
             <DocLink label='RadioGroup' url='/Documentation/Forms/Radio' />
           </span>.
-        </p>
+        </div>
       </div>
 
       {/* Showcase Input Element Variants */}

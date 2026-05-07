@@ -98,7 +98,7 @@ export const Docs_Icon = () => {
       {/* Variants */}
       <Variants className='span-12 py-2' id="showcase-variants">
         { currentTab == 'default' && 
-          <ShowcaseElement jsx={getSourceCode(IconCodeSnippets, "Example_Icon")} styles="spacing gap-0 opacity-0 animate-fade-in">
+          <ShowcaseElement startingTab='jsx' jsx={getSourceCode(IconCodeSnippets, "Example_Icon")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <div className='span-12 p-8'>
               <Example_Icon />
             </div>
@@ -140,6 +140,7 @@ export const Docs_Icon = () => {
                   iconListNames?.[index] == 'Company Icons' ? '[&_svg]:size-32 [&_svg]:lg:size-52 [&_svg]:mx-6' : 
                   '[&_svg]:size-12'
                 }
+                key={`doc_icon_${variant}`}
               />
             )}
           </Card>

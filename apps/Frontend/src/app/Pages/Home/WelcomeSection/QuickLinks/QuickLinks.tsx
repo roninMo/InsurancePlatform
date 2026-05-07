@@ -77,8 +77,8 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
 
 
   const getStatusIcon = (): IconTypes => {
-    if (status == 'Error') return 'Error';
-    if (status == 'Ok') return 'Checkbox';
+    if (status == 'Error') return 'OutlineError';
+    if (status == 'Ok') return 'OutlineOkay';
     return 'Loading';
   }
 
@@ -100,11 +100,11 @@ export const QuickLink = ({ url, label, id, env, initialRender, index }: QuickLi
       <UrlLinks className="span-9 rowStart items-center gap-1">
         {/* name: link w/label */}
         <span className={`pl-2 pr-1 mb-[2px] italic ${status == 'Loading' ? 'loading-text' : 'text-colors'}`}> name: </span>
-        <HashLink label={label} url={url} opts={{ type: 'page' }} styles={`dropdown-link-text ${getTextStyles()}`} />
+        <HashLink label={label} url={url} type='page' styles={`dropdown-link-text ${getTextStyles()}`} />
 
         {/* url: link w/url */}
         <span className={`pl-8 pr-1 mb-[2px] italic ${status == 'Loading' ? 'loading-text' : 'text-colors'}`}> url: </span>
-        <HashLink label={url} url={url} opts={{ type: 'page' }} styles={`dropdown-link-text ${getTextStyles()}`} />
+        <HashLink label={url} url={url} type='page' styles={`dropdown-link-text ${getTextStyles()}`} />
       </UrlLinks>
 
       {/* Loading bar animation */}

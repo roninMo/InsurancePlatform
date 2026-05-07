@@ -65,7 +65,6 @@ export const Docs_Tooltip = () => {
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
 
   return (
@@ -132,7 +131,7 @@ export const Docs_Tooltip = () => {
         { currentTab == 'code' && 
           <ShowcaseElement jsx={getSourceCode(TooltipCodeSnippets, "Example_CodeTooltip")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <div className='span-10 lg:span-6 p-8'>
-              <Example_CodeTooltip codeSnippet={getSourceCode(SourceTooltipProviderSnippets, 'TooltipProvider', 'component')} />
+              <Example_CodeTooltip codeSnippet={getSourceCode(SourceTooltipSnippets, 'TooltipType', 'type')} />
             </div>
           </ShowcaseElement>
         }
@@ -278,7 +277,6 @@ const paramTypeElements: Record<string, React.FC> = {
 
 // Code Snippets
 import SourceTooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip?raw';
-import SourceTooltipProviderSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider?raw';
 const Code_CodeTypes = getSourceCode(SourceTooltipSnippets, 'CodeTypes', 'type');
 
 

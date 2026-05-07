@@ -3,7 +3,7 @@ import { IconAttributes } from "../../../Icon";
 export const Icon_Bamboo = ({ styles }: IconAttributes) => {
   return ( 
     <svg className={styles} xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-      <title>Bamboo SVG Icon</title>
+      {/* <title>Bamboo SVG Icon</title> */}
       <defs>
         <linearGradient id="deviconOriginalBamboo0" x1="11.217" x2="11.217" y1="7.486" y2="21.607" gradientTransform="scale(4)" gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor="#0052cc"/><stop offset="1" stopColor="#2684ff"/>

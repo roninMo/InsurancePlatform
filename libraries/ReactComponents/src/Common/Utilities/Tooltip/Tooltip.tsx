@@ -269,7 +269,8 @@ export const Tooltip = (props: TooltipProps) => {
           showLineNumbers={showLineNumbers} 
           customStyle={{ 
             paddingBottom: '1rem', 
-            paddingRight: type == 'component' || type == 'interface' ? '6rem' : '1rem'
+            paddingRight: type == 'component' || type == 'interface' ? '6rem' : '1rem',
+            // overflowX: 'hidden'
           }}
         />
       </div>

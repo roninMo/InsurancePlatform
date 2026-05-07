@@ -3,7 +3,7 @@ import { IconAttributes } from "../../../Icon";
 export const Icon_GCP = ({ styles }: IconAttributes) => {
   return ( 
     <svg className={`${styles} [&_rect]:fill-[#F4F2ED] dark:[&_rect]:fill-[#242938]`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-      <title>Gcp-dark SVG Icon</title>
+      {/* <title>Gcp-dark SVG Icon</title> */}
       <g fill="none">
         <rect width="256" height="256" fill="#242938" rx="60"/>
         <path fill="#EA4335" d="m161.009 92.39l17.385-17.386l1.159-7.32c-31.68-28.807-82.04-25.54-110.6 6.816c-7.932 8.986-13.817 20.19-16.955 31.76l6.226-.878l34.77-5.733l2.684-2.745c15.466-16.986 41.617-19.272 59.475-4.82z"/>

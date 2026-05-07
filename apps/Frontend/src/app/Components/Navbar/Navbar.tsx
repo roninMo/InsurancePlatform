@@ -246,7 +246,7 @@ const NavbarComponent = ({}: NavbarProps) => {
                 <HashLink label="Welcome"         url="/#welcome-section" styles="footer-link" />
                 <HashLink label="Previous Works"  url="/#previous-works-section" styles="footer-link" />
                 <HashLink label="Experience"      url="/#experiences-section" styles="footer-link" />
-                <HashLink label="Resume"          url="/"  opts={{ type: 'page' }} styles="footer-link" />
+                <HashLink label="Resume"          url="/" type='page' styles="footer-link" />
               </div>
             
               <div>

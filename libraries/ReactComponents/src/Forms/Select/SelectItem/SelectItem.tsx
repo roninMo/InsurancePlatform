@@ -84,9 +84,7 @@ export const SelectItemComponent = memo(({ item, index, onSelect, currentSelectV
   if (shouldRerender) return false;
 
   // Default Logic - just check if the memoized selectItem object is a "new" object to handle shallow equality checks. 
-  // TODO: should we save us from using memoized and just check if the items have been "checked"?
-  return (
-    prevProps.item === nextProps.item 
+  return ( prevProps.item.selected === nextProps.item.selected
     && prevProps.multiSelect === nextProps.multiSelect 
     && prevProps.dropdownOpen === nextProps.dropdownOpen 
   );

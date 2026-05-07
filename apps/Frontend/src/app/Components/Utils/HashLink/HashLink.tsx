@@ -1,5 +1,5 @@
 import { memo, ReactNode, useMemo } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link, useLocation, NavigateOptions } from "react-router-dom";
 
 
 
@@ -28,7 +28,7 @@ interface HashLinkPropsBase {
 
     // If you add the state or opts prop, it must be memoized in order to prevent rerenders 
     state?: Record<string, any>;
-    opts?: Record<string, any> & { state?: any };
+    opts?: NavigateOptions;
 
   */
 }
@@ -51,7 +51,7 @@ type NavTypeProps =
 // if we're using the navigate function, we need the opts for extra nav functionality 
 | {
     type?: Extract<NavTypes, 'useNavigate'>; 
-    opts?: Record<string, any> & { state?: any };
+    opts?: NavigateOptions;
 
     /** @deprecated CANNOT use 'state' when 'type' is 'useNavigate'. */
     state?: never; 

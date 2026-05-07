@@ -63,14 +63,14 @@ export const Example_PopupModal = ({ isModalOpen, setIsModalOpen }: {
 
       closeModalButton={false}
       alignmentStyles="flex justify-center items-start pt-8"
-      dimensionStyles='min-h-14 min-w-96 px-8'
+      dimensionStyles='min-h-14 min-w-96 px-8 my-6'
     >
       <div className="col justify-between gap-4">
-        <label className="text-base font-normal">
+        <label className="text-base input-colors font-normal">
           An example popup notification.
         </label>
 
-        <div className="row justify-end">
+        <div className="row justify-end pt-4">
           <div>
             <Button 
               displayText="Close"
