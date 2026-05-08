@@ -1,10 +1,27 @@
-import { Button, Checkbox, Dropbox, getValuesFromType, Icon, IconTypes, Input, RadioGroup, RadioItem, RadioTable, Select, Slider, Textarea, TooltipService } from '@Project/ReactComponents';
-import { HashLink } from '../../../../Components/Utils/HashLink/HashLink';
-import styles from './Docs_Introduction.module.scss';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { HashLink } from '../../../../Components/Utils/HashLink/HashLink';
 import { Alert } from '../../../../Components/Content/Alert/Alert';
 import { Card } from '../../../../Components/Content/Card/Card';
+import { 
+  Button, 
+  Checkbox, 
+  Dropbox, 
+  getValuesFromType, 
+  Icon, 
+  IconTypes, 
+  Input, 
+  RadioGroup, 
+  RadioItem, 
+  RadioTable, 
+  Select, 
+  Slider, 
+  Textarea, 
+  TooltipService 
+} from '@Project/ReactComponents';
+
+import styles from './Docs_Introduction.module.scss';
 
 
 interface DocsIntroductionProps {
@@ -13,23 +30,26 @@ interface DocsIntroductionProps {
 export const Docs_Introduction = ({ links }: DocsIntroductionProps) => {
   return (
     <div className="spacing gap-4 p-4">
-      <h2 className='span-12'>
-        Introduction
-      </h2>
+      { links == 'all' && <>
+        <h2 className='span-12'>
+          Introduction
+        </h2>
 
-      {/* Welcome to documentation demo */}
-      <p className='span-12 py-2 text-lg lg:text-xl'>
-          Welcome to the Documentation Demo. This documentation consists of the majority of functional custom components used within this project. 
-          The components consist of universal dynamic form inputs, themed reusable content, and utility components that 
-          can be used across your application with ease. 
-      </p>
-      
-      {/* intro explanation and text */}
-      <p className='span-12 py-2 pb-10 text-lg lg:text-xl'>
-          The majority of the component's design are focused on best practices, efficiency, customization, 
-          and being reusable across the application with ease. It was a lot of fun putting these components together,
-          even though I probably won't be using these much outside of this project, I got to design a lot of neat things while developing each one.
-      </p>
+        {/* Welcome to documentation demo */}
+        <p className='span-12 py-2 text-lg lg:text-xl'>
+            Welcome to the Documentation Demo. This documentation consists of the majority of functional custom components used within this project. 
+            The components consist of universal dynamic form inputs, 
+            themed reusable content, and utility components that 
+            can be used across your application with ease. 
+        </p>
+        
+        {/* intro explanation and text */}
+        <p className='span-12 py-2 pb-10 text-lg lg:text-xl'>
+            The majority of the component's design are focused on best practices, efficiency, customization, 
+            and being reusable across the application with ease. It was a lot of fun putting these components together,
+            even though I probably won't be using these much outside of this project, I got to design a lot of interesting things while developing each one.
+        </p>
+      </>}
 
       <div className='spacing gap-6'>
         { links == 'all' && 
@@ -52,7 +72,6 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
   const navigate = useNavigate();
   useEffect(() => {
     const selectElement = document.getElementById('quicklink-select-slct');
-    console.log('selectElement: ', selectElement);
     if (selectElement) selectElement.click();
     setAllowSelectNav(true);
   }, []);
@@ -65,10 +84,17 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
 
   return (<>
     { links != 'all' ? 
-      <h2 id='forms-quicklinks' className='span-12 pb-4'>Form Links</h2>
+      <h2 id='forms-quicklinks' className='span-12 pt-4'>Form Links</h2>
     :
-      <h3 id='forms-quicklinks' className='span-12 pt-10 pb-4'>Form Inputs</h3>
+      <h3 id='forms-quicklinks' className='span-12 pt-4'>Form Inputs</h3>
     }
+    
+    <p className='span-12 pb-4 text-lg lg:text-xl'>
+      Custom interactive and highly customizable themed form components. We're using rhf to 
+      help tackle performance bottlenecks with deeply nested components, as well as memoized.
+      Between trying best practices and customizability, these were fun to spin up from reference.
+      They all have variants for different scenarios, give it a try.
+    </p>
 
     {/* input */}
     <div className='span-12 lg:span-5 col *:flex-1'>
@@ -235,10 +261,15 @@ const ContentQuickLinks = ({ links }: DocsIntroductionProps) => {
 
   return (<>
     { links != 'all' ? 
-      <h2 id='content-quicklinks' className='span-12 pb-4'>Content Links</h2>
+      <h2 id='content-quicklinks' className='span-12 pt-4'>Content Links</h2>
     :
-      <h3 id='content-quicklinks' className='span-12 pt-10 pb-4'>Content Components</h3>
+      <h3 id='content-quicklinks' className='span-12 pt-20'>Content Components</h3>
     }
+    
+    <p className='span-12 pb-4 text-lg lg:text-xl'>
+      Random Content functions to go along with the theme and find new ways to make 
+      ease of access customizable components for the developers to use.
+    </p>
 
     {/* alert */}
     <div className='span-12 lg:span-6 col *:flex-1'>
@@ -349,10 +380,15 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
 
   return (<>
     { links != 'all' ? 
-      <h2 id='utils-quicklinks' className='span-12 pb-4'>Utils Links</h2>
+      <h2 id='utils-quicklinks' className='span-12 pt-4'>Utils Links</h2>
     :
-      <h3 id='utils-quicklinks' className='span-12 pt-10 pb-4'>Utils Components</h3>
+      <h3 id='utils-quicklinks' className='span-12 pt-20'>Utils Components</h3>
     }
+    
+    <p className='span-12 pb-4 text-lg lg:text-xl'>
+      Utility functions that are useful for various scenarios that help leverage other libraries,
+      help with performance and efficiency, and are in general convenient to use.
+    </p>
 
     {/* modal */}
     <div className='span-12 lg:span-6 col *:flex-1'>
@@ -406,10 +442,9 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
         <h4 className='pb-2'>HashLink Component</h4>
         
         <div className='p-4 pb-8 row justify-center items-center'>
-          <HashLink 
-            label='Click me' 
-            url='/Documentation/Utils/HashLink' 
-            styles='py-1.5 px-2.5 link-text text-lg underline' />
+          <p className='link-text py-1.5 px-2.5 link-text text-lg underline'>
+            Click me 
+          </p>
         </div>
       </HashLink>
     </div>

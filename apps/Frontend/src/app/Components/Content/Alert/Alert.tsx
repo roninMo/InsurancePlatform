@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import { Icon, IconTypes } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
@@ -6,16 +6,21 @@ import styles from './Alert.module.scss';
 
 
 export type AlertType = 'info' | 'warning' | 'error' | 'ok' | 'question';
-interface AlertPropsBase {
+export interface AlertProps {
   type: AlertType;
   children: ReactNode;
-  additStyles?: string;
-  additCStyles?: string;
+
+  // Optional state handling
+  showAlert?: boolean;
+  setShowAlert?: Dispatch<SetStateAction<boolean>>;
+  
+  // Styles
+  additCStyles?: string; // Container Styles 
+  additStyles?: string; // Content Styles
 }
 
-export type AlertProps = AlertPropsBase;
 
-export const Alert = ({ type, children, additStyles = '', additCStyles = '' }: AlertProps) => {
+export const Alert = ({ type, children, showAlert, setShowAlert, additStyles = '', additCStyles = '' }: AlertProps) => {
   const getAlertTheme = (): string => {
     if (type == 'info') return 'selected-box [&_.alert-content]:primary-text';
     if (type == 'warning') return 'warning-box [&_.alert-content]:warning-text';
@@ -34,12 +39,23 @@ export const Alert = ({ type, children, additStyles = '', additCStyles = '' }: A
     return '';
   }
 
+  const [internalShowAlert, setInternalShowAlert] = useState<boolean>(true);
+  const getShowAlert = () => showAlert ? showAlert : internalShowAlert;
+  const dismissAlert = () => {
+    if ((showAlert !== undefined) && setShowAlert) setShowAlert(false);
+    else setInternalShowAlert(false);
+  }
+
   return (
-    <Container className={`alert ${getAlertTheme()} ${additCStyles}`}>
+    <Container className={`alert ${getAlertTheme()} ${getShowAlert() ? '' : 'alert-hidden'} ${additCStyles}`}>
       <Icon variant={AlertIcons[type]} styles={`alert-icon ${getIconColor()}`} />
 
       <div className={`alert-content ${additStyles}`}>
         { children }
+      </div>
+
+      <div onClick={dismissAlert}>
+        <Icon variant='Close' styles={`alert-close ${getIconColor()}`} />
       </div>
     </Container>
   );

@@ -166,6 +166,7 @@ export function App() {
               - Allow the devs to toggle what's being logged in the console, and a list of what's captured
                 - from render times and other react specific diagnostics
                 - to specific logs added to each component
+                - the accumulated rerenders, w/a reference percentage chart to what parent component they were in 
 							- capture the e.type, and e.nativeEvent functions in dev logs
 
           There should also be a way to capture and display state updates

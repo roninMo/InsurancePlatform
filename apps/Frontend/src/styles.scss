@@ -188,6 +188,12 @@
       cursor-pointer transition-all;
   }
 
+  .i-interactive {
+    @apply 
+      i-default-theme theme-fa  
+      hover:scale-110 active:scale-100;
+  }
+
   .i-default-color {
     @apply text-blue-300 dark:text-slate-400;
   }
@@ -1523,19 +1529,30 @@
   // #region Alert component styles
   .alert {
     @apply 
-      p-2 rowStart items-start gap-1.5 transition-all
+      p-2 row justify-evenly items-start gap-1.5 transition-all
       outline-css
     ;
   }
   
   .alert-icon {
     @apply 
-      size-[1.4rem] justify-center self-center 
+      size-[1.4rem] 
+      justify-center self-center 
       opacity-90 transition-all;
+  }
+
+  .alert-close {
+    @apply 
+      alert-icon cursor-pointer 
+      theme-fa hover:scale-110 active:scale-100;
   }
 
   .alert-content {
     @apply w-full p-0.5;
+  }
+
+  .alert-hidden {
+    @apply animate-fade-out-hidden;
   }
   // #endregion
 

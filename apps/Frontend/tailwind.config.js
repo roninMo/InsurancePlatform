@@ -17,6 +17,7 @@ module.exports = {
         'fade-in': 'fade-in 0.4s ease-out forwards',
         'fade-in-slow': 'fade-in 0.64s ease-out forwards',
         'fade-out': 'fade-out 0.3s ease-in forwards',
+        'fade-out-hidden': 'fade-out-hidden 0.4s ease-in forwards',
         'fade-pulse':   'fade-pulse   1.7s ease-out',
         'fade-pulse-i': 'fade-pulse-i 1.7s ease-out',
 
@@ -41,9 +42,18 @@ module.exports = {
 
 
       keyframes: {
+        // Animation settings for fading element in/out smoothly
         'fade-in':      { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'fade-in-slow': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'fade-out':     { '0%': { opacity: '1' }, '100%': { opacity: '0' } },
+        
+        // For element you want to gracefully remove from the DOM
+        'fade-out-hidden': { 
+          '0%':   { opacity: '1' }, 
+          '75%':  { opacity: '0' }, // 0.3s
+          '100%':  { display: 'none', opacity: '0' } // 0.4s
+        },
+        
 
         // Displays element for a second and then fades out. Think indiana jones for display messages
         'fade-pulse':   {

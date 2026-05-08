@@ -144,7 +144,7 @@ export const WelcomeSection = () => {
               additionalStyles='text-base rounded-lg'
             />
 
-            <HashLink url="/Documentation/Forms/Input" opts={{ type: 'useNavigate' }}>
+            <HashLink url="/Documentation">
               <Button displayText='Documentation'
                 onClick={() => {}}
                 size='md'

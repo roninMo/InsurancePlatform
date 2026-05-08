@@ -194,10 +194,10 @@ const PageContent = styled.div``;
 // Documentation Sidebar Links
 export const DocumentationPage_SidebarLinks: SubPageLinkProps[] = [
   // Inputs Page and Subroutes
-  // {
-  //   sectionLink: { label: "Get Started", url: "" },
-  //   subLinks: []
-  // },
+  {
+    sectionLink: { label: "Get Started", url: "" },
+    subLinks: []
+  },
   {
     // TODO: Add redirects to create individual "home" page content for the quickLinks of each section
     sectionLink: { label: "Forms", url: "Forms" }, 

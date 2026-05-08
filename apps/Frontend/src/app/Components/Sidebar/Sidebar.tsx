@@ -35,9 +35,9 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSe
     <Container className="sidebar col gap-2 p-4 pr-10">
       {/* TODO: Eventual open close arrow with fixed positioning */}
       
-      <h4 className="py-2 pb-4 text-[1.35rem]">
+      {/* <h4 className="py-2 pb-4 text-[1.35rem]">
         Navigation
-      </h4>
+      </h4> */}
       {/* <div className="pt-2" /> */}
 
       { LinkSections.map(({ sectionLink, subLinks }: SubPageLinkProps, index: number) => 
