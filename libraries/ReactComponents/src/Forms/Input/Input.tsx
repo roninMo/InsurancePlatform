@@ -1,4 +1,4 @@
-import { Dispatch, MouseEvent, RefObject, SetStateAction, useContext, useState } from 'react';
+import { ChangeEvent, Dispatch, MouseEvent, RefObject, SetStateAction, useContext, useRef, useState } from 'react';
 import { Button } from '../Button/Button';
 import { Icon } from '../../Common/Icons/Icon';
 import { InputMask, useMask } from '@react-input/mask';
@@ -18,7 +18,8 @@ export type TextInputAutoCompleteTypes =
   | "name" | "given-name" | "family-name" | "email" | "password" | "tel" 
   | "street-address" | "address-level2"| "address-level1" | "postal-code" | "country-name";
 
-export interface InputProps {
+interface InputPropsBase {
+  /** The variant of input we're using. Each has different functionality for each input type. */
   type?: TextInputTypes
   
   name: string;
@@ -42,6 +43,190 @@ export interface InputProps {
   opts?: InputVariantOpts;
 }
 
+export type InputProps = InputPropsBase & ConditionalVariantProps;
+
+// TODO: update the docs input examples to include these variant options
+// TODO: the optionally visible elements for each variant should be by default true, and optionally hidden.
+export interface InputVariantOpts {
+    /** Number  */
+    incrementButtons?: boolean;
+    
+    /* Email */
+    showEmailIcon?: boolean;
+
+    /* Password */
+    visibilityIcon?: boolean;
+
+    /* Search */
+    sortButton?: boolean;
+    sortType?: SearchSortType;
+    
+    /* Policy Number */
+    showPolicyNumberIcon?: boolean;
+    policyNumberMask?: boolean;
+
+    /* Phone Number */
+    showPhoneIcon?: boolean;
+    phoneNumberMask?: boolean;
+
+    /* Credit Card */
+    showCreditCardIcon?: boolean;
+    creditCarkMask?: boolean;
+
+    /* Currency */
+    showMoneySign?: boolean;
+    currencyTypeDropdown?: boolean;
+}
+
+// #region conditional variant props 
+type NumberVariantProps = 
+| { 
+    /** An input that's oriented for using number specific values. */
+    type?: 'number';
+    /** Whether to disable the number input's incremental buttons.  */
+    hideIncrementButtons?: boolean;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'number'>; 
+    /** @deprecated CANNOT use 'hideIncrementButtons' when 'type' isn't number. */
+    hideIncrementButtons?: never; 
+  };
+
+type EmailVariantProps = 
+| { 
+    /** The variant specific for handling emails. Visually for emails; however, we opted to using rhf's validation for handling email. */
+    type?: 'email';
+    /** Whether to hide this variant's email icon.  */
+    hideEmailIcon?: boolean;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'email'>; 
+    /** @deprecated CANNOT use 'hideEmailIcon' when 'type' isn't email. */
+    hideEmailIcon?: never; 
+  };
+
+type PasswordVariantProps = 
+| { 
+    /** The password variant. Hides the input value, and adds an icon to show/hide the input value */
+    type?: 'password';
+    /** Whether to hide this variant's visibility icon.  */
+    hideVisibilityIcon?: boolean;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'password'>; 
+    /** @deprecated CANNOT use 'hideVisibilityIcon' when 'type' isn't     type?: Exclude<TextInputTypes, 'password'>; 
+. */
+    hideVisibilityIcon?: never; 
+  };
+
+type SearchVariantProps = 
+| { 
+    /** The search variant. Adds a dropdown for search results, and optional sorting. */
+    type?: 'search';
+    /** Whether to add a sort button for the rendered search results.  */
+    sortButton?: boolean;
+    /** The sorting type for the search results.  */
+    sortType?: SearchSortType;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'search'>; 
+    /** @deprecated CANNOT use 'sortButton' when 'type' isn't search. */
+    sortButton?: never; 
+    /** @deprecated CANNOT use 'sortType' when 'type' isn't search. */
+    sortType?: never;
+  };
+
+type PolicyNumberVariantProps = 
+| { 
+    /** The policy number variant. Has an input mask for the format, and an optional icon. */
+    type?: 'policyNumber';
+    /** Whether to hide the policy number icon for the input.  */
+    hidePolicyNumberIcon?: boolean;
+    /** The policy number format we're using.  */
+    policyNumberMask?: RefObject<any>;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'policyNumber'>; 
+    /** @deprecated CANNOT use 'hidePolicyNumberIcon' when 'type' isn't policyNumber. */
+    hidePolicyNumberIcon?: never; 
+    /** @deprecated CANNOT use 'policyNumberMask' when 'type' isn't policyNumber. */
+    policyNumberMask?: never;
+  };
+
+
+type PhoneVariantProps = 
+| { 
+    /** The phone variant. Has an input mask for the format, and an optional phone icon. */
+    type?: 'phone';
+    /** Whether to hide the phone icon for the input.  */
+    hidePhoneIcon?: boolean;
+    /** The phone number format we're using.  */
+    phoneNumberMask?: RefObject<any>;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'phone'>; 
+    /** @deprecated CANNOT use 'hidePhoneIcon' when 'type' isn't phone. */
+    hidePhoneIcon?: never; 
+    /** @deprecated CANNOT use 'phoneNumberMask' when 'type' isn't phone. */
+    phoneNumberMask?: never;
+  };
+
+type CreditCardVariantProps = 
+| { 
+    /** The credit card variant. Has an input mask for the format, and an optional icon. */
+    type?: 'creditCard';
+    /** Whether to hide the credit card icon for the input.  */
+    hideCreditCardIcon?: boolean;
+    /** The credit card number's format we're using.  */
+    creditCardMask?: RefObject<any>;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'creditCard'>; 
+    /** @deprecated CANNOT use 'hideCreditCardIcon' when 'type' isn't creditCard. */
+    hideCreditCardIcon?: never; 
+    /** @deprecated CANNOT use 'creditCardMask' when 'type' isn't creditCard. */
+    creditCardMask?: never;
+  };
+
+type CurrencyVariantProps = 
+| { 
+    /** The credit card variant. Has an input mask for the format, and an optional icon. */
+    type?: 'currency';
+    /** Whether to hide the money sign before the value.  */
+    hideMoneySign?: boolean;
+    /** an optional currency type dropdown built into the input.  */
+    currencyTypeDropdown?: boolean;
+  } 
+| { 
+    /** The variant of input we're using. Each has different functionality for each input type. */
+    type?: Exclude<TextInputTypes, 'currency'>; 
+    /** @deprecated CANNOT use 'hideMoneySign' when 'type' isn't currency. */
+    hideMoneySign?: never; 
+    /** @deprecated CANNOT use 'currencyTypeDropdown' when 'type' isn't currency. */
+    currencyTypeDropdown?: never;
+  };
+
+/** The conditional props for each of the variants, only valid and shown when the specific variant is select. */
+type ConditionalVariantProps = 
+|  NumberVariantProps
+|  EmailVariantProps
+|  PasswordVariantProps
+|  SearchVariantProps
+|  PolicyNumberVariantProps
+|  PhoneVariantProps
+|  CreditCardVariantProps
+|  CurrencyVariantProps;
+// #endregion
+
+
+
 export const Input = ({
   type = 'text', name, label, description, value, setValue, placeholder,
   error = false, errorMessage, required = false, disabled = false, tooltipContext, tooltipContent,
@@ -64,6 +249,22 @@ export const Input = ({
     if (type == 'number' || type == 'currency') return 'number';
     if (type == 'password') return showPassword ? 'text' : 'password';
     return 'text';
+  }
+
+  // Update value
+  const currentValue = useRef<number | undefined>(undefined);
+  const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // handled by user
+    if (onChange) onChange(e);
+    
+    // increment button value ref
+    if (type == 'number') {
+      const newValue = e?.target?.value;
+      const num = Number(newValue);
+      const isNumber = newValue.trim() !== '' && Number.isFinite(num);
+      if (isNumber) currentValue.current = num;
+      else currentValue.current = undefined;
+    }
   }
 
   // Error handling
@@ -111,11 +312,12 @@ export const Input = ({
 
         <SubsequentElements
           type={type} name={name}
-          setValue={setValue} 
           disabled={disabled}
           error={getError()} 
           tooltipContext={tooltipContext}
           tooltipContent={tooltipContent}
+          incrementValue={updateValue} 
+          currentValRef={currentValue}
         />
         
         <LoadingBar className='input-loading-bar-cont'>
@@ -189,24 +391,21 @@ interface SubsequentElProps {
   type: TextInputTypes;
   disabled: boolean;
   error: boolean;
-  setValue?: Dispatch<SetStateAction<string>>;
   tooltipContext?: TooltipContextActions;
   tooltipContent?: TooltipContentProps;
+  incrementValue: (e: ChangeEvent<HTMLInputElement>) => void;
+  currentValRef: RefObject<number | undefined>;
 }
 export const SubsequentElements: React.FC<SubsequentElProps> = ({
-  name, type, disabled, error, setValue, tooltipContext, tooltipContent
+  name, type, disabled, error, tooltipContext, tooltipContent, incrementValue, currentValRef
 }) => {
   const { show, hide } = tooltipContext || {};
 
-  const incrementValue = (add: boolean) => {
-    if (!setValue) return;
+  const onPressIncrementButtons = (add: boolean) => {
+    if (currentValRef.current === undefined) return;
 
-    setValue(prevValue => {
-      const num = Number(prevValue); 
-      const isNumber = prevValue.trim() !== '' && Number.isFinite(num);
-      if (isNumber) return add ? `${num + 1}` : `${num - 1}`;
-      return prevValue;
-    })
+    const currentValue = currentValRef.current + (add ? 1 : -1);
+    incrementValue({ target: { value: `${currentValue}`} } as any);
   }
   
   return (
@@ -226,12 +425,12 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
         { type == 'number' && 
           <div className={`increment-btns ${!disabled && !error ? 'increment-btns-states' : error ? 'input-btns-error' : ''}`}>
             <Button 
-              onClick={() => incrementValue(true)}
+              onClick={() => onPressIncrementButtons(true)}
               icon='ChevronUp' iconStyles='input-inc-i' disabled={disabled} 
               color='gray' additionalStyles='inc-btn-base input-inc-btn-t' 
             />
             <Button 
-              onClick={() => incrementValue(false)}
+              onClick={() => onPressIncrementButtons(false)}
               icon='ChevronDown' iconStyles='input-inc-i' disabled={disabled} 
               color='gray' additionalStyles='inc-btn-base input-inc-btn-b' 
             />
@@ -284,38 +483,6 @@ const SortSearchButton = styled.button``;
 const CurrencySelectContainer = styled.div``;
 const CurrencySelect = styled.select``;
 
-
-// TODO: update the docs input examples to include these variant options
-export interface InputVariantOpts {
-    /* Number  */
-    incrementButtons?: boolean;
-    
-    /* Email */
-    showEmailIcon?: boolean;
-
-    /* Password */
-    visibilityIcon?: boolean;
-
-    /* Search */
-    sortButton?: boolean;
-    sortType?: SearchSortType;
-    
-    /* Policy Number */
-    showPolicyNumberIcon?: boolean;
-    policyNumberMask?: boolean;
-
-    /* Phone Number */
-    showPhoneIcon?: boolean;
-    phoneNumberMask?: boolean;
-
-    /* Credit Card */
-    showCreditCardIcon?: boolean;
-    creditCarkMask?: boolean;
-
-    /* Currency */
-    showMoneySign?: boolean;
-    currencyTypeDropdown?: boolean;
-}
 
 export type SearchSortType = 'alphabetical' | 'numerical' | ((a: any, b: any) => void);
 

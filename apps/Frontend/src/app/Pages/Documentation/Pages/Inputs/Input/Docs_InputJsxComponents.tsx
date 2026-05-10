@@ -11,7 +11,7 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
 }) => {
   const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -55,7 +55,7 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
 }) => {
   const [value, setValue] = useState<string>('0');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -74,13 +74,12 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         name={`number-input-form-name`}
 
         value={value}
-        setValue={setValue}
+        onChange={e => onValueUpdated(e)}
         error={!!error}
         disabled={disabled}
         errorMessage={error}
         // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -103,7 +102,7 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
 }) => {
   const [value, setValue] = useState<string>('example@email.com');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -150,7 +149,7 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
 }) => {
   const [value, setValue] = useState<string>('password');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -197,7 +196,7 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
 }) => {
   const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -244,7 +243,7 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
 }) => {
   const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -292,7 +291,7 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
 }) => {
   const [value, setValue] = useState<string>('(012)-345-6789');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -340,7 +339,7 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
 }) => {
   const [value, setValue] = useState<string>('0000-0000-0000-0000');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -388,7 +387,7 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
 }) => {
   const [value, setValue] = useState<string>('0.00');
   
-  const onValueUpdated = (e: any) => {
+  const onValueUpdated = (e: ChangeEvent<any>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }

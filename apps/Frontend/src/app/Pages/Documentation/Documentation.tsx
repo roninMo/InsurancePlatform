@@ -24,12 +24,13 @@ export const Documentation = () => {
   /* TODO: From where we left off
 
     - Finish the documentation pages
-      - Content
-        - add an alert dismiss button
       - Forms
-        - add conditionally rendered variant props for the input component
+        x add conditionally rendered variant props for the input component
+          - just need to remove the opts variant and fix all the current inputs that are being used
         - add RHF to all components, and change the state to a custom prop that overrides rhf
 
+    - When we're using Textastic 
+      - update the props comments to be doc comments for the forms components 
 
     - @note for the hashLink scroll restoration. 
         Once they navigate to a hash link and it auto scrolls to it's location on the page,
@@ -39,8 +40,12 @@ export const Documentation = () => {
       - if they navigated to a hash link
       - for as long as it takes to navigate
       - try speeding up the animation, it feels kind of sluggish
-
-    - Another thing, if there isn't a hashLink, have it start at the start of the page
+        - FIX: Use a singleton class to keep track of the current state init, navigating, scrolling, ready
+          - with 2 functions: 
+            - getNavState() -> HashLink, Navbar
+            - shouldScrollToHash(url, wasReload) -> uses the stored prevUrl and reload to check if it's valid to scroll
+          - then remove the extra state props passed to hashLinks, they're no longer needed  
+        - Another thing, if there isn't a hashLink, have it start at the start of the page
 
     - Navbar Navigation Handler 
       - We need a specific route map to define the page names for the browser history

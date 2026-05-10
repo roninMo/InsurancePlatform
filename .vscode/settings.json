@@ -18,7 +18,8 @@
     "subroot",
     "subtable",
     "Svgs",
-    "Textareas"
+    "Textareas",
+    "Textastic"
   ],
   // Tailwind @apply css binds
   "css.lint.unknownAtRules": "ignore",
