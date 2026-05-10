@@ -83,6 +83,75 @@ export const Documentation = () => {
           - A system notification system similar to above, but for account specific things 
 
 
+        devlog sidebar render history for each component 
+          - with an array of t: time, type: props, parent, state, context, other, log message, log values passed in.
+          - a display like a console of each component rerendered with a dropdown quick info and content dropdown,
+          - a by component page with a filter search for individual components. with a list of the rerenders and its info from the array
+          - a config section to select each prop to have devlogs
+          - filtered section should show components enabled, and then those grayed out, with old data from when it was enabled
+
+
+
+
+
+
+        - have a linked list tree search to traverse after a filtered search
+        - each component ref should have a parent, component, alias (it's label or input value), and props to display as a second sidebar popover
+        - check to enable disable logging, and selectable to show current rerenders and logging
+        - tabs should be console, filtered, by component, and settings
+
+
+      - vite ATS code to attach the parentComponentName as a prop to all components
+        - https://share.google/aimode/jI9AcgZHCDzDSxLux
+        - use this to create a hierarchy of components for traversing and object structure
+        - have the devlog capture this and the component's specific props as well, essential for rerender context
+
+      - Devlog that captures the devlogs and rerender states of components, 
+        - That has multiple consoles for readability and different focuses to help debug code
+
+        - A popover content bar that comes from the bottom of the screen like a console, with dynamic sizing from a min height
+        - It has multiple consoles, and a specific section to select a component to see it's specific devlogs.
+          1. The 'Console' tab displays all components selected, their logs, their rerenders, and metadata for both in each message within dropdowns
+              - option for render/console. The render view (default) captures all messages tied to a component and 
+                  stores them in a rerender IF there was a recent rerender (200ms before / after).
+          
+          2. The 'Filtered' tab (is created when they filter on the console -> moved to this one for brevity)
+              - Let's you select components to show in the console instead of everything enabled.
+              - Allows them a sidebar that has a search to select, then a hierarchy (from the current component, to it's children or 
+                  back up a level). 
+            
+          3. The 'By Component' tab allows for a different view, one that lets you select a single component, and show all it's logs and rerenders in a single list
+              - The hierarchy should be more open and scrollable (by mouse), or find something to do here
+              - The actual menu should be different, rather
+
+          4. The 'Settings' tab allows you to adjust certain settings for the devlog, and anything else used in this popover 
+                - setting for displaying logs to the console
+                - what components should have devlogs enabled
+                - etc.
+
+
+          Note on Sidebar component selection
+            - should have a col row layout, with a div in each row to build a tree diagram |- and negative margins on the containers of the content 
+              - <col> <itemRow> <tree> <itemContainer> /> etc.
+              - should have a search to filter the found components
+              - Components should have their component name, and a ref of the current (their label prop, input value, or id number)
+              - The hierarchy should let you click on the nested components, or go back
+              - There should be a "{...}" icon in the top right of the sidebar for a popover of their specific props
+
+          Each specific logged message
+            - the log has the message, data attached the log, and any additional used in the custom devLog
+              - message should have a style for a string value
+              - the additional data should use a json stringify library to render this (dropdown)
+            - the rerender log captures the [time, component, rerender type, etc.]
+              - for the timeline we should have a dropdown of the logs that occurred during this rerender
+
+
+
+        - A singleton class that the devlog subscribes to passes both log types to the class for storage and use
+          - the history value is a Record<index, DevLog | Rerender> that increments with each log captured
+          - There will be an additional two variables created from this
+
+
 	*/
 
 
