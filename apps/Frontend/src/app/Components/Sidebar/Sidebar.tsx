@@ -1,8 +1,9 @@
-import { MouseEvent, Dispatch, SetStateAction, useState} from "react";
+import { MouseEvent, Dispatch, SetStateAction, useState, useEffect} from "react";
 import { HashLink } from "../Utils/HashLink/HashLink";
 
 import styled from "@emotion/styled";
 import styles from './Sidebar.module.scss';
+import { useLocation } from "react-router-dom";
 
 
 export interface SidebarLinkProps {
@@ -22,14 +23,35 @@ export interface SidebarProps {
   setSidebarOpen: Dispatch<SetStateAction<boolean>>;
   onSetSidebarState: (wasOpened: boolean) => void;
 
-  LinkSections: SubPageLinkProps[];
+  linkSections: SubPageLinkProps[];
 }
-export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSections }: SidebarProps) => {
-  const [currentPage, setCurrentPage] = useState<string>("");
+export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, linkSections }: SidebarProps) => {
+  const [currentPage, setCurrentPage] = useState<SidebarLinkProps>({ url: '', label: '' });
   const toggleSidebar = (setOpened: boolean) => {
     setSidebarOpen(setOpened);
     if (onSetSidebarState) onSetSidebarState(setOpened);
   }
+  
+  // Handle native browser back/forwards navigation scenarios where the sidebar's state isn't updated
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (currentPage.url == pathname) return;
+
+    linkSections.some((list: SubPageLinkProps) => {
+      if (list.sectionLink.url == pathname) {
+        setCurrentPage(list.sectionLink);
+        return true;
+      }
+
+      list.subLinks.some((item) => {
+        if (item.url == pathname) {
+          setCurrentPage(item);
+          return true;
+        }
+      })
+    });
+
+  }, [pathname]);
   
   return (
     <Container className="sidebar col gap-2 p-4 pr-10">
@@ -40,7 +62,7 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSe
       </h4> */}
       {/* <div className="pt-2" /> */}
 
-      { LinkSections.map(({ sectionLink, subLinks }: SubPageLinkProps, index: number) => 
+      { linkSections.map(({ sectionLink, subLinks }: SubPageLinkProps, index: number) => 
         <SidebarLinks 
           sectionLink={sectionLink} 
           subLinks={subLinks} 
@@ -57,12 +79,12 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen, onSetSidebarState, LinkSe
 
 // Sidebar nested links
 interface SideBarLinkProps extends SubPageLinkProps {
-  currentPage: string;
-  setCurrentPage: Dispatch<SetStateAction<string>>;
+  currentPage: SidebarLinkProps;
+  setCurrentPage: Dispatch<SetStateAction<SidebarLinkProps>>;
 }
 
 const SidebarLinks = ({ sectionLink, subLinks, currentPage, setCurrentPage }: SideBarLinkProps) => {
-  const handlePageSelected = (pageLabel: string, e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+  const handlePageSelected = (pageLabel: SidebarLinkProps, e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
     setCurrentPage(pageLabel);
   }
 
@@ -73,13 +95,13 @@ const SidebarLinks = ({ sectionLink, subLinks, currentPage, setCurrentPage }: Si
         styles="pb-2 sidebar-link-header" 
       />
 
-      { subLinks.map(({url, label}: SidebarLinkProps, index: number) =>
-        <HashLink url={url} key={`sidebar-link(${index})-${label}`}>
+      { subLinks.map((data: SidebarLinkProps, index: number) =>
+        <HashLink url={data?.url} key={`sidebar-link(${index})-${data?.label}`}>
           <div 
-            onClick={(e) => handlePageSelected(label, e)}
-            className={`px-4 pr-8 sidebar-link ${currentPage == label ? 'sidebar-link-selected' : ''}`}
+            onClick={(e) => handlePageSelected(data, e)}
+            className={`px-4 pr-8 sidebar-link ${currentPage.url == data?.url ? 'sidebar-link-selected' : ''}`}
           >
-            { label }
+            { data?.label }
           </div>
         </HashLink>
       )}

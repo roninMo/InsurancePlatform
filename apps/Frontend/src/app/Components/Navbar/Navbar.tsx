@@ -1,5 +1,5 @@
 import { memo, MouseEvent, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import { ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
+import { ScrollRestoration, useLocation, useNavigationType } from 'react-router-dom';
 import { hashLinkScrollRestoration, Icon } from '@Project/ReactComponents';
 import { HashLink } from '../Utils/HashLink/HashLink';
 
@@ -10,8 +10,8 @@ import styles from './Navbar.module.scss';
 export interface NavbarProps {}
 
 const NavbarComponent = ({}: NavbarProps) => {
-  const navigate = useNavigate();
   const navScrollRestoration = hashLinkScrollRestoration;
+  const navType = useNavigationType(); // Returns 'PUSH', 'POP', or 'REPLACE'
 
   //------------------------------------------------------------------------------------//
   // React Router Hash Link ScrollRestoration Logic when navigate is used with an id    //
@@ -21,58 +21,80 @@ const NavbarComponent = ({}: NavbarProps) => {
 
   // TODO: handle scroll restoration with loader redirects on browser route lists
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    const didNavigate = state?.fromNavigate;
-    const scrollOpts: ScrollIntoViewOptions = { behavior: 'smooth' };
-    // console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
+    const smoothScroll: ScrollIntoViewOptions = { behavior: 'smooth' };
+    const scrollToTop: ScrollToOptions = { top: 0, left: 0 };
 
-    // Update the navigation information
-    navScrollRestoration.UpdateNavInfo(`${pathname}${hash}`);
-    
+    // Update the navigation information, and handle scroll behavior for each scenario
+    const prevNavState = navScrollRestoration.getNavState();
+    const navState = navScrollRestoration.UpdateNavInfo(`${pathname}${hash}`, navType);
+    // console.log(`\n\nNavState(${prevNavState} -> ${navState}), type: ${navType}, url: ${pathname} - ${hash}`);
 
-    // TODO: Call DetermineScrollBehavior() from navScrollRestoration
-    //   - If we need to scroll, use scrollIntoView()
-    //   - If we shouldn't scroll, use scrollToTop() - without an animation for proper behavior
-    //   - If we navigated from (reload, back, or forwards) - allow the native behavior to handle it
-    // - Then update HashLink to call updateNavInfo() to keep the navScrollRestoration class in sync with the navigation state
+    // default native behavior
+    if (navState == 'navigated') {
+      window.scroll(scrollToTop);
+      // console.log(`(${navState}) user navigated to a new page (no hash)`);
+    }
 
-    // Navbar -> useEffect called after router navigation
-    //   - scroll to location if state is 'scroll'
-    //   - scrollToTop without transition if state is 'navigated'
-    // - Both set to 'ready' once logic is ran (synchronous)
+    if (navState == 'scroll') {
+      // Scroll to the hash
+      if (hash) {
+        const id = hash.replace("#", "");
+        const element = document.getElementById(id);
 
-
-
-    if (didNavigate) {
-      // Ensure the page is loaded before we try to scroll
-      timeout = setTimeout(() => {
-        // Start the scroll behavior from the top of the page
-        document.documentElement.scrollIntoView();
-
-        // Smooth scroll if there's a hash
-        if (hash) {
-          const id = hash.replace("#", "");
-          const element = document.getElementById(id);
-          if (element) element.scrollIntoView(scrollOpts);
+        if (element) {
+          element.scrollIntoView(smoothScroll);
         }
+        else window.scroll(scrollToTop);
+        // console.log(`(${navState}) user scrolled to a hash ${hash}`);
+      }
 
-
-
-        // We've already rerendered from navigation, just clear the state 
-        window.history.replaceState({...state, fromNavigate: false}, '');
-        
-      }, 10);
-      
+      // Same page
+      else {
+        window.scroll({ ...scrollToTop, ...smoothScroll });
+        // console.log(`(${navState}) user clicked on the same page link`);
+      }
     }
     
+    // We handle this scenario through the popstate listener because it accounts for all scenarios (same page hash navigations)
+    if (false && navState == 'browser') {
+      
+      // If we went back/forwards on the same page to a new hash
+      // TODO: this does not work, the browser handles the navigation before this effect is ran
+      // TODO: and the window.history does not have event listeners for Forwards/Backwards navigations
+      const samePageNav = navScrollRestoration.samePageNavigation(`${pathname}${hash}`);
+      if (hash && samePageNav) {
+        const element = document.getElementById(hash.replace("#", ""));
+        let hashLinkFound = false;
+
+        // Smoothly scroll to the previous page location
+        if (element) {
+          hashLinkFound = true;
+          window.history.scrollRestoration = 'manual';
+          element?.scrollIntoView(smoothScroll);
+          // console.log(`(${navState}) went back to same page prev/forward hash ${hash}`);
+        }
+
+        // If we didn't find the previous link for some reason
+        if (!hashLinkFound) {
+          window.history.scrollRestoration = 'auto';
+          // console.log(`(${navState}) using browser's saved scroll location on prev/back navigations`);
+        }
+      }
+
+      // non hash links should use browser's saved previous location
+      else {
+        window.history.scrollRestoration = 'auto';
+      }
+    }
     
-    console.log(`\nNavigationHandling: `, { didNavigate, hash, key, pathname, state, windowLocation: window.location });
-    console.log(`navScrollRestoration: `, navScrollRestoration);
-    console.log(`performanceEntries[nav]: `, [performance.getEntriesByType('navigation')]);
+    navScrollRestoration.setNavState('ready');
+    // console.log(`\nNavigationHandling: `, { didNavigate, hash, key, pathname, state, navType, windowLocation: window?.location });
+    // console.log(`navScrollRestoration${navType}: `, navScrollRestoration);
     
-    // cleanup with the useEffect's return
-    return () => clearTimeout(timeout);
-  }, [pathname, /* hash, */ key]); // when the page is updated, or the user navigates to another id on the page
+    // Just add a timer to reset the navState to ready after the autoscroll has finished
+    // const timeout = setTimeout(() => navScrollRestoration.setNavState('ready'), 740); // browser's avg smooth scroll duration
+    // return () => clearTimeout(timeout);
+  }, [pathname, /* hash, */ key, navType]); // when the page is updated, or the user navigates to another id on the page
   // #endregion
 
 
@@ -98,13 +120,16 @@ const NavbarComponent = ({}: NavbarProps) => {
 
 
   // Prevent the dropdown from opening right after they navigate so they have time to navigate
+  const previousPathName = useRef<string>('');
   useEffect(() => {
-    // Don't prevent dropdown functionality if they clicked a same page link
-    const didNavigate = state?.fromNavigate;
-    const previousPath = state?.previousPathname;
-    if (didNavigate && previousPath == pathname) {
+    // Don't prevent dropdown functionality if they're still on the same page
+    const finishedNavScroll = navScrollRestoration.getNavState() == 'ready';
+    if (!finishedNavScroll && previousPathName.current == pathname) {
       return;
     }
+
+    // update the previous pathname with the current one (it's just for this scenario)
+    previousPathName.current = pathname;
     
     // Delay opening the dropdown for a second and let the user mouse it's mouse
     setIsDropdownAllowed(false);
@@ -115,6 +140,8 @@ const NavbarComponent = ({}: NavbarProps) => {
       // console.log(`dropdownElement, hovering: ${isHovering}`, dropdownElement);
       if (!isHovering && showDropdown) setShowDropdown(false);
       else if (isHovering) setShowDropdown(true);
+      // TODO: if we close the dropdown early after they've hovered it won't open from enter/leave events
+      // TODO: create/enable a mouse over on this else case until they hover again?
     }, 500);
     return () => clearTimeout(timeout);
   }, [key]);

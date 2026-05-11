@@ -7,7 +7,6 @@ import { Contact } from "./Pages/Contact/Contact";
 import {DocumentationPageRoutes} from "./Pages/Documentation/routes_Documentation";
 
 
-export const defaultNavState = { fromNavigate: true }; // Allows @see Navbar.tsx to implement scroll behavior with hash links and pages
 export const router = createBrowserRouter([
   {
     path: "/",

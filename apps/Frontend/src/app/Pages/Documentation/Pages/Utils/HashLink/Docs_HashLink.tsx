@@ -231,7 +231,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'children': () => <ParamType type="ReactNode" tooltip={{ text: 'The custom content rendered within the HashLink.' }} />,
   
   'type': () => <ParamType type="NavTypes" tooltip={{ code: Code_NavTypes }} />,
-  'state': () => <ParamType type="any" tooltip={{ code: dParArg('state', '{ fromNavigate: true }', 'var', 'By default, that HashLink adds this.') }} />,
+  'state': () => <ParamType type="any" tooltip={{ code: dParArg('state', '{ /* custom state props */ }', 'var') }} />,
   'opts': () => <ParamType type="NavigateOptions" tooltip={{ code: Code_NavigateOptions }} />,
   'customNavigate': () => <ParamType type="function" tooltip={{ code: dParArg('customNavigate', '() => MyCustomNavLogic()', 'var') }} />,
 };
@@ -245,8 +245,7 @@ const Code_NavigateOptions = getSourceCode(HashLinkCodeSnippets, 'NavigateOption
 const paramDescriptionElements: Record<string, React.FC> = {
   'url': () => 
     <div className='param-item-desc-text'>
-      The url we're navigating to. Accepts id hash links, and by default will scroll to them upon navigation.
-      If you don't want this behavior, add "fromNavigate: false" to your state, or use a normal Link.
+      The url we're navigating to. Accepts id hash links, and will scroll to them upon navigation.
     </div>,
   'styles': () => 
     <div className='param-item-desc-text'>

@@ -1,7 +1,8 @@
 
 
 
-export type NavState = 'navigated' | 'scroll' | 'ready';
+export type NavState = 'navigated' | 'scroll' | 'browser' | 'ready';
+export type HistoryAction = 'POP' | 'PUSH' | 'REPLACE';
 
 // TODO: what is window history's object for this?
 export interface CurrentNavInfo { // The values we need/should calculate
@@ -77,21 +78,28 @@ class HashLinkScrollRestoration {
    * This function updates this class's internal values and 
    * should be ran in parallel with the internal react-router's navigation logic to stay in sync.
    * 
-   *  - update state to 'navigated' or 'scroll'
+   *  - update state scenarios:
    *    - 'navigated' if they navigate to a new page without an id
    *    - 'scroll' if they navigate with a hash to a new or the same page (or same page without a hash)
+   *    - 'browser' if the navigation occurred from the user pressing 'reload', 'back', or 'forwards'
+   *    - 'ready' a way to notify that the scroll animation has been completed
    * 
    * @param url The new url we're navigating to.
    */
-  public UpdateNavInfo(route: string): NavState {
+  public UpdateNavInfo(route: string, navType: HistoryAction): NavState {
     const { baseRoute, hash } = this.getHashAndBaseRoute(route);
     const prevBaseRoute = this.getBaseRoute(this.prevRoute);
     const prevHash = this.getHash(this.prevRoute);
 
+    // Check that this was not a browser reload, or user back-forwards click
+    if (navType == 'POP') { // @note - react-router-dom doesn't update on forwards-backwards navs on SAME page hash link navigation
+      this.currentNavState = 'browser'; // Set to browser and handle through a popstate event
+    }
+
     // new page
-    if (baseRoute != prevBaseRoute) {
-      if (!hash) this.currentNavState = 'navigated';
-      else this.currentNavState = 'scroll';
+    else if (baseRoute != prevBaseRoute) {
+      if (hash) this.currentNavState = 'scroll';
+      else this.currentNavState = 'navigated';
     }
 
     // if they click the same page's link (without a hash), just scroll to top
@@ -148,6 +156,19 @@ class HashLinkScrollRestoration {
   public getNavState(): NavState {
     return this.currentNavState;
   }
+  
+  /** Returns the previous route the user navigated to. */
+  public getPrevRoute(): string {
+    return this.prevRoute;
+  }
+
+  /** Returns whether you're still on the same page, even if the hash is different. */
+  public samePageNavigation(url: string): boolean {
+    const baseRoute = this.getBaseRoute(url);
+    const prevBaseRoute = this.getBaseRoute(this.prevRoute);
+
+    return baseRoute == prevBaseRoute;
+  }
 
 
 
@@ -155,23 +176,6 @@ class HashLinkScrollRestoration {
   //------------------------------------------//
   // Utility Functions                        //
   //------------------------------------------//
-  /** 
-   * Retrieves the navigation type from the PerformanceNavigationTiming API 
-   * @returns 'back', 'forward', 'reload', 'navigate'
-  */
-  public getNavigationType(): NavigationTimingType | undefined {
-    if (typeof window === 'undefined' || !window.performance) {
-      return undefined; // Not in a browser environment
-    }
-
-    // Retrieve the nav type
-    const [navigation] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-    if (!navigation) return undefined;
-    
-    return navigation.type;
-  }
-
-
   /** Returns the current route and hash from the most recent captured navigation. */
   public getHashAndBaseRoute(route: string): { hash: string, baseRoute: string } {
     if (!this.isHashRoute(route)) {

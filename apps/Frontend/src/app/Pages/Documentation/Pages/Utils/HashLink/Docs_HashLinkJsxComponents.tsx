@@ -12,10 +12,7 @@ export const Example_DefaultHashLink = () => {
         type="router" // By default
         label="Click Me" 
         url="./#param-table"
-        state={{ // optional state to pass to the navigate function (must be memoized)
-          // by default, the HashLink always adds { fromNavigate: true }
-          // It allows for scrolling to hash links, which is handled in @see Navbar.tsx 
-        }}
+        state={{ // optional state to pass to the navigate function (must be memoized) }}
         styles="link-text"
       /> */}
 
@@ -38,10 +35,7 @@ export const Example_PageHashLink = () => {
         type="page"
         label="Click Me" 
         url="https://react-hook-form.com/"
-        state={{ // optional state to pass to the navigate function (must be memoized)
-          // by default, the HashLink always adds { fromNavigate: true }
-          // It allows for scrolling to hash links, which is handled in @see Navbar.tsx 
-        }}
+        state={{ // optional state to pass to the navigate function (must be memoized) }}
         styles="link-text"
       /> */}
       
@@ -87,7 +81,7 @@ export const Example_CustomHashLink = () => {
   // If you need to prevent rerenders for performance reasons, opts or state must be memoized for efficiency.
   const customNavState = useMemo(() => {
     return { 
-      fromNavigate: true, // Added by default - enables scrolling to hash links. 
+      customState: true, 
       /* additional state is added and memoized with the hashLink's default state functionality */
     }
   }, []);

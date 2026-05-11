@@ -71,7 +71,7 @@ export const Docs_RadioTable = () => {
     <Container className='spacing'>
 
       <h3 className="span-12 p-2 docs-showcase-header">
-        Button Component
+        Radio Table Component
       </h3>
 
       <div className='span-12'>

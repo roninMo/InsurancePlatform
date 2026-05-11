@@ -5,7 +5,7 @@ import { useNavigate, Link, useLocation, NavigateOptions } from "react-router-do
 
 
 export type NavTypes = 'router' | 'page' | 'useNavigate';
-export const DEFAULT_NAV_STATE = { fromNavigate: true };
+export const DEFAULT_NAV_STATE = { };
 export const DEFAULT_OPTS_STATE = { state: DEFAULT_NAV_STATE };
 
 
@@ -127,13 +127,6 @@ export const HashLink = memo((props: HashLinkProps) => {
       window.open(url, '_blank', 'noopener,noreferrer'); // new tab, Content Safe / NoHTTPs Referrer
       return;
     }
-  }
-
-  // uses the HashLinkScrollRestoration singleton to keep track of the navState for scroll behavior
-  const updateNavState = () => {
-    if (!navScrollRestoration) return;
-
-    // navScrollRestoration.UpdateNavInfo(url);
   }
 
   // Styles
