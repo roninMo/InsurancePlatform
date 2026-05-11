@@ -1,6 +1,6 @@
 import { memo, MouseEvent, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import { ScrollRestoration, useLocation, useNavigate } from 'react-router-dom';
-import { Icon } from '@Project/ReactComponents';
+import { hashLinkScrollRestoration, Icon } from '@Project/ReactComponents';
 import { HashLink } from '../Utils/HashLink/HashLink';
 
 import styled from '@emotion/styled';
@@ -11,6 +11,7 @@ export interface NavbarProps {}
 
 const NavbarComponent = ({}: NavbarProps) => {
   const navigate = useNavigate();
+  const navScrollRestoration = hashLinkScrollRestoration;
 
   //------------------------------------------------------------------------------------//
   // React Router Hash Link ScrollRestoration Logic when navigate is used with an id    //
@@ -20,57 +21,57 @@ const NavbarComponent = ({}: NavbarProps) => {
 
   // TODO: handle scroll restoration with loader redirects on browser route lists
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
     const didNavigate = state?.fromNavigate;
+    const scrollOpts: ScrollIntoViewOptions = { behavior: 'smooth' };
     // console.log(`NavigationHandling: `, {didNavigate, hash, key, pathname, state});
 
-    if (didNavigate) {
-      const scrollOpts: ScrollIntoViewOptions = { behavior: 'smooth' }
+    // Update the navigation information
+    navScrollRestoration.UpdateNavInfo(`${pathname}${hash}`);
+    
 
+    // TODO: Call DetermineScrollBehavior() from navScrollRestoration
+    //   - If we need to scroll, use scrollIntoView()
+    //   - If we shouldn't scroll, use scrollToTop() - without an animation for proper behavior
+    //   - If we navigated from (reload, back, or forwards) - allow the native behavior to handle it
+    // - Then update HashLink to call updateNavInfo() to keep the navScrollRestoration class in sync with the navigation state
+
+    // Navbar -> useEffect called after router navigation
+    //   - scroll to location if state is 'scroll'
+    //   - scrollToTop without transition if state is 'navigated'
+    // - Both set to 'ready' once logic is ran (synchronous)
+
+
+
+    if (didNavigate) {
       // Ensure the page is loaded before we try to scroll
-      const timeout = setTimeout(() => {
+      timeout = setTimeout(() => {
+        // Start the scroll behavior from the top of the page
+        document.documentElement.scrollIntoView();
+
+        // Smooth scroll if there's a hash
         if (hash) {
           const id = hash.replace("#", "");
           const element = document.getElementById(id);
           if (element) element.scrollIntoView(scrollOpts);
-        } else {
-          document.documentElement.scrollIntoView(scrollOpts);
         }
 
-        // TODO: Call DetermineScrollBehavior() from navScrollRestoration
-        //   - If we need to scroll, use scrollIntoView()
-        //   - If we shouldn't scroll, use scrollToTop() - without an animation for proper behavior
-        //   - If we navigated from (reload, back, or forwards) - allow the native behavior to handle it
-        // - Then update HashLink to call updateNavInfo() to keep the navScrollRestoration class in sync with the navigation state
 
 
-        // We've already rerendered from navigation, just clear the state
+        // We've already rerendered from navigation, just clear the state 
         window.history.replaceState({...state, fromNavigate: false}, '');
         
-        // TODO: Add a specific route map to define the page names for the browser history
-        // TODO: Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
-        // Update the browser history's document title so we have some context when going backwards or forwards
-        console.log('navigated, information: ', { pathname, hash, key, state });
-        let pageName = '';
-        
-        const routeSegments = pathname.split('/').filter(Boolean);
-        const lastRoute = routeSegments.pop() || "Home"; // Fallback for root '/'
-
-        // Adds space before capital letters
-        const currentRoute = lastRoute.charAt(0).toUpperCase() + lastRoute.slice(1);
-        pageName = currentRoute.replace(/([A-Z])/g, ' $1').trim(); 
-        
-        let pageSection = '';
-        if (hash) {
-          let segments = hash.replace("#", "").split('-').map(section => section?.charAt(0).toUpperCase() + section.slice(1));
-          pageSection = ` - ${segments.join(' ')}`;
-        }
-        document.title = pageName + pageSection;
-        console.log('pageName: ', document.title);
       }, 10);
       
-      return () => clearTimeout(timeout);
     }
-
+    
+    
+    console.log(`\nNavigationHandling: `, { didNavigate, hash, key, pathname, state, windowLocation: window.location });
+    console.log(`navScrollRestoration: `, navScrollRestoration);
+    console.log(`performanceEntries[nav]: `, [performance.getEntriesByType('navigation')]);
+    
+    // cleanup with the useEffect's return
+    return () => clearTimeout(timeout);
   }, [pathname, /* hash, */ key]); // when the page is updated, or the user navigates to another id on the page
   // #endregion
 

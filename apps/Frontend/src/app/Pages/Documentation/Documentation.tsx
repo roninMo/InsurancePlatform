@@ -50,7 +50,6 @@ export const Documentation = () => {
     - Eventually add aria specific stuff to custom components!
 
 
-    - Add an alias for the home and docs page, and all page components for quickly reffing imports and readability 
     - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
       - add documentation to UpdateRecord, and move it to the library utils
       - Add a getEntries to return either an array or the default entries list without calling Object.fromEntries

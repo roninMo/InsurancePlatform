@@ -1,3 +1,4 @@
+import { hashLinkScrollRestoration } from "@Project/ReactComponents";
 import { memo, ReactNode, useMemo } from "react";
 import { useNavigate, Link, useLocation, NavigateOptions } from "react-router-dom";
 
@@ -94,11 +95,12 @@ export const HashLink = memo((props: HashLinkProps) => {
     styles, 
   } = props;
 
+  const navScrollRestoration = hashLinkScrollRestoration;
   const navigate = useNavigate(); 
   const { pathname } = useLocation();
   
   // Only merge the objects when the source state data actually changes
-  // TODO: Refactor this to handle if they pass in state or opts1
+  // TODO: Refactor this to handle if they pass in state or opts
   const mergedState = useMemo(() => ({
     ...state,
     ...DEFAULT_NAV_STATE,
@@ -106,9 +108,8 @@ export const HashLink = memo((props: HashLinkProps) => {
   }), [state, pathname]);
 
   // Navigation logic for when they aren't using type="router"
-  const onClickToNavigate = () => {
+  const clickedLink = () => {
     // Custom navigation logic
-    console.log('onClickToNavigate?');
     if (customNavigate) {
       console.log('found custom navigation function');
       customNavigate(url, label);
@@ -128,6 +129,13 @@ export const HashLink = memo((props: HashLinkProps) => {
     }
   }
 
+  // uses the HashLinkScrollRestoration singleton to keep track of the navState for scroll behavior
+  const updateNavState = () => {
+    if (!navScrollRestoration) return;
+
+    // navScrollRestoration.UpdateNavInfo(url);
+  }
+
   // Styles
   const linkStyles = styles ? styles : 'link-text';
 
@@ -140,7 +148,7 @@ export const HashLink = memo((props: HashLinkProps) => {
 
   // UseNavigate, Page or custom navigation
   else return (
-    <div onClick={() => onClickToNavigate()} className={linkStyles}>
+    <div onClick={clickedLink} className={linkStyles}>
       { label ? label : children }
     </div>
   );

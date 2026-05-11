@@ -19,7 +19,8 @@
     "subtable",
     "Svgs",
     "Textareas",
-    "Textastic"
+    "Textastic",
+    "VITE"
   ],
   // Tailwind @apply css binds
   "css.lint.unknownAtRules": "ignore",

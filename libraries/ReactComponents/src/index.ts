@@ -2,6 +2,9 @@ export * from './Common/Content/HeightTransWrapper/HeightTransWrapper';
 // Common
 export * from './Common/index';
 
+// Singletons, Services, etc.
+export * from './Singletons/HashLinkScrollRef/HashLinkScrollRestoration';
+
 // Forms
 export * from './Forms/Address/AddressInfo';
 export * from './Forms/Button/Button';

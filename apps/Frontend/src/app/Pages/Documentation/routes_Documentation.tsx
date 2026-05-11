@@ -43,7 +43,8 @@ export const DocumentationPageRoutes: RouteObject = {
     },
     {
       path: 'Introduction',
-      element: <Docs_Introduction links="all" />
+      element: <Docs_Introduction links="all" />,
+      handle: { title: "Docs - Get Started" },
     },
 
     // Inputs
@@ -55,17 +56,18 @@ export const DocumentationPageRoutes: RouteObject = {
         { index: true, loader: () => redirect("Introduction") },
         {
           path: 'Introduction',
-          element: <Docs_Introduction links="forms" />
+          element: <Docs_Introduction links="forms" />,
+          handle: { title: "Forms - Links" },
         },
-        { path: 'Button',  element: <Docs_Button /> },
-        { path: 'Checkbox',  element: <Docs_Checkbox /> },
-        { path: 'Dropbox',  element: <Docs_Dropbox /> },
-        { path: 'Input',  element: <Docs_Input /> },
-        { path: 'Radio',  element: <Docs_Radio /> },
-        { path: 'RadioTable',  element: <Docs_RadioTable /> },
-        { path: 'Select',  element: <Docs_Select /> },
-        { path: 'Slider',  element: <Docs_Slider /> },
-        { path: 'Textarea',  element: <Docs_Textarea /> },
+        { path: 'Button',  element: <Docs_Button />, handle: { title: "Forms - Button" } },
+        { path: 'Checkbox',  element: <Docs_Checkbox />, handle: { title: "Forms - Checkbox" } },
+        { path: 'Dropbox',  element: <Docs_Dropbox />, handle: { title: "Forms - Dropbox" } },
+        { path: 'Input',  element: <Docs_Input />, handle: { title: "Forms - Input" } },
+        { path: 'Radio',  element: <Docs_Radio />, handle: { title: "Forms - Radio" } },
+        { path: 'RadioTable',  element: <Docs_RadioTable />, handle: { title: "Forms - Radio Table" } },
+        { path: 'Select',  element: <Docs_Select />, handle: { title: "Forms - Select" } },
+        { path: 'Slider',  element: <Docs_Slider />, handle: { title: "Forms - Slider" } },
+        { path: 'Textarea',  element: <Docs_Textarea />, handle: { title: "Forms - Textarea" } },
       ]
     },
 
@@ -78,12 +80,13 @@ export const DocumentationPageRoutes: RouteObject = {
         { index: true, loader: () => redirect("Introduction") },
         {
           path: 'Introduction',
-          element: <Docs_Introduction links="content" />
+          element: <Docs_Introduction links="content" />,
+          handle: { title: "Content - Links" }
         },
-        { path: 'Alert',  element: <Docs_Alert /> },
-        { path: 'Card',  element: <Docs_Card /> },
-        { path: 'Icon',  element: <Docs_Icon /> },
-        { path: 'Dropdown',  element: <Docs_Dropdown /> },
+        { path: 'Alert',  element: <Docs_Alert />, handle: { title: "Content - Alert" } },
+        { path: 'Card',  element: <Docs_Card />, handle: { title: "Content - Card" } },
+        { path: 'Icon',  element: <Docs_Icon />, handle: { title: "Content - Icon" } },
+        { path: 'Dropdown',  element: <Docs_Dropdown />, handle: { title: "Content - Dropdown" } },
       ]
     },
 
@@ -96,12 +99,13 @@ export const DocumentationPageRoutes: RouteObject = {
         { index: true, loader: () => redirect("Introduction") },
         {
           path: 'Introduction',
-          element: <Docs_Introduction links="utils" />
+          element: <Docs_Introduction links="utils" />,
+          handle: { title: "Utils - Links" }
         },
-        { path: 'DragAndDrop', element: <Docs_DragAndDrop /> },
-        { path: 'Modal', element: <Docs_Modal /> },
-        { path: 'Tooltip', element: <Docs_Tooltip /> },
-        { path: 'HashLink', element: <Docs_HashLink /> },
+        { path: 'DragAndDrop', element: <Docs_DragAndDrop />, handle: { title: "Utils - DragAndDrop" } },
+        { path: 'Modal', element: <Docs_Modal />, handle: { title: "Utils - Modal" } },
+        { path: 'Tooltip', element: <Docs_Tooltip />, handle: { title: "Utils - Tooltip" } },
+        { path: 'HashLink', element: <Docs_HashLink />, handle: { title: "Utils - HashLink" } },
       ]
     },
   ]

@@ -11,6 +11,11 @@ export interface CurrentNavInfo { // The values we need/should calculate
   wentBackOrForward?: boolean;
 }
 
+export interface HashLinkScrollResConfig {
+  baseUrl: string;
+  historyRef?: any;
+}
+
 /*
   user lands on the home page - 'ready'
     - clicks on a link -> sets to 'navigated'
@@ -36,65 +41,78 @@ export interface CurrentNavInfo { // The values we need/should calculate
 */
 
 class HashLinkScrollRestoration {
-  protected history?: any;
-  protected currentNavState: NavState;
-  protected baseUrl: string;
+  private static instance: HashLinkScrollRestoration; // Init pattern
+  protected baseUrl: string = '';
+  protected history?: History;
 
-  constructor() {
-    this.baseUrl = process.env.REACT_APP_BASE_URL || window.location.origin;
-    this.currentNavState = 'ready';
-    if (typeof window !== 'undefined') {
-      this.history = window.history;
+  protected currentNavState: NavState = 'ready';
+  protected prevRoute: string = '';
+
+  /** Enforce the GoF pattern */
+  private constructor() { }
+
+  /** Initializes this class for your app. Call this at the base of your app. */
+  public init(config: HashLinkScrollResConfig) {
+    this.baseUrl = config.baseUrl;
+    this.history = config.historyRef;
+  }
+
+  /** Used to create or retrieve this class for the app from the export */
+  public static getInstance(): HashLinkScrollRestoration {
+    if (!HashLinkScrollRestoration.instance) {
+      HashLinkScrollRestoration.instance = new HashLinkScrollRestoration();
     }
-
-    console.log('initial window history: ', this.history);
+    return HashLinkScrollRestoration.instance;
   }
 
 
-  /* 
-    HashLink -> Navigates
-      - update state to 'navigated' or 'scroll'
-        - 'navigated' if they navigate to a new page without an id
-        - 'scroll' if they navigate with a hash to a new or the same page
-    
-    Does not handle back/forward or reload here
-      - allows for native scroll behavior
-      - NavState is not affected, so default behavior shouldn't be affected
-
-    
-    Navbar -> useEffect called after router navigation
-      - scroll to location if state is 'scroll'
-      - scrollToTop without transition if state is 'navigated'
-    - Both set to 'ready' once logic is ran (synchronous)
 
 
-    Class Functions
-      - updateNavInfo (HashLink)
-      - determineScrollBehavior (Navbar)
-  
-  */
-
-
+  //------------------------------------------//
+  // Scroll Restoration State and Logic       //
+  //------------------------------------------//
   /** 
    * Updates the internal navigation state so the scroll behavior's logic knows what to do. \n
    * 
    * This function updates this class's internal values and 
    * should be ran in parallel with the internal react-router's navigation logic to stay in sync.
    * 
-   * 
    *  - update state to 'navigated' or 'scroll'
    *    - 'navigated' if they navigate to a new page without an id
-   *    - 'scroll' if they navigate with a hash to a new or the same page
+   *    - 'scroll' if they navigate with a hash to a new or the same page (or same page without a hash)
    * 
    * @param url The new url we're navigating to.
    */
-  public UpdateNavInfo(url: string): void {
-    const prevUrl: string = '';
+  public UpdateNavInfo(route: string): NavState {
+    const { baseRoute, hash } = this.getHashAndBaseRoute(route);
+    const prevBaseRoute = this.getBaseRoute(this.prevRoute);
+    const prevHash = this.getHash(this.prevRoute);
 
-    console.log(`updateNavInfo::current nav history: `, {
-      newUrl: url,
-      history: this.history
-    });
+    // new page
+    if (baseRoute != prevBaseRoute) {
+      if (!hash) this.currentNavState = 'navigated';
+      else this.currentNavState = 'scroll';
+    }
+
+    // if they click the same page's link (without a hash), just scroll to top
+    else if (baseRoute == prevBaseRoute /* && this is to account for non hash scenarios */) {
+      this.currentNavState = 'scroll';
+    }
+
+    // to a hash
+    else if (hash) {
+      this.currentNavState = 'scroll';
+    }
+
+    // catch to clear previous states
+    else {
+      console.error(`There was a navigation scenario that wasn't accounted for when navigating to ${route}`);
+      this.currentNavState = 'ready';
+    }
+
+    // Update the rest of the state information
+    this.prevRoute = route;
+    return this.currentNavState;
   }
 
 
@@ -131,13 +149,33 @@ class HashLinkScrollRestoration {
     return this.currentNavState;
   }
 
+
+
+
   //------------------------------------------//
   // Utility Functions                        //
   //------------------------------------------//
+  /** 
+   * Retrieves the navigation type from the PerformanceNavigationTiming API 
+   * @returns 'back', 'forward', 'reload', 'navigate'
+  */
+  public getNavigationType(): NavigationTimingType | undefined {
+    if (typeof window === 'undefined' || !window.performance) {
+      return undefined; // Not in a browser environment
+    }
+
+    // Retrieve the nav type
+    const [navigation] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    if (!navigation) return undefined;
+    
+    return navigation.type;
+  }
+
+
   /** Returns the current route and hash from the most recent captured navigation. */
   public getHashAndBaseRoute(route: string): { hash: string, baseRoute: string } {
     if (!this.isHashRoute(route)) {
-      return { hash: '', baseRoute: route };
+      return { hash: '', baseRoute: this.getBaseRoute(route) };
     }
 
     // return the hash and the base url
@@ -161,7 +199,7 @@ class HashLinkScrollRestoration {
       
       const hashPart = route.slice(hashIndex + 1);
       const queryInHashIndex = hashPart.indexOf('?');
-      
+
       return queryInHashIndex !== -1 
         ? hashPart.slice(0, queryInHashIndex) 
         : hashPart;
@@ -194,11 +232,9 @@ class HashLinkScrollRestoration {
       return index !== -1;
     }
   }
-
-
 }
 
 
-
-
-export const navScrollRestoration = new HashLinkScrollRestoration();
+// Export the singleton instance directly
+export const hashLinkScrollRestoration = HashLinkScrollRestoration.getInstance();
+// export const hashLinkScrollRestoration = new HashLinkScrollRestoration();

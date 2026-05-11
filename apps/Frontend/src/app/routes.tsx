@@ -13,23 +13,28 @@ export const router = createBrowserRouter([
     path: "/",
     element: <Home />,
     errorElement: <ErrorPage />,
+    handle: { title: "Home Page" },
   },
   {
     path: "/Demos",
     element: <Demos />,
+    handle: { title: "Demos" },
   },
   {
     path: "/MockDatabase",
     element: <MockDatabase />,
+    handle: { title: "Mock Database" },
   },
   {
     path: "/Contact",
     element: <Contact />,
+    handle: { title: "Contact Us" },
   },
   DocumentationPageRoutes,
   {
     path: '*',
-    element: <ErrorPage />
+    element: <ErrorPage />,
+    handle: { title: "Page Not Found" },
   }
 
   // Home page
