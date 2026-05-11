@@ -36,6 +36,13 @@ const NavbarComponent = ({}: NavbarProps) => {
           document.documentElement.scrollIntoView(scrollOpts);
         }
 
+        // TODO: Call DetermineScrollBehavior() from navScrollRestoration
+        //   - If we need to scroll, use scrollIntoView()
+        //   - If we shouldn't scroll, use scrollToTop() - without an animation for proper behavior
+        //   - If we navigated from (reload, back, or forwards) - allow the native behavior to handle it
+        // - Then update HashLink to call updateNavInfo() to keep the navScrollRestoration class in sync with the navigation state
+
+
         // We've already rerendered from navigation, just clear the state
         window.history.replaceState({...state, fromNavigate: false}, '');
         

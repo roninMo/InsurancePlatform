@@ -1,7 +1,7 @@
 
 
 
-export type NavState = 'uninitialized' | 'navigated' | 'scroll' | 'ready';
+export type NavState = 'navigated' | 'scroll' | 'ready';
 
 // TODO: what is window history's object for this?
 export interface CurrentNavInfo { // The values we need/should calculate
@@ -36,24 +36,65 @@ export interface CurrentNavInfo { // The values we need/should calculate
 */
 
 class HashLinkScrollRestoration {
+  protected history?: any;
   protected currentNavState: NavState;
-  protected prevUrl: string;
-  protected windowHistoryRef?: any;
-
-  // Current scroll to metadata
-  protected wasReload?: boolean;
-  protected baseUrl?: string;
-  protected idHash?: string;
-  
+  protected baseUrl: string;
 
   constructor() {
-    this.currentNavState = 'uninitialized';
-    this.prevUrl = '';
-    this.windowHistoryRef = undefined;
+    this.baseUrl = process.env.REACT_APP_BASE_URL || window.location.origin;
+    this.currentNavState = 'ready';
+    if (typeof window !== 'undefined') {
+      this.history = window.history;
+    }
 
-    this.wasReload = false;
-    this.baseUrl = '';
-    this.idHash = '';
+    console.log('initial window history: ', this.history);
+  }
+
+
+  /* 
+    HashLink -> Navigates
+      - update state to 'navigated' or 'scroll'
+        - 'navigated' if they navigate to a new page without an id
+        - 'scroll' if they navigate with a hash to a new or the same page
+    
+    Does not handle back/forward or reload here
+      - allows for native scroll behavior
+      - NavState is not affected, so default behavior shouldn't be affected
+
+    
+    Navbar -> useEffect called after router navigation
+      - scroll to location if state is 'scroll'
+      - scrollToTop without transition if state is 'navigated'
+    - Both set to 'ready' once logic is ran (synchronous)
+
+
+    Class Functions
+      - updateNavInfo (HashLink)
+      - determineScrollBehavior (Navbar)
+  
+  */
+
+
+  /** 
+   * Updates the internal navigation state so the scroll behavior's logic knows what to do. \n
+   * 
+   * This function updates this class's internal values and 
+   * should be ran in parallel with the internal react-router's navigation logic to stay in sync.
+   * 
+   * 
+   *  - update state to 'navigated' or 'scroll'
+   *    - 'navigated' if they navigate to a new page without an id
+   *    - 'scroll' if they navigate with a hash to a new or the same page
+   * 
+   * @param url The new url we're navigating to.
+   */
+  public UpdateNavInfo(url: string): void {
+    const prevUrl: string = '';
+
+    console.log(`updateNavInfo::current nav history: `, {
+      newUrl: url,
+      history: this.history
+    });
   }
 
 
@@ -63,80 +104,21 @@ class HashLinkScrollRestoration {
    * This function updates this class's internal values and 
    * should be ran in parallel with the internal react-router's navigation logic to stay in sync.
    * 
-   * @param url The new url after the navigation has occurred
-   * @param userReload Whether the user reloaded the page
+   *  - This check is in place to account for non react-router nav logic (reload, forwards, backwards)
+   *    - 'scroll':     scroll transition to location
+   *    - 'navigated':  scrollToTop without transition
+   *    - 'ready':      allow for default behavior
    * 
-   * @returns If we should scroll 
-   */ // TODO: handle scroll behavior BEFORE we scroll for onNavigate() scroll logic (snap, stay, snap->scroll)
-  public shouldScrollFromNav(url: string, userReload: boolean, historyRef?: any): boolean {
-    const newBaseUrl = this.getBaseUrl(url);
-    const oldBaseUrl = this.getBaseUrl(this.prevUrl);
-    const newHash = this.getHash(url);
-    const oldHash = this.getHash(this.prevUrl);
-    
-    
-    // The user navigated with a hash, we should use our custom scroll behavior
-    const hasHashLink = this.isHashUrl(url);
-    const didNavigate = url != this.prevUrl;
-    const differentHashLink = newHash != oldHash;
-    if (hasHashLink) 
-    {
-      if (didNavigate) {
-        this.updatedNavInfo(url, 'scroll', historyRef);
-        return true;
-      }
-  
-      if (differentHashLink) {
-        this.updatedNavInfo(url, 'scroll', historyRef);
-        return true;
-      }
-    }
-    else 
-    {
-      // navigated to a new page without a hashLink (immediately open at the top)
-      if (didNavigate) {
-        this.updatedNavInfo(url, 'ready', historyRef);
-        return false;
-      }
+   * @param url The new url we're navigating to.
+   * 
+   * @returns The navState associated with how we navigated.
+   */
+  public determineScrollBehavior(): NavState {
 
-      if (this.wasReload) {
-        this.updatedNavInfo(url, 'ready', historyRef);
-        return false;
-      }
-
-      // - when the user goes back to their previous route
-      // - TODO: when the user presses the back or forward button
-      //   - should we just capture the window.history?
-      if (true) {
-
-      }
-    }
-
-    
-
-    /* 
-      When we should scroll
-      - navigated to a page with an id (start from the beginning and scroll down)
-      - navigated to a new id on the same page (current to new location)
-      
-      When we shouldn't scroll
-        - when the user reloaded the page
-        - when the user goes back to their previous route
-        - TODO: when the user presses the back or forward button
-          - should we just capture the window.history?
-    
-    */
-
-    return false;
+    console.log(`determineScrollBehavior::current nav history: `, this.history);
+    return 'scroll';
   }
 
-  
-  /** Updates the internal current nav state for this service. */
-  public updatedNavInfo(url: string, newState: NavState, historyRef?: any): void {
-    this.prevUrl = url;
-    this.currentNavState = newState;
-    this.windowHistoryRef = historyRef;
-  }
 
   /** Updates the internal current nav state for this service. */
   public setNavState(state: NavState): void {
@@ -145,44 +127,77 @@ class HashLinkScrollRestoration {
 
 
   /** Returns the current navigation state. */
-  protected getNavState(): NavState {
+  public getNavState(): NavState {
     return this.currentNavState;
   }
 
-
-  /** Returns the current url and hash from the most recent captured navigation. */
-  protected getHashAndBaseUrl(url: string): { hash: string, baseUrl: string } {
-    if (!this.isHashUrl(url)) {
-      return { hash: '', baseUrl: url };
+  //------------------------------------------//
+  // Utility Functions                        //
+  //------------------------------------------//
+  /** Returns the current route and hash from the most recent captured navigation. */
+  public getHashAndBaseRoute(route: string): { hash: string, baseRoute: string } {
+    if (!this.isHashRoute(route)) {
+      return { hash: '', baseRoute: route };
     }
 
     // return the hash and the base url
-    const hashIndex = url.indexOf('#');
-    const baseUrl = url.slice(0, hashIndex);
-    const hash = url.slice(hashIndex + 1);
-    return { hash, baseUrl };
-  }
-
-  protected getHash(url: string): string {
-    const hashIndex = url.indexOf('#');
-    return url.slice(hashIndex + 1);
+    return { 
+      hash: this.getHash(route), 
+      baseRoute: this.getBaseRoute(route)
+    };
   }
 
 
-  /** Gets the base url from a react-router-dom url, removing the id */ // TODO: is there query params that we should account for?
-  protected getBaseUrl(url: string): string {
-    const hashIndex = url.indexOf('#');
-    return url.slice(0, hashIndex);
+  /** Returns the hash from the current url passed in */
+  public getHash(route: string): string {
+    try {
+      const parsed = new URL(route, this.baseUrl);
+      console.log(`hash: ${parsed.hash}, route: ${route}`, {url: parsed});
+      return parsed.hash.replace('#', '');
+    } catch (e) {
+      // Manual fallback: find #, then cut off anything starting at ?
+      const hashIndex = route.indexOf('#');
+      if (hashIndex === -1) return '';
+      
+      const hashPart = route.slice(hashIndex + 1);
+      const queryInHashIndex = hashPart.indexOf('?');
+      
+      return queryInHashIndex !== -1 
+        ? hashPart.slice(0, queryInHashIndex) 
+        : hashPart;
+    }
   }
 
 
-  /** Whether this url has a hash id */
-  protected isHashUrl(url: string): boolean {
-    return url.includes('#');
+  /** Gets the base route from a react-router-dom navigation url, removing the id */
+  public getBaseRoute(route: string): string {
+    try {
+      const parsed = new URL(route, this.baseUrl);
+      console.log(`baseRoute: ${parsed.pathname}, route: ${route}`, {url: parsed});
+      return parsed.pathname;
+    } catch (e) {
+      // Fallback for extreme edge cases
+      const index = route.search(/[?#]/);
+      return index !== -1 ? route.slice(0, index) : route;
+    }
+  }
+
+
+  /** Whether this route has a hash id */
+  public isHashRoute(route: string): boolean {
+    try {
+      const parsed = new URL(route, this.baseUrl);
+      console.log(`isHash: ${parsed.hash}, route: ${route}`, {url: parsed});
+      return !!parsed.hash;
+    } catch (e) {
+      const index = route.search(/[#]/);
+      return index !== -1;
+    }
   }
 
 
 }
+
 
 
 
