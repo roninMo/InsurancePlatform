@@ -85,9 +85,7 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          incrementButtons: true
-        }}
+        // hideIncrementButtons
       />
     </div>
   );
@@ -132,9 +130,7 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          showEmailIcon: true
-        }}
+        // hideEmailIcon
       />
     </div>
   );
@@ -179,9 +175,7 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          visibilityIcon: true
-        }}
+        // hideVisibilityIcon
       />
     </div>
   );
@@ -226,10 +220,9 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          sortButton: true,
-          sortType: 'alphabetical',
-        }}
+        
+        sortButton
+        sortType='alphabetical'
       />
     </div>
   );
@@ -273,10 +266,9 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          showPolicyNumberIcon: true,
-          policyNumberMask: true,
-        }}
+        
+        // hidePolicyNumberIcon
+        // policyNumberMask={}
       />
     </div>
   );
@@ -321,10 +313,9 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          showPhoneIcon: true,
-          phoneNumberMask: true,
-        }}
+        
+        // hidePhoneIcon
+        // phoneNumberMask={}
       />
     </div>
   );
@@ -369,10 +360,9 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          showCreditCardIcon: true,
-          creditCarkMask: true,
-        }}
+        
+        // hideCreditCardIcon
+        // creditCardMask={}
       />
     </div>
   );
@@ -417,10 +407,9 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
-        opts={{
-          showMoneySign: true,
-          currencyTypeDropdown: true,
-        }}
+        
+        // hideMoneySign
+        // hideCurrencyType
       />
     </div>
   );

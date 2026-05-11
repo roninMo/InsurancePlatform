@@ -26,30 +26,22 @@ export const Documentation = () => {
     - Finish the documentation pages
       - Forms
         x add conditionally rendered variant props for the input component
-          - just need to remove the opts variant and fix all the current inputs that are being used
+          x just need to remove the opts variant and fix all the current inputs that are being used
         - add RHF to all components, and change the state to a custom prop that overrides rhf
 
     - When we're using Textastic 
       - update the props comments to be doc comments for the forms components 
 
-    - @note for the hashLink scroll restoration. 
-        Once they navigate to a hash link and it auto scrolls to it's location on the page,
-        any scrolling the user did will snap to wherever they scrolled when the animation finishes
+    - Use a singleton class to determine when we decide to nav, the scroll behavior
+      - with 2 functions: 
+        - getNavState() -> HashLink, Navbar
+        - shouldScrollToHash(url, wasReload) -> uses the stored prevUrl and reload to check if it's valid to scroll
+      - then remove the extra state props passed to hashLinks, they're no longer needed  
+    - Another thing, if there isn't a hashLink, have it start at the start of the page
 
-    - we need to prevent user scrolling until that animation is done, 
-      - if they navigated to a hash link
-      - for as long as it takes to navigate
-      - try speeding up the animation, it feels kind of sluggish
-        - FIX: Use a singleton class to keep track of the current state init, navigating, scrolling, ready
-          - with 2 functions: 
-            - getNavState() -> HashLink, Navbar
-            - shouldScrollToHash(url, wasReload) -> uses the stored prevUrl and reload to check if it's valid to scroll
-          - then remove the extra state props passed to hashLinks, they're no longer needed  
-        - Another thing, if there isn't a hashLink, have it start at the start of the page
+    - Tab Title from navigation reference map  
+      - We need a specific route map to define the page names for the back/forwards history
 
-    - Navbar Navigation Handler 
-      - We need a specific route map to define the page names for the browser history
-      - Should there be history for when we navigate to hashLinks on the same page? And should we add the hash context to the history
 
 
     - Add react hook forms soon alongside the option to add state to the value for custom scenarios

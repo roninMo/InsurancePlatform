@@ -1,11 +1,11 @@
-import { ChangeEvent, Dispatch, MouseEvent, RefObject, SetStateAction, useContext, useRef, useState } from 'react';
-import { Button } from '../Button/Button';
-import { Icon } from '../../Common/Icons/Icon';
+import { ChangeEvent, Dispatch, RefObject, SetStateAction, useRef, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { TooltipContextActions } from '../../Common/Utilities/Tooltip/TooltipProvider/TooltipProvider';
 import { TooltipContentProps } from '../../Common/Utilities/Tooltip/Tooltip';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
-import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
+import { Icon } from '../../Common/Icons/Icon';
+import { Button } from '../Button/Button';
 
 import styled from '@emotion/styled';
 import styles from './Input.module.scss';
@@ -18,16 +18,15 @@ export type TextInputAutoCompleteTypes =
   | "name" | "given-name" | "family-name" | "email" | "password" | "tel" 
   | "street-address" | "address-level2"| "address-level1" | "postal-code" | "country-name";
 
-interface InputPropsBase {
+export type InputProps = ConditionalVariantProps & {
   /** The variant of input we're using. Each has different functionality for each input type. */
   type?: TextInputTypes
-  
   name: string;
+  
   label: string;
   description?: string;
-  value: string;
-  setValue?: Dispatch<SetStateAction<string>>;
   placeholder?: string;
+  value: string;
 
   error?: boolean;
   errorMessage?: string | null;
@@ -36,46 +35,22 @@ interface InputPropsBase {
 
   tooltipContext?: TooltipContextActions;
   tooltipContent?: TooltipContentProps;
-
   autocomplete?: TextInputAutoCompleteTypes;
 
-  // variant specific configurations
-  opts?: InputVariantOpts;
-}
-
-export type InputProps = InputPropsBase & ConditionalVariantProps;
-
-// TODO: update the docs input examples to include these variant options
-// TODO: the optionally visible elements for each variant should be by default true, and optionally hidden.
-export interface InputVariantOpts {
-    /** Number  */
-    incrementButtons?: boolean;
-    
-    /* Email */
-    showEmailIcon?: boolean;
-
-    /* Password */
-    visibilityIcon?: boolean;
-
-    /* Search */
-    sortButton?: boolean;
-    sortType?: SearchSortType;
-    
-    /* Policy Number */
-    showPolicyNumberIcon?: boolean;
-    policyNumberMask?: boolean;
-
-    /* Phone Number */
-    showPhoneIcon?: boolean;
-    phoneNumberMask?: boolean;
-
-    /* Credit Card */
-    showCreditCardIcon?: boolean;
-    creditCarkMask?: boolean;
-
-    /* Currency */
-    showMoneySign?: boolean;
-    currencyTypeDropdown?: boolean;
+  /* Variant Specific - ConditionalVariantProps */
+  // hideIncrementButtons?: boolean;
+  // hideEmailIcon?: boolean;
+  // hideVisibilityIcon?: boolean;
+  // sortButton?: boolean;
+  // sortType?: SortType;
+  // hidePolicyNumberIcon?: boolean;
+  // policyNumberMask?: RefObject<any>;
+  // hidePhoneIcon?: boolean;
+  // phoneNumberMask?: RefObject<any>;
+  // hideCreditCardIcon?: boolean;
+  // creditCardMask?: RefObject<any>;
+  // hideMoneySign?: boolean;
+  // hideCurrencyType?: boolean;
 }
 
 // #region conditional variant props 
@@ -202,19 +177,19 @@ type CurrencyVariantProps =
     /** Whether to hide the money sign before the value.  */
     hideMoneySign?: boolean;
     /** an optional currency type dropdown built into the input.  */
-    currencyTypeDropdown?: boolean;
+    hideCurrencyType?: boolean;
   } 
 | { 
     /** The variant of input we're using. Each has different functionality for each input type. */
     type?: Exclude<TextInputTypes, 'currency'>; 
     /** @deprecated CANNOT use 'hideMoneySign' when 'type' isn't currency. */
     hideMoneySign?: never; 
-    /** @deprecated CANNOT use 'currencyTypeDropdown' when 'type' isn't currency. */
-    currencyTypeDropdown?: never;
+    /** @deprecated CANNOT use 'hideCurrencyType' when 'type' isn't currency. */
+    hideCurrencyType?: never;
   };
 
 /** The conditional props for each of the variants, only valid and shown when the specific variant is select. */
-type ConditionalVariantProps = 
+export type ConditionalVariantProps = 
 |  NumberVariantProps
 |  EmailVariantProps
 |  PasswordVariantProps
@@ -223,16 +198,56 @@ type ConditionalVariantProps =
 |  PhoneVariantProps
 |  CreditCardVariantProps
 |  CurrencyVariantProps;
+
+
+// Retrieve the keys from a conditional map, and then type them to extract from a destructured object
+// This flattens the conditions into a single object where every property is optional, regardless of whether it was 'never'.
+type AllKeys<T> = T extends any ? keyof T : never;
+// type AllVariantProps = Partial<Record<AllKeys<ConditionalVariantProps>, any>>;
+
+/** Look up a key's type across a union, ignoring 'never' */
+type PickType<T, K extends PropertyKey> = T extends any 
+  ? (K extends keyof T ? (T[K] extends never ? never : T[K]) : never) 
+  : never;
+
+/** The final flattened type for internal destructuring */
+type AllVariantProps<T> = {
+  [K in AllKeys<T>]?: PickType<T, K>;
+};
 // #endregion
 
 
 
-export const Input = ({
-  type = 'text', name, label, description, value, setValue, placeholder,
-  error = false, errorMessage, required = false, disabled = false, tooltipContext, tooltipContent,
-  onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-  autocomplete, opts = DefaultInputVariantOpts, ...props
-}: InputProps & UniversalEventHandlers) => {
+export const Input = (props: InputProps & UniversalEventHandlers) => {
+  // Base Props
+  const  {
+    type = 'text', name, 
+    label, description, placeholder, value, 
+    
+    error, errorMessage, 
+    disabled = false, required = false, 
+    
+    tooltipContext, tooltipContent,
+    autocomplete, 
+    
+    onChange, 
+    onBlur, onFocus, onClick, 
+    onMouseEnter, onMouseLeave
+  } = props;
+
+  // Variant Specific conditionally rendered props
+  const {
+    hideIncrementButtons, 
+    hideEmailIcon, 
+    hideVisibilityIcon, 
+    sortButton, sortType, 
+    hidePolicyNumberIcon, policyNumberMask, 
+    hidePhoneIcon, phoneNumberMask, 
+    hideCreditCardIcon, creditCardMask, 
+    hideMoneySign, hideCurrencyType
+  } = props as AllVariantProps<ConditionalVariantProps>;
+
+  // Other
   const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
   const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This could mess with seeing loading with actual load times
 
@@ -251,13 +266,14 @@ export const Input = ({
     return 'text';
   }
 
-  // Update value
+
+  // State handling
   const currentValue = useRef<number | undefined>(undefined);
   const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
     // handled by user
     if (onChange) onChange(e);
     
-    // increment button value ref
+    // increment button value ref (capture the current value for the increment click events)
     if (type == 'number') {
       const newValue = e?.target?.value;
       const num = Number(newValue);
@@ -268,7 +284,7 @@ export const Input = ({
   }
 
   // Error handling
-  const getError = (): boolean => (error && !disabled);
+  const getError = (): boolean => (!!error && !disabled);
 
 
   return (
@@ -279,18 +295,20 @@ export const Input = ({
 
       <InputContainer className="input-container group">
         <input 
+          // { ...props }
           type={getType()}
           name={name} id={`${name}-${type}`}
           // ref={getMaskRef(type)} // TODO: add optional input masking
-          value={value}
+          
           placeholder={placeholder}
+          value={value}
           autoComplete={autocomplete}
           required={required} 
           disabled={disabled}
 
-          onChange={(e) => onChange && onChange(e)}
-          onBlur={  (e) => onBlur && onBlur(e)}
+          onChange={updateValue}
           onFocus={ (e) => onFocus && onFocus(e)}
+          onBlur={  (e) => onBlur && onBlur(e)}
           onClick={ (e) => onClick && onClick(e)}
           onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
           onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
@@ -299,25 +317,27 @@ export const Input = ({
             ${!inputTypesWithoutIcons.includes(type) ? 'input-icon-spacing' : ''}
             ${getError() ? 'input-error' : ''}
           `}
-          { ...props }
         />
 
         {/* Variant specific elements before and after the input element */}
         <PrecedingElements 
           type={type}
-          showPassword={showPassword}
-          setShowPassword={setShowPassword}
-          opts={opts}
+          showPassword={showPassword} setShowPassword={setShowPassword}
+          hideEmailIcon={hideEmailIcon} hideVisibilityIcon={hideVisibilityIcon} hidePolicyNumberIcon={hidePolicyNumberIcon}
+          hidePhoneIcon={hidePhoneIcon} hideCreditCardIcon={hideCreditCardIcon} hideMoneySign={hideMoneySign}
         />
 
         <SubsequentElements
           type={type} name={name}
-          disabled={disabled}
-          error={getError()} 
-          tooltipContext={tooltipContext}
-          tooltipContent={tooltipContent}
-          incrementValue={updateValue} 
-          currentValRef={currentValue}
+          disabled={disabled} error={getError()} 
+
+          tooltipContent={tooltipContent} tooltipContext={tooltipContext}
+          
+          hideIncrementButtons={hideIncrementButtons}
+          incrementValue={updateValue} currentValRef={currentValue}
+          
+          sortButton={sortButton} sortType={sortType}
+          hideCurrencyType={hideCurrencyType}
         />
         
         <LoadingBar className='input-loading-bar-cont'>
@@ -338,6 +358,7 @@ export const Input = ({
 
 
 
+
 //------------------------------------------//
 // Preceding Variant Elements               //
 //------------------------------------------//
@@ -345,18 +366,31 @@ interface PrecedingElProps {
   type: TextInputTypes;
   showPassword: boolean;
   setShowPassword: Dispatch<SetStateAction<boolean>>;
-  opts: InputVariantOpts;
+  
+  /* Variant Specific */
+  hideEmailIcon?: boolean;
+  hideVisibilityIcon?: boolean;
+  hidePolicyNumberIcon?: boolean;
+  hidePhoneIcon?: boolean;
+  hideCreditCardIcon?: boolean;
+  hideMoneySign?: boolean;
 }
-export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPassword, setShowPassword, opts }) => {
+export const PrecedingElements: React.FC<PrecedingElProps> = ({ 
+  type, showPassword, setShowPassword, 
+  hideEmailIcon, hideVisibilityIcon, hidePolicyNumberIcon, 
+  hidePhoneIcon, hideCreditCardIcon, hideMoneySign
+}) => {
   const toggleShowPassword = (visible: boolean) => setShowPassword(visible);
-  const VariantIcon: React.FC<InputVariantOpts> | undefined = PrecedingIcons[type] || undefined;
+  const showVariantIcon = !hideEmailIcon || !hideVisibilityIcon || // TODO: Do we want to simplify the prop passed here?
+    !hidePolicyNumberIcon || !hidePhoneIcon || !hideCreditCardIcon || !hideMoneySign;
+  const VariantIcon: React.FC | undefined = showVariantIcon ? PrecedingIcons[type] || undefined : undefined;
   
   return (
     <VariantIcons className="input-preceding-el-c">
       <div className='input-preceding-el'>
-        {VariantIcon && <VariantIcon {...opts} />}
+        {VariantIcon && <VariantIcon />}
 
-        { type == 'password' && 
+        { (type == 'password' && !hideVisibilityIcon) && 
           <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
             { showPassword  &&  <Icon variant='EyeSlash' styles='input-icon-def' /> }
             { !showPassword &&  <Icon variant='Eye' styles='input-icon-def' /> }
@@ -368,19 +402,14 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({ type, showPasswo
 }
 
 const inputTypesWithoutIcons = ['search', 'text', 'currency', 'number'];
-const PrecedingIcons: Partial<Record<TextInputTypes, React.FC<InputVariantOpts>>> = {
-  'email': (opts) => opts.showEmailIcon 
-  ? <Icon variant='Envelope'    styles='input-icon-def' /> : undefined,
-
-  'policyNumber': (opts) => opts.showPolicyNumberIcon 
-  ? <Icon variant='Profile'     styles='input-icon-def' /> : undefined,
-
-  'phone': (opts) => opts.showPhoneIcon 
-  ? <Icon variant='Phone'       styles='input-icon-def' /> : undefined,
-
-  'creditCard': (opts) => opts.showCreditCardIcon 
-  ? <Icon variant='CreditCard'  styles='input-icon-def' /> : undefined,
+const PrecedingIcons: Partial<Record<TextInputTypes, React.FC>> = {
+  'email': () => <Icon variant='Envelope'         styles='input-icon-def' />,
+  'policyNumber': () => <Icon variant='Profile'   styles='input-icon-def' />,
+  'phone': () => <Icon variant='Phone'            styles='input-icon-def' />,
+  'creditCard': () => <Icon variant='CreditCard'  styles='input-icon-def' />,
 };
+
+
 
 
 //------------------------------------------//
@@ -389,15 +418,28 @@ const PrecedingIcons: Partial<Record<TextInputTypes, React.FC<InputVariantOpts>>
 interface SubsequentElProps {
   name: string;
   type: TextInputTypes;
+  
   disabled: boolean;
   error: boolean;
-  tooltipContext?: TooltipContextActions;
+
   tooltipContent?: TooltipContentProps;
+  tooltipContext?: TooltipContextActions;
+  
+  // Variant specific
+  hideIncrementButtons?: boolean;
   incrementValue: (e: ChangeEvent<HTMLInputElement>) => void;
   currentValRef: RefObject<number | undefined>;
+
+  sortButton?: boolean;
+  sortType?: SearchSortType;
+  hideCurrencyType?: boolean;
 }
 export const SubsequentElements: React.FC<SubsequentElProps> = ({
-  name, type, disabled, error, tooltipContext, tooltipContent, incrementValue, currentValRef
+  name, type, disabled, error, 
+  tooltipContext, tooltipContent, 
+  hideIncrementButtons, incrementValue, currentValRef,
+  sortButton, sortType,
+  hideCurrencyType
 }) => {
   const { show, hide } = tooltipContext || {};
 
@@ -417,12 +459,12 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
           onMouseEnter={() => tooltipContent && show?.(tooltipContent)} 
           onMouseLeave={() => hide?.()} 
         >
-          { error ? <Icon variant='OutlineWarning' styles='mr-3 input-sub-icon i-err-color' /> 
-          :         <Icon variant='OutlineInfo' styles='mr-3 input-sub-icon' /> }
+          { error ? <Icon variant='OutlineWarning' styles='mr-2.5 input-sub-icon i-err-color' /> 
+          :         <Icon variant='OutlineInfo' styles='mr-2.5 input-sub-icon' /> }
         </ErrorAndTooltipIcon>
 
         {/* Increment buttons - type="number" */}
-        { type == 'number' && 
+        { (type == 'number' && !hideIncrementButtons) && 
           <div className={`increment-btns ${!disabled && !error ? 'increment-btns-states' : error ? 'input-btns-error' : ''}`}>
             <Button 
               onClick={() => onPressIncrementButtons(true)}
@@ -438,7 +480,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
         }
 
         {/* Currency Dropdown - type="currency" */}
-        { type == 'currency' && 
+        { (type == 'currency' && !hideCurrencyType) && 
           <CurrencySelectContainer className='row relative'>
             <Icon variant='DropdownArrow' styles='input-curr-i' />
             <CurrencySelect 
@@ -486,21 +528,6 @@ const CurrencySelect = styled.select``;
 
 export type SearchSortType = 'alphabetical' | 'numerical' | ((a: any, b: any) => void);
 
-const DefaultInputVariantOpts: InputVariantOpts = {
-    incrementButtons: true,
-    showEmailIcon: true,
-    visibilityIcon: true,
-    sortButton: true,
-    sortType: 'alphabetical',
-    showPolicyNumberIcon: true,
-    policyNumberMask: true,
-    showPhoneIcon: true,
-    phoneNumberMask: true,
-    showCreditCardIcon: true,
-    creditCarkMask: true,
-    showMoneySign: true,
-    currencyTypeDropdown: true,
-}
 
 // #region Input Type Props
 type InputPropsPartial = Partial<InputProps> & { type: TextInputTypes } & any;
