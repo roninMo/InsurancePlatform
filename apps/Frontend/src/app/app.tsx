@@ -179,6 +179,10 @@ export function App() {
         
         */}
 
+        {/* 
+            Add a generatePackageJson to the production build to only include what dependencies are used
+        */}
+
       </LoginContext.Provider>
     </AppSpacing>
   );

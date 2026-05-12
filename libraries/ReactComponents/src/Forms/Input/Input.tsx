@@ -1,5 +1,6 @@
-import { ChangeEvent, Dispatch, RefObject, SetStateAction, useRef, useState } from 'react';
+import { ChangeEvent, Dispatch, FocusEvent, RefObject, SetStateAction, useRef, useState } from 'react';
 import { InputMask, useMask } from '@react-input/mask';
+import { FieldErrors, useFormContext } from 'react-hook-form';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { TooltipContextActions } from '../../Common/Utilities/Tooltip/TooltipProvider/TooltipProvider';
 import { TooltipContentProps } from '../../Common/Utilities/Tooltip/Tooltip';
@@ -20,16 +21,29 @@ export type TextInputAutoCompleteTypes =
 
 export type InputProps = ConditionalVariantProps & {
   /** The variant of input we're using. Each has different functionality for each input type. */
-  type?: TextInputTypes
+  type?: TextInputTypes;
+  
+  /** 
+   * The form name for this input. By default, we use react-hook-forms for handling state.
+   * If you want different logic, add an onChange and value prop to this component.
+   */
   name: string;
   
+  /** The label of this input */
   label: string;
+  /** The description of this input */
   description?: string;
-  placeholder?: string;
-  value: string;
 
-  error?: boolean;
-  errorMessage?: string | null;
+  /** The placeholder of this input */
+  placeholder?: string;
+  
+  /** An optional value if you're overriding hook forms with useState. Link to the state using the onChange event. */
+  value?: string;
+
+  /** You can use the onChange without it affecting rhf. Whether you define value determines if you're overriding the hook forms */
+  // onChange: ChangeEvent;
+
+  error?: string;
   disabled?: boolean;
   required?: boolean;
 
@@ -219,12 +233,14 @@ type AllVariantProps<T> = {
 
 
 export const Input = (props: InputProps & UniversalEventHandlers) => {
+  const { register, getValues } = useFormContext();
+
   // Base Props
   const  {
     type = 'text', name, 
     label, description, placeholder, value, 
     
-    error, errorMessage, 
+    error, 
     disabled = false, required = false, 
     
     tooltipContext, tooltipContent,
@@ -260,6 +276,10 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
   // Password visibility
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
+  // Used for retrieving the value for the increment buttons on the number variant
+  const localInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Retrieves the actual input type
   const getType = (): TextInputTypes => {
     if (type == 'number' || type == 'currency') return 'number';
     if (type == 'password') return showPassword ? 'text' : 'password';
@@ -268,24 +288,51 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
 
 
   // State handling
-  const currentValue = useRef<number | undefined>(undefined);
-  const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // handled by user
-    if (onChange) onChange(e);
+  // const currentValue = useRef<number | undefined>(undefined);
+  // const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
+  //   // handled by user
+  //   if (onChange) onChange(e);
     
-    // increment button value ref (capture the current value for the increment click events)
-    if (type == 'number') {
-      const newValue = e?.target?.value;
-      const num = Number(newValue);
-      const isNumber = newValue.trim() !== '' && Number.isFinite(num);
-      if (isNumber) currentValue.current = num;
-      else currentValue.current = undefined;
-    }
-  }
+  //   // increment button value ref (capture the current value for the increment click events)
+  //   if (type == 'number') {
+  //     const newValue = e?.target?.value;
+  //     const num = Number(newValue);
+  //     const isNumber = newValue.trim() !== '' && Number.isFinite(num);
+  //     if (isNumber) currentValue.current = num;
+  //     else currentValue.current = undefined;
+  //   }
+  // }
 
   // Error handling
   const getError = (): boolean => (!!error && !disabled);
 
+  // Input binding logic
+  const isRHFMode = !!register && value === undefined;
+  const rhfBindings = isRHFMode ? register(name) : null;
+  console.log(`isRhfMode: ${isRHFMode}, bindings: `, rhfBindings);
+  console.log(`value: `, value !== undefined);
+  console.log(`onChange: `, !!onChange);
+
+  // Intercept changes cleanly
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (isRHFMode && rhfBindings) {
+      rhfBindings.onChange(e);
+    }
+    if (onChange) onChange(e);
+  };
+
+  const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
+    if (isRHFMode && rhfBindings) rhfBindings.onBlur(e);
+    if (onBlur) onBlur(e);
+  }
+
+  // Safe Unified Ref Callback
+  const handleRef = (node: HTMLInputElement | null) => {
+    localInputRef.current = node; // Store it locally for our increment buttons
+    if (isRHFMode && rhfBindings?.ref) {
+      rhfBindings.ref(node); // Pass it along to React Hook Form
+    }
+  };
 
   return (
     <TextInput className='input'>
@@ -297,18 +344,26 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
         <input 
           // { ...props }
           type={getType()}
-          name={name} id={`${name}-${type}`}
-          // ref={getMaskRef(type)} // TODO: add optional input masking
-          
+          id={`${name}-${type}`}
           placeholder={placeholder}
-          value={value}
           autoComplete={autocomplete}
           required={required} 
           disabled={disabled}
+          ref={handleRef}
+          
+          // Rhf or useState handling
+          {...(() => {
+            if (isRHFMode && rhfBindings) {
+              const { ref, onChange: _, ...rest } = rhfBindings;
+              return rest;
+            }
+            return { name, value };
+          })()}
 
-          onChange={updateValue}
+          // Other optional events
           onFocus={ (e) => onFocus && onFocus(e)}
-          onBlur={  (e) => onBlur && onBlur(e)}
+          onChange={handleOnChange} // custom rhfBindings.onChange
+          onBlur={handleOnBlur}
           onClick={ (e) => onClick && onClick(e)}
           onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
           onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
@@ -334,7 +389,7 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
           tooltipContent={tooltipContent} tooltipContext={tooltipContext}
           
           hideIncrementButtons={hideIncrementButtons}
-          incrementValue={updateValue} currentValRef={currentValue}
+          inputRef={localInputRef} isRHFMode={isRHFMode} incrementValue={handleOnChange}
           
           sortButton={sortButton} sortType={sortType}
           hideCurrencyType={hideCurrencyType}
@@ -349,8 +404,8 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
       </InputContainer>
 
       {/* Error / Description messages */}
-      <ErrorAndDesc show={!!description || getError()} styles='mt-2 ml-1' cStyles={(getError() && errorMessage) ? 'error-text' : 'text-colors'}>
-        { (getError() && errorMessage) ? errorMessage : description } &nbsp;
+      <ErrorAndDesc show={!!description || getError()} styles='mt-2 ml-1' cStyles={getError() ? 'error-text' : 'text-colors'}>
+        { getError() ? error : description } &nbsp;
       </ErrorAndDesc>
     </TextInput>
   );
@@ -427,8 +482,9 @@ interface SubsequentElProps {
   
   // Variant specific
   hideIncrementButtons?: boolean;
+  inputRef?: RefObject<HTMLInputElement | null>;
+  isRHFMode?: boolean;
   incrementValue: (e: ChangeEvent<HTMLInputElement>) => void;
-  currentValRef: RefObject<number | undefined>;
 
   sortButton?: boolean;
   sortType?: SearchSortType;
@@ -437,17 +493,47 @@ interface SubsequentElProps {
 export const SubsequentElements: React.FC<SubsequentElProps> = ({
   name, type, disabled, error, 
   tooltipContext, tooltipContent, 
-  hideIncrementButtons, incrementValue, currentValRef,
+  hideIncrementButtons, inputRef, isRHFMode, incrementValue,
   sortButton, sortType,
   hideCurrencyType
 }) => {
   const { show, hide } = tooltipContext || {};
+  const { getValues, setValue } = useFormContext();
 
   const onPressIncrementButtons = (add: boolean) => {
-    if (currentValRef.current === undefined) return;
+    // If we're using rhf
+    if (getValues(name) || getValues(name) === 0) {
+      if (!Number(getValues(name))) return;
+      const currentValue = Number(getValues(name)) || 0;
+      setValue(name, currentValue + (add ? 1 : -1), { shouldValidate: true });
+      return;
+    }
 
-    const currentValue = currentValRef.current + (add ? 1 : -1);
-    incrementValue({ target: { value: `${currentValue}`} } as any);
+    // Scenario A: Handled cleanly via React Hook Form cache
+    if (isRHFMode) {
+      const rawFormValue = getValues(name);
+      const baseValue = (rawFormValue === undefined || rawFormValue === '') ? 0 : Number(rawFormValue);
+      
+      if (!Number.isNaN(baseValue)) {
+        const nextValue = baseValue + (add ? 1 : -1);
+        setValue(name, nextValue, { shouldValidate: true });
+        incrementValue({ target: { value: String(nextValue) } } as any);
+      }
+      return;
+    }
+
+    // Scenario B: Read straight from the HTML DOM node value property
+    if (inputRef && inputRef.current) {
+      const domValue = inputRef.current.value;
+      const baseValue = domValue === '' ? 0 : Number(domValue);
+      
+      if (!Number.isNaN(baseValue)) {
+        const nextValue = baseValue + (add ? 1 : -1);
+        
+        // Dispatch the change event back up to the user's custom state handler
+        incrementValue({ target: { value: String(nextValue) } } as any);
+      }
+    }
   }
   
   return (

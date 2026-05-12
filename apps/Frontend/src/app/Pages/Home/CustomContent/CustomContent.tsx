@@ -240,8 +240,7 @@ export const CustomContent = () => {
             value={input}
             placeholder="Input text..."
             onChange={inputChanged}
-            error={inputError} 
-            errorMessage={inputErrorMessage} 
+            error={inputErrorMessage} 
             disabled={disabled}
             tooltipContext={tooltipContext}
             tooltipContent={genericTooltipContent}

@@ -27,15 +27,13 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
         label="Text Input"
         placeholder="Type something..."
         description="The text input's description."
-        name={`text-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`text-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -71,14 +69,12 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         label="Number Input"
         placeholder="Type a number..."
         description="The number input's description."
-        name={`number-input-form-name`}
-
-        value={value}
-        onChange={e => onValueUpdated(e)}
-        error={!!error}
+        
+        name={`number-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
         disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
@@ -116,15 +112,13 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         label="Email Input"
         placeholder="Your email..."
         description="The email input's description."
-        name={`email-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`email-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -161,15 +155,13 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         label="Password Input"
         placeholder="Type your password..."
         description="The password input's description."
-        name={`password-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`password-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -206,15 +198,13 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         label="Search Input"
         placeholder="Type something..."
         description="The search input's description."
-        name={`search-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`search-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -252,15 +242,13 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         label="Policy Number Input"
         placeholder="Do something..."
         description="The policy number input's description."
-        name={`search-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`search-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -299,15 +287,13 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         label="Phone Input"
         placeholder="Type something..."
         description="The phone input's description."
-        name={`phone-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`phone-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -346,15 +332,13 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         label="Credit Card Input"
         placeholder="Type something..."
         description="The credit card input's description."
-        name={`credit-card-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`credit-card-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         
@@ -393,15 +377,13 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         label="Currency Input"
         placeholder="Type something..."
         description="The currency input's description."
-        name={`currency-input-form-name`}
-
-        value={value}
-        error={!!error}
-        disabled={disabled}
-        errorMessage={error}
-        // ref={getMaskRef(type)}
         
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onValueUpdated(e)}
+        name={`currency-input-form-name`} // using rhf
+        // value={value} // optional useState override
+        // onChange={e => onValueUpdated(e)}
+        error={error}
+        disabled={disabled}
+        
         onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
         

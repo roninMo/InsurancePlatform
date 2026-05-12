@@ -1,5 +1,14 @@
+import { ChangeEvent, useContext, useMemo, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { yupResolver } from "@hookform/resolvers/yup"
+import { array, boolean, InferType, mixed, object, string } from 'yup';
 import { Navbar } from '../../Components/Navbar/Navbar';
+import { Button, Input, TooltipService } from '@Project/ReactComponents';
+
+import styled from '@emotion/styled';
 import styles from './MockDatabase.module.scss';
+import { Card } from '../../Components/Content/Card/Card';
+
 
 /*
 
@@ -158,25 +167,148 @@ Context options
 		- get History Actions Param
 		
 		- if changes end up affecting the values, pass back updates tables
-		
-	
-	
-		
 
 */
+
+
+
+// Password
+const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+// FileUpload
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const VALID_FILE_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
+
+
+const schema = object({
+	database: string()
+    .oneOf(['db1', 'db2', 'db3'], 'Please select a valid database')
+    .required('You must select a database'),
+	tables: array()
+    .of(string()
+			.oneOf(['table1', 'table2', 'table3'], 'Invalid table selected')
+			.required()
+		)
+    .min(1, 'Select at least one table')
+    .max(3, 'You can select a maximum of 3 tables')
+    .required('Skills selection is required'),
+	
+	retrieveServerData: boolean().optional(),
+		// .nullable(), // .notRequired()
+
+	radioGroupTest: string()
+    .oneOf(['item1', 'item2', 'item3'], 'Please select a valid radio item')
+    .required('You must select a radio item'),
+		
+	radioTableTest: string()
+    .oneOf(['item1', 'item2', 'item3'], 'Please select a valid radio table item')
+    .required('You must select a radio table item'),
+
+  checkboxTest: array()
+    .required('Skills selection is required'),
+
+	user: object({
+		email: string()
+			.trim()
+			.lowercase()
+			.email('Invalid email format')
+			.matches(
+				/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+				'Email must have a valid domain extension (e.g., .com)'
+			)
+			.required('Email is required'),
+		password: string()
+			.required('Password is required')
+			.matches(pwdRegex, 'Password must be 8+ characters with 1 letter and 1 number'),
+	}),
+	
+	profilePicture: mixed<File>()
+    .required('A file upload is required')
+    .test('fileSize', 'File size must be less than 2MB', (value) => {
+      return value ? value.size <= MAX_FILE_SIZE : false;
+    })
+    .test('fileType', 'Unsupported file format', (value) => {
+      return value ? VALID_FILE_TYPES.includes(value.type) : false;
+    }),
+
+		textareaTest: string()
+			.max(500)
+			.required(),
+		// textareaFileUpload
+});
+
+// Type reference if needed
+export type TestForm = InferType<typeof schema>;
+
+
+
 export const MockDatabase =() => {
+	const tooltipContext = useContext(TooltipService);
+	const tooltip = useMemo(() => ({ text: 'The email for this account.' }), []);
+  const formMethods = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      database: undefined,
+      tables: [],
+      retrieveServerData: false,
+      radioGroupTest: undefined,
+      radioTableTest: undefined,
+      checkboxTest: [],
+      user: { email: '', password: '' },
+      textareaTest: '',
+    },
+  });
+
+	const { handleSubmit, formState: { errors } } = formMethods;
+
+  const onSubmit = (data: TestForm) => {
+    console.log('Validated Form Data:', data);
+  };
+
+	// custom state handling (non rhf)
+	const [value, setValue] = useState<string>('');
+	const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
+		const newValue = e?.target?.value;
+		setValue(newValue);
+	}
+
+
   return (
-   	<>
-      {/* Navbar */}
-      <Navbar />
-      <div className='dropdown-spacing py-10' />
+		<FormProvider {...formMethods}>
+			{/* Navbar */}
+			<Navbar />
+			<div className='dropdown-spacing py-10' />
 
-      <div className='p-4'>
-        <h4> Mock Database </h4>
+			<div className='p-4'>
+				<form onSubmit={handleSubmit(onSubmit)} className='spacing col gap-2 p-4 bg-div outline-css outline-default'>
+					<h4 className='span-12 pb-10 py-2'> 
+						Mock Database 
+					</h4>
+					
+					<div className='span-12 lg:span-6'>
+						<Input 
+							type="text" name="user.email"
+							label='Email'
+							description="What is your account's email?"
+							error={ errors?.user?.email?.message }
+							tooltipContext={tooltipContext}
+							tooltipContent={tooltip}
 
-      </div>
-    </>
+							// useState override
+							// value={value}
+							// onChange={updateValue}
+						/>
+					</div>
+
+					<div className='span-12 text-right p-4'>
+						<Button displayText='Submit' type='submit' color='primary' />
+					</div>
+				</form>
+			</div>
+		</FormProvider>
   );
 }
 
-export default MockDatabase;
+
+// Styled components
+const FormContainer = styled.form``;

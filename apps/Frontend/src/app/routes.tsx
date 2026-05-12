@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { Home } from "./Pages/Home/Home";
 import { ErrorPage } from "./Pages/ErrorPage/ErrorPage";
 import { Demos } from "./Pages/Demos/Demos";
-import MockDatabase from "./Pages/MockDatabase/MockDatabase";
+import { MockDatabase } from "./Pages/MockDatabase/MockDatabase";
 import { Contact } from "./Pages/Contact/Contact";
 import {DocumentationPageRoutes} from "./Pages/Documentation/routes_Documentation";
 

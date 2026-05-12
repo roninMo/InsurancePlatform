@@ -76,6 +76,7 @@
   ],
   "dependencies": {
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
     "@react-input/mask": "^2.0.4",
     "@tailwindplus/elements": "^1.0.21",
     "axios": "^1.13.2",
@@ -85,10 +86,12 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-element-to-jsx-string": "^17.0.1",
+    "react-hook-form": "^7.75.0",
     "react-intersection-observer": "^10.0.3",
     "react-router-dom": "^7.11.0",
     "react-router-hash-link": "^2.4.3",
-    "react-syntax-highlighter": "^16.1.1"
+    "react-syntax-highlighter": "^16.1.1",
+    "yup": "^1.7.1"
   },
   "nx": {
     "includedScripts": [],

@@ -145,8 +145,7 @@ export const ContactUsSection = () => {
               onChange={(e) => updateValue(e, setFirstName, 'firstName')}
 
               required={false}
-              error={errors?.firstName?.error}
-              errorMessage={errors?.firstName?.message}
+              error={errors?.firstName?.message}
 
               name="ContactUs-FirstName"
             />
@@ -162,8 +161,7 @@ export const ContactUsSection = () => {
               onChange={(e) => updateValue(e, setLastName, 'lastName')}
 
               required={false}
-              error={errors?.lastName?.error}
-              errorMessage={errors?.lastName?.message}
+              error={errors?.lastName?.message}
 
               name="ContactUs-LastName"
             />
@@ -179,8 +177,7 @@ export const ContactUsSection = () => {
               onChange={(e) => updateValue(e, setEmail, 'email')}
 
               required={false}
-              error={errors?.email?.error}
-              errorMessage={errors?.email?.message}
+              error={errors?.email?.message}
 
               name="ContactUs-Email"
             />
@@ -196,8 +193,7 @@ export const ContactUsSection = () => {
               onChange={(e) => updateValue(e, setPhone, 'phone')}
 
               required={false}
-              error={errors?.phone?.error}
-              errorMessage={errors?.phone?.message}
+              error={errors?.phone?.message}
 
               name="ContactUs-Email"
             />

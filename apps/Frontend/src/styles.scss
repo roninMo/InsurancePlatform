@@ -1561,7 +1561,7 @@
   .card-container {
     @apply p-2 rounded-md transition-all;
   }
-  .card-bg { @apply bg-default; }
+  .card-bg { @apply bg-div; }
   .card-border { @apply outline-css outline-default transition-all; }
   .card-hover {
     &:hover {
