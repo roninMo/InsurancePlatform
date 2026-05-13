@@ -1,64 +1,139 @@
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FocusEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItemComponent, SelectItem } from './SelectItem/SelectItem';
 import { TooltipContentProps, TooltipContextActions } from "../../Common";
-import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
-import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
+import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
-import styles from './Select.module.scss';
 import styled from '@emotion/styled';
+import styles from './Select.module.scss';
 
 
 export interface SelectProps {
-  name: string;
+  /** The label of the select. */
   label: string;
+
+  /** The description of the select. */
   description?: string;
 
-  value: SelectItem;
+  /** The form name of the select. Used with Rhf's register or useController in this case. */
+  name: string;
+
+  /** If you're overriding Rhf with useState, explicitly set the value. You can use the onSelect to handle update events. */
+  value?: SelectItem;
+  /** Additional logic to run when the user selects a value. If you're not using Rhf, this is how you update the value. */
+  onSelect?: (selected: SelectItem) => void;
+
+  /** @note must be memoized. Updates to this overrides the current tracking of selected values when using Rhf. */
   values: SelectItem[];
+
+  /** Whether this is a multiselect component. */
   multiSelect?: boolean;
-  onSelect?: (selected: SelectItem, index: number) => void;
+
+  /** The placeholder text for the select. */
   placeholder?: string;
 
-  // Error / Validation // TODO: change the error state to a single value OR the error obj (if stable ref from RHF)
-  error?: boolean;
-  errorMessage?: string;
+
+  // Error / Validation
+  /** The error message, if there's an error. */
+  error?: string;
+
+  /** Whether the select component is disabled. */
   disabled?: boolean;
+
+  /** Whether the select component is required. */
   required?: boolean;
-  
-  /* Tooltip */
-  // The Tooltip Context stable function ref
+
+
+  // Tooltip props
+  /** The Tooltip Context stable function ref */ 
   tooltipContext?: TooltipContextActions;
   // The content props for the tooltip component
   tooltipContent?: TooltipContentProps; 
 
-  /* Select Dropdown Options */
-  // when they hover outside of the element, close the dropdown.
+
+  // Select Dropdown Options
+  /** when they hover outside of the element, close the dropdown. */ 
   closeDropdownOnLeave?: boolean;
   
-  // for both normal or multiselect. undefined is ignored
+  /** for both normal or multiselect. undefined is ignored. */ 
   keepDropdownOpenOnSelect?: boolean;
   
-  // by default, we open the dropdown if the user tabs to it
+  /** by default, we open the dropdown if the user tabs to it. */ 
   preventOpenOnTabFocus?: boolean;
 }
-
 
 
 // Custom select component for themes and advanced functionality
 export const Select = ({
   name, label, description, value, values, multiSelect, onSelect, placeholder,
-  onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
+  onBlur, onChange, onFocus, onClick, onMouseEnter, onMouseLeave,
   closeDropdownOnLeave, keepDropdownOpenOnSelect, preventOpenOnTabFocus, 
-  error = false, errorMessage, disabled = false, required = false, tooltipContext, tooltipContent, 
+  error, disabled = false, required = false, tooltipContext, tooltipContent, 
 }: SelectProps & UniversalEventHandlers) => {
   const { show, hide } = tooltipContext || {};  
+  
+  // Open / Close dropdown
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  // const selectedValues = useRef<Record<string, boolean>>(Object.fromEntries(values.map(item => [value.value, false])));
   const dropdownId = `${name}-slct-dropdown`;
   const selectId = `${name}-slct`;
 
-  // Error Handling
+  // Input binding logic
+  const isRHFMode = value === undefined;
+  const [internalVal, setInternalVal] = useState<SelectItem>({ label: '', value: '', ...value });
+  const { field, fieldState } = useController({name}) || {};
+  // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, field, fieldState, onSelect });
+
+  // Internal selected values tracking. Overridden when the values prop is updated - CAUTION when using with Rhf
+  const internalValues = useRef<SelectItem[]>([ ...values ]);
+  useEffect(() => { 
+    if (!isRHFMode) return;
+    internalValues.current = [ ...values ]; 
+  }, [values]);
+
+  // Intercept changes cleanly
+  const handleOnChange = (selected: SelectItem) => {
+    const updatedVal = { ...selected, selected: !selected.selected };
+
+    // react hook forms event
+    if (isRHFMode && field) {
+      
+      // internal state tracking synced from this event
+      internalValues.current = internalValues.current.map(item => {
+        if ( item.value == updatedVal.value 
+          && item.label == updatedVal.label) return updatedVal;
+        return item;
+      });
+      
+      // rerenders on selectItems happen using the currently selected item (value) as reference
+      setInternalVal(updatedVal);
+
+      // Rhf's update event
+      if (multiSelect) field.onChange(internalValues.current
+          .filter(item => item.selected)
+          .map(item => item.value)
+      );
+      else field.onChange(updatedVal.value);
+    }
+    
+    // additional event hooks
+    const targetData: any = { target: { value: updatedVal.value }};
+    if (onSelect) onSelect(updatedVal); // actual logic
+    if (onChange) onChange(targetData); // optional union prop events // TODO: Finish plugging UniversalEventHandlers into the rest of the components
+    
+    handleDropdownToggle();
+    // console.log(`${updatedVal.label} selected: ${updatedVal.selected}, data: `, {updatedVal, values: getValues() });
+  }
+
+  const handleOnBlur = (e: FocusEvent<HTMLButtonElement>) => {
+    if (isRHFMode && field) field.onBlur();
+    if (onBlur) onBlur(e);
+  }
+
+  // Get functions
+  const getValue = (): SelectItem | undefined => isRHFMode ? internalVal : value;
+  const getValues = (): SelectItem[] => isRHFMode ? internalValues.current : values;
   const getError = (): boolean => !!error && !disabled;
 
 
@@ -75,25 +150,12 @@ export const Select = ({
     if (!dropdownOpen) setDropdownOpen(true);
   }
   
-  // Handles logic when the dropdown is selected
-  const onDropdownItemSelected = (selected: SelectItem, index: number) => {
-    // capture whether the value has been selected here and toggle it
-    // if (multiSelect) {
-    //   selectedValues.current[selected.value] = !selectedValues.current[selected.value];
-    // }
-
-    if (onSelect) onSelect(selected, index); // actual logic
-    handleDropdownToggle();
-    // console.log(`item ${index} selected: `, selected);
-  }
-
   const handleDropdownToggle = () => {
     const keepDropdownOpen = keepDropdownOpenOnSelect;
 
     // Default behavior
     if (keepDropdownOpen === undefined) {
       if (!multiSelect && dropdownOpen) setDropdownOpen(false);
-      // otherwise multiSelect variants have it stay left open
     }
 
     else {
@@ -203,14 +265,15 @@ export const Select = ({
   // #endregion
 
   const getSelectDisplay = () => {
-    const defaultValue = value?.value ? value.label : placeholder;
+    const defaultValue = getValue()?.selected ? getValue()?.label || placeholder : placeholder;
     if (multiSelect) {
-      if (values?.filter((item: SelectItem) => item.selected).length == 1) return defaultValue;
+      if (getValues()?.filter((item: SelectItem) => item.selected).length == 1) return defaultValue;
       return placeholder;
     }
 
     return defaultValue;
   }
+
 
   return (
     <Container className="select-container">
@@ -220,12 +283,12 @@ export const Select = ({
 
       <StyledSelect 
         name={name} id={selectId} 
-        value={value?.value} type="button" 
+        value={getValue()?.value} type="button" 
         
         ref={selectElementRef}
         onFocus={(e) => onFocus && onFocus(e)}
-        onClick={(e) => onClickSelect(e)}
-        onBlur={(e) => onBlur && onBlur(e)}
+        onClick={(e) => onClickSelect(e)} // Open/Close Dropdown
+        onBlur={handleOnBlur}
         disabled={disabled}
         className={`select-base group
           ${!disabled && dropdownOpen ? 'select-focus' : ''}
@@ -233,7 +296,7 @@ export const Select = ({
         `}
       >
         <CurrentlySelected className={`currently-selected`}>
-          <span className={`text-sm ${value?.value ? 'text-colors' : 'placeholder-text'}`}> 
+          <span className={`text-sm ${getValue()?.value ? 'text-colors' : 'placeholder-text'}`}> 
             { getSelectDisplay() } 
           </span>
 
@@ -260,14 +323,12 @@ export const Select = ({
           ${!disabled ? 'select-dd-scroll' : 'select-dd-disabled'}
       `}>			
         <DropdownAnim show={dropdownOpen}>
-          {values.map((item: SelectItem, index: number) => 
+          {getValues().map((item: SelectItem) => 
             <SelectItemComponent 
-              item={item}
-              index={index}
-              onSelect={onDropdownItemSelected} 
-              currentSelectValue={value}
+              item={item} name={name}
+              handleItemSelected={handleOnChange} 
+              currentValue={getValue()} // primarily handles memoized select rerenders
               multiSelect={multiSelect}
-              name={name}
               dropdownOpen={dropdownOpen}
               key={`${name}-${item.value}`}
             />
@@ -276,7 +337,7 @@ export const Select = ({
       </Dropdown>
 
       <ErrorAndDescription show={!!description || getError()} styles="pl-1 mt-2" cStyles={`text-sm ${getError() ? 'error-text' : 'text-colors'}`}>
-        { getError() ? errorMessage : description } &nbsp;
+        { getError() ? error : description } &nbsp;
       </ErrorAndDescription>
     </Container>
   );

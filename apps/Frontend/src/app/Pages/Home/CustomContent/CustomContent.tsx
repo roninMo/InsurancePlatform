@@ -26,11 +26,13 @@ import {
 import styles from './CustomContent.module.scss';
 import { Alert } from '../../../Components/Content/Alert/Alert';
 import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
+import { FormProvider, useForm } from 'react-hook-form';
 
 
 export const CustomContent = () => {
   const tooltipContext = useContext(TooltipService);
   const genericTooltipContent = useMemo(() => ({ text: 'Tooltip text...'}), []);
+  const formMethods = useForm();
 
   // #region Input Elements
   // Input
@@ -44,7 +46,7 @@ export const CustomContent = () => {
   const [inputType, setInputType] = useState<SelectItem>({ value: 'search', label: 'Select an input type...'});
   const types: TextInputTypes[] = ['text', 'email', 'password', 'phone', 'creditCard', 'currency', 'policyNumber', 'search'];
   const inputTypes: SelectItem[] = types.map(type => ({ value: type, label: type }));
-  const inputTypeChanged = (selected: SelectItem, index: number) => {
+  const inputTypeChanged = (selected: SelectItem) => {
     setInput("");
     SetInputError(false);
     SetInputErrorMessage("");
@@ -90,7 +92,7 @@ export const CustomContent = () => {
   const [currentIcon, setCurrentIcon] = useState<SelectItem>({ value: '', label: ''});
   const [selectIconError, setSelectIconError] = useState<boolean>(false);
   const [selectIconErrorMessage, setSelectIconErrorMessage] = useState<string>();
-  const selectIconChanged = (selected: SelectItem, index: number) => {
+  const selectIconChanged = (selected: SelectItem) => {
     setCurrentIcon(selected);
     // console.log('select: new value: ', {currentIcon, index, selectIcons});
   }
@@ -227,7 +229,8 @@ export const CustomContent = () => {
 
 
   return (
-    <>
+    <FormProvider {...formMethods}>
+      
       {/* First Section for Input component logic */}
       <div className='spacing mt-4 p-4 pb-8 bg-div outline-css outline-styles'>
         <div className='span-12 md:span-8 lg:span-4 p-2'>
@@ -390,8 +393,7 @@ export const CustomContent = () => {
               placeholder="input text..."
               submitButtonText='Post'
               { ...textareaProps }
-              error={taError}
-              errorMessage="An error occurred."
+              error={taError ? "An error occurred." : undefined}
               disabled={taDisabled}
             />
           </div>
@@ -405,8 +407,7 @@ export const CustomContent = () => {
               submitButtonText='Create'
               { ...textareaProps }
               metadataTags={defaultBoxMetadataTags}
-              error={taError}
-              errorMessage="An error occurred."
+              error={taError ? "An error occurred." : undefined}
               disabled={taDisabled}
             />
           </div>
@@ -420,8 +421,7 @@ export const CustomContent = () => {
               submitButtonText='Post'
               { ...textareaProps }
               metadataTags={defaultPostMetadataTags}
-              error={taError}
-              errorMessage="An error occurred."
+              error={taError ? "An error occurred." : undefined}
               disabled={taDisabled}
             />
           </div>
@@ -460,8 +460,7 @@ export const CustomContent = () => {
             onSelect={selectIconChanged}
             placeholder='Select a value'
 
-            error={selectIconError}
-            errorMessage={selectIconErrorMessage}
+            error={selectIconErrorMessage}
             disabled={false}
             required={false}
           />
@@ -523,8 +522,7 @@ export const CustomContent = () => {
                 value={slider}
                 onChange={onChangeSlider}
 
-                error={sliderError}
-                errorMessage={sliderErrorMessage}
+                error={sliderErrorMessage}
                 required={false}
                 disabled={false}
                 key={`inputSlider-${index}`}
@@ -977,6 +975,6 @@ export const CustomContent = () => {
 
 
       <div className='pb-24' />
-    </>
+    </FormProvider>
   );
 }

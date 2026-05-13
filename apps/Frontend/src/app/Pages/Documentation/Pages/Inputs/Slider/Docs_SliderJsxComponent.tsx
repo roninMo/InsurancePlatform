@@ -24,11 +24,10 @@ export const Example_DefaultSlider = ({ error, disabled }: {
         label="Slider Component"
         description="The description of the slider."
         
-        value={sliderValue}
-        onChange={() => onChangeSlider()}
+        // value={sliderValue} // if you want to use custom state instead of Rhf, use this value.
+        // onChange={() => onChangeSlider()} // An optional custom event to run alongside Rhf's change event
 
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
       />

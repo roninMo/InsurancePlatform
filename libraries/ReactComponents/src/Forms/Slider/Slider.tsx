@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
@@ -12,11 +13,10 @@ export interface SliderProps {
   label?: string;
   description?: string;
 
-  value: boolean;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  value?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 
-  error?: boolean;
-  errorMessage?: string;
+  error?: string;
   disabled?: boolean;
   required?: boolean;
   additionalStyles?: string;
@@ -24,9 +24,29 @@ export interface SliderProps {
 
 export const Slider = ({
   variant = 'default', name, label, description, value, onChange, 
-  error, errorMessage, required, disabled, additionalStyles,
+  error, required, disabled, additionalStyles,
   ...props
 }: SliderProps) => {
+  const { register, getValues, control } = useFormContext() || {};
+  
+  // Input binding logic
+  const isRHFMode = !!register && value === undefined;
+  const rhfBindings = isRHFMode ? register(name) : null;
+  console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange, register });
+
+  // Intercept changes cleanly
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (isRHFMode && rhfBindings) rhfBindings.onChange(e);
+    if (onChange) onChange(e);
+  };
+
+  const isChecked = (): boolean => isRHFMode ? !!watchedValue : !!value;
+  const watchedValue = useWatch({
+    name,
+    control: control,
+    disabled: !isRHFMode // Optimization: disable watch if not in RHF mode
+  });
+
 
   return (
     <Container className={`slider-c ${disabled ? 'slider-disabled' : error ? 'slider-error' : ''}`}>
@@ -42,26 +62,32 @@ export const Slider = ({
           </Description> 
         }
 
-        <ErrorText show={error && !disabled} cStyles='pt-1 error-text'>
-          { errorMessage ? errorMessage : '' } &nbsp;
+        <ErrorText show={!!error && !disabled} cStyles='pt-1 error-text'>
+          { error ? error : '' } &nbsp;
         </ErrorText>
       </Content>
       
       <SliderContainer className={`slider-base ${additionalStyles}`}>
         <input 
-          type='checkbox'
-          name={name}
-          id={`sldr-${name}`}
+          {...props}
+          type='checkbox' id={`sldr-${name}`}
+          
+          // Rhf or useState handling
+          {...(() => {
+            if (isRHFMode && rhfBindings) {
+              const { onChange: _, ...rest } = rhfBindings;
+              return rest;
+            }
+            return { name, value: `${value}` }; // default behavior
+          })()}
 
-          // TODO: I don't know whether the form value shouldn't be a specific string value for this project
-          value={`${value}`} 
-          checked={value}
-          onChange={onChange}
+          // combined input bindings
+          onChange={handleOnChange} // custom rhfBindings.onChange
+          checked={isChecked()}
 
           disabled={disabled}
           required={required}
           className='slider-input'
-          {...props}
         />
 
         <Switch className="slider-switch"/>

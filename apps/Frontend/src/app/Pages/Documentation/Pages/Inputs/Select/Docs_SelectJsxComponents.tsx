@@ -19,8 +19,8 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
     ...selectIcons
   ]);
   
-  const onSelectValue = (selected: SelectItem, index: number) => {
-    setSelectedValue(selected);
+  const onSelectValue = (selected: SelectItem) => {
+    // setSelectedValue(selected);
     console.log('select: new value: ', selected);
   }
   
@@ -38,13 +38,12 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
         placeholder="Select a value..."
         description="The select input's description."
 
-        value={selectedValue}
         values={projectIcons}
-        onSelect={onSelectValue}
+        // value={selectedValue} // If you don't want to use Rhf
+        // onSelect={onSelectValue} // optional with Rhf, otherwise use to update state
 
         // Error / Validation
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
 
@@ -53,9 +52,9 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
         tooltipContent={ tooltipContent }
         
         // Dropdown options? 
-        closeDropdownOnLeave={ closeOnLeave}
-        keepDropdownOpenOnSelect={ keepOpenOnSlct} 
-        preventOpenOnTabFocus={ preventOpenOnTab}
+        closeDropdownOnLeave={ closeOnLeave }
+        keepDropdownOpenOnSelect={ keepOpenOnSlct } 
+        preventOpenOnTabFocus={ preventOpenOnTab }
       />
     </div>
   );
@@ -85,9 +84,10 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
     Object.fromEntries(projectIcons.map(item => [item.value, item]))
   );
   
-  const onSelectValue = (selected: SelectItem, index: number) => {
+  const onSelectValue = (selected: SelectItem) => {
+    console.log(`${selected.selected ? 'checked' : 'unchecked'} ${selected.value}`);
+
     const updatedSelection: SelectItem = { ...selected }; // rerender the SelectItem only w/new object and a memo.
-    updatedSelection.selected = !updatedSelection.selected; 
     
     // if most recently selected, then update single display 
     if (updatedSelection.selected) currentlySelected.current = updatedSelection;
@@ -112,14 +112,13 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
         placeholder="Select some values..."
         description="The select input's description."
 
-        value={currentlySelected.current} // only shows current if there's only one selected
         values={Object.values(selectedValues)}
-        onSelect={onSelectValue}
+        // value={currentlySelected.current} // If you don't want to use Rhf
+        // onSelect={onSelectValue} // optional with Rhf, otherwise use to update state
         multiSelect
 
         // Error / Validation
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
 
@@ -128,9 +127,9 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
         tooltipContent={ tooltipContent }
         
         // Dropdown options? 
-        closeDropdownOnLeave={ closeOnLeave}
-        keepDropdownOpenOnSelect={ keepOpenOnSlct} 
-        preventOpenOnTabFocus={ preventOpenOnTab}
+        closeDropdownOnLeave={ closeOnLeave }
+        keepDropdownOpenOnSelect={ keepOpenOnSlct } 
+        preventOpenOnTabFocus={ preventOpenOnTab }
       />
     </div>
   );

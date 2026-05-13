@@ -233,20 +233,18 @@ type AllVariantProps<T> = {
 
 
 export const Input = (props: InputProps & UniversalEventHandlers) => {
-  const { register, getValues } = useFormContext();
+  const { register, getValues } = useFormContext() || {}; // non rhf variant catch
 
   // Base Props
   const  {
     type = 'text', name, 
-    label, description, placeholder, value, 
-    
-    error, 
-    disabled = false, required = false, 
+    label, description, placeholder, 
+    error, disabled = false, required = false, 
     
     tooltipContext, tooltipContent,
-    autocomplete, 
+    autocomplete = 'none', 
     
-    onChange, 
+    value, onChange, 
     onBlur, onFocus, onClick, 
     onMouseEnter, onMouseLeave
   } = props;
@@ -286,32 +284,13 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
     return 'text';
   }
 
-
-  // State handling
-  // const currentValue = useRef<number | undefined>(undefined);
-  // const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
-  //   // handled by user
-  //   if (onChange) onChange(e);
-    
-  //   // increment button value ref (capture the current value for the increment click events)
-  //   if (type == 'number') {
-  //     const newValue = e?.target?.value;
-  //     const num = Number(newValue);
-  //     const isNumber = newValue.trim() !== '' && Number.isFinite(num);
-  //     if (isNumber) currentValue.current = num;
-  //     else currentValue.current = undefined;
-  //   }
-  // }
-
   // Error handling
   const getError = (): boolean => (!!error && !disabled);
 
   // Input binding logic
   const isRHFMode = !!register && value === undefined;
   const rhfBindings = isRHFMode ? register(name) : null;
-  console.log(`isRhfMode: ${isRHFMode}, bindings: `, rhfBindings);
-  console.log(`value: `, value !== undefined);
-  console.log(`onChange: `, !!onChange);
+  // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange });
 
   // Intercept changes cleanly
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -354,14 +333,14 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
           // Rhf or useState handling
           {...(() => {
             if (isRHFMode && rhfBindings) {
-              const { ref, onChange: _, ...rest } = rhfBindings;
+              const { ref, onChange: _, onBlur: __, ...rest } = rhfBindings;
               return rest;
             }
-            return { name, value };
+            return { name, value }; // default behavior
           })()}
 
           // Other optional events
-          onFocus={ (e) => onFocus && onFocus(e)}
+          onFocus={(e) => onFocus && onFocus(e)}
           onChange={handleOnChange} // custom rhfBindings.onChange
           onBlur={handleOnBlur}
           onClick={ (e) => onClick && onClick(e)}
@@ -498,7 +477,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
   hideCurrencyType
 }) => {
   const { show, hide } = tooltipContext || {};
-  const { getValues, setValue } = useFormContext();
+  const { getValues, setValue } = useFormContext() || {};
 
   const onPressIncrementButtons = (add: boolean) => {
     // If we're using rhf

@@ -214,8 +214,7 @@ export const ContactUsSection = () => {
             
               onSubmit={(e) => onSubmit()}
               submitButtonText="Submit"
-              error={errors?.message?.error}
-              errorMessage={errors?.message?.message}
+              error={errors?.message?.message}
             
               // disabled={messageDisabled}
               // required={messageRequired}

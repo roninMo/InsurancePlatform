@@ -229,7 +229,7 @@ class HashLinkScrollRestoration {
   public isHashRoute(route: string): boolean {
     try {
       const parsed = new URL(route, this.baseUrl);
-      console.log(`isHash: ${parsed.hash}, route: ${route}`, {url: parsed});
+      // console.log(`isHash: ${parsed.hash}, route: ${route}`, {url: parsed});
       return !!parsed.hash;
     } catch (e) {
       const index = route.search(/[#]/);

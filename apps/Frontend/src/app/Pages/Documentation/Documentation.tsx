@@ -18,6 +18,7 @@ import { Docs_Textarea } from "./Pages/Inputs/Textarea/Docs_Textarea";
 
 import styled from "@emotion/styled";
 import styles from './Documentation.module.scss';
+import { FormProvider, useForm } from 'react-hook-form';
 
 
 export const Documentation = () => {
@@ -128,98 +129,104 @@ export const Documentation = () => {
   const onSetSidebarState = (wasOpened: boolean) => {
     console.log(`The sidebar was ` + wasOpened ? 'opened' : 'closed');
   };
+
+  // UseForm placeholder for no errors with doc examples 
+  const formMethods = useForm();
 	
   
 	
   return (
     <>
       {/* Navbar */}
-      <Navbar />
-      <div className='dropdown-spacing py-4' />
-        
-      <Container className="spacing pt-10">
-        
-        {/* Page Content*/}
-        <ContentAndSidebars className="span-12 rowStart gap-4">
-          <StickySidebar className='flex items-start min-h-[80vh]'>
-            <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
-              <Sidebar 
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-                onSetSidebarState={onSetSidebarState}
-                linkSections={DocumentationPage_SidebarLinks}
-              />
-            </div>
-          </StickySidebar>
+		  <FormProvider {...formMethods}>
+        <Navbar />
+        <div className='dropdown-spacing py-4' />
           
+        <Container className="spacing pt-10">
           
-          <Content className="w-full py-2">
-            <NotificationContainer	className="p-2 rowStart gap-2 selected-box outline-css outline-focus">
-              <Icon variant="CircleQuestion" styles="size-5 primary-text" />
-              Notification
-            </NotificationContainer>
-            
-            <PageContent className="py-4 pr-4 2xl:pr-0">
-              <Outlet />
-              
-              <div className='span-12'>
-                <div className='p-2 showcase-text'>
-
-                  {/* <div className='ascii-text'> 
-                        _                       
-                        \`*-.                   
-                        )  _`-.                
-                        .  : `. .               
-                        : _   '  \              
-                        ; *` _.   `*-._         
-                        `-.-'          `-.      
-                          ;       `       `.    
-                          :.       .        \   
-                          . \  .   :   .-'   .  
-                          '  `+.;  ;  '      :  
-                          :  '  |    ;       ;-.
-                          ; '   : :`-:     _.`* ;
-                [bug] .*' /  .*' ; .*`- +'  `*'
-                      `*-*   `*-*  `*-*'       
-                  </div> */}
-                  <p className='ascii-text hover:loading-text transition-all'>
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\`*-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;&nbsp;_`-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;:&nbsp;`.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;_&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;*`&nbsp;_.&nbsp;&nbsp;&nbsp;`*-._&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-.-'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`.&nbsp;&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;\&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;.-'&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;`+.;&nbsp;&nbsp;;&nbsp;&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;-.
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;'&nbsp;&nbsp;&nbsp;:&nbsp;:`-:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_.`*&nbsp;;
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bue]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
-                    <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;`*-*'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  </p>
-
-                </div>
+          {/* Page Content*/}
+          <ContentAndSidebars className="span-12 rowStart gap-4">
+            <StickySidebar className='flex items-start min-h-[80vh]'>
+              <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
+                <Sidebar 
+                  sidebarOpen={sidebarOpen}
+                  setSidebarOpen={setSidebarOpen}
+                  onSetSidebarState={onSetSidebarState}
+                  linkSections={DocumentationPage_SidebarLinks}
+                />
               </div>
-            </PageContent>
-          </Content>
+            </StickySidebar>
+            
+            
+            <Content className="w-full py-2">
+              <NotificationContainer	className="p-2 rowStart gap-2 selected-box outline-css outline-focus">
+                <Icon variant="CircleQuestion" styles="size-5 primary-text" />
+                Notification
+              </NotificationContainer>
+              
+              <PageContent className="py-4 pr-4 2xl:pr-0">
+                <Outlet />
+                
+                <div className='span-12'>
+                  <div className='p-2 showcase-text'>
 
-          <StickySidebar className='hidden 2xl:flex items-start pt-2 min-w-[20%] 2xl:min-w-[15%]'>
-            <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
-              <Hashbar />
-            </div>
-          </StickySidebar>
-        </ContentAndSidebars>
-        
-      </Container>
-      
-        
+                    {/* <div className='ascii-text'> 
+                          _                       
+                          \`*-.                   
+                          )  _`-.                
+                          .  : `. .               
+                          : _   '  \              
+                          ; *` _.   `*-._         
+                          `-.-'          `-.      
+                            ;       `       `.    
+                            :.       .        \   
+                            . \  .   :   .-'   .  
+                            '  `+.;  ;  '      :  
+                            :  '  |    ;       ;-.
+                            ; '   : :`-:     _.`* ;
+                  [bug] .*' /  .*' ; .*`- +'  `*'
+                        `*-*   `*-*  `*-*'       
+                    </div> */}
+                    <p className='ascii-text hover:loading-text transition-all'>
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\`*-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;&nbsp;_`-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;:&nbsp;`.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;_&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;*`&nbsp;_.&nbsp;&nbsp;&nbsp;`*-._&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-.-'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`.&nbsp;&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;\&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;.-'&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;&nbsp;`+.;&nbsp;&nbsp;;&nbsp;&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;-.
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;'&nbsp;&nbsp;&nbsp;:&nbsp;:`-:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_.`*&nbsp;;
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bue]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
+                      <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;`*-*'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </p>
 
-      {/*<div className='spacing gap-4 p-4'>*/}
-      {/*  /!*<CustomContent />*!/*/}
-      {/*</div>*/}
-      <Footer />
+                  </div>
+                </div>
+              </PageContent>
+            </Content>
+
+            <StickySidebar className='hidden 2xl:flex items-start pt-2 min-w-[20%] 2xl:min-w-[15%]'>
+              <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
+                <Hashbar />
+              </div>
+            </StickySidebar>
+          </ContentAndSidebars>
+          
+        </Container>
+        
+          
+
+        {/*<div className='spacing gap-4 p-4'>*/}
+        {/*  /!*<CustomContent />*!/*/}
+        {/*</div>*/}
+        <Footer />
+      </FormProvider>
+
     </>
   );
 }

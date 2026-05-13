@@ -1040,15 +1040,18 @@
   .select-item {
     @apply 
       rowBetween gap-2 items-center p-2 pr-4
-      transition-all duration-200 ease-in
-      hover:btn-primary-colors
-      border-b border-default border-opacity-30 dark:border-opacity-20
-
+      transition-all ease-in
+      border-b border-default 
+      border-opacity-30 dark:border-opacity-20
+      
+      outline-transparent
+      hover:select-item-hover
       active:select-item-active;
     ;
   }
+  .select-item-hover { @apply btn-primary-colors outline-css outline-focus rounded-none;}
   .select-item-selected { @apply select-item btn-primary-colors opacity-bg-80; }
-  .select-item-active { @apply btn-primary-colors brightness-75; }
+  .select-item-active { @apply btn-primary-colors brightness-75 outline-css outline-focus rounded-none; }
 
   .select-item-text { @apply transition-all text-colors group-hover:btn-text; }
   .select-item-text-selected { @apply transition-all btn-text; }

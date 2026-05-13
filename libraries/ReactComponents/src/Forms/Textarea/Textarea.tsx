@@ -1,40 +1,68 @@
-import { memo, MouseEvent, ReactNode, useId, useMemo, useRef, useState } from "react";
-import { Button } from "../Button/Button";
+import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { FileUploadProps } from "../Dropbox/Dropbox";
-import { Ht } from "../../Common/Content/HeightTransWrapper/HeightTransWrapper";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
+import { Button } from "../Button/Button";
+import { Ht } from "../../Common/Content/HeightTransWrapper/HeightTransWrapper";
 
 import styled from '@emotion/styled';
 import styles from './Textarea.module.scss';
 
 
+/** The themed textarea variant you'd like to use. */
 export type TextareaTypes = 'default' | 'box' | 'post';
+
+/** The props for the textarea component. */
 export interface TextareaProps {
-  type?: TextareaTypes
+  /** The variant of the textarea we're using. */
+  type?: TextareaTypes;
+
+  /** The form name of the textarea. Rhf uses this in it's register functions. */
   name: string;
 
+  /** The textarea's label. */
   label?: string;
-  description?: string;
-  placeholder?: string;
-  value: string;
   
-  error?: boolean;
-  errorMessage?: string | null;
+  /** The description of the textarea. */
+  description?: string;
+
+  /** The placeholder for the textarea. */
+  placeholder?: string;
+
+  /** If you're overriding Rhf with useState, explicitly set the value. You can use the onChange to handle update events. */
+  value?: string;
+  // onChange?: (e: ChangeEvent<any>) => void; 
+  
+  /** Error message, if there's an error. */
+  error?: string;
+
+  /** Whether the textarea is disabled. */
   disabled?: boolean;
+
+  /** Whether the textarea is required. */
   required?: boolean;
   
-  onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
-  submitButtonText?: string;
-  submitButtonDisabled?: boolean;
 
-  // This object needs to be memoized when used to prevent extra rerenders.
+  // Optional Submit button props
+  /** The function that's ran when you press the submit button. */
+  onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
+  
+  /** The display text for the submit button. */
+  submitButtonText?: string;
+
+  /** Whether the submit button is explicitly disabled. The default disabled prop doesn't affect the button. */
+  submitButtonDisabled?: boolean;
+  submitButtonType?: 'button' | 'submit';
+
+  /** The attach file props object needs to be memoized when used to prevent extra rerenders. */
 	attachFile?: FileUploadProps;
 
-  // Custom interactive buttons for various functionality you'd like to implement alongside this input component
+  /** Custom interactive buttons for various functionality you'd like to implement alongside this input component */ 
   metadataTags?: MetadataTagProps[] | boolean;
 }
 
+/** Tag events for custom logic that you want to run in parallel with the textarea.  */
 export interface MetadataTagProps {
   tagLabel?: string;
   tagIcon?: IconTypes;
@@ -46,29 +74,53 @@ export interface MetadataTagProps {
 // The input functionality of the textarea
 const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
   const { type = 'default', name, value, placeholder, metadataTags, attachFile,
-    error = false, errorMessage, disabled, required, 
-    onSubmit, submitButtonText, submitButtonDisabled = false, 
+    error = false, disabled, required, 
+    onSubmit, submitButtonText, submitButtonDisabled = false, submitButtonType = 'button',
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
     ...props
   } = allProps;
-  const id = useId();
+
+  // Input bindings
+  const { register, getValues } = useFormContext() || {};
+  
+    // Input binding logic
+    const isRHFMode = !!register && value === undefined;
+    const rhfBindings = isRHFMode ? register(name) : null;
+    // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange });
+  
+    // Intercept changes cleanly
+    const handleOnChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      if (isRHFMode && rhfBindings) rhfBindings.onChange(e);
+      if (onChange) onChange(e);
+    };
+  
+    const handleOnBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
+      if (isRHFMode && rhfBindings) rhfBindings.onBlur(e);
+      if (onBlur) onBlur(e);
+    }
+
 
   return (
     <textarea 
-        name={name}
-        value={value}
+        id={name}
         placeholder={placeholder}
-        id={id}
-
-        onChange={(e) => onChange ? onChange(e) : null}
-        onBlur={(e) => onBlur ? onBlur(e) : null}
+        disabled={disabled} required={required}
+        
+        // Rhf or useState handling
+        {...(() => {
+          if (isRHFMode && rhfBindings) {
+            const { onChange: _, onBlur: __, ...rest } = rhfBindings;
+            return rest;
+          }
+          return { name, value }; // default behavior
+        })()}
+        onChange={handleOnChange}
+        onBlur={handleOnBlur}
+        
         onFocus={(e) => onFocus ? onFocus(e) : null}
         onClick={(e) => onClick ? onClick(e) : null}
         onMouseEnter={(e) => onMouseEnter ? onMouseEnter(e) : null}
         onMouseLeave={(e) => onMouseLeave ? onMouseLeave(e) : null}
-
-        required={required}
-        disabled={disabled}
 				
         className={`ta-base
           ${type == 'default' ? 'ta-d-base' : ''}
@@ -84,9 +136,9 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
 export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   const { 
     type = 'default', name, label, description, 
-    value, attachFile, metadataTags,
-    error = false, errorMessage, required = false, disabled = false, 
-    onSubmit, submitButtonText, submitButtonDisabled = false, 
+    value, attachFile, metadataTags = true,
+    error = false, required = false, disabled = false, 
+    onSubmit, submitButtonText, submitButtonDisabled = false, submitButtonType = 'button', 
   } = allProps;
 
 
@@ -115,9 +167,10 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         { onSubmit && 
           <SubsequentInputElements>
             <Button 
+              type={submitButtonType}
               displayText={submitButtonText || "Submit"} 
               onClick={e => onSubmit && onSubmit(e)} 
-                disabled={disabled || submitButtonDisabled}
+              disabled={submitButtonDisabled}
               additionalStyles="ta-submit-btn px-3" 
             />
           </SubsequentInputElements>
@@ -144,10 +197,11 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         { onSubmit && 
           <div className="margin-auto-div-fix">
             <Button 
-              displayText={submitButtonText ? submitButtonText : 'Create'} 
+              type={submitButtonType}
+              displayText={submitButtonText || 'Create'} 
               size="default" 
               onClick={e => onSubmit && onSubmit(e)} 
-              disabled={disabled || submitButtonDisabled}
+              disabled={submitButtonDisabled}
               additionalStyles="ta-submit-btn px-3" 
             />
           </div>
@@ -216,7 +270,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         
         <ErrAndDescElements 
           type={type} description={description} 
-          error={error} errorMessage={errorMessage} 
+          error={error} 
           disabled={disabled}
         />
       </div>
@@ -242,7 +296,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
       
       <ErrAndDescElements 
         type={type} description={description} 
-        error={error} errorMessage={errorMessage} 
+        error={error} 
         disabled={disabled}
       />
     </>);
@@ -290,10 +344,11 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
             <div className="margin-auto-div-fix">
               { onSubmit && (
                 <Button 
-                displayText="Post" 
+                type={submitButtonType}
+                displayText={submitButtonText || "Post"}
                 size="default" 
                 onClick={e => onSubmit && onSubmit(e)} 
-                disabled={disabled}
+                disabled={submitButtonDisabled}
                 additionalStyles="ta-submit-btn px-3 self-start" 
                 />
               )}
@@ -303,7 +358,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         
         <ErrAndDescElements 
           type={type} description={description} 
-          error={error} errorMessage={errorMessage} 
+          error={error} 
           disabled={disabled}
         />
       </Container>
@@ -313,13 +368,13 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
 
 // Universal error and description handling
-const ErrAndDescElements = memo(({ type, error, errorMessage, disabled, description }: any) => (
+const ErrAndDescElements = memo(({ type, error, disabled, description }: any) => (
   <ErrorAndDescription 
     show={description || (error && !disabled)} 
     styles={`${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}`}
-    cStyles={`text-sm ${(!disabled && error && errorMessage) ? 'error-text' : 'text-colors'}`}
+    cStyles={`text-sm ${(!disabled && error) ? 'error-text' : 'text-colors'}`}
   >
-    { (!disabled && error && errorMessage) ? errorMessage : description } &nbsp;
+    { (!disabled && error) ? error : description } &nbsp;
   </ErrorAndDescription>
 ), (prev, next) => (prev.error === next.error && prev.disabled === next.disabled));
 

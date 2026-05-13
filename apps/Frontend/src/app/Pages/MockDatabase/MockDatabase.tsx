@@ -1,9 +1,9 @@
-import { ChangeEvent, useContext, useMemo, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { ChangeEvent, Dispatch, SetStateAction, useContext, useMemo, useRef, useState } from 'react';
+import { FieldErrors, FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import { array, boolean, InferType, mixed, object, string } from 'yup';
 import { Navbar } from '../../Components/Navbar/Navbar';
-import { Button, Input, TooltipService } from '@Project/ReactComponents';
+import { Button, Input, Select, SelectItem, Slider, Textarea, TooltipService } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './MockDatabase.module.scss';
@@ -172,17 +172,30 @@ Context options
 
 
 
-// Password
+// validation consts
 const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 // FileUpload
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const VALID_FILE_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
 
-
+// Form validations
 const schema = object({
+		user: object({
+			email: string()
+				.trim()
+				.lowercase()
+				.email('Invalid email format')
+				.matches(emailRegex, 'Email must have a valid domain extension (e.g., .com)')
+				.required('Email is required'),
+			password: string()
+				.required('Password is required')
+				.matches(pwdRegex, 'Password must be 8+ characters with 1 letter and 1 number'),
+		}),
+
 	database: string()
-    .oneOf(['db1', 'db2', 'db3'], 'Please select a valid database')
+    .oneOf(['databaseA', 'databaseB', 'databaseC'], 'Please select a valid database')
     .required('You must select a database'),
 	tables: array()
     .of(string()
@@ -207,22 +220,7 @@ const schema = object({
   checkboxTest: array()
     .required('Skills selection is required'),
 
-	user: object({
-		email: string()
-			.trim()
-			.lowercase()
-			.email('Invalid email format')
-			.matches(
-				/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-				'Email must have a valid domain extension (e.g., .com)'
-			)
-			.required('Email is required'),
-		password: string()
-			.required('Password is required')
-			.matches(pwdRegex, 'Password must be 8+ characters with 1 letter and 1 number'),
-	}),
-	
-	profilePicture: mixed<File>()
+	databaseLogo: mixed<File>()
     .required('A file upload is required')
     .test('fileSize', 'File size must be less than 2MB', (value) => {
       return value ? value.size <= MAX_FILE_SIZE : false;
@@ -244,7 +242,10 @@ export type TestForm = InferType<typeof schema>;
 
 export const MockDatabase =() => {
 	const tooltipContext = useContext(TooltipService);
-	const tooltip = useMemo(() => ({ text: 'The email for this account.' }), []);
+	const emailTooltip = useMemo(() => ({ text: 'The email for this account.' }), []);
+	const passwordTooltip = useMemo(() => ({ text: 'The password for this account.' }), []);
+	const dbTooltip = useMemo(() => ({ text: 'The selected database.' }), []);
+	const tableTooltip = useMemo(() => ({ text: 'The tables to search.' }), []);
   const formMethods = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -259,17 +260,46 @@ export const MockDatabase =() => {
     },
   });
 
+	// Rhf hook
 	const { handleSubmit, formState: { errors } } = formMethods;
-
   const onSubmit = (data: TestForm) => {
-    console.log('Validated Form Data:', data);
+    console.log('\nValid Form Data:', data);
   };
+	const onInvalid = (errors: FieldErrors<TestForm>) => {
+    console.log('\ninvalid Form Data:', errors);
+		console.log(`rhf state: `, formMethods.getValues());
+  };
+
 
 	// custom state handling (non rhf)
 	const [value, setValue] = useState<string>('');
-	const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
+	const [textareaVal, setTextareaVal] = useState<string>('');
+	const [selectedDb, setSelectedDb] = useState<SelectItem>({ label: '', value: '' });
+
+	const updateStateVal = (e: ChangeEvent<HTMLInputElement>, state: Dispatch<SetStateAction<any>>) => {
 		const newValue = e?.target?.value;
-		setValue(newValue);
+		console.log(`${newValue}`, state);
+		state(newValue);
+	}
+
+	const [dbItems, setDbItems] = useState<Record<string, SelectItem>>(
+		Object.fromEntries(databaseValues.map(item => [item.value, item]))
+	);
+	const updateSelect = (updatedItem: SelectItem) => {
+		const selectedVal = updatedItem.value;
+
+		setDbItems(
+			Object.fromEntries(databaseValues.map(dbItem => {
+				let currentItem = dbItem;
+				if (currentItem.value == selectedVal) currentItem = updatedItem;
+				
+				return [currentItem.value, currentItem];
+			}))
+		);
+
+		console.log(`updated ${selectedVal}, isSelected: ${updatedItem.selected}, data: `, {updatedItem, items: dbItems.current});
+		// useState logic
+		// setSelectedDb(item);
 	}
 
 
@@ -279,30 +309,138 @@ export const MockDatabase =() => {
 			<Navbar />
 			<div className='dropdown-spacing py-10' />
 
-			<div className='p-4'>
-				<form onSubmit={handleSubmit(onSubmit)} className='spacing col gap-2 p-4 bg-div outline-css outline-default'>
-					<h4 className='span-12 pb-10 py-2'> 
+			<div className='row justify-center pt-20'>
+				<form onSubmit={handleSubmit(onSubmit)} className='spacing p-8 min-w-[75%] gap-2 bg-div outline-css outline-default'>
+					<h3 className='span-12 pb-10'> 
 						Mock Database 
+					</h3>
+					
+					
+					<h4 className='span-12 pb-4'> 
+						React Hook forms example
 					</h4>
 					
-					<div className='span-12 lg:span-6'>
-						<Input 
-							type="text" name="user.email"
-							label='Email'
-							description="What is your account's email?"
-							error={ errors?.user?.email?.message }
-							tooltipContext={tooltipContext}
-							tooltipContent={tooltip}
+					<Card type='default' noBackground additStyles='spacing gap-y-4 gap-x-8 lg:p-8'>
+						{/* Email */}
+						<div className='span-12 lg:span-6'>
+							<Input 
+								type="email" name="user.email"
+								label='Email' placeholder='email@example.com'
+								description="What is your account's email?"
+								error={ errors?.user?.email?.message }
+								tooltipContext={tooltipContext} tooltipContent={emailTooltip}
 
-							// useState override
-							// value={value}
-							// onChange={updateValue}
-						/>
-					</div>
+								// useState override
+								// value={value}
+								// onChange={(e) => updateStateVal(e, setValue)}
+							/>
+						</div>
 
-					<div className='span-12 text-right p-4'>
-						<Button displayText='Submit' type='submit' color='primary' />
-					</div>
+						{/* Password */}
+						<div className='span-12 lg:span-6'>
+							<Input 
+								type="password" name="user.password"
+								label='Password' placeholder='Enter your password'
+								description="The password of this account."
+								error={ errors?.user?.password?.message }
+								tooltipContext={tooltipContext} tooltipContent={passwordTooltip}
+							/>
+						</div>
+
+						
+						<h5 className='span-12 pt-10'> 
+							Database information
+						</h5>
+						
+						{/* Database (Select) */}
+						<div className='span-12 lg:span-8'>
+							<Select 
+								name="database"
+								label='Select a database'
+								description='The databases that are saved to this account.'
+								placeholder='Select a database...'
+
+								values={Object.values(dbItems || {})}
+								// onSelect={updateSelect}
+								// value={selectedDb} // useState override
+								error={ errors?.database?.message }
+								tooltipContext={tooltipContext} tooltipContent={dbTooltip}
+							/>
+						</div>
+
+						{/* Tables (MultiSelect) */}
+						<div className='span-12 lg:span-6'>
+							<Select 
+								name="tables"
+								label='Tables'
+								description="The tables that you'd like information about."
+								placeholder='Select some tables...'
+
+								multiSelect
+								values={tableValues}
+								// onSelect={updateSelect}
+								// value={selectedDb} // useState override
+								error={ errors?.database?.message }
+								tooltipContext={tooltipContext} tooltipContent={tableTooltip}
+							/>
+						</div>
+						
+						{/* <div className='span-12 -mt-10' /> */}
+
+						{/* retrieveServerData (Slider) */}
+						<div className='span-12 pt-4'>
+							<div className='inline-flex'>
+								<Slider 
+									name="retrieveServerData"
+									label='Retrieve Server Data'
+									description='Download custom data from the server?'
+								/>
+							</div>
+						</div>
+
+						{/* radioGroupTest */}
+						<div className='span-12 lg:span-6'>
+							
+						</div>
+
+						{/* radioTableTest */}
+						<div className='span-12 lg:span-6'>
+							
+						</div>
+
+						{/* checkboxTest */}
+						<div className='span-12 lg:span-6'>
+							
+						</div>
+						
+						{/* databaseLogo (File Upload) */}
+
+						{/* Textarea */}
+						<div className='span-12' />
+						<div className='span-12 pr-8'>
+							<Textarea 
+								type='default' name='textareaTest'
+								label='Textarea Label'
+								placeholder='Type something...'
+								// description='The textarea input for this form.'
+
+								// value={textareaVal}
+								// onChange={(e) => updateStateVal(e, setTextareaVal)}
+								error={ errors?.textareaTest?.message }
+
+								submitButtonText='Submit'
+								submitButtonType='submit'
+								onSubmit={handleSubmit(onSubmit, onInvalid)}
+							/>
+						</div>
+
+
+
+
+						{/* <div className='span-12 text-right pt-4'>
+							<Button displayText='Submit' type='submit' color='primary' size='md' />
+						</div> */}
+					</Card>
 				</form>
 			</div>
 		</FormProvider>
@@ -312,3 +450,16 @@ export const MockDatabase =() => {
 
 // Styled components
 const FormContainer = styled.form``;
+
+
+const databaseValues: SelectItem[] = [
+	{ label: 'Database A', value: 'databaseA' },
+	{ label: 'Database B', value: 'databaseB' },
+	{ label: 'Database C', value: 'databaseC' },
+];
+
+const tableValues: SelectItem[] = [
+	{ label: 'Table1', value: 'Table1' },
+	{ label: 'Table2', value: 'Table2' },
+	{ label: 'Table3', value: 'Table3' },
+];
