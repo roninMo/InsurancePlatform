@@ -1,4 +1,5 @@
-import { ChangeEvent, memo, MouseEvent, useCallback } from 'react';
+import { ChangeEvent, memo, MouseEvent, useCallback, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
@@ -22,7 +23,8 @@ export interface CheckboxProps {
   description?: string;
 
   items: Record<string, CheckboxItem>;
-  onSelect: (checked: CheckboxItem, event: ChangeEvent<HTMLElement>) => void;
+  onSelect: (event: ChangeEvent<HTMLInputElement>, checked: CheckboxItem) => void;
+  disableHookForms?: boolean;
 
   // These need to be wrapped in a useCallback for memoization to work
   onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
@@ -36,16 +38,22 @@ export interface CheckboxProps {
 
 export const Checkbox = ({
   variant = 'default', name, label, description,
-  items, onSelect, 
+  items, onSelect, disableHookForms = false,
   error = false, errorMessage, disabled = false, required = false,
   onMouseEnter, onMouseLeave
 }: CheckboxProps) => {
 
-  const onToggleCheckbox = useCallback((item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
-    onSelect(item, event);
-    // console.log(`${name} onToggleCheckboxItem: `, item);
+  const { watch } = useFormContext() || {};
+  const formValues = watch(name) || [];
+  const onToggleCheckbox = useCallback((event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
+    const updatedItem = { ...item, checked: !item.checked }; // rhf handles this internally
+    onSelect(event, updatedItem); // event logic
+    // console.log(`${name}(${item.value}) ${updatedItem.checked ? 'checked' : 'unchecked'}: `, updatedItem);
   }, [onSelect]);
 
+  const renderedItems = () => Object.values(items).map(item => 
+    !disableHookForms ? { ...item, checked: formValues.includes(item.value) } as CheckboxItem : item
+  );
 
   return (
     <Container>
@@ -55,7 +63,7 @@ export const Checkbox = ({
       </HeaderContainer>
 
       <ItemContainer className={`${variant != 'inline' ? 'colStart' : 'rowStart gap-4 flex-wrap'} mt-4`}>
-        {Object.values(items).map((item: CheckboxItem) =>  
+        {renderedItems().map((item: CheckboxItem) =>  
           <CheckBoxItemComponent
             variant={variant}
             name={name}
@@ -63,6 +71,7 @@ export const Checkbox = ({
 
             item={item}
             onSelect={onToggleCheckbox}
+            usingHookForms={!disableHookForms}
             disabled={disabled}
             required={required}
             error={error && !disabled}
@@ -86,7 +95,8 @@ interface CheckBoxItemComponentProps {
   name: string;
 
   item: CheckboxItem;
-  onSelect: (checked: CheckboxItem, event: ChangeEvent<HTMLElement>) => void;
+  onSelect: (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => void;
+  usingHookForms: boolean;
   disabled?: boolean;
   required?: boolean;
   error?: boolean;
@@ -96,9 +106,21 @@ interface CheckBoxItemComponentProps {
 } 
 
 const CheckBoxItemComponent = memo(({
-  variant, name, item, onSelect,
+  variant, name, item, onSelect, usingHookForms, 
   error, required, disabled, onMouseEnter, onMouseLeave 
 }: CheckBoxItemComponentProps) => {
+  const { register, getValues } = useFormContext() || {};
+  const rhfBindings = usingHookForms ? register(name) : null;
+
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (usingHookForms && rhfBindings) {
+      rhfBindings.onChange(e); 
+    }
+
+    onSelect(e, item);
+  }
+
+
   return (
     <label 
       onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
@@ -109,14 +131,20 @@ const CheckBoxItemComponent = memo(({
     `}>
       <ListLayout className={variant != 'list' ? 'rowStart' : 'rowBetween w-full'}>
         <StyledCheckbox 
-          type='checkbox' name={name} 
-          id={`${name}-${item.value}`}
+          type='checkbox' id={`${name}-${item.value}`}
+          disabled={disabled || item.disabled} required={required}
 
+          // Rhf or useState handling
+          {...(() => {
+            if (usingHookForms && rhfBindings) {
+              const { onChange: _, ...rest } = rhfBindings;
+              return rest;
+            }
+            return { name }; // default behavior
+          })()}
           value={item.value}
           checked={item.checked}
-          onChange={(e) => onSelect(item, e)}
-          required={required}
-          disabled={disabled || item.disabled}
+          onChange={handleOnChange}
 
           className={`checkbox 
             ${variant == 'list' ? 'order-1' : 'mr-1'} 

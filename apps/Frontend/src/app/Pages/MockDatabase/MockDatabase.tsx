@@ -3,7 +3,7 @@ import { FieldErrors, FormProvider, useForm, useFormContext } from 'react-hook-f
 import { yupResolver } from "@hookform/resolvers/yup"
 import { array, boolean, InferType, mixed, object, string } from 'yup';
 import { Navbar } from '../../Components/Navbar/Navbar';
-import { Button, Input, Select, SelectItem, Slider, Textarea, TooltipService } from '@Project/ReactComponents';
+import { Button, Checkbox, CheckboxItem, Input, makeRecord, mapRecord, Select, SelectItem, Slider, Textarea, TooltipService } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './MockDatabase.module.scss';
@@ -275,6 +275,8 @@ export const MockDatabase =() => {
 	const [value, setValue] = useState<string>('');
 	const [textareaVal, setTextareaVal] = useState<string>('');
 	const [selectedDb, setSelectedDb] = useState<SelectItem>({ label: '', value: '' });
+	const [dbItems, setDbItems] = useState<Record<string, SelectItem>>(makeRecord(databaseValues, item => [item.value, item]));
+	const [chbxItems, setChbxItems] = useState<Record<string, CheckboxItem>>(makeRecord(chbxVals, item => [item.value, item]))
 
 	const updateStateVal = (e: ChangeEvent<HTMLInputElement>, state: Dispatch<SetStateAction<any>>) => {
 		const newValue = e?.target?.value;
@@ -282,24 +284,16 @@ export const MockDatabase =() => {
 		state(newValue);
 	}
 
-	const [dbItems, setDbItems] = useState<Record<string, SelectItem>>(
-		Object.fromEntries(databaseValues.map(item => [item.value, item]))
-	);
 	const updateSelect = (updatedItem: SelectItem) => {
 		const selectedVal = updatedItem.value;
-
-		setDbItems(
-			Object.fromEntries(databaseValues.map(dbItem => {
-				let currentItem = dbItem;
-				if (currentItem.value == selectedVal) currentItem = updatedItem;
-				
-				return [currentItem.value, currentItem];
-			}))
-		);
-
+		setDbItems( mapRecord(dbItems, (k, val) => val.value == selectedVal ? updatedItem : val) );
 		console.log(`updated ${selectedVal}, isSelected: ${updatedItem.selected}, data: `, {updatedItem, items: dbItems.current});
-		// useState logic
-		// setSelectedDb(item);
+		// setSelectedDb(item); // useState logic
+	}
+
+	const updateChbx = (e: ChangeEvent<HTMLInputElement>, checked: CheckboxItem) => {
+		// console.log(`${checked.label} ${checked.checked ? 'checked' : 'unchecked'}, data: `, { checked, chbxItems });
+		// setChbxItems(mapRecord(chbxItems, (k, v) => v.value == checked.value ? checked : v)); // useState update
 	}
 
 
@@ -369,7 +363,7 @@ export const MockDatabase =() => {
 						</div>
 
 						{/* Tables (MultiSelect) */}
-						<div className='span-12 lg:span-6'>
+						<div className='span-12 lg:span-6 col gap-2'>
 							<Select 
 								name="tables"
 								label='Tables'
@@ -383,6 +377,20 @@ export const MockDatabase =() => {
 								error={ errors?.database?.message }
 								tooltipContext={tooltipContext} tooltipContent={tableTooltip}
 							/>
+
+							
+							{/* checkboxTest */}
+							<div className='pt-3'>
+								<Checkbox 
+									name="checkboxTest" variant="list"
+									label="Checkbox Test"
+									description="The checkbox test's description."
+
+									items={chbxItems}
+									onSelect={updateChbx}
+									// disableHookForms
+								/>
+							</div>
 						</div>
 						
 						{/* <div className='span-12 -mt-10' /> */}
@@ -407,13 +415,11 @@ export const MockDatabase =() => {
 						<div className='span-12 lg:span-6'>
 							
 						</div>
-
-						{/* checkboxTest */}
+						
+						{/* databaseLogo (File Upload) */}
 						<div className='span-12 lg:span-6'>
 							
 						</div>
-						
-						{/* databaseLogo (File Upload) */}
 
 						{/* Textarea */}
 						<div className='span-12' />
@@ -462,4 +468,11 @@ const tableValues: SelectItem[] = [
 	{ label: 'Table1', value: 'Table1' },
 	{ label: 'Table2', value: 'Table2' },
 	{ label: 'Table3', value: 'Table3' },
+];
+
+const chbxVals: CheckboxItem[] = [
+	{ value: 'Value1', label: 'Value 1', description: 'The description of Value 1.', checked: false },
+	{ value: 'Value2', label: 'Value 2', description: 'The description of Value 2.', checked: false },
+	{ value: 'Value3', label: 'Value 3', description: 'The description of Value 3.', checked: false },
+	{ value: 'Value4', label: 'Value 4', description: 'The description of Value 4.', checked: false },
 ];

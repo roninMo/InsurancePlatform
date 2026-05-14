@@ -322,12 +322,9 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
       <InputContainer className="input-container group">
         <input 
           // { ...props }
-          type={getType()}
-          id={`${name}-${type}`}
-          placeholder={placeholder}
-          autoComplete={autocomplete}
-          required={required} 
-          disabled={disabled}
+          type={getType()} id={`${name}-${type}`}
+          placeholder={placeholder} autoComplete={autocomplete}
+          disabled={disabled} required={required} 
           ref={handleRef}
           
           // Rhf or useState handling

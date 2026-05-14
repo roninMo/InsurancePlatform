@@ -25,14 +25,13 @@ export interface SliderProps {
 export const Slider = ({
   variant = 'default', name, label, description, value, onChange, 
   error, required, disabled, additionalStyles,
-  ...props
 }: SliderProps) => {
   const { register, getValues, control } = useFormContext() || {};
   
   // Input binding logic
   const isRHFMode = !!register && value === undefined;
   const rhfBindings = isRHFMode ? register(name) : null;
-  console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange, register });
+  // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange, register });
 
   // Intercept changes cleanly
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,8 +68,8 @@ export const Slider = ({
       
       <SliderContainer className={`slider-base ${additionalStyles}`}>
         <input 
-          {...props}
           type='checkbox' id={`sldr-${name}`}
+          disabled={disabled} required={required}
           
           // Rhf or useState handling
           {...(() => {
@@ -84,9 +83,6 @@ export const Slider = ({
           // combined input bindings
           onChange={handleOnChange} // custom rhfBindings.onChange
           checked={isChecked()}
-
-          disabled={disabled}
-          required={required}
           className='slider-input'
         />
 
