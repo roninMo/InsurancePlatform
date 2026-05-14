@@ -6,26 +6,51 @@ import styled from '@emotion/styled';
 import styles from './Dropbox.module.scss';
 
 
+/** The file input type's props. These should be memoized. */
 export interface FileUploadProps {
+	/** the form name used for this input, and in Rhf's register function. */
   name: string;
+	
+	/** The file types that's accepted by this input. ex: accept='.pdf, .doc, .docx, .txt' */
   accept?: string;
+	
+	/** Event functioj for handling the inlut's changeEvent. Can be used alongside Rhf's change event. */
   handleFiles: (files: FileList | null) => void;
+		
+	/** Whether to accept multiple files */
   multiple?: boolean;
 }
-
-export interface DropboxProps extends FileUploadProps {
+	
+	/** The Dropbox component's props */
+export interface DropboxProps extends FileUploadProps {	
+	/** The Dropbox's label. */
   label?: string;
+		
+	/** The Dropbox's description. */
   description?: string;
+		
+	/** Additional styles for the Dropbox.	*/
   additionalStyles?: string;
+		
+	/** Optional custom icon for the file upload drop zone. */
   customIcon?: IconTypes;
+		
+	/** The drop zone icon's styles. */
   iconStyles?: string;
-
-  value: FileList | null;
+	
+	/** Only used when using custom state in favor of Rhf. adding this disables Rhf. */
+  value?: FileList | null;
+		
+	/** The error message, if there is one. */
   error?: boolean;
-  errorMessage?: string;
+		
+	/** Whether the input is disabled. */
   disabled?: boolean;
+		
+	/** Whether the input is required.	*/
   required?: boolean;
 }
+
 
 export const Dropbox = ({ 
   name, label, description, handleFiles, multiple, accept, 

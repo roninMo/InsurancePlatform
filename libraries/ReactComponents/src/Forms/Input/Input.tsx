@@ -43,12 +43,24 @@ export type InputProps = ConditionalVariantProps & {
   /** You can use the onChange without it affecting rhf. Whether you define value determines if you're overriding the hook forms */
   // onChange: ChangeEvent;
 
+	// Validation	
+	/** The error message, if there is one. */
   error?: string;
+		
+	/** Whether this input is disabled. */
   disabled?: boolean;
+		
+	/** Whether this input is required. */
   required?: boolean;
 
+	// misc	
+	/** The context used to enable the tooltip @see TooltipProvider */
   tooltipContext?: TooltipContextActions;
+		
+	/** The content you'd like to display for the tooltip. Don't forget memoization to prevent rerenders. */
   tooltipContent?: TooltipContentProps;
+	
+	/** the specific autocompletetype you'd like to use. */
   autocomplete?: TextInputAutoCompleteTypes;
 
   /* Variant Specific - ConditionalVariantProps */

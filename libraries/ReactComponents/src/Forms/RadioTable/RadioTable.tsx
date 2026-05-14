@@ -6,24 +6,47 @@ import styled from '@emotion/styled';
 import styles from './RadioTable.module.scss';
 
 
+/** This changes the behavior of the labeland description only. */
 export type RadioTableVariant = 'inline' | 'block';
-export interface RadioTableProps {
+export interface RadioTableProps {	
+	/** Whether you want an inline or block style layout for each table item. */
   variant?: RadioTableVariant;
+		
+	/** The form group name of this input. Used in Rhf's register function. */
   name: string;
+		
+	/** The RadioTable's label. */
   label?: string;
+		
+	/** The RadioTable's description. */
   description?: string;
 
+	// Input Handling	
+	/** The radio items for this input. Each item has both value and display properties. */
   radioItems: RadioItem[];
+		
+	/** Only used if you want custom state handling in favor of using react hook forms.  */
   currentValue: RadioItem;
+		
+	/** Event function that can be used with Rhf. If you're handling custom state, handle it here. */
   onSelect: (item: RadioItem, currentValue: RadioItem, e?: ChangeEvent<HTMLInputElement>) => void;
-  
-  // These need to be wrapped in a useCallback for memoization to work
+	
+	
+  // Additional events
+	/** Mouse event. Needs to be wrapped in a useCallback to prevent rerenders */
   onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+	
+	/** Mouse event. Needs to be wrapped in a useCallback to prevent rerenders */
   onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 
+	// form / validation
+	/** The error message, if there us one. */
   error?: boolean;
-  errorMessage?: string;
+	
+	/** Whether this input is disabled. */
   disabled?: boolean;
+	
+	/** Whether this input is required. */
   required?: boolean;
 }
 

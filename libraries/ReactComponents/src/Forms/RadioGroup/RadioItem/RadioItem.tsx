@@ -6,15 +6,28 @@ import styled from '@emotion/styled';
 import styles from './RadioItem.module.scss';
 
 
-export interface RadioItemProps {
+export interface RadioItemProps {	
+	/** Used for handling proper styling from @see RadioGroup */
   variant: RadioVariant;
+		
+	/** The form group name for this input/Rhf register's init. */
   inputName: string;
 
-  value: RadioItem;
+	// Input handling
+	/** The value of the RadioItem. not used when using Rhf. */
+  value?: RadioItem;
+		
+	/** Whrther this value is the currently selected value. */
   checked: boolean;
+		
+	/** OnChange event. used in combination with Rhf, or for handling state your own way. */
   onSelect: (item: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;
 
+	// form validation	
+	/** The error message, if there is one. */
   error?: boolean;
+		
+	/** Whether the input is disabled. */
   disabled?: boolean;
 }
 

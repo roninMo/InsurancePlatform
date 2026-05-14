@@ -15,24 +15,48 @@ export interface CheckboxItem {
 }
 
 
+/** Inline is like the native style, default is easier to read, and list is a column like theme for each checkbox item. */
 export type CheckboxVariant = 'default' | 'list' | 'inline';
+
+/** The props associated with the Checkbox Component. */
 export interface CheckboxProps {
+	/** The checkbix variant. */
   variant?: CheckboxVariant;
+	
+	/** The form group name of the checkbox. used in Rhf's register function. */
   name: string;
+	
+	/** The label of the checkbox. */
   label?: string;
+	
+	/** The description of the checbox. */
   description?: string;
 
+	// Input data and events
+	/** The checkbox's list items. Each item contains the value, label, description, and whether it's checked. */
   items: Record<string, CheckboxItem>;
+	
+	/** optional event that can be used in combination with Rhf. if you're not using Rhf, use this to handle state. */
   onSelect: (event: ChangeEvent<HTMLInputElement>, checked: CheckboxItem) => void;
+	
+	/** Whether you want to handle the state instead of using Rhf. */
   disableHookForms?: boolean;
 
-  // These need to be wrapped in a useCallback for memoization to work
+  // Additional events
+	/** Mouse event. Needs to be wrapped in a useCallback to prevent rerenders */
   onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
+	
+	/** Mouse event. Needs to be wrapped in a UseCallback to prevent rerenders.  */
   onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 
+	// Validation logic
+	/** The error message, if there is one. */
   error?: boolean;
-  errorMessage?: string;
+	
+	/** Whether the checkbox is disabled. you can disable individual inputs through ChekcboxIte 's values. */
   disabled?: boolean;
+	
+	/** Whtether the checkbox is a required form input. */
   required?: boolean;
 }
 
