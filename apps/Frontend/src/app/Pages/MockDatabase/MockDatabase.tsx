@@ -397,7 +397,7 @@ export const MockDatabase = () => {
 								placeholder='Select a database...'
 
 								values={Object.values(dbItems || {})}
-								onSelect={updateDbItems}
+								onSelect={ updateDbItems }
 								error={ errors?.database?.message }
 								tooltipContext={tooltipContext} tooltipContent={dbTooltip}
 							/>
@@ -433,7 +433,6 @@ export const MockDatabase = () => {
 								/>
 							</div>
 						</div>
-						
 						{/* <div className='span-12 -mt-10' /> */}
 
 						{/* retrieveServerData (Slider) */}
@@ -455,6 +454,14 @@ export const MockDatabase = () => {
 								/>
 							</div>
 						</div>
+
+						{/* Rendered form values */}
+						<div className='spacing pt-4'>
+							<RenderedItems name="tables" styles='span-12 lg:span-6' />
+							<RenderedItems name="database" styles='span-12 lg:span-6' />
+							
+						</div>
+
 
 						{/* radioGroupTest */}
 						<div className='span-12 lg:span-6'>
@@ -556,3 +563,35 @@ const radioVals: RadioItem[] = [
 	{ value: 'Radio3', label: 'Radio 3', description: 'The description of Radio 3', disabled: false },
 	{ value: 'Radio4', label: 'Radio 4', description: 'The description of Radio 4', disabled: false },
 ];
+
+
+const RenderedItems = ({ name, styles }: { name: string, styles?: string }) => {
+	const { watch } = useFormContext() || {};
+	const formValues = watch(name);
+	const getValues = () => Array.isArray(formValues) ? [...formValues].sort() : [formValues];
+	const getComputedVal = (val: any) => {
+		if (val === true) return 'true';
+		if (val === false) return 'false';
+		if (val === null) return 'null';
+		if (val === undefined) return 'undefined';
+		if (val === '') return 'empty string';
+		return val;
+	}
+
+	return (
+		<div className={`rendered-form-vals-c ${styles}`}>
+			<span className='rendered-form-vals-header'>
+				&nbsp;{ name }'s <span className='text-base'>values</span>
+			</span>
+			<div className='my-1 mb-2.5 border-b border-default' />
+
+			<div className='rendered-form-vals-items-c'>
+				{ getValues().map(value => (
+					<div className='rendered-form-vals-item' key={`${name}-disp-${getComputedVal(value)}`}> 
+						{ getComputedVal(value) }
+					</div>
+				))}
+			</div>
+		</div>
+	)
+}

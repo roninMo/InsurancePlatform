@@ -38,10 +38,10 @@
 
   // JsDoc specific styling
   "workbench.colorCustomizations": {
-    "editorHoverWidget.background": "#1e222a",     // Distinct background for the hover window
-    "editorHoverWidget.border": "#3e4451",         // Crisp outline border
+    "editorHoverWidget.background": "#1e222a",
+    "editorHoverWidget.border": "#3e4451",
     "editorHoverWidget.statusBarBackground": "#21252b",
-    "textBlockCodeBlock.background": "#282c34"      // Darker contrast tint behind your ```ts``` examples
+    "textBlockCodeBlock.background": "#282c34"
   },
 
   // Editor specific stuff for the terminal

@@ -1,5 +1,5 @@
 import { ChangeEvent, FocusEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { useController } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { SelectItemComponent, SelectItem } from './SelectItem/SelectItem';
 import { mapRecord, TooltipContentProps, TooltipContextActions } from "../../Common";
@@ -77,12 +77,34 @@ export const Select = ({
   closeDropdownOnLeave, keepDropdownOpenOnSelect, preventOpenOnTabFocus, 
 }: SelectProps & UniversalEventHandlers) => {
   const { show, hide } = tooltipContext || {};  
+  const selectOrder = useRef<Record<number, string>>({ 0: '' });
 
   // Input binding logic
   const isRhfMode = !disableHookForms;
-  const { field, fieldState } = useController({name}) || {};
+  const { field } = useController({name}) || {};
+  const { getValues } = useFormContext() || {};
 
-  // Values are stored as a string by default, or an array of strings for multiSelects
+  /** 
+   * Retrieves the selected values with proper typing based on whether it's a single or multi select input.  
+   * 
+   * ---
+   * This function uses getValues instead of field.value for state that's in sync. If you're using custom state
+   * instead of Rhf, it retrieves it's selected values from the values array.  
+   * 
+   * ### Example
+   * ```ts
+   * 
+   * // Default Select  
+   * const currentlySelected: string | undefined = getSelectedValues(); 
+   * 
+   * // MultiSelect variant
+   * const selectedValues: string[] | undefined = getSelectedValues<true>();
+   * 
+   * ```
+   * ---
+   * @template {boolean} [MultiSelect=false] - Whether to return an array of values.
+   * @returns the form value or values (string | string[]) based on whether it's a multiSelect
+  */
   const getSelectedVals = <MultiSelect extends boolean = false>(): 
     MultiSelect extends true 
       ? string[] | undefined 
@@ -92,8 +114,10 @@ export const Select = ({
     let formValues: any = undefined;
 
     // React hook forms / Custom State override 
-    if (isRhfMode) formValues = field.value;
-    else {
+    if (isRhfMode) {
+      // formValues = field.value; // Stale reference
+      formValues = Array.isArray(getValues(name)) ? [...getValues(name)] : getValues(name);
+    } else {
       const selected = values.filter(i => i.selected).map(i => i.value);
       formValues = mSl ? selected : selected?.[0];
     }
@@ -101,97 +125,129 @@ export const Select = ({
     return formValues as MultiSelect extends true ? string[] | undefined : string | undefined;
   }
 
+  /** Used for rerendering SelectItem via @see getValues() */
   const isSelected = (item: SelectItem): boolean => {
     if (multiSelect) return !!getSelectedVals<true>()?.includes(item.value);
     return getSelectedVals() == item.value;
   }
 
-  // we need last selected item, and since the updates are batched alongside the watch, we're adding a state variable
-  const [currentlySelected, setCurrentlySelected] = useState<SelectItem>();
-  const selectOrder = useRef<Record<number, string>>({ 0: '' });
-  console.log(`\n\nisRhfMode: ${isRhfMode}, data: `, { currentlySelected, selectedVals: getSelectedVals(), values }, field);
 
-  // Intercept changes cleanly
+  // Render and state
+  // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n data: `, 
+  //   isRhfMode ? multiSelect ? Array.isArray(getSelectedVals<true>()) 
+  //     ? getSelectedVals<true>()?.sort() : getSelectedVals<true>()
+  //     : getSelectedVals() 
+  //   : values.filter(item => item.selected),
+  //   `\n selected from : `, { vals: values.map(i => i.value) }
+  // );
+
+  /** Handles changeEvents, open/close dropdown logic, and state synchronization for display purposes. */
   const handleOnChange = (selected: SelectItem) => {
-    const updatedVal = { ...selected, selected: !isSelected(selected) };
-    const wasSelected = updatedVal.selected;
+    // By default, this component should handle it's own rerenders
+    // And onSelect / onChange shouldn't inherently cause hierarchical rerenders
+    if (!multiSelect) for (let index in values) values[index].selected = false;
+    selected.selected = !selected.selected;  // native-like !nonRender ref update
 
+    const selVal = { ...selected }; // new reference
+    const wasSelected = selVal.selected;
+    console.log(`handleOnChange(${selected.value}) ${wasSelected ? 'selected' : 'unselected'}`, selVal,
+      `\nselectedValues on start: `, getSelectedVals(),
+      `\nfieldValues on start: `, field.value
+    );
+    
     // react hook forms event
     if (isRhfMode && field) {
-      // Add/Remove to the currently selected items
+      // MultiSelect - Add/Remove to the currently selected items
       if (multiSelect) {
-        let newVals = getSelectedVals<true>() || [];
-        const includesClickedVal = newVals.includes(updatedVal.value);
-        console.log(`\nMultiSelect(): update field value `, { includesClickedVal, wasSelected, currentVals: newVals });
-
-        if (wasSelected && !includesClickedVal) newVals.push(updatedVal.value);
-        else if (includesClickedVal && !wasSelected) {
-          newVals = newVals.filter(val => val != updatedVal.value);
-          console.log(`removing ${updatedVal.value}: `, newVals.filter(val => val != updatedVal.value));
+        let currVals = getSelectedVals<true>() || [];
+        let newVals: string | string[] | undefined; 
+        
+        // Add or remove the value from the array
+        if (wasSelected) {
+          newVals = [...currVals, selVal.value];
+        } else {
+          newVals = currVals.filter(val => val != selVal.value);
+          // console.log(`removing ${selVal.value}: `, newVals);
         }
-
-        console.log(`${selected.value} ${updatedVal.selected ? 'selected' : 'unselected'}, new field values: `, newVals);
+        
         field.onChange(newVals);
+        // console.log(
+        //   `${selVal.value} ${selVal.selected ? 'selected' : 'unselected'}, newValues: `, newVals,
+        //   `\nfieldValues/getSelectedVals(): `, getSelectedVals<true>(),
+        //   `\nCurrent SelectOrder: `, selectOrder.current
+        // );
       }
-
-      // Single Select logic
+      
+      // Single Select logic (overwrite)
       else {
-        console.log(`\nHandleOnChange(): `, wasSelected, updatedVal);
-        field.onChange(wasSelected ? updatedVal.value : undefined);
+        field.onChange(wasSelected ? selVal.value : undefined);
+        console.log(`Single Select:: ${selVal.value} ${wasSelected ? 'selected' : 'unselected'}, data: `, selVal);
       }
     }
     
     // additional event hooks and custom state override
-    const targetData: any = { target: { value: updatedVal.value }};
-    if (onSelect) onSelect(updatedVal); // actual logic
-    if (onChange) onChange(targetData); // optional union prop events // TODO: Finish plugging UniversalEventHandlers into the rest of the components
+    const targetData: any = { target: { value: selVal.value }};
+    // if (onSelect) onSelect(selVal); // actual logic & optional custom state handling
+    // if (onChange) onChange(targetData); // optional union prop events // TODO: Finish plugging UniversalEventHandlers into the rest of the components
     
+    // open / close logic
     handleDropdownToggle();
-    // console.log(`${updatedVal.label} selected: ${updatedVal.selected}, data: `, {updatedVal, values: getItems() });
+    
+    // persistent state for displayed selected items
+    updateSelectionOrder(selVal);
+  }
 
+  /** React hook forms and additional onBlur event binding */
+  const handleOnBlur = (e: FocusEvent<HTMLButtonElement>) => {
+    if (isRhfMode && field) field.onBlur();
+    if (onBlur) onBlur(e);
+  }
 
+  /** Keeps track of the order of selected items for proper display with multiSelects */
+  const updateSelectionOrder = (selVal: SelectItem) => {
+    const wasSelected = selVal.selected;
+    
     /* 
       * setCurrentlySelected() - keep track of the last selected item: increment fifo
       ?   - add a new item to the stack
       ?   - removes the item, and decrements every number after it
     */
     if (multiSelect) {
-      // Increment / Decrement logic
       let newOrder: Record<number, string> = { ...selectOrder.current };
-      const nextInList = (getSelectedVals<true>()?.length || 0);
-      let decrementStartingPoint = 0;
+      const nextInList = Object.values(selectOrder.current).filter(v => !!v).length; 
+      let decrementStartingPoint = -1;
+      // console.log(`-------------------------`,
+      //   `\nselectOrder logic - nextInList(${nextInList}), currentOrder: `, selectOrder.current
+      // );
 
-      if (wasSelected) newOrder[nextInList] = updatedVal.value;
-      else {
-        // Decrement - find the starting point 
+      // increment add to last of array
+      if (wasSelected) {
+        newOrder[nextInList] = selVal.value;
+        // console.log(`adding ${selVal.value} to index ${nextInList}, updatedList: `, newOrder);
+      } else { // Decrement - find the starting point, decrement all values from then 
         for (let i = 0; i < values.length; i++) {
           const value = newOrder[i];
-          if (decrementStartingPoint == 0 && value == updatedVal.value) {
+          if (decrementStartingPoint == -1 && value == selVal.value) {
             decrementStartingPoint = i;
-            // console.log('decrement starting point')
+            newOrder[i] = '';
+            // console.log(`decrement starting index: ${i}`);
           }
           
           // decrement everything else 
-          if (i >= decrementStartingPoint) {
+          if (i >= decrementStartingPoint && decrementStartingPoint != -1) {
             newOrder[i] = newOrder?.[i + 1] || '';
+            // console.log(`updating ${i} to ${newOrder?.[i + 1] || ''}`);
           }
         }
       }
-
+      
       // update the hash table
       selectOrder.current = newOrder;
+      console.log(`Selection order finished: `,
+        `\nprevious: `, selectOrder.current,
+        `\ncurrent: `, newOrder,
+      );
     }
-
-    // This is the most recently selected value - used this to check if the value was updated / removed
-    setCurrentlySelected(updatedVal);
-    // if (multiSelect) setCurrentlySelected(values.filter(item => item.value == selectOrder.current[0])[0])
-    // else setCurrentlySelected(wasSelected ? updatedVal : undefined);
-    console.log(`new selection order`, selectOrder.current);
-  }
-
-  const handleOnBlur = (e: FocusEvent<HTMLButtonElement>) => {
-    if (isRhfMode && field) field.onBlur();
-    if (onBlur) onBlur(e);
   }
 
   // Get functions
@@ -231,82 +287,114 @@ export const Select = ({
 
   // Default: Checks if clicked outside the dropdown via mousedown event on whether to close the dropdown
   useEffect(() => {
+    
     const handleOutsideClick = (e: globalThis.MouseEvent) => {
-      const element: any = e.target as HTMLElement;
+      const element = e.target as HTMLElement;
       if (!element) {
-        if (dropdownOpen) setDropdownOpen(false);
+        setDropdownOpen(false);
         return;
       }
 
-      const dropdown = element.closest(`#${dropdownId}`);
-      const select = element.closest(`#${selectId}`);
-      const isInside = !!dropdown || !!select;
-      if (!isInside) {
+      // Direct ref checks are dramatically faster than DOM string scanning (.closest)
+      const isInsideSelect = selectElementRef.current?.contains(element);
+      const isInsideDropdown = dropdownElementRef.current?.contains(element);
+      if (!isInsideSelect && !isInsideDropdown) {
         setDropdownOpen(false);
+      if (isRhfMode && field) field.onBlur();
       }
-    }
+    };
     
-    // When the dropdown opens
     if (dropdownOpen) {
       document.addEventListener('mousedown', handleOutsideClick);
     }
-
-    // Removed when dropdownOpen is false or the component unmounts
     return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [dropdownOpen]);
+  }, [dropdownOpen, isRhfMode, field]);
 
 
   // for closeDropdownOnLeave: Closes the dropdown when hovers outside of it 
   useEffect(() => {
-    const select = selectElementRef.current;
-    const dropdown = dropdownElementRef.current;
-    
     // If the dropdown is closed or this option isn't enabled don't add the event
     if (!dropdownOpen || !closeDropdownOnLeave) {
       return;
     }
 
-    // error prevention
-    if (!select || !dropdown) {
-      return;
-    }
+    // Calculate the bounding box once @see HeightTransWrapper()'s animation is finished
+    let isAnimationComplete = false;
+    let cachedMinLeft = 0;
+    let cachedMaxRight = 0;
+    let cachedMinTop = 0;
+    let cachedMaxBottom = 0;
+
+    // Lock the layout dimensions after your animation duration finishes (e.g., 300ms)
+    const animationTimer = setTimeout(() => {
+      const select = selectElementRef.current;
+      const dropdown = dropdownElementRef.current;
+      
+      // check if the mouse is inbetween the select and the dropdown (margin edge case)
+      if (select && dropdown) {
+        const selectRect = select.getBoundingClientRect();
+        const dropdownRect = dropdown.getBoundingClientRect();
+        
+        cachedMinLeft = Math.min(selectRect.left, dropdownRect.left);
+        cachedMaxRight = Math.max(selectRect.right, dropdownRect.right);
+        cachedMinTop = Math.min(selectRect.top, dropdownRect.top);
+        cachedMaxBottom = Math.max(selectRect.bottom, dropdownRect.bottom);
+        isAnimationComplete = true;
+      }
+    }, 300);
+
 
     // Handle closing the dropdown when leaving the select
     const handleMouseOver = (e: globalThis.MouseEvent) => {
-      // The element is missing or the dropdown could be closed, just let the native behavior handle potential edge cases
-      if (!select || !dropdown) {
-        document.removeEventListener('mouseover', handleMouseOver);
+      const select = selectElementRef.current;
+      const dropdown = dropdownElementRef.current;
+      if (!select || !dropdown) { // error prevention
         return;
       }
-
+      
       // Check if we're hovering the element
       const element = e.target as HTMLElement;
-      const isWithinSelect = element.closest(`#${selectId}`);
-      const isWithinDropdown = element.closest(`#${dropdownId}`);
-      if (isWithinSelect || isWithinDropdown) return;
-      // else console.log(`${name}: mouse hovering select(${isWithinSelect}, dropdown(${isWithinDropdown}))`);
-
-      // check if the mouse is inbetween the select and the dropdown (margin edge case)
-      const selectRect = select.getBoundingClientRect();
-      const dropdownRect = dropdown.getBoundingClientRect();
+      if (!element) return; // validity
+      if (select.contains(element) || dropdown.contains(element)) return; // pointer verification
+      // else console.log(`${name}: mouse hovering select(${select.contains(element)}, dropdown(${dropdown.contains(element)}))`);
+      
+      // Calculate the animated bounding box or used the cached values
+      let minLeft, maxRight, minTop, maxBottom;
+      if (isAnimationComplete) { // TODO: should we event try to close while it's opening?
+        minLeft = cachedMinLeft;
+        maxRight = cachedMaxRight;
+        minTop = cachedMinTop;
+        maxBottom = cachedMaxBottom;
+      } else {
+        // check if the mouse is inbetween the select and the dropdown (margin edge case)
+        const selectRect = select.getBoundingClientRect();
+        const dropdownRect = dropdown.getBoundingClientRect();
+        
+        minLeft = Math.min(selectRect.left, dropdownRect.left);
+        maxRight = Math.max(selectRect.right, dropdownRect.right);
+        minTop = Math.min(selectRect.top, dropdownRect.top);
+        maxBottom = Math.max(selectRect.bottom, dropdownRect.bottom);
+      }
 
       // Create a virtual "bounding box" that spans from the top of the select 
       // to the bottom of the dropdown and covers their width.
-      const compBounds = (
-        e.clientX >= Math.min(selectRect.left, dropdownRect.left) &&
-        e.clientX <= Math.max(selectRect.right, dropdownRect.right) &&
-        e.clientY >= Math.min(selectRect.top, dropdownRect.top) &&
-        e.clientY <= Math.max(selectRect.bottom, dropdownRect.bottom)
-      );
+      const isInsideVirtualBox = 
+        e.clientX >= minLeft && 
+        e.clientX <= maxRight && 
+        e.clientY >= minTop && 
+        e.clientY <= maxBottom;
 
-      // console.log(`${name}: mouse isInsideBounds(${compBounds})`);
-      if (!compBounds) {
+      // console.log(`${name}: mouse isInsideBounds(${isInsideVirtualBox})`);
+      if (!isInsideVirtualBox) {
         setDropdownOpen(false);
       }
     }
 
     document.addEventListener('mouseover', handleMouseOver);
-    return () => document.removeEventListener('mouseover', handleMouseOver);
+    return () => {
+      document.removeEventListener('mouseover', handleMouseOver);
+      clearTimeout(animationTimer);
+    }
   }, [dropdownOpen, closeDropdownOnLeave]);
 
 
@@ -318,21 +406,23 @@ export const Select = ({
     // tabbed / keyboard nav to focus the element
     const checkIfTabbed = (event: globalThis.FocusEvent) => {
       const target = event.target as HTMLElement;
-      if (target.matches(':focus-visible')) setDropdownOpen(true);
+      if (!target) return;
+
+      // Wait for the browser to finish applying pseudo classes
+      requestAnimationFrame(() => target.matches(':focus-visible') && setDropdownOpen(true))
     }
 
     selectElement.addEventListener('focus', checkIfTabbed);
     return () => selectElement.removeEventListener('focus', checkIfTabbed);
-
-    // TODO: add arrow keys after tabbing to allow them to focus and then select an item from this!
-  }, []);
+    // TODO: add arrow keys after tabbing to allow them to focus and then select an item from this.
+  }, [preventOpenOnTabFocus]);
   // #endregion
 
   // Return a list of the selected items, or the currently selected
   const getSelectDisplay = () => {
     if (multiSelect) {
-      const vals = getSelectedVals<true>();
-      return vals && vals.length !== 0 ? vals.join(', ') : placeholder;
+      const selectionOrder = Object.values(selectOrder.current).filter(i => !!i);
+      return selectionOrder && selectionOrder.length !== 0 ? selectionOrder.join(', ') : placeholder;
     }
 
     // find the currently selected
@@ -417,117 +507,3 @@ const DropdownAnim = styled(Ht)``;
 const TooltipIcons = styled.div``;
 const ErrorAndDescription = styled(Ht)``;
 
-
-/*
-  * Suggested fixes for performance reasons
-
-{
-    // ==========================================
-    // Open / Close Dropdown Logic (Optimized)
-    // ==========================================
-
-    const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-    const dropdownId = `${name}-slct-dropdown`;
-    const selectId = `${name}-slct`;
-    const selectElementRef = useRef<HTMLButtonElement>(null);
-    const dropdownElementRef = useRef<HTMLDivElement>(null);
-
-    // Open the dropdown if they have clicked the select element
-    const onClickSelect = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-      if (onClick) onClick(e);
-      if (!dropdownOpen) setDropdownOpen(true);
-    };
-
-    const handleDropdownToggle = () => {
-      const keepDropdownOpen = keepDropdownOpenOnSelect;
-      
-      // Default behavior
-      if (keepDropdownOpen === undefined) {
-        if (!multiSelect && dropdownOpen) setDropdownOpen(false);
-      } else {
-        // If the user wants the dropdown to stay open on select, do so
-        if (keepDropdownOpen === true) return;
-        if (dropdownOpen) setDropdownOpen(false);
-      }
-    };
-
-    // Fix 1 & 3: Optimized click outside listener
-    useEffect(() => {
-      if (!dropdownOpen) return;
-
-      const handleOutsideClick = (e: globalThis.MouseEvent) => {
-        const target = e.target as HTMLElement;
-        if (!target) {
-          setDropdownOpen(false);
-          return;
-        }
-
-        // Direct ref checks are dramatically faster than DOM string scanning (.closest)
-        const isInsideSelect = selectElementRef.current?.contains(target);
-        const isInsideDropdown = dropdownElementRef.current?.contains(target);
-
-        if (!isInsideSelect && !isInsideDropdown) {
-          setDropdownOpen(false);
-        }
-      };
-
-      document.addEventListener('mousedown', handleOutsideClick);
-      return () => document.removeEventListener('mousedown', handleOutsideClick);
-    }, [dropdownOpen]); // Only runs when open state flips
-
-    // Fix 2: Optimized hover outside listener
-    useEffect(() => {
-      if (!dropdownOpen || !closeDropdownOnLeave) return;
-
-      const handleMouseOver = (e: globalThis.MouseEvent) => {
-        const select = selectElementRef.current;
-        const dropdown = dropdownElementRef.current;
-        if (!select || !dropdown) return;
-
-        const element = e.target as HTMLElement;
-        
-        // Direct node validation
-        const isWithinSelect = select.contains(element);
-        const isWithinDropdown = dropdown.contains(element);
-        if (isWithinSelect || isWithinDropdown) return;
-
-        // Virtual bounding box calculations
-        const selectRect = select.getBoundingClientRect();
-        const dropdownRect = dropdown.getBoundingClientRect();
-
-        const compBounds = (
-          e.clientX >= Math.min(selectRect.left, dropdownRect.left) &&
-          e.clientX <= Math.max(selectRect.right, dropdownRect.right) &&
-          e.clientY >= Math.min(selectRect.top, dropdownRect.top) &&
-          e.clientY <= Math.max(selectRect.bottom, dropdownRect.bottom)
-        );
-
-        if (!compBounds) {
-          setDropdownOpen(false);
-        }
-      };
-
-      document.addEventListener('mouseover', handleMouseOver);
-      return () => document.removeEventListener('mouseover', handleMouseOver);
-    }, [dropdownOpen, closeDropdownOnLeave]);
-
-    // Fix 4: Solved infinite event registration bug
-    useEffect(() => {
-      const selectElement = selectElementRef.current;
-      if (preventOpenOnTabFocus || !selectElement) return;
-
-      const checkIfTabbed = (event: globalThis.FocusEvent) => {
-        const target = event.target as HTMLElement;
-        if (target.matches(':focus-visible')) {
-          setDropdownOpen(true);
-        }
-      };
-
-      selectElement.addEventListener('focus', checkIfTabbed);
-      
-      // ✅ Cleanup now safely locks execution down to mount cycles
-      return () => selectElement.removeEventListener('focus', checkIfTabbed);
-    }, [preventOpenOnTabFocus]); // Added dependency array to stop rendering loops
-}
-
-*/

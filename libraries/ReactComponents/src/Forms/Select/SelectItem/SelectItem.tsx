@@ -41,7 +41,7 @@ export interface SelectItemProps {
 
 export const SelectItemComponent = memo(({ item, name, isSelected, handleItemSelected, multiSelect, dropdownOpen }: SelectItemProps) => {
   const { value, label, iconProps, selected } = item;
-
+  // console.log(`SelectItem ${item.value} rerendered, isSelected(${isSelected}), dropdownOpen(${dropdownOpen})`);
 
   return (
     <Container 
@@ -75,7 +75,6 @@ export const SelectItemComponent = memo(({ item, name, isSelected, handleItemSel
 // custom rerender functionality
 }, (prevProps, nextProps) => {
   let shouldRerender = false;
-
   
   // If they have keepDropdownOpenOnSelect set to true for a non multiSelect
   const usingKeepDropdownOpen = !nextProps.multiSelect && prevProps.dropdownOpen && nextProps.dropdownOpen;
@@ -91,11 +90,28 @@ export const SelectItemComponent = memo(({ item, name, isSelected, handleItemSel
   if (shouldRerender) return false;
 
   // Default Logic - just check if the memoized selectItem object is an updated object to handle shallow equality checks. 
-  return ( prevProps.item.selected === nextProps.item.selected // TODO: handle how we check against this with non rhf
-    && prevProps.isSelected === nextProps.isSelected
-    && prevProps.multiSelect === nextProps.multiSelect 
-    && prevProps.dropdownOpen === nextProps.dropdownOpen 
-  );
+  // If its selection status changed (Crucial for RHF tracking), rerender
+  if (prevProps.isSelected !== nextProps.isSelected) {
+    return false; 
+  }
+
+  // If the internal item selection flag changed, rerender
+  if (prevProps.item.selected !== nextProps.item.selected) {
+    return false;
+  }
+
+  // If the dropdown opens or closes, rerender (to manage visibility/animations)
+  if (prevProps.dropdownOpen !== nextProps.dropdownOpen) {
+    return false;
+  }
+
+  // If configurations change, rerender
+  if (prevProps.multiSelect !== nextProps.multiSelect || prevProps.name !== nextProps.name) {
+    return false;
+  }
+
+  // If nothing changed, safely skip the rerender
+  return true; 
 });
 
 

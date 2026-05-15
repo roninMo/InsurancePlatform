@@ -2330,6 +2330,43 @@
 
 
 
+  //------------------------------------------//
+  // Mock Database Page Themes                //
+  //------------------------------------------//
+  // #region Mock Database Page Themes
+  .rendered-form-vals-c {
+    @apply 
+      col gap-0 p-2 pt-1.5 pb-3 w-full
+      transition-all animate-fade-in
+      bg-default outline-css outline-default
+      hover:outline-focus;
+  }
+
+  .rendered-form-vals-header {
+    @apply text-base font-semibold italic primary-text opacity-90;
+  }
+
+  // Item and it's container
+  .rendered-form-vals-items-c {
+    @apply rowStart gap-2.5;
+  }
+  .rendered-form-vals-item {
+    @apply 
+      px-2 py-1.5 text-xs font-semibold italic shadow-lg 
+      transition-all cursor-pointer
+      selected-box primary-text outline-css
+      
+      animate-fade-in
+      hover:theme-f hover:outline-focus 
+      hover:scale-105; 
+      // active:scale-100;
+  }
+  
+  // #endregion
+
+
+
+
 }
 
 
