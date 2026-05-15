@@ -30,10 +30,17 @@ export const Documentation = () => {
     - There's a bug with the navbar if you hover over and out and back to it before the duration ends
       - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
 
+    - Select component fixes
+      - fix the value being calculated with normal / multi selects
+      - fix the selectOrder to properly capture and remove selected / unselected items from the list
+      - fid the rerender logic for multi select items
+      - find a good way to internally handle whether an item is checked, and how to use that w/rhf and without
+
     - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
       - add documentation to UpdateRecord, and move it to the library utils
       - Add a getEntries to return either an array or the default entries list without calling Object.fromEntries
       - check if there's any other quick functions you can add for Record/map edit and retrieval scenarios
+    - Go back through and remove all onChange && onChange() refs, they're not needed unless adding additional props to a function
     - Fix up the CustomContent page to use the proper props
     - Decide whether you want to find a place to add the tooltip on the textarea
     - Eventually add aria specific stuff to custom components?

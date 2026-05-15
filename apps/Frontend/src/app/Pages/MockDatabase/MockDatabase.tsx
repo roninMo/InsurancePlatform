@@ -1,13 +1,13 @@
-import { ChangeEvent, Dispatch, SetStateAction, useContext, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { FieldErrors, FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import { array, boolean, InferType, mixed, object, string } from 'yup';
 import { Navbar } from '../../Components/Navbar/Navbar';
-import { Button, Checkbox, CheckboxItem, Input, makeRecord, mapRecord, Select, SelectItem, Slider, Textarea, TooltipService } from '@Project/ReactComponents';
+import { Card } from '../../Components/Content/Card/Card';
+import { Button, Checkbox, CheckboxItem, Input, makeRecord, mapRecord, RadioGroup, RadioItem, RadioTable, Select, SelectItem, Slider, Textarea, TooltipService } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './MockDatabase.module.scss';
-import { Card } from '../../Components/Content/Card/Card';
 
 
 /*
@@ -217,8 +217,7 @@ const schema = object({
     .oneOf(['item1', 'item2', 'item3'], 'Please select a valid radio table item')
     .required('You must select a radio table item'),
 
-  checkboxTest: array()
-    .required('Skills selection is required'),
+  checkboxTest: array().min(1, 'Skills selection is required.'),
 
 	databaseLogo: mixed<File>()
     .required('A file upload is required')
@@ -240,7 +239,7 @@ export type TestForm = InferType<typeof schema>;
 
 
 
-export const MockDatabase =() => {
+export const MockDatabase = () => {
 	const tooltipContext = useContext(TooltipService);
 	const emailTooltip = useMemo(() => ({ text: 'The email for this account.' }), []);
 	const passwordTooltip = useMemo(() => ({ text: 'The password for this account.' }), []);
@@ -271,30 +270,70 @@ export const MockDatabase =() => {
   };
 
 
-	// custom state handling (non rhf)
-	const [value, setValue] = useState<string>('');
+	//--------------------------//
+	// Rhf Toggle								//
+	//--------------------------//
+	const usingRhf = true; 
+
+
+	const [email, setEmail] = useState<string>('');
+	const [pass, setPass] = useState<string>('');
 	const [textareaVal, setTextareaVal] = useState<string>('');
-	const [selectedDb, setSelectedDb] = useState<SelectItem>({ label: '', value: '' });
-	const [dbItems, setDbItems] = useState<Record<string, SelectItem>>(makeRecord(databaseValues, item => [item.value, item]));
-	const [chbxItems, setChbxItems] = useState<Record<string, CheckboxItem>>(makeRecord(chbxVals, item => [item.value, item]))
+	const updateEmail = useCallback((e: ChangeEvent<any>) => { 
+		console.log(`${e?.target?.value}`); 
+		if (!usingRhf) setEmail(e?.target?.value); 
+	}, []);
 
-	const updateStateVal = (e: ChangeEvent<HTMLInputElement>, state: Dispatch<SetStateAction<any>>) => {
-		const newValue = e?.target?.value;
-		console.log(`${newValue}`, state);
-		state(newValue);
-	}
+	const updatePass = useCallback((e: ChangeEvent<any>) => { 
+		console.log(`${e?.target?.value}`); 
+		if (!usingRhf) setPass(e?.target?.value); 
+	}, []);
 
-	const updateSelect = (updatedItem: SelectItem) => {
-		const selectedVal = updatedItem.value;
-		setDbItems( mapRecord(dbItems, (k, val) => val.value == selectedVal ? updatedItem : val) );
-		console.log(`updated ${selectedVal}, isSelected: ${updatedItem.selected}, data: `, {updatedItem, items: dbItems.current});
-		// setSelectedDb(item); // useState logic
-	}
+	const updateTextarea = useCallback((e: ChangeEvent<any>) => { 
+		console.log(`${e?.target?.value}`); 
+		if (!usingRhf) setTextareaVal(e?.target?.value); 
+	}, []);
 
-	const updateChbx = (e: ChangeEvent<HTMLInputElement>, checked: CheckboxItem) => {
-		// console.log(`${checked.label} ${checked.checked ? 'checked' : 'unchecked'}, data: `, { checked, chbxItems });
-		// setChbxItems(mapRecord(chbxItems, (k, v) => v.value == checked.value ? checked : v)); // useState update
-	}
+
+	const [dbItems, setDbItems] = useState<SelectItem[]>([ ...databaseValues ]);
+	const updateDbItems = useCallback((updatedItem: SelectItem) => {
+		console.log(`updated ${updatedItem.value}, isSelected: ${updatedItem.selected}, data: `, {updatedItem, items: dbItems});
+		if (!usingRhf) {
+			setDbItems(pv => pv.map(item => updatedItem.value == item.value ? updatedItem : item));
+		}
+	}, []);
+	
+	const [tableItems, setTableItems] = useState<SelectItem[]>([ ...tableValues ]);
+	const updateTableItems = useCallback((updatedItem: SelectItem) => {
+		// console.log(`updated ${updatedItem.value}, isSelected: ${updatedItem.selected}, data: `, {updatedItem, items: tableItems });
+		// if (!usingRhf) setTableItems(pv => pv.map(item => updatedItem.value == item.value ? updatedItem : item));
+	}, []);
+
+
+	const [chbxItems, setChbxItems] = useState<Record<string, CheckboxItem>>(makeRecord(chbxVals, item => [item.value, item]));
+	const updateChbx = useCallback((e: ChangeEvent<HTMLInputElement>, checked: CheckboxItem) => {
+		console.log(`${checked.label} ${checked.checked ? 'checked' : 'unchecked'}, data: `, { checked, chbxItems });
+		if (!usingRhf) setChbxItems(mapRecord(chbxItems, (k, v) => v.value == checked.value ? checked : v)); // useState update
+	}, []);
+
+	const [retServerData, setRetServerData] = useState<'true' | 'false'>('false');
+	const updateRetServerData = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+		const checked = e?.target?.value as 'true' | 'false';
+		console.log(`retrieveServerData: ${checked}`);
+		setRetServerData(checked);
+	}, []);
+
+	const [radioItem, setRadioItem] = useState<RadioItem>({ label: '', value: '' });
+	const [radioTableItem, setRadioTableItem] = useState<RadioItem>({ label: '', value: '' });
+	const updateRadioGroup = useCallback((e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
+		console.log(`${selected.label} selected: `, selected);
+		if (!usingRhf) setRadioItem(selected);
+	}, []);
+
+	const updateRadioTable = useCallback((e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
+		console.log(`${selected.label} selected: `, selected);
+		if (!usingRhf) setRadioTableItem(selected);
+	}, []);
 
 
   return (
@@ -304,7 +343,7 @@ export const MockDatabase =() => {
 			<div className='dropdown-spacing py-10' />
 
 			<div className='row justify-center pt-20'>
-				<form onSubmit={handleSubmit(onSubmit)} className='spacing p-8 min-w-[75%] gap-2 bg-div outline-css outline-default'>
+				<form onSubmit={handleSubmit(onSubmit)} className='spacing p-8 w-3/4 gap-2 bg-div outline-css outline-default'>
 					<h3 className='span-12 pb-10'> 
 						Mock Database 
 					</h3>
@@ -315,18 +354,18 @@ export const MockDatabase =() => {
 					</h4>
 					
 					<Card type='default' noBackground additStyles='spacing gap-y-4 gap-x-8 lg:p-8'>
+
 						{/* Email */}
 						<div className='span-12 lg:span-6'>
 							<Input 
 								type="email" name="user.email"
 								label='Email' placeholder='email@example.com'
 								description="What is your account's email?"
+								
+								value={!usingRhf ? email : undefined} // useState override
+								onChange={updateEmail}
 								error={ errors?.user?.email?.message }
 								tooltipContext={tooltipContext} tooltipContent={emailTooltip}
-
-								// useState override
-								// value={value}
-								// onChange={(e) => updateStateVal(e, setValue)}
 							/>
 						</div>
 
@@ -336,6 +375,9 @@ export const MockDatabase =() => {
 								type="password" name="user.password"
 								label='Password' placeholder='Enter your password'
 								description="The password of this account."
+
+								value={!usingRhf ? pass : undefined} // useState override
+								onChange={updatePass}
 								error={ errors?.user?.password?.message }
 								tooltipContext={tooltipContext} tooltipContent={passwordTooltip}
 							/>
@@ -355,8 +397,7 @@ export const MockDatabase =() => {
 								placeholder='Select a database...'
 
 								values={Object.values(dbItems || {})}
-								// onSelect={updateSelect}
-								// value={selectedDb} // useState override
+								onSelect={updateDbItems}
 								error={ errors?.database?.message }
 								tooltipContext={tooltipContext} tooltipContent={dbTooltip}
 							/>
@@ -371,24 +412,24 @@ export const MockDatabase =() => {
 								placeholder='Select some tables...'
 
 								multiSelect
-								values={tableValues}
-								// onSelect={updateSelect}
-								// value={selectedDb} // useState override
-								error={ errors?.database?.message }
+								values={tableItems}
+								onSelect={updateTableItems}
+								error={ errors?.tables?.message }
 								tooltipContext={tooltipContext} tooltipContent={tableTooltip}
 							/>
 
 							
 							{/* checkboxTest */}
-							<div className='pt-3'>
+							<div className='pt-3 inline-flex'>
 								<Checkbox 
-									name="checkboxTest" variant="list"
+									name="checkboxTest" variant="inline"
 									label="Checkbox Test"
-									description="The checkbox test's description."
+									description="The Checkbox test's description."
 
 									items={chbxItems}
 									onSelect={updateChbx}
-									// disableHookForms
+									disableHookForms={!usingRhf}
+									error={ errors?.checkboxTest?.message }
 								/>
 							</div>
 						</div>
@@ -396,19 +437,51 @@ export const MockDatabase =() => {
 						{/* <div className='span-12 -mt-10' /> */}
 
 						{/* retrieveServerData (Slider) */}
-						<div className='span-12 pt-4'>
+						<div className='span-12 lg:span-6 pt-[18px]'>
 							<div className='inline-flex'>
 								<Slider 
 									name="retrieveServerData"
 									label='Retrieve Server Data'
 									description='Download custom data from the server?'
+									value={retServerData}
+									onChange={updateRetServerData}
+								/>
+							</div>
+							<div className='pt-12 inline-flex'>
+								<Slider 
+									name="unaffiliatedSliderTest"
+									label='Use cached data'
+									description="Use save data that's been cached locally?"
 								/>
 							</div>
 						</div>
 
 						{/* radioGroupTest */}
 						<div className='span-12 lg:span-6'>
-							
+							<RadioGroup 
+								name="radioGroupTest" variant='list'
+								label='RadioGroup Test'
+								description="The RadioGroup test's description."
+								radioItems={radioVals}
+								
+								currentValue={radioItem}
+								onSelect={updateRadioGroup}
+								disableHookForms={!usingRhf}
+								error={ errors?.radioGroupTest?.message }
+							/>
+						</div>
+						
+						<div className='span-12 lg:span-6'>
+							{/* <RadioTable 
+								name="RadioTableTest"
+								label='RadioTable Test'
+								description="The RadioTable test's description."
+								radioItems={radioVals}
+								
+								currentValue={radioItem}
+								onSelect={(e, s) => updateRadio(e, s, 'rg')}
+								error={ errors?.radioTableTest?.message }
+							/> */}
 						</div>
 
 						{/* radioTableTest */}
@@ -430,12 +503,11 @@ export const MockDatabase =() => {
 								placeholder='Type something...'
 								// description='The textarea input for this form.'
 
-								// value={textareaVal}
-								// onChange={(e) => updateStateVal(e, setTextareaVal)}
+								value={!usingRhf ? textareaVal : undefined}
+								onChange={updateTextarea}
 								error={ errors?.textareaTest?.message }
 
-								submitButtonText='Submit'
-								submitButtonType='submit'
+								submitButtonText='Submit' submitButtonType='submit'
 								onSubmit={handleSubmit(onSubmit, onInvalid)}
 							/>
 						</div>
@@ -459,6 +531,7 @@ const FormContainer = styled.form``;
 
 
 const databaseValues: SelectItem[] = [
+	{ label: 'None', value: '' },
 	{ label: 'Database A', value: 'databaseA' },
 	{ label: 'Database B', value: 'databaseB' },
 	{ label: 'Database C', value: 'databaseC' },
@@ -471,8 +544,15 @@ const tableValues: SelectItem[] = [
 ];
 
 const chbxVals: CheckboxItem[] = [
-	{ value: 'Value1', label: 'Value 1', description: 'The description of Value 1.', checked: false },
-	{ value: 'Value2', label: 'Value 2', description: 'The description of Value 2.', checked: false },
-	{ value: 'Value3', label: 'Value 3', description: 'The description of Value 3.', checked: false },
-	{ value: 'Value4', label: 'Value 4', description: 'The description of Value 4.', checked: false },
+	{ value: 'Value1', label: 'Value 1', description: '', checked: false },
+	{ value: 'Value2', label: 'Value 2', description: '', checked: false },
+	{ value: 'Value3', label: 'Value 3', description: '', checked: false },
+	{ value: 'Value4', label: 'Value 4', description: '', checked: false },
+];
+
+const radioVals: RadioItem[] = [
+	{ value: 'Radio1', label: 'Radio 1', description: 'The description of Radio 1', disabled: false },
+	{ value: 'Radio2', label: 'Radio 2', description: 'The description of Radio 2', disabled: false },
+	{ value: 'Radio3', label: 'Radio 3', description: 'The description of Radio 3', disabled: false },
+	{ value: 'Radio4', label: 'Radio 4', description: 'The description of Radio 4', disabled: false },
 ];

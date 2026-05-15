@@ -1,46 +1,66 @@
-import { ChangeEvent, memo } from 'react';
+import { ChangeEvent, FocusEvent, memo } from 'react';
 import { RadioItem, RadioVariant } from '../RadioGroup';
 import { UniversalEventHandlers } from '../../../Common/Utilities/Utils';
 
 import styled from '@emotion/styled';
 import styles from './RadioItem.module.scss';
+import { useFormContext } from 'react-hook-form';
 
 
 export interface RadioItemProps {	
 	/** Used for handling proper styling from @see RadioGroup */
   variant: RadioVariant;
-		
+
 	/** The form group name for this input/Rhf register's init. */
   inputName: string;
 
 	// Input handling
 	/** The value of the RadioItem. not used when using Rhf. */
-  value?: RadioItem;
-		
-	/** Whrther this value is the currently selected value. */
-  checked: boolean;
-		
-	/** OnChange event. used in combination with Rhf, or for handling state your own way. */
-  onSelect: (item: RadioItem, e: ChangeEvent<HTMLInputElement>) => void;
+  value: RadioItem;
 
-	// form validation	
-	/** The error message, if there is one. */
-  error?: boolean;
-		
+	/** Whether this value is the currently selected value. */
+  selected: boolean;
+
+	/** OnChange event. used in combination with Rhf, or for handling state your own way. */
+  onSelect?: (e: ChangeEvent<HTMLInputElement>, item: RadioItem) => void;
+
+  /** Whether we're using react hook forms to handle input state. */
+  isRhfMode?: boolean;
+
+	// form state	
+	/** Whether the input is required. */
+  required?: boolean;
+
 	/** Whether the input is disabled. */
   disabled?: boolean;
 }
 
 export const RadioGroupItem = memo(({ 
-  checked, onSelect, value, inputName, variant, error, disabled,
+  inputName, variant, 
+  value, selected, onSelect, isRhfMode, required, disabled,
   onFocus, onChange, onBlur, onClick, onMouseEnter, onMouseLeave
 }: RadioItemProps & UniversalEventHandlers) => {
+  // Input bindings
+  const { register, getValues } = useFormContext() || {};
+  const rhfBindings = isRhfMode ? register(inputName) : null;
+  // console.log(`isRhfMode: ${isRhfMode}, data: `, { value, rhfBindings, onChange, register });
 
-  // Event handling
-  const selectedRadioItem = (item: RadioItem, e: ChangeEvent<HTMLInputElement>) => {
-    if (onChange) onChange(e);
-    onSelect(item, e);
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (isRhfMode && rhfBindings) {
+      console.log(`calling hook forms change event: ${e?.target?.value} `, e);
+      rhfBindings.onChange(e);
+    }
+      
+    if (onChange) onChange(e); // additional optional event @see UniversalEventHandlers
+    if (onSelect) onSelect(e, value); // default logic
   }
+
+  const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
+    if (isRhfMode && rhfBindings) rhfBindings.onBlur(e);
+    if (onBlur) onBlur(e);
+  }
+
+  // console.log(`${value.label} rerendered: `, value);
 
   return (
     <label 
@@ -53,20 +73,27 @@ export const RadioGroupItem = memo(({
         ${variant == 'list' ? 'radio-item-c-l' : ''}
       `} 
     >
-      <Radio 
-        type="radio" 
-        id={`${inputName}-${value.value}`}
-        name={inputName}
-        className={`radio-button`} 
+      <input 
+        type="radio" id={`${inputName}-${value.value}`}
+        value={value.value} 
+        disabled={disabled} required={required}
         
-        value={value.value}
-        checked={checked}
-        disabled={disabled}
-        
-        onChange={(e) => selectedRadioItem(value, e)}
-        onBlur={e => onBlur && onBlur(e)}
+        // Rhf or useState handling
+        {...(() => {
+          if (isRhfMode && rhfBindings) {
+            const { onChange: _, onBlur: __, ...rest } = rhfBindings;
+            return rest;
+          }
+
+          return { checked: selected }; // default logic
+        }) ()}
+        onChange={handleOnChange}
+        onBlur={handleOnBlur}
+
+        // Optional events
         onFocus={e => onFocus && onFocus(e)}
         onClick={e => onClick && onClick(e)}
+        className={`radio-button`} 
       />
 
       <LabelAndDescription className="radio-text">

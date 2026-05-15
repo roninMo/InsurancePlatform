@@ -23,12 +23,12 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
     },
   });
 
-  const onCheckedItem = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
+  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
     // Record mapping using the internal value as a key
     setCheckboxItems((prevValue) => {
       const newValue = { 
         ...prevValue, 
-        [item.value]: {...item, checked: !item.checked} 
+        [item.value]: { ...item } 
       };
       
       console.log('checked values: ', newValue);
@@ -49,8 +49,7 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
 
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
       />
@@ -80,12 +79,14 @@ export const Example_ListCheckbox = ({ error, disabled }: {
     },
   });
 
-  const onCheckedItem = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
+  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
+    console.log('checked items: ', item);
+
     // Record mapping using the internal value as a key
     setCheckboxItems((prevValue) => {
       const newValue = { 
         ...prevValue, 
-        [item.value]: {...item, checked: !item.checked} 
+        [item.value]: { ...item } 
       };
       
       console.log('checked values: ', newValue);
@@ -106,8 +107,7 @@ export const Example_ListCheckbox = ({ error, disabled }: {
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
 
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
       />
@@ -137,12 +137,12 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
     },
   });
 
-  const onCheckedItem = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
+  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
     // Record mapping using the internal value as a key
     setCheckboxItems((prevValue) => {
       const newValue = { 
         ...prevValue, 
-        [item.value]: {...item, checked: !item.checked} 
+        [item.value]: { ...item } 
       };
       
       console.log('checked values: ', newValue);
@@ -163,8 +163,7 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
 
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
       />

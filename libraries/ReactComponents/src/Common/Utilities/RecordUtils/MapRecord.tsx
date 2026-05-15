@@ -20,7 +20,7 @@
  * @param transformer   The function used to edit the data.
  * @returns             The transformed record with proper typings.
  */
-export const mapRecord = <Key extends string, Value, Result>(
+export const mapRecord = <Key extends string | number, Value, Result>(
   record: Record<Key, Value>,
   transformer: (key: Key, value: Value) => Result
 ): Record<Key, Result> => {

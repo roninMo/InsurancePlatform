@@ -41,7 +41,7 @@ export interface RadioTableProps {
 
 	// form / validation
 	/** The error message, if there us one. */
-  error?: boolean;
+  error?: string;
 	
 	/** Whether this input is disabled. */
   disabled?: boolean;
@@ -54,7 +54,7 @@ export interface RadioTableProps {
 export const RadioTable = ({
   variant = 'block', name, label, description,
   radioItems, currentValue, onSelect,  onMouseEnter, onMouseLeave,
-  error, errorMessage, disabled, required,
+  error, disabled, required,
 }: RadioTableProps) => {
   const currentValRef = useRef(currentValue); // Prevent rerenders on memoized child
   currentValRef.current = currentValue; 
@@ -67,6 +67,8 @@ export const RadioTable = ({
   // Get functions
   const isSelected = (item: RadioItem): boolean => currentValue.value == item.value;
   const getError = (): boolean => !!error && !disabled;
+
+  console.log('\nradioTable rerendered');
 
 
   return (
@@ -96,7 +98,7 @@ export const RadioTable = ({
 
       {/* Error Text */}
       <ErrorText show={getError()} styles='px-1 pt-3' cStyles='error-text'>
-        { errorMessage ? errorMessage : '' } &nbsp;
+        { error ? error : '' } &nbsp;
       </ErrorText>
     </Container>
   );

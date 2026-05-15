@@ -13,7 +13,7 @@ export interface SliderProps {
   label?: string;
   description?: string;
 
-  value?: boolean;
+  value?: 'true' | 'false';
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 
   error?: string;
@@ -35,11 +35,15 @@ export const Slider = ({
 
   // Intercept changes cleanly
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e?.target?.value == 'true' ? 'false' : 'true';
+    if (e?.target?.value) e.target.value = newValue;
+
+    // Event functions
     if (isRHFMode && rhfBindings) rhfBindings.onChange(e);
     if (onChange) onChange(e);
   };
 
-  const isChecked = (): boolean => isRHFMode ? !!watchedValue : !!value;
+  const isChecked = (): boolean => isRHFMode ? !!watchedValue : value == 'true';
   const watchedValue = useWatch({
     name,
     control: control,
@@ -77,7 +81,7 @@ export const Slider = ({
               const { onChange: _, ...rest } = rhfBindings;
               return rest;
             }
-            return { name, value: `${value}` }; // default behavior
+            return { name, value: value }; // default behavior
           })()}
 
           // combined input bindings

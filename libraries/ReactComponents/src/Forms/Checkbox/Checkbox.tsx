@@ -51,7 +51,7 @@ export interface CheckboxProps {
 
 	// Validation logic
 	/** The error message, if there is one. */
-  error?: boolean;
+  error?: string;
 	
 	/** Whether the checkbox is disabled. you can disable individual inputs through ChekcboxIte 's values. */
   disabled?: boolean;
@@ -63,7 +63,7 @@ export interface CheckboxProps {
 export const Checkbox = ({
   variant = 'default', name, label, description,
   items, onSelect, disableHookForms = false,
-  error = false, errorMessage, disabled = false, required = false,
+  error, disabled = false, required = false,
   onMouseEnter, onMouseLeave
 }: CheckboxProps) => {
 
@@ -80,13 +80,13 @@ export const Checkbox = ({
   );
 
   return (
-    <Container>
-      <HeaderContainer className='colStart px-1'>
+    <Container className={variant == 'list' ? 'checkbox-cont-l' : ''}>
+      <HeaderContainer className='checkbox-header colStart px-1'>
         { label && <Label className='checkbox-label'>{ label }</Label> }
         { description && <Description className='checkbox-desc'>{ description }</Description> }
       </HeaderContainer>
 
-      <ItemContainer className={`${variant != 'inline' ? 'colStart' : 'rowStart gap-4 flex-wrap'} mt-4`}>
+      <ItemContainer className={`${variant != 'inline' ? 'colStart' : 'rowStart gap-4 flex-wrap'}`}>
         {renderedItems().map((item: CheckboxItem) =>  
           <CheckBoxItemComponent
             variant={variant}
@@ -98,7 +98,7 @@ export const Checkbox = ({
             usingHookForms={!disableHookForms}
             disabled={disabled}
             required={required}
-            error={error && !disabled}
+            error={!!error && !disabled}
 
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -106,8 +106,8 @@ export const Checkbox = ({
         )}
       </ItemContainer>
 
-      <ErrorText show={error && !disabled} styles='pl-1' cStyles={`error-text ${variant == 'list' ? 'pt-3' : ''}`}>
-        { errorMessage ? errorMessage : '' } &nbsp;
+      <ErrorText show={!!error && !disabled} styles='pl-1' cStyles={`error-text ${variant == 'list' ? 'pt-3' : 'pt-2'}`}>
+        { error ? error : '' } &nbsp;
       </ErrorText>
     </Container>
   );
@@ -150,8 +150,8 @@ const CheckBoxItemComponent = memo(({
       onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
       onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
       className={`group
-        ${variant == 'default' ? 'checkbox-c-d' : variant == 'inline' ? 'checkbox-c-i' : 'checkbox-c-l'}
-        ${error ? 'checkbox-c-error' : ''}
+        ${variant == 'default' ? 'checkbox-i-c-d' : variant == 'inline' ? 'checkbox-i-c-i' : 'checkbox-i-c-l'}
+        ${error ? 'checkbox-i-c-error' : ''}
     `}>
       <ListLayout className={variant != 'list' ? 'rowStart' : 'rowBetween w-full'}>
         <StyledCheckbox 
@@ -172,12 +172,12 @@ const CheckBoxItemComponent = memo(({
 
           className={`checkbox 
             ${variant == 'list' ? 'order-1' : 'mr-1'} 
-            ${error ? 'checkbox-error' : ''}
+            ${error ? 'checkbox-i-error' : ''}
           `}
         />
 
         { (variant == 'list') && 
-          <ItemLabel className='checkbox-label'>
+          <ItemLabel className='checkbox-i-label'>
             { item.label }
           </ItemLabel>
         }
@@ -185,11 +185,11 @@ const CheckBoxItemComponent = memo(({
 
       <DefaultLayout className={`colStart gap-2 text-left ${variant == 'list' ? 'mr-8' : ''}`}>
         {(variant != 'list') && 
-          <ItemLabel className='checkbox-label'>
+          <ItemLabel className='checkbox-i-label'>
             { item.label }
           </ItemLabel>
         }
-        <ItemDescription className='checkbox-desc'>
+        <ItemDescription className='checkbox-i-desc'>
           { item.description }
         </ItemDescription>
       </DefaultLayout>
