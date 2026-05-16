@@ -24,23 +24,29 @@ import { FormProvider, useForm } from 'react-hook-form';
 export const Documentation = () => {
   /* TODO: From where we left off
 
+    - There's a bug with the navbar if you hover over and out and back to it before the duration ends
+    - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
+    
     - Add react hook forms soon alongside the option to add state to the value for custom scenarios
       - this changes all inputs, add custom opts for using useState to track value instead.
+      - finish up the remaining components
+        - Dropbox
+        - RadioTable
     
-    - There's a bug with the navbar if you hover over and out and back to it before the duration ends
-      - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
-
     - Select component fixes
       - Check if the custom state handling is working properly
     - Check all component rerenders
-      x Select rendering
-      - checkbox events
+    - Check error/disabled state have proper rerenders
+      x Select rendering (both)
+      x checkbox events (both)
       - dropbox events
       - input onChange and other events
       - textarea events and other things
       - slider events
       - radioGroup onSelect
       - radioTable onSelect
+
+    - go back through the docs and update them again
 
     - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
       - add documentation to UpdateRecord, and move it to the library utils

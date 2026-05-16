@@ -25,15 +25,15 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
 
   const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
     // Record mapping using the internal value as a key
-    setCheckboxItems((prevValue) => {
-      const newValue = { 
-        ...prevValue, 
-        [item.value]: { ...item } 
-      };
+    // setCheckboxItems((prevValue) => {
+    //   const newValue = { 
+    //     ...prevValue, 
+    //     [item.value]: { ...item } 
+    //   };
       
-      console.log('checked values: ', newValue);
-      return newValue;
-    });
+    //   console.log('checked values: ', newValue);
+    //   return newValue;
+    // });
   }
 
   return (
@@ -80,18 +80,18 @@ export const Example_ListCheckbox = ({ error, disabled }: {
   });
 
   const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
-    console.log('checked items: ', item);
+    console.log('checked item: ', item);
 
     // Record mapping using the internal value as a key
-    setCheckboxItems((prevValue) => {
-      const newValue = { 
-        ...prevValue, 
-        [item.value]: { ...item } 
-      };
+    // setCheckboxItems((prevValue) => {
+    //   const newValue = { 
+    //     ...prevValue, 
+    //     [item.value]: { ...item } 
+    //   };
       
-      console.log('checked values: ', newValue);
-      return newValue;
-    });
+    //   console.log('checked values: ', newValue);
+    //   return newValue;
+    // });
   }
 
   return (
@@ -104,6 +104,7 @@ export const Example_ListCheckbox = ({ error, disabled }: {
 
         items={checkboxItems}
         onSelect={onCheckedItem}
+        disableHookForms
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
 
@@ -139,15 +140,15 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
 
   const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
     // Record mapping using the internal value as a key
-    setCheckboxItems((prevValue) => {
-      const newValue = { 
-        ...prevValue, 
-        [item.value]: { ...item } 
-      };
+    // setCheckboxItems((prevValue) => {
+    //   const newValue = { 
+    //     ...prevValue, 
+    //     [item.value]: { ...item } 
+    //   };
       
-      console.log('checked values: ', newValue);
-      return newValue;
-    });
+    //   console.log('checked values: ', newValue);
+    //   return newValue;
+    // });
   }
 
   return (

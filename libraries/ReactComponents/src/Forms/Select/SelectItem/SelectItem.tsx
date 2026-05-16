@@ -40,7 +40,7 @@ export interface SelectItemProps {
 
 
 export const SelectItemComponent = memo(({ item, name, isSelected, handleItemSelected, multiSelect, dropdownOpen }: SelectItemProps) => {
-  const { value, label, iconProps, selected } = item;
+  const { value, label, iconProps } = item;
   // console.log(`SelectItem ${item.value} rerendered, isSelected(${isSelected}), dropdownOpen(${dropdownOpen})`);
 
   return (
@@ -74,23 +74,8 @@ export const SelectItemComponent = memo(({ item, name, isSelected, handleItemSel
 
 // custom rerender functionality
 }, (prevProps, nextProps) => {
-  let shouldRerender = false;
-  
-  // If they have keepDropdownOpenOnSelect set to true for a non multiSelect
-  const usingKeepDropdownOpen = !nextProps.multiSelect && prevProps.dropdownOpen && nextProps.dropdownOpen;
-  // if (!nextProps.multiSelect && usingKeepDropdownOpen) {
-  //   const wasPreviouslySelected = prevProps?.currentValue?.value == prevProps.item.value;
-  //   const wasJustSelected = nextProps?.currentValue?.value == prevProps.item.value;
 
-  //   // Dropdown open/close handles the majority of the actual rerenders, and if the item's "checked" value is changed
-  //   if (wasPreviouslySelected || wasJustSelected) shouldRerender = true; // accounts for both multi and normal
-  // }
-
-  // scenario rerenders
-  if (shouldRerender) return false;
-
-  // Default Logic - just check if the memoized selectItem object is an updated object to handle shallow equality checks. 
-  // If its selection status changed (Crucial for RHF tracking), rerender
+  // If its selection status changed, rerender
   if (prevProps.isSelected !== nextProps.isSelected) {
     return false; 
   }
