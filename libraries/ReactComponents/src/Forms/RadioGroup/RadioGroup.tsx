@@ -1,11 +1,11 @@
 import { ChangeEvent, useCallback, useRef } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { RadioGroupItem } from './RadioItem/RadioItem';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
-import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 
 import styled from '@emotion/styled';
 import styles from './RadioGroup.module.scss';
-import { useFormContext } from 'react-hook-form';
 
 
 /** default is like the native, column is a block layout, and list has dividers and a different alignment. */
@@ -16,36 +16,36 @@ export type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
 export interface RadioGroupProps {	
 	/** default is like the native, column is a block layout, and list has dividers and a different alignment. */
   variant?: RadioVariant;
-
+  
 	/** The form group's name, used in Rhf's register function. */
   name: string;
-
+  
 	/** The Radio Group's label. */
   label?: string;
-
+  
 	/** The Radio Group's description. */
   description?: string;
-
+  
 	// Information and handling	
 	/** Each contain's it's value, label, description, and optionally whether it's disabled */
   radioItems: RadioItem[];
-
+  
 	/** Only used if you want custom state handling in favor of using react hook forms. */
   currentValue?: RadioItem;
-
+  
 	/** An optional event function you can use alongside Rhf. If you're handling your own state, handle it here. */
   onSelect?: (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => void;
-
+  
   /** Whether we should use custom state handling instead of React hook forms. */
   disableHookForms?: boolean;
-
+  
 	// Form validation	
 	/** The error message, if there is one. */
   error?: string;
-
+  
 	/** Whether this input is disabled. */
   disabled?: boolean;
-
+  
 	/** Whether this input is required. */
   required?: boolean;
 }
@@ -55,13 +55,16 @@ export interface RadioGroupProps {
 export interface RadioItem {	
 	/** The value for this specific radio input. */
   value: string;
-
+  
+  /** Whether this value is currently selected. */
+  selected: boolean;
+  
 	/** The RadioItem's individual label. */
   label: string;
-
+  
 	/** The RadioItem's individual optional description. */
   description?: string;
-
+  
 	/** Whether you want this specific RadioItem to be disabled in certain scenarios. */
   disabled?: boolean;
 }
@@ -73,14 +76,15 @@ export const RadioGroup = ({
   error, disabled = false, required = false, 
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
 }: UniversalEventHandlers & RadioGroupProps) => {
-  // const { watch } = useFormContext() || {};
-  // const formValues = watch(name) || {};
-  
-  // Get functions
   const getError = (): boolean => !!error && !disabled;
   
-  // console.log('\nradioGroup rerendered');
-
+  const { getValues } = useFormContext() || {};
+  console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
+    !disableHookForms ? getValues(name) : radioItems.filter(item => item.selected),
+    `\n selected from : `, { vals: radioItems },
+  );
+  
+  
   return (
     <Container className={`radio-group 
       ${disabled ? 'radio-group-disabled' : ''}
@@ -93,7 +97,7 @@ export const RadioGroup = ({
           { description && <Description>{ description }</Description> }
         </div>
       }
-
+      
       <RadioItems className={rowStyleVariants.includes(variant) ? 'rowStart gap-1 flex-wrap' : 'colStart *:pb-4'}>
         { radioItems.map((item: RadioItem) =>
           <RadioGroupItem key={`rgi-${name}-${item.value}`}
@@ -104,14 +108,14 @@ export const RadioGroup = ({
             required={required}
             disabled={disabled ? true : item.disabled}
             isRhfMode={!disableHookForms}
-
+            
             // Optional Events
             onFocus={onFocus} onClick={onClick} onBlur={onBlur}
             onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
           />
         )}
       </RadioItems>
-
+      
       <ErrorText show={getError()} styles='pt-2' cStyles='error-text'>
         { error ? error : '' } &nbsp;
       </ErrorText>

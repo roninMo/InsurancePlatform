@@ -1,6 +1,7 @@
 import { useContext, useMemo, useRef, useState } from "react";
 import { Select, SelectItem } from "@Project/ReactComponents";
 import { TooltipService } from "@Project/ReactComponents";
+import { useFormContext } from "react-hook-form";
 
 
 export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnSlct, preventOpenOnTab }: {
@@ -10,43 +11,52 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
   keepOpenOnSlct?: boolean;
   preventOpenOnTab?: boolean;
 }) => {
-  const [selectedValue, setSelectedValue] = useState<SelectItem>({ value: '', label: '' });
-  const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
+  // React hook forms
+  const { getValues } = useFormContext();
+  
+  // raw data object
+  const [values, setValues] = useState<SelectItem[]>([
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
     { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }},
     { value: 'error', label: "Error", iconProps:                  { icon: "CircleError", placement: 'left' }},
     { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
-    ...selectIcons
+    ...projectIcons
   ]);
   
-  const onSelectValue = (selected: SelectItem) => {
-    // setSelectedValue(selected);
-    console.log('select: new value: ', selected);
+  const onSelectValue = (newValue: SelectItem) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues()?.[`select-form-name`];
+    
+    // Capturing state manually
+    setValues(prev => prev.map(val => val.value === newValue.value ? newValue : val));
+    console.log('select: new value: ', newValue, `\nall values: `, values);
   }
   
   // Prevent object from causing rerenders.
   const tooltipContent = useMemo(() => ({ text: "Tooltip text" }), []);
-
+  
   // The universal tooltip provider
   const tooltipContext = useContext(TooltipService);
-
+  
+  
   return (
     <div>
       <Select 
-        name={`select-form-name`}
         label="Select Component"
+        name={`select-form-name`}
         placeholder="Select a value..."
         description="The select input's description."
-
-        values={projectIcons}
-        // value={selectedValue} // If you don't want to use Rhf
-        // onSelect={onSelectValue} // optional with Rhf, otherwise use to update state
-
+        
+        values={values}
+        onSelect={onSelectValue} // optional with Rhf, otherwise use to update state
+        // disableHookForms
+        
         // Error / Validation
         error={error}
         disabled={disabled}
         required
-
+        
         // Tooltip params
         tooltipContext={ tooltipContext }
         tooltipContent={ tooltipContent }
@@ -68,60 +78,53 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
   keepOpenOnSlct?: boolean;
   preventOpenOnTab?: boolean;
 }) => {
-
+  // React hook forms
+  const { getValues } = useFormContext();
+  
   // raw data object
-  const [projectIcons, setProjectIcons] = useState<SelectItem[]>([
+  const [values, setValues] = useState<SelectItem[]>([
     { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
     { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }},
     { value: 'error', label: "Error", iconProps:                  { icon: "CircleError", placement: 'left' }},
     { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
-    ...selectIcons
+    ...projectIcons
   ]);
   
-  // state values for multiSelect
-  const currentlySelected = useRef<SelectItem>({ value: '', label: '' }); // up to you which value is displayed as the current
-  const [selectedValues, setSelectedValues] = useState<Record<string, SelectItem>>(
-    Object.fromEntries(projectIcons.map(item => [item.value, item]))
-  );
-  
-  const onSelectValue = (selected: SelectItem) => {
-    console.log(`${selected.selected ? 'checked' : 'unchecked'} ${selected.value}`);
-
-    const updatedSelection: SelectItem = { ...selected }; // rerender the SelectItem only w/new object and a memo.
+  const onSelectValue = (newValue: SelectItem) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues()?.[`select-form-name`];
     
-    // if most recently selected, then update single display 
-    if (updatedSelection.selected) currentlySelected.current = updatedSelection;
-
-    // update the current list of selected values
-    setSelectedValues(prevValue => {
-      return { ...prevValue, [selected.value]: updatedSelection };
-    });
+    // Capturing state manually
+    setValues(prev => prev.map(val => val.value === newValue.value ? newValue : val));
+    console.log('select: new value: ', newValue, `\nall values: `, values);
   }
   
-    // Prevent object from causing rerenders.
-    const tooltipContent = useMemo(() => ({ text: "Tooltip text" }), []);
-
+  // Prevent object from causing rerenders.
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text" }), []);
+  
   // The universal tooltip provider
   const tooltipContext = useContext(TooltipService);
-
+  
+  
   return (
     <div>
       <Select 
-        name={`select-form-name`}
         label="Multi Select Component"
+        name={`select-form-name`}
         placeholder="Select some values..."
         description="The select input's description."
-
-        values={Object.values(selectedValues)}
-        // value={currentlySelected.current} // If you don't want to use Rhf
-        // onSelect={onSelectValue} // optional with Rhf, otherwise use to update state
+        
+        values={values}
+        onSelect={onSelectValue} // optional with Rhf, otherwise use to update state
+        // disableHookForms
         multiSelect
-
+        
         // Error / Validation
         error={error}
         disabled={disabled}
         required
-
+        
         // Tooltip params
         tooltipContext={ tooltipContext }
         tooltipContent={ tooltipContent }
@@ -136,7 +139,7 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
 }
 
 
-const selectIcons: SelectItem[] = [
+const projectIcons: SelectItem[] = [
   { value: 'darkTheme', label: "Dark Theme", iconProps:         { icon: "DarkTheme", placement: 'left' }},
   { value: 'dropdownArrow', label: "Dropdown Arrow", iconProps: { icon: "DropdownArrow", placement: 'left' }},
   { value: 'envelope', label: "Envelope", iconProps:            { icon: "Envelope", placement: 'left' }},

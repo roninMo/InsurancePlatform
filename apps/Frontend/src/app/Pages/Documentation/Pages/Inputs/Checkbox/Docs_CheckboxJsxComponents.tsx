@@ -1,11 +1,13 @@
 import { ChangeEvent, useState } from "react";
 import { Checkbox, CheckboxItem } from "@Project/ReactComponents";
+import { useFormContext } from "react-hook-form";
 
 
 export const Example_DefaultCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
+  const { getValues } = useFormContext();
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -22,33 +24,32 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
       checked: false
     },
   });
-
-  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
-    // Record mapping using the internal value as a key
-    // setCheckboxItems((prevValue) => {
-    //   const newValue = { 
-    //     ...prevValue, 
-    //     [item.value]: { ...item } 
-    //   };
-      
-    //   console.log('checked values: ', newValue);
-    //   return newValue;
-    // });
+  
+  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, newValue: CheckboxItem) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues()?.[`checkboxFormName`];
+    
+    // Capturing state manually
+    console.log('checked values: ', newValue, `\n all values: `, checkboxItems);
+    setCheckboxItems(prev => ({ ...prev, [newValue.value]: newValue }));
   }
-
+  
+  
   return (
     <div>
       <Checkbox 
-        name={`CheckboxComponent`}
+        name={`checkboxFormName`}
         variant="default"
         label="Default Checkbox"
         description="The checkbox component's description."
-
+        
         items={checkboxItems}
-        onSelect={onCheckedItem}
+        onSelect={onCheckedItem} // optional with Rhf, otherwise use to update state
+        // disableHookForms
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
-
+        
         error={error}
         disabled={disabled}
         required
@@ -62,6 +63,7 @@ export const Example_ListCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
+  const { getValues } = useFormContext();
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -78,22 +80,18 @@ export const Example_ListCheckbox = ({ error, disabled }: {
       checked: false
     },
   });
-
-  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
-    console.log('checked item: ', item);
-
-    // Record mapping using the internal value as a key
-    // setCheckboxItems((prevValue) => {
-    //   const newValue = { 
-    //     ...prevValue, 
-    //     [item.value]: { ...item } 
-    //   };
-      
-    //   console.log('checked values: ', newValue);
-    //   return newValue;
-    // });
+  
+  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, newValue: CheckboxItem) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues()?.[`checkboxFormName`];
+    
+    // Capturing state manually
+    console.log('checked values: ', newValue, `\n all values: `, checkboxItems);
+    setCheckboxItems(prev => ({ ...prev, [newValue.value]: newValue }));
   }
-
+  
+  
   return (
     <div>
       <Checkbox 
@@ -101,13 +99,13 @@ export const Example_ListCheckbox = ({ error, disabled }: {
         variant="list"
         label="List Checkbox"
         description="The checkbox component's description."
-
+        
         items={checkboxItems}
-        onSelect={onCheckedItem}
-        disableHookForms
+        onSelect={onCheckedItem} // optional with Rhf, otherwise use to update state
+        // disableHookForms
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
-
+        
         error={error}
         disabled={disabled}
         required
@@ -121,6 +119,7 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
+  const { getValues } = useFormContext();
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -137,20 +136,18 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
       checked: false
     },
   });
-
-  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
-    // Record mapping using the internal value as a key
-    // setCheckboxItems((prevValue) => {
-    //   const newValue = { 
-    //     ...prevValue, 
-    //     [item.value]: { ...item } 
-    //   };
-      
-    //   console.log('checked values: ', newValue);
-    //   return newValue;
-    // });
+  
+  const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, newValue: CheckboxItem) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues()?.[`checkboxFormName`];
+    
+    // Capturing state manually
+    console.log('checked values: ', newValue, `\n all values: `, checkboxItems);
+    setCheckboxItems(prev => ({ ...prev, [newValue.value]: newValue }));
   }
-
+  
+  
   return (
     <div>
       <Checkbox 
@@ -158,12 +155,13 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
         variant="inline"
         label="Inline Checkbox"
         description="The checkbox component's description."
-
+        
         items={checkboxItems}
-        onSelect={onCheckedItem}
+        onSelect={onCheckedItem} // optional with Rhf, otherwise use to update state
+        // disableHookForms
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
-
+        
         error={error}
         disabled={disabled}
         required

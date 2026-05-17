@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, MouseEvent, useCallback, useState } from 'react';
+import { ChangeEvent, memo, MouseEvent, useCallback, useReducer, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { mapRecord } from '@Project/ReactComponents/Common';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
@@ -33,7 +33,8 @@ export interface CheckboxProps {
 	
 	/** The description of the checkbox. */
   description?: string;
-
+  
+  
 	// Input data and events
 	/** The checkbox's list items. Each item contains the value, label, description, and whether it's checked. */
   items: Record<string, CheckboxItem>;
@@ -43,14 +44,16 @@ export interface CheckboxProps {
 	
 	/** Whether you want to handle the state instead of using Rhf. */
   disableHookForms?: boolean;
-
+  
+  
   // Additional events
 	/** Mouse event. Needs to be wrapped in a useCallback to prevent rerenders */
   onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 	
 	/** Mouse event. Needs to be wrapped in a UseCallback to prevent rerenders.  */
   onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-
+  
+  
 	// Validation logic
 	/** The error message, if there is one. */
   error?: string;
@@ -69,25 +72,20 @@ export const Checkbox = ({
   error, disabled = false, required = false,
   onMouseEnter, onMouseLeave
 }: CheckboxProps) => {
-  const { register, watch } = useFormContext() || {};
-  const formValues = watch && watch(name);
-  const [internalCheckedHash, setInternalCheckedHash] = useState<Record<string, boolean>>({});
+  const { register, getValues } = useFormContext() || {};
+  const formValues = getValues && getValues(name);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   
   const onToggleCheckbox = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
     item.checked = !item.checked; // handle this like a native event, to optionally rerender parent
-    if (disableHookForms) { // rerender here
-      setInternalCheckedHash(prev => {
-        const newRecord = mapRecord(prev, (v, c) => v == item.value ? item.checked : c);
-        if (!(item.value in newRecord)) newRecord[item.value] = item.checked;
-        return newRecord;
-      }); 
-    }
-    
-    const updatedItem = { ...item };
-    if (onSelect) onSelect(event, updatedItem); 
+    const updatedItem = { ...item }; // new reference
     // console.log(`${name}(${item.value}) ${updatedItem.checked ? 'checked' : 'unchecked'}: `, { updated: updatedItem, items },
     //   `\nevent value: ${event?.target?.value}, getValues: `, formValues
     // );
+    
+    // rerender internally for visual updates, if it's rhf we're using watch()
+    if (!disableHookForms) forceUpdate();
+    if (onSelect) onSelect(event, updatedItem); // optional event logic
   };
   
   const isSelected = (item: CheckboxItem): boolean => {
@@ -97,31 +95,33 @@ export const Checkbox = ({
     }
     
     // default logic
-    if (item.value in internalCheckedHash) return internalCheckedHash[item.value];
+    else {
+      if (item.value in items) return items[item.value].checked;
+    }
+    
     return false;
   } 
   
   // console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
   //   !disableHookForms ? formValues : Object.values(items).filter(item => item.checked),
   //   `\n selected from : `, { vals: Object.values(items).map(i => i.value) },
-  //   `\ninternal checked values: `, disableHookForms ? internalCheckedHash : undefined
   // );
-
-
+  
+  
   return (
     <Container className={variant == 'list' ? 'checkbox-cont-l' : ''}>
       <HeaderContainer className='checkbox-header colStart px-1'>
         { label && <Label className='checkbox-label'>{ label }</Label> }
         { description && <Description className='checkbox-desc'>{ description }</Description> }
       </HeaderContainer>
-
+      
       <ItemContainer className={`${variant != 'inline' ? 'colStart' : 'rowStart gap-4 flex-wrap'}`}>
         {Object.values(items).map((item: CheckboxItem) =>  
           <CheckBoxItemComponent
             variant={variant}
             name={name}
             key={`cb-${name}-${item.value}`}
-
+            
             item={item}
             isSelected={isSelected(item)}
             onSelect={onToggleCheckbox}
@@ -129,13 +129,13 @@ export const Checkbox = ({
             disabled={disabled}
             required={required}
             error={!!error && !disabled}
-
+            
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
           />
         )}
       </ItemContainer>
-
+      
       <ErrorText show={!!error && !disabled} styles='pl-1' cStyles={`error-text ${variant == 'list' ? 'pt-3' : 'pt-2'}`}>
         { error ? error : '' } &nbsp;
       </ErrorText>
@@ -147,7 +147,7 @@ export const Checkbox = ({
 interface CheckBoxItemComponentProps {
   variant: CheckboxVariant;
   name: string;
-
+  
   item: CheckboxItem;
   isSelected: boolean;
   onSelect: (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => void;
@@ -155,7 +155,7 @@ interface CheckBoxItemComponentProps {
   disabled?: boolean;
   required?: boolean;
   error?: boolean;
-
+  
   onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 } 
@@ -164,14 +164,14 @@ const CheckBoxItemComponent = memo(({
   variant, name, item, isSelected, onSelect, rhfBindings, 
   error, required, disabled, onMouseEnter, onMouseLeave 
 }: CheckBoxItemComponentProps) => {
-  console.log(`CheckboxItem ${item.value} rerendered, checked(${isSelected})`);
-
+  // console.log(`CheckboxItem ${item.value} rerendered, checked(${isSelected})`);
+  
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (rhfBindings) rhfBindings.onChange(e); 
     onSelect(e, item);
   }
-
-
+  
+  
   return (
     <label 
       onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
@@ -184,7 +184,7 @@ const CheckBoxItemComponent = memo(({
         <StyledCheckbox 
           type='checkbox' id={`${name}-${item.value}`}
           disabled={disabled || item.disabled} required={required}
-
+          
           // Rhf or useState handling
           {...(() => {
             if (rhfBindings) {
@@ -196,20 +196,20 @@ const CheckBoxItemComponent = memo(({
           value={item.value}
           checked={isSelected}
           onChange={handleOnChange}
-
+          
           className={`checkbox 
             ${variant == 'list' ? 'order-1' : 'mr-1'} 
             ${error ? 'checkbox-i-error' : ''}
           `}
         />
-
+        
         { (variant == 'list') && 
           <ItemLabel className='checkbox-i-label'>
             { item.label }
           </ItemLabel>
         }
       </ListLayout>
-
+      
       <DefaultLayout className={`colStart gap-2 text-left ${variant == 'list' ? 'mr-8' : ''}`}>
         {(variant != 'list') && 
           <ItemLabel className='checkbox-i-label'>
@@ -224,17 +224,17 @@ const CheckBoxItemComponent = memo(({
   );
 // custom rerender functionality
 }, (prevProps, nextProps) => {
-
+  
   // If its selection status changed, rerender
   if (prevProps.isSelected !== nextProps.isSelected) {
     return false; 
   }
-
+  
   // If the internal item selection flag changed, rerender (custom state handling)
   if (prevProps.item.checked !== nextProps.item.checked) {
     return false;
   }
-
+  
   // Form / Validation
   if ( prevProps.disabled !== nextProps.disabled 
     || prevProps.required !== nextProps.required
@@ -242,12 +242,12 @@ const CheckBoxItemComponent = memo(({
     || prevProps.error !== nextProps.error) {
     return false;
   }
-
+  
   // If configurations change, rerender
   if (prevProps.name !== nextProps.name) {
     return false;
   }
-
+  
   // If nothing changed, safely skip the rerender
   return true; 
 });

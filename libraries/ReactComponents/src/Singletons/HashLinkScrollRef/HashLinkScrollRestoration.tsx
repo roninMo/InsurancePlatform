@@ -19,7 +19,7 @@ export interface HashLinkScrollResConfig {
 
 /*
   user lands on the home page - 'ready'
-    - clicks on a link -> sets to 'navigated'
+    - clicks on a link -> sets to 'navigated', 'scroll', or 'browser'
     - the navbar rerenders for nav, checks state, if just 'navigated'
       - checks if there's a hash to scroll to
         - able to scroll?: scrolls to hash and sets to 'scroll'
@@ -29,7 +29,6 @@ export interface HashLinkScrollResConfig {
 
     - if we interrupt a scroll in progress with another nav
       - stable because behavior doesn't affect anything and the state is set to 'navigated' again
-      - @note - navbar's userScrollPause timers should be canceled upon navigation from the effect. 
 
   
   TODO: this no longer is for scroll behavior, but whether they should scroll
@@ -121,28 +120,6 @@ class HashLinkScrollRestoration {
     // Update the rest of the state information
     this.prevRoute = route;
     return this.currentNavState;
-  }
-
-
-  /** 
-   * Checks whether we should scroll from the previous navigation. \n
-   * 
-   * This function updates this class's internal values and 
-   * should be ran in parallel with the internal react-router's navigation logic to stay in sync.
-   * 
-   *  - This check is in place to account for non react-router nav logic (reload, forwards, backwards)
-   *    - 'scroll':     scroll transition to location
-   *    - 'navigated':  scrollToTop without transition
-   *    - 'ready':      allow for default behavior
-   * 
-   * @param url The new url we're navigating to.
-   * 
-   * @returns The navState associated with how we navigated.
-   */
-  public determineScrollBehavior(): NavState {
-
-    console.log(`determineScrollBehavior::current nav history: `, this.history);
-    return 'scroll';
   }
 
 

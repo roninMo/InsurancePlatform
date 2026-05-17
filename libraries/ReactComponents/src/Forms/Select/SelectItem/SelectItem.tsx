@@ -6,15 +6,27 @@ import styles from './SelectItem.module.scss';
 
 
 export interface SelectItem {
+  /** The value for this item. */
   value: string;
+  
+  /** Whether this value is currently selected. */
+  selected?: boolean;
+  
+  /** The label of this item. */
   label: string;
+  
+  /** Adds an icon to the left / right of the select item in the dropdown. Additional display config */
   iconProps?: SelectItemIconConfig;
-  selected?: boolean; // used with multiselect
 }
 
 export interface SelectItemIconConfig {
+  /** The icon we're using. */
   icon: IconTypes;
+  
+  /** Where it's placed in the dropdown. */
   placement?: 'left' | 'right';
+  
+  /** Styles for the icon. */
   styles?: string;
 }
 
