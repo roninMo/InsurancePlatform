@@ -7,7 +7,7 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const { getValues } = useFormContext();
+  const { getValues } = useFormContext() || {};
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -63,7 +63,7 @@ export const Example_ListCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const { getValues } = useFormContext();
+  const { getValues } = useFormContext() || {};
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",
@@ -119,7 +119,7 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const { getValues } = useFormContext();
+  const { getValues } = useFormContext() || {};
   const [checkboxItems, setCheckboxItems] = useState<Record<string, CheckboxItem>>({
     "valueA": {
       label: "Option A",

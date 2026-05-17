@@ -41,28 +41,25 @@ export const RadioGroupItem = memo(({
   value, selected, onSelect, isRhfMode, required, disabled,
   onFocus, onChange, onBlur, onClick, onMouseEnter, onMouseLeave
 }: RadioItemProps & UniversalEventHandlers) => {
-  // Input bindings
   const { register, getValues } = useFormContext() || {};
   const rhfBindings = isRhfMode ? register(inputName) : null;
-  console.log(`RadioItem ${value.value} rerendered, selected(${value.selected})`);
+  // console.log(`RadioItem ${value.value} rerendered, selected(${value.selected})`);
   
-
+  /** Handle react hook form's event logic here, and other linked events. */
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // By default, this component should handle it's own rerenders
-    // And onSelect / onChange shouldn't inherently cause hierarchical rerenders
-    value.selected = !value.selected;  // native-like !nonRender ref update
-    const newVal = { ...value }; // new reference
-    console.log(`handleOnChange, target data: ${e?.target?.value}, `,
-      `\n selected: `, newVal,
-      `\n event data: `, e
-    );
+    value.selected = true;  // native-like !nonRender ref update
+    // console.log(`itemHandleOnChange, target data: ${e?.target?.value}, `,
+    //   `\n selected: `, value,
+    //   `\n event data: `, e
+    // );
     
+    // React hook forms event logic
     if (isRhfMode && rhfBindings) {
       rhfBindings.onChange(e);
     }
     
     if (onChange) onChange(e); // additional optional event @see UniversalEventHandlers
-    if (onSelect) onSelect(e, newVal); // default logic
+    if (onSelect) onSelect(e, value); // default logic
   }
   
   const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
@@ -113,9 +110,35 @@ export const RadioGroupItem = memo(({
       </LabelAndDescription>
     </label>
   );
+  
+// custom rerender functionality
+}, (prevProps, nextProps) => {
+
+  // If its selection status changed, rerender
+  if (prevProps.selected !== nextProps.selected) {
+    return false; 
+  }
+  
+  // // If the actual item's value changed, rerender
+  // if (prevProps.value.selected !== nextProps.value.selected) {
+  //   return false;
+  // }
+  
+  // Form / Validation
+  if ( prevProps.disabled !== nextProps.disabled 
+    || prevProps.required !== nextProps.required
+    || prevProps.value.disabled !== nextProps.value.disabled) {
+    return false;
+  }
+  
+  // If configurations change, rerender
+  if (prevProps.inputName !== nextProps.inputName) {
+    return false;
+  }
+  
+  // If nothing changed, safely skip the rerender
+  return true; 
 });
-
-
 // Styled Components
 const Radio = styled.input``;
 const LabelAndDescription = styled.div``;

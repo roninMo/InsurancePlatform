@@ -12,7 +12,7 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
   preventOpenOnTab?: boolean;
 }) => {
   // React hook forms
-  const { getValues } = useFormContext();
+  const { getValues } = useFormContext() || {};
   
   // raw data object
   const [values, setValues] = useState<SelectItem[]>([
@@ -79,7 +79,7 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
   preventOpenOnTab?: boolean;
 }) => {
   // React hook forms
-  const { getValues } = useFormContext();
+  const { getValues } = useFormContext() || {};
   
   // raw data object
   const [values, setValues] = useState<SelectItem[]>([

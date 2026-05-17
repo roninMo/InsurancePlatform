@@ -86,27 +86,27 @@ export const SelectItemComponent = memo(({ item, name, isSelected, handleItemSel
 
 // custom rerender functionality
 }, (prevProps, nextProps) => {
-
+  
   // If its selection status changed, rerender
   if (prevProps.isSelected !== nextProps.isSelected) {
     return false; 
   }
-
+  
   // If the internal item selection flag changed, rerender
   if (prevProps.item.selected !== nextProps.item.selected) {
     return false;
   }
-
+  
   // If the dropdown opens or closes, rerender (to manage visibility/animations)
   if (prevProps.dropdownOpen !== nextProps.dropdownOpen) {
     return false;
   }
-
+  
   // If configurations change, rerender
   if (prevProps.multiSelect !== nextProps.multiSelect || prevProps.name !== nextProps.name) {
     return false;
   }
-
+  
   // If nothing changed, safely skip the rerender
   return true; 
 });

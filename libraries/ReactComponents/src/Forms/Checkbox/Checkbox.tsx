@@ -77,7 +77,7 @@ export const Checkbox = ({
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   
   const onToggleCheckbox = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
-    item.checked = !item.checked; // handle this like a native event, to optionally rerender parent
+    item.checked = !item.checked; // handle this like a native event, to optionally rerender hierarchy
     const updatedItem = { ...item }; // new reference
     // console.log(`${name}(${item.value}) ${updatedItem.checked ? 'checked' : 'unchecked'}: `, { updated: updatedItem, items },
     //   `\nevent value: ${event?.target?.value}, getValues: `, formValues

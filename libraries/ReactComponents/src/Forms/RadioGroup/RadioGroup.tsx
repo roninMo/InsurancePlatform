@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useRef } from 'react';
+import { ChangeEvent, useReducer, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { RadioGroupItem } from './RadioItem/RadioItem';
@@ -30,9 +30,6 @@ export interface RadioGroupProps {
 	/** Each contain's it's value, label, description, and optionally whether it's disabled */
   radioItems: RadioItem[];
   
-	/** Only used if you want custom state handling in favor of using react hook forms. */
-  currentValue?: RadioItem;
-  
 	/** An optional event function you can use alongside Rhf. If you're handling your own state, handle it here. */
   onSelect?: (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => void;
   
@@ -57,7 +54,7 @@ export interface RadioItem {
   value: string;
   
   /** Whether this value is currently selected. */
-  selected: boolean;
+  selected?: boolean;
   
 	/** The RadioItem's individual label. */
   label: string;
@@ -72,23 +69,53 @@ export interface RadioItem {
 
 export const RadioGroup = ({
   variant = 'default', name, label, description,
-  radioItems, currentValue, onSelect, disableHookForms, 
+  radioItems, onSelect, disableHookForms, 
   error, disabled = false, required = false, 
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
 }: UniversalEventHandlers & RadioGroupProps) => {
-  const getError = (): boolean => !!error && !disabled;
+  const { getValues, watch } = useFormContext() || {};
+  const formValues = getValues(name); // watch && watch(name);
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
   
-  const { getValues } = useFormContext() || {};
-  console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
-    !disableHookForms ? getValues(name) : radioItems.filter(item => item.selected),
-    `\n selected from : `, { vals: radioItems },
-  );
+  /** Handle even updates from user interaction */
+  const handleOnSelected = (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
+    // By default, this component should handle it's own rerenders
+    // And onSelect / onChange shouldn't inherently cause hierarchical rerenders
+    radioItems.forEach(item => { item.selected = false; });
+    selected.selected = true; // native-like event update
+    const newVal = { ...selected }; // new reference
+    
+    // console.log(`groupHandleOnChange: ${!disableHookForms ? 'forceUpdate() - ' : ''} Just selected ${newVal.value}`, selected);
+    if (disableHookForms) forceUpdate(); // update the display
+    if (onSelect) onSelect(e, newVal); // optional event logic
+  }
+  
+  /** Uses rhf's capture values, or the reference passed in for determining whether the radio item's been selected. */
+  const isSelected = (item: RadioItem): boolean => {
+    if (!disableHookForms) {
+      const currentlySelected = formValues;
+      if (currentlySelected == item.value) return true;
+    }
+    
+    // default behavior
+    // else return currentlySelected == item.value;
+    else {
+      const index = radioItems.findIndex(val => val.value == item.value);
+      if (index != -1) return !!radioItems[index].selected;
+    }
+    return false;
+  }
+  
+  // console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
+  //   !disableHookForms ? formValues : radioItems.filter(item => item.selected)?.[0] || [],
+  //   `\n selected from : `, radioItems,
+  // );
   
   
   return (
     <Container className={`radio-group 
       ${disabled ? 'radio-group-disabled' : ''}
-      ${getError() ? 'radio-group-error' : ''} 
+      ${(!!error && !disabled) ? 'radio-group-error' : ''} 
     `}>
       {/* Label and Description */}
       { (label || description) && 
@@ -102,8 +129,8 @@ export const RadioGroup = ({
         { radioItems.map((item: RadioItem) =>
           <RadioGroupItem key={`rgi-${name}-${item.value}`}
             inputName={name} variant={variant}
-            value={item} onSelect={onSelect}
-            selected={currentValue?.value == item.value}
+            value={item} onSelect={handleOnSelected}
+            selected={isSelected(item)}
             
             required={required}
             disabled={disabled ? true : item.disabled}
@@ -116,7 +143,7 @@ export const RadioGroup = ({
         )}
       </RadioItems>
       
-      <ErrorText show={getError()} styles='pt-2' cStyles='error-text'>
+      <ErrorText show={(!!error && !disabled)} styles='pt-2' cStyles='error-text'>
         { error ? error : '' } &nbsp;
       </ErrorText>
     </Container>
