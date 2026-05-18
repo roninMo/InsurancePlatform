@@ -43,7 +43,7 @@ export const Documentation = () => {
       - input onChange and other events
       - textarea events and other things
       - slider events
-      - radioGroup onSelect
+      x radioGroup onSelect
       - radioTable onSelect
 
     - go back through the docs and update them again
