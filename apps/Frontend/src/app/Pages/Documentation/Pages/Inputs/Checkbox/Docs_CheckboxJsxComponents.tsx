@@ -28,7 +28,7 @@ export const Example_DefaultCheckbox = ({ error, disabled }: {
   const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, newValue: CheckboxItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`checkboxFormName`];
+    const formValue = getValues(`checkboxFormName`);
     
     // Capturing state manually
     console.log('checked values: ', newValue, `\n all values: `, checkboxItems);
@@ -84,7 +84,7 @@ export const Example_ListCheckbox = ({ error, disabled }: {
   const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, newValue: CheckboxItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`checkboxFormName`];
+    const formValue = getValues('checkboxFormName');
     
     // Capturing state manually
     console.log('checked values: ', newValue, `\n all values: `, checkboxItems);
@@ -140,7 +140,7 @@ export const Example_InlineCheckbox = ({ error, disabled }: {
   const onCheckedItem = (event: ChangeEvent<HTMLInputElement>, newValue: CheckboxItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`checkboxFormName`];
+    const formValue = getValues('checkboxFormName');
     
     // Capturing state manually
     console.log('checked values: ', newValue, `\n all values: `, checkboxItems);

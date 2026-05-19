@@ -77,17 +77,24 @@ export const RadioGroup = ({
   const formValues = getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   
-  /** Handle even updates from user interaction */
-  const handleOnSelected = (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
-    // By default, this component should handle it's own rerenders
-    // And onSelect / onChange shouldn't inherently cause hierarchical rerenders
+  /**
+   * Links event logic with custom user event logic for both Rhf and custom state handling.  
+   * 
+   * By default, this component should handle it's own rerenders, and 
+   * onSelect / onChange shouldn't inherently cause hierarchical rerenders.
+   * 
+   * ---
+   * @param event       The native changeEvent data tied to the input event.
+   * @param selected    The @see RadioItem that was just selected.
+   */
+  const handleOnSelected = (event: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
     radioItems.forEach(item => { item.selected = false; });
     selected.selected = true; // native-like event update
     const newVal = { ...selected }; // new reference
     
     // console.log(`groupHandleOnChange: ${!disableHookForms ? 'forceUpdate() - ' : ''} Just selected ${newVal.value}`, selected);
     if (disableHookForms) forceUpdate(); // update the display
-    if (onSelect) onSelect(e, newVal); // optional event logic
+    if (onSelect) onSelect(event, newVal); // optional event logic
   }
   
   /** Uses rhf's capture values, or the reference passed in for determining whether the radio item's been selected. */

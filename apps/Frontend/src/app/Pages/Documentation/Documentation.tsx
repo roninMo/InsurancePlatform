@@ -41,7 +41,7 @@ export const Documentation = () => {
         - dropbox events
         - input onChange and other events
         - textarea events and other things
-        - slider events
+        x slider events
         x radioGroup onSelect
         x radioTable onSelect
 

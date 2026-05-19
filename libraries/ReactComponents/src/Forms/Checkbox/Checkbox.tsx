@@ -76,6 +76,16 @@ export const Checkbox = ({
   const formValues = getValues && getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   
+  /**
+   * Links event logic with custom user event logic for both Rhf and custom state handling.  
+   * 
+   * By default, this component should handle it's own rerenders, and 
+   * onSelect / onChange shouldn't inherently cause hierarchical rerenders.
+   * 
+   * ---
+   * @param event       The native changeEvent data tied to the input event.
+   * @param item        The @see CheckboxItem that was just selected.
+   */
   const onToggleCheckbox = (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => {
     item.checked = !item.checked; // handle this like a native event, to optionally rerender hierarchy
     const updatedItem = { ...item }; // new reference

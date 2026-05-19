@@ -143,10 +143,16 @@ export const Select = ({
   //   `\n selected from : `, { vals: values.map(i => i.value) }
   // );
   
-  /** Handles changeEvents, open/close dropdown logic, and state synchronization for display purposes. */
+  /**
+   * Handles changeEvents, open/close dropdown logic, and state synchronization for display purposes. 
+   * 
+   * By default, this component should handle it's own rerenders, and 
+   * onSelect / onChange shouldn't inherently cause hierarchical rerenders.
+   * 
+   * ---
+   * @param selected    The @see SelectItem that was just selected.
+   */
   const handleOnChange = (selected: SelectItem) => {
-    // By default, this component should handle it's own rerenders
-    // And onSelect / onChange shouldn't inherently cause hierarchical rerenders
     if (!multiSelect) for (let index in values) values[index].selected = false;
     selected.selected = !selected.selected;  // native-like !nonRender ref update
     

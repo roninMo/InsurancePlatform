@@ -471,7 +471,7 @@ export const MockDatabase = () => {
 								description="The RadioGroup test's description."
 								radioItems={radioVals}
 								
-								currentValue={radioItem}
+								// currentValue={radioItem}
 								onSelect={updateRadioGroup}
 								disableHookForms={!usingRhf}
 								error={ errors?.radioGroupTest?.message }

@@ -1,32 +1,39 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Slider } from "@Project/ReactComponents";
+import { useFormContext } from "react-hook-form";
 
 
 export const Example_DefaultSlider = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
+  const { getValues } = useFormContext() || {};
   const [sliderValue, setSliderValue] = useState<boolean>(false);
   
-  const onChangeSlider = () => {
-    setSliderValue((prevState: boolean) => {
-      const newState = !prevState;
-      console.log('slider value: ', newState);
-      return newState;
-    });
+  const onChangeSlider = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
+    const newValue: boolean = e?.target?.checked;
+    console.log('selected value: ', newValue);
+    // setSliderValue(newValue);
   }
-
+  
+  
   return (
     <div>
       <Slider 
         variant="default"
-        name={`slider-form-name`}
+        name={`sliderFormName`}
         label="Slider Component"
         description="The description of the slider."
         
-        // value={sliderValue} // if you want to use custom state instead of Rhf, use this value.
-        // onChange={() => onChangeSlider()} // An optional custom event to run alongside Rhf's change event
-
+        onChange={(e) => onChangeSlider(e)} // An optional custom event to run alongside Rhf's change event
+        disableHookForms
+        // value={sliderValue} // if you want to use custom state instead of Rhf, use this value. Disables Rhf.
+        
         error={error}
         disabled={disabled}
         required

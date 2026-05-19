@@ -19,7 +19,7 @@ export const Example_DefaultRadioGroup = ({ error, disabled }: {
   const onSelectRadioItem = (event: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`radioGroupFormName-default`];
+    const formValue = getValues('radioGroupFormName-default');
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);
@@ -61,7 +61,7 @@ export const Example_ColumnRadioGroup = ({ error, disabled }: {
   const onSelectRadioItem = (event: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`radioGroupFormName-column`];
+    const formValue = getValues('radioGroupFormName-column');
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);
@@ -104,7 +104,7 @@ export const Example_ColumnInlineRadioGroup = ({ error, disabled }: {
   const onSelectRadioItem = (event: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`radioGroupFormName-ci`];
+    const formValue = getValues('radioGroupFormName-ci');
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);
@@ -147,7 +147,7 @@ export const Example_ListRadioGroup = ({ error, disabled }: {
   const onSelectRadioItem = (event: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`radioGroupFormName-list`];
+    const formValue = getValues('radioGroupFormName-list');
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);

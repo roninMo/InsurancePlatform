@@ -20,7 +20,7 @@ export const Example_InlineRadioTable = ({ error, disabled }: {
   const onSelectRadioItem = (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`radioTableFormName-i`];
+    const formValue = getValues('radioTableFormName-i');
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);
@@ -65,7 +65,7 @@ export const Example_BlockRadioTable = ({ error, disabled }: {
   const onSelectRadioItem = (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`radioTableFormName-b`];
+    const formValue = getValues('radioTableFormName-b');
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);

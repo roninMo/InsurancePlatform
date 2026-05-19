@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useReducer, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
@@ -13,8 +13,8 @@ export interface SliderProps {
   label?: string;
   description?: string;
 
-  value?: 'true' | 'false';
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  disableHookForms?: boolean;
 
   error?: string;
   disabled?: boolean;
@@ -23,34 +23,43 @@ export interface SliderProps {
 }
 
 export const Slider = ({
-  variant = 'default', name, label, description, value, onChange, 
+  variant = 'default', name, label, description, onChange, disableHookForms, 
   error, required, disabled, additionalStyles,
 }: SliderProps) => {
-  const { register, getValues, control } = useFormContext() || {};
-  
-  // Input binding logic
-  const isRHFMode = !!register && value === undefined;
+  const { register, control } = useFormContext() || {};
+  const isRHFMode = disableHookForms && !!register;
   const rhfBindings = isRHFMode ? register(name) : null;
-  // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange, register });
+  const formValue = useWatch({ name, control: control, disabled: !isRHFMode }); 
+  
+  const internalValue = useRef<boolean>(false); // custom state handling
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  // console.log(`\n\nRerendered ${name}: isRhfMode(${isRHFMode}) value: `, isRHFMode ? formValue : internalValue.current);
 
-  // Intercept changes cleanly
+  /**
+   * Links event logic with custom user event logic for both Rhf and custom state handling.  
+   * 
+   * By default, this component should handle it's own rerenders, and 
+   * onSelect / onChange shouldn't inherently cause hierarchical rerenders.
+   * 
+   * ---
+   * @param event       The native changeEvent data tied to the input event.
+   * @param selected    The @see RadioItem that was just selected.
+   */
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e?.target?.value == 'true' ? 'false' : 'true';
-    if (e?.target?.value) e.target.value = newValue;
+    const newValue = e?.target?.checked; // update the internal state
+    internalValue.current = newValue;
+    // console.log(`handleOnChange(${name}) ${newValue ? 'checked' : 'unchecked'} `, e);
 
     // Event functions
     if (isRHFMode && rhfBindings) rhfBindings.onChange(e);
-    if (onChange) onChange(e);
+    else forceUpdate(); // update the display
+    if (onChange) onChange(e); // additional logic / custom state handling
   };
-
-  const isChecked = (): boolean => isRHFMode ? !!watchedValue : value == 'true';
-  const watchedValue = useWatch({
-    name,
-    control: control,
-    disabled: !isRHFMode // Optimization: disable watch if not in RHF mode
-  });
-
-
+  
+  // Determine if the toggle is currently active
+  const isChecked = isRHFMode ? !!formValue : !!internalValue.current;
+  
+  
   return (
     <Container className={`slider-c ${disabled ? 'slider-disabled' : error ? 'slider-error' : ''}`}>
       <Content className='colStart gap-1 pb-4 p-2'>
@@ -64,7 +73,7 @@ export const Slider = ({
             { description }
           </Description> 
         }
-
+        
         <ErrorText show={!!error && !disabled} cStyles='pt-1 error-text'>
           { error ? error : '' } &nbsp;
         </ErrorText>
@@ -74,6 +83,7 @@ export const Slider = ({
         <input 
           type='checkbox' id={`sldr-${name}`}
           disabled={disabled} required={required}
+          checked={isChecked}
           
           // Rhf or useState handling
           {...(() => {
@@ -81,15 +91,12 @@ export const Slider = ({
               const { onChange: _, ...rest } = rhfBindings;
               return rest;
             }
-            return { name, value: value }; // default behavior
+            return { name, checked: isChecked }; // default behavior
           })()}
-
-          // combined input bindings
           onChange={handleOnChange} // custom rhfBindings.onChange
-          checked={isChecked()}
           className='slider-input'
         />
-
+        
         <Switch className="slider-switch"/>
       </SliderContainer>
     </Container>

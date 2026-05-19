@@ -26,7 +26,7 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
   const onSelectValue = (newValue: SelectItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`select-form-name`];
+    const formValue = getValues('selectFormName');
     
     // Capturing state manually
     setValues(prev => prev.map(val => val.value === newValue.value ? newValue : val));
@@ -44,7 +44,7 @@ export const Example_SelectInput = ({ error, disabled, closeOnLeave, keepOpenOnS
     <div>
       <Select 
         label="Select Component"
-        name={`select-form-name`}
+        name={`selectFormName`}
         placeholder="Select a value..."
         description="The select input's description."
         
@@ -93,7 +93,7 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
   const onSelectValue = (newValue: SelectItem) => {
     // React hook forms
     console.log('getValues: ', getValues());
-    const formValue = getValues()?.[`select-form-name`];
+    const formValue = getValues('multiSelectFormName');
     
     // Capturing state manually
     setValues(prev => prev.map(val => val.value === newValue.value ? newValue : val));
@@ -111,7 +111,7 @@ export const Example_MultiSelectInput = ({ error, disabled, closeOnLeave, keepOp
     <div>
       <Select 
         label="Multi Select Component"
-        name={`select-form-name`}
+        name={`multiSelectFormName`}
         placeholder="Select some values..."
         description="The select input's description."
         
