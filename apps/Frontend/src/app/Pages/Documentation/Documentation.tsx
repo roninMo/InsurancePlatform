@@ -28,23 +28,22 @@ export const Documentation = () => {
     - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
     
     - Add react hook forms soon alongside the option to add state to the value for custom scenarios
-      - this changes all inputs, add custom opts for using useState to track value instead.
+      x this changes all inputs, add custom opts for using useState to track value instead.
       - finish up the remaining components
         - Dropbox
-        - RadioTable
     
     - Select component fixes
-      - Check if the custom state handling is working properly
-    - Check all component rerenders
-    - Check error/disabled state have proper rerenders
-      x Select rendering (both)
-      x checkbox events (both)
-      - dropbox events
-      - input onChange and other events
-      - textarea events and other things
-      - slider events
-      x radioGroup onSelect
-      - radioTable onSelect
+      1. Check if both Rhf and the custom state handling are working properly
+      2. Check all component rerenders
+      3. Check error/disabled state have proper rerenders
+        x Select rendering (both)
+        x checkbox events (both)
+        - dropbox events
+        - input onChange and other events
+        - textarea events and other things
+        - slider events
+        x radioGroup onSelect
+        x radioTable onSelect
 
     - go back through the docs and update them again
 

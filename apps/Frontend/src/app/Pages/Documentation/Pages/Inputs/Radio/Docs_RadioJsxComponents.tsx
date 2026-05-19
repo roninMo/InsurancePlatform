@@ -23,7 +23,6 @@ export const Example_DefaultRadioGroup = ({ error, disabled }: {
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);
-    // setRadioItems(prev => prev.map(item => item.value == selected.value ? selected : item));
   }
   
   return (
@@ -66,7 +65,6 @@ export const Example_ColumnRadioGroup = ({ error, disabled }: {
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);
-    setRadioItems(prev => prev.map(item => item.value == selected.value ? selected : item));
   }
   
   
@@ -110,7 +108,6 @@ export const Example_ColumnInlineRadioGroup = ({ error, disabled }: {
     
     // Capturing state manually
     console.log('selected value: ', selected, `\n all values: `, radioItems);
-    setRadioItems(prev => prev.map(item => item.value == selected.value ? selected : item));
   }
   
   

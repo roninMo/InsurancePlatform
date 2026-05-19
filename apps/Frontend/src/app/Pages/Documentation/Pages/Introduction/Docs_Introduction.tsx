@@ -164,10 +164,10 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
           description="The select input's description."
           multiSelect
 
-          value={{ value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }}}
+          // value={{ value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }}}
           values={[
             { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
-            { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }},
+            { value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }, selected: true },
             { value: 'error', label: "Error", iconProps:                  { icon: "CircleError", placement: 'left' }},
             { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
           ]}
@@ -189,8 +189,8 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
           label="Block Style"
           description="The description of the radio table."
 
-          radioItems={radioItems}
-          currentValue={radioItems[1]}
+          radioItems={radioTableItems}
+          // currentValue={radioItems[1]}
           onSelect={() => {}}
         />
       </HashLink>
@@ -206,7 +206,7 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
           description="The description of the radio group."
 
           radioItems={radioItems}
-          currentValue={radioItems[3]}
+          // currentValue={radioItems[3]}
           onSelect={() => {}}
         />
       </HashLink>
@@ -235,7 +235,8 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
         <Slider 
           label="Slider Component" name="quicklink-slider"
           description="The description of the slider."
-          value onChange={() => {}}
+          value="true" 
+          onChange={() => {}}
         />
       </HashLink>
     </div>
@@ -454,12 +455,23 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
 
 
 // Example RadioItems
-const radioItems: RadioItem[] = ["A", "B", "C", "D"].map((val) => {
+const radioItems: RadioItem[] = ["A", "B", "C", "D"].map((val, i) => {
   return {
     value: `value${val}`,
     label: `Option ${val}`,
     description: `The description of option ${val}.`,
-    disabled: false
+    disabled: false,
+    selected: i == 3
+  };
+});
+
+const radioTableItems: RadioItem[] = ["A", "B", "C", "D"].map((val, i) => {
+  return {
+    value: `value${val}`,
+    label: `Option ${val}`,
+    description: `The description of option ${val}.`,
+    disabled: false,
+    selected: i == 1
   };
 });
 

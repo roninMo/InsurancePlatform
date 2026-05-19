@@ -145,7 +145,7 @@ export const CustomContent = () => {
   const [favoriteFood, setFavoriteFood] = useState<RadioItem>({ value: '', label: ''});
   const [radioItemError, setRadioItemError] = useState<boolean>(false);
   const [radioItemErrorMessage, setRadioItemErrorMessage] = useState<string>('');
-  const selectedFavoriteFood = (item: RadioItem, currentValue: RadioItem, e?: ChangeEvent<HTMLInputElement>) => {
+  const selectedFavoriteFood = (e: ChangeEvent<HTMLInputElement>, item: RadioItem) => {
     setFavoriteFood(item);
     // console.log(`radioButton: `, {selected, index, currentValue});
   }

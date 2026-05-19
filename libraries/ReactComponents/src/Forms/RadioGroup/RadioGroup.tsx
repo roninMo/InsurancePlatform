@@ -73,9 +73,9 @@ export const RadioGroup = ({
   error, disabled = false, required = false, 
   onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
 }: UniversalEventHandlers & RadioGroupProps) => {
-  const { getValues, watch } = useFormContext() || {};
-  const formValues = getValues(name); // watch && watch(name);
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const { getValues } = useFormContext() || {};
+  const formValues = getValues(name);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   
   /** Handle even updates from user interaction */
   const handleOnSelected = (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
@@ -91,20 +91,7 @@ export const RadioGroup = ({
   }
   
   /** Uses rhf's capture values, or the reference passed in for determining whether the radio item's been selected. */
-  const isSelected = (item: RadioItem): boolean => {
-    if (!disableHookForms) {
-      const currentlySelected = formValues;
-      if (currentlySelected == item.value) return true;
-    }
-    
-    // default behavior
-    // else return currentlySelected == item.value;
-    else {
-      const index = radioItems.findIndex(val => val.value == item.value);
-      if (index != -1) return !!radioItems[index].selected;
-    }
-    return false;
-  }
+  const isSelected = (item: RadioItem): boolean => !disableHookForms ? formValues == item.value : !!item.selected;
   
   // console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
   //   !disableHookForms ? formValues : radioItems.filter(item => item.selected)?.[0] || [],

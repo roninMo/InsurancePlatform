@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { RadioItem, RadioTable } from "@Project/ReactComponents";
+import { useFormContext } from "react-hook-form";
 
 
 export const Example_InlineRadioTable = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
+  const { getValues } = useFormContext() || {}
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
       value: `value${val}`,
@@ -16,27 +17,30 @@ export const Example_InlineRadioTable = ({ error, disabled }: {
     };
   }));
 
-  const onSelectRadioItem = (selected: RadioItem, currentValue: RadioItem) => {
-    setSelectedItem(selected);
-    console.log(`user selected: `, {selected, currentValue});
+  const onSelectRadioItem = (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues()?.[`radioTableFormName-i`];
+    
+    // Capturing state manually
+    console.log('selected value: ', selected, `\n all values: `, radioItems);
   }
 
   return (
     <div>
       <RadioTable
         variant="inline"
-        name={`radioTable-form-name`}
+        name={`radioTableFormName-i`}
         label="Inline Style"
         description="The description of the radio table."
 
         radioItems={radioItems}
-        currentValue={selectedItem}
         onSelect={onSelectRadioItem}
+        // disableHookForms
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
 
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
       />
@@ -48,7 +52,7 @@ export const Example_BlockRadioTable = ({ error, disabled }: {
   error: string;
   disabled: boolean;
 }) => {
-  const [selectedItem, setSelectedItem] = useState<RadioItem>({ value: '', label: ''});
+  const { getValues } = useFormContext() || {};
   const [radioItems, setRadioItems] = useState<RadioItem[]>(["A", "B", "C", "D"].map((val, index) => {
     return {
       value: `value${val}`,
@@ -58,27 +62,30 @@ export const Example_BlockRadioTable = ({ error, disabled }: {
     };
   }));
 
-  const onSelectRadioItem = (selected: RadioItem, currentValue: RadioItem) => {
-    setSelectedItem(selected);
-    console.log(`user selected: `, {selected, currentValue});
+  const onSelectRadioItem = (e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
+    // React hook forms
+    console.log('getValues: ', getValues());
+    const formValue = getValues()?.[`radioTableFormName-b`];
+    
+    // Capturing state manually
+    console.log('selected value: ', selected, `\n all values: `, radioItems);
   }
 
   return (
     <div>
       <RadioTable
         variant="block"
-        name={`radioTable-form-name`}
+        name={`radioTableFormName-b`}
         label="Block Style"
         description="The description of the radio table."
 
         radioItems={radioItems}
-        currentValue={selectedItem}
         onSelect={onSelectRadioItem}
+        // disableHookForms
         onMouseEnter={() => {}}
         onMouseLeave={() => {}}
 
-        error={!!error}
-        errorMessage={error}
+        error={error}
         disabled={disabled}
         required
       />

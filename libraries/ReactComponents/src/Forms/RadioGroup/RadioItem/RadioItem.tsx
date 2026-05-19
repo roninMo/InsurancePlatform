@@ -91,7 +91,7 @@ export const RadioGroupItem = memo(({
             return rest;
           }
           
-          return { checked: selected }; // default logic
+          return { name: inputName, checked: selected }; // default logic
         }) ()}
         onChange={handleOnChange}
         onBlur={handleOnBlur}
@@ -139,6 +139,8 @@ export const RadioGroupItem = memo(({
   // If nothing changed, safely skip the rerender
   return true; 
 });
+
+
 // Styled Components
 const Radio = styled.input``;
 const LabelAndDescription = styled.div``;
