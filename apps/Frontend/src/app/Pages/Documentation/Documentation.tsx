@@ -31,6 +31,10 @@ export const Documentation = () => {
       x this changes all inputs, add custom opts for using useState to track value instead.
       - finish up the remaining components
         - Dropbox
+          - add an option to display either a list or each boxed file below the dropbox
+          - currently testing if multi file dropbox adds to file list when more files are added
+          - check that it saves files correctly for both modes, and rerender properly
+
     
     - Select component fixes
       1. Check if both Rhf and the custom state handling are working properly

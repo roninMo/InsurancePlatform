@@ -194,9 +194,8 @@
       hover:scale-110 active:scale-100;
   }
 
-  .i-default-color {
-    @apply text-slate-500 dark:text-slate-400;
-  }
+  .i-default-color { @apply text-slate-500 dark:text-slate-400; }
+  .i-light-color   { @apply text-slate-400 dark:text-slate-300; }
 
   .i-info-color { @apply text-sky-500     dark:text-sky-500; }
   .i-warn-color { @apply text-amber-600   dark:text-amber-400; }
@@ -592,6 +591,39 @@
   .dropbox-text   { @apply text-colors dropbox-text-base; }
   .dropbox-text-d { @apply disabled-text dropbox-text-base; }
 
+  .dropbox-file-c {
+    @apply 
+      py-2 px-1 rowStart gap-2 flex-wrap
+      transition-all animate-fade-in;
+  }
+  
+  .dropbox-file-i {
+    @apply
+      px-2 py-1 rowStart items-center gap-1.5
+      transition-all cursor-pointer
+      
+      ok-box dark:faded-box dark:opacity-75 
+      [&_span]:ok-text 
+      outline-css outline-ok 
+      
+      hover:outline-emerald-500 hover:dark:outline-emerald-500
+      hover:scale-105 active:scale-100 active:theme-a;
+  }
+  
+  .dropbox-file-i-desc {
+    @apply 
+      max-w-24 mb-0.5 
+      overflow-hidden text-ellipsis text-nowrap
+      transition-all cursor-pointer select-none
+      font-semibold italic;
+  }
+  
+  .dropbox-file-i-close-btn {
+    @apply 
+      i-interactive size-6
+      hover:i-light-color active:theme-a; 
+  }
+  
   // #endregion
 
 

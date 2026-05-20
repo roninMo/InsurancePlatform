@@ -18,7 +18,7 @@ export const Example_DefaultSlider = ({ error, disabled }: {
     // Capturing state manually
     const newValue: boolean = e?.target?.checked;
     console.log('selected value: ', newValue);
-    // setSliderValue(newValue);
+    setSliderValue(newValue);
   }
   
   
@@ -31,8 +31,7 @@ export const Example_DefaultSlider = ({ error, disabled }: {
         description="The description of the slider."
         
         onChange={(e) => onChangeSlider(e)} // An optional custom event to run alongside Rhf's change event
-        disableHookForms
-        // value={sliderValue} // if you want to use custom state instead of Rhf, use this value. Disables Rhf.
+        // disableHookForms
         
         error={error}
         disabled={disabled}
