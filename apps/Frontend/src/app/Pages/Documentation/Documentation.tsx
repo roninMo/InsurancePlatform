@@ -28,12 +28,24 @@ export const Documentation = () => {
     - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
     
     - Add react hook forms soon alongside the option to add state to the value for custom scenarios
-      x this changes all inputs, add custom opts for using useState to track value instead.
-      - finish up the remaining components
-        - Dropbox
-          - add an option to display either a list or each boxed file below the dropbox
-          - currently testing if multi file dropbox adds to file list when more files are added
-          - check that it saves files correctly for both modes, and rerender properly
+      - Go back to the input and textarea
+        - Change custom state handling to useRefs, and use focus events for rerenders
+        - Add a couple functions for input masking and optionally editing on the fly
+          - A class for handling masks that take in a couple arguments
+            - a mask, where underscores are wildcard characters from the user 
+              ex: phone - (___)-___-____
+            - a regex string for acceptable characters
+            - Then find a way to add this alongside input components
+          - input::onFocus(), onChange(), onBlur()
+            - rerenders should be now tied to focus or blur events, or a delay after typing.
+            - use onChange for updating rhf after we've handled masks, and custom edits from updateValue()
+          - input::updateValue()
+            - handles editing the value after a user does a keypress
+              - not tied to state, does not cause rerenders, just the native input's value attr
+          - input::mask
+            - add default masks for each input type with masks
+            - variants mask params should optionally enable/disable their mask
+            - there should be a new param for adding a mask through this class, or a custom one
 
     
     - Select component fixes
@@ -42,12 +54,12 @@ export const Documentation = () => {
       3. Check error/disabled state have proper rerenders
         x Select rendering (both)
         x checkbox events (both)
-        - dropbox events
+        x dropbox events (both)
         - input onChange and other events
         - textarea events and other things
-        x slider events
-        x radioGroup onSelect
-        x radioTable onSelect
+        x slider events (both)
+        x radioGroup onSelect (both)
+        x radioTable onSelect (both)
 
     - go back through the docs and update them again
 

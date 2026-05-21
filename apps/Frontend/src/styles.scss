@@ -247,8 +247,19 @@
   .faded-box { 
     @apply 
       bg-opacity-20 dark:bg-opacity-40
-      bg-div
-      outline-default 
+      bg-div outline-default 
+  }
+  
+  .faded-def-box { 
+    @apply 
+      bg-opacity-50 dark:bg-opacity-40
+      bg-default outline-default 
+  }
+  
+  .faded-light-box { 
+    @apply 
+      bg-opacity-50 dark:bg-opacity-40
+      bg-div-light outline-light 
   }
 
   .warning-box {
@@ -590,38 +601,111 @@
   .dropbox-text-base { @apply transition-all; }
   .dropbox-text   { @apply text-colors dropbox-text-base; }
   .dropbox-text-d { @apply disabled-text dropbox-text-base; }
-
-  .dropbox-file-c {
+  
+  
+  // Dropbox selected file header and variant buttons
+  .dropbox-sf-dropdown-h { @apply text-lg header-colors font-semibold pr-2; }
+  .dropbox-sf-dropdown-hc { 
     @apply 
-      py-2 px-1 rowStart gap-2 flex-wrap
+      pb-2 rowStart items-center
+      border-b border-default; 
+  }
+  
+  .dropbox-sf-dd-var-btns {
+    @apply 
+      py-1 px-2.5 pb-[5px]
+      italic text-xs rounded-none
+      
+      transition-all duration-200
+      active:theme-a;
+  }
+  
+  .dropbox-sf-dd-var-l { // list variant button
+    @apply 
+      dropbox-sf-dd-var-btns primary-text
+      rounded-l-md 
+      hover:selected-box focus:outline-focus;
+  }
+  
+  .dropbox-sf-dd-var-b { // box variant button
+    @apply 
+      dropbox-sf-dd-var-btns ok-text
+      rounded-r-md -ml-[1px]
+      hover:ok-box focus:outline-ok;
+  }
+  
+  
+  
+  // Dropbox selected file variants
+  .dropbox-file-c-b {
+    @apply 
+      py-2 px-1 pt-3 rowStart gap-2 flex-wrap
       transition-all animate-fade-in;
   }
   
+  .dropbox-file-c-l {
+    @apply 
+      col gap-0 p-0
+      transition-all animate-fade-in
+    ;
+  }
+  
   .dropbox-file-i {
+    @apply block;
+  }
+  
+  // Dropbox Box-style Selected Files
+  .dbx-sf-box {
     @apply
       px-2 py-1 rowStart items-center gap-1.5
       transition-all cursor-pointer
+      faded-box opacity-75
+      outline-css outline-default
       
-      ok-box dark:faded-box dark:opacity-75 
-      [&_span]:ok-text 
-      outline-css outline-ok 
-      
-      hover:outline-emerald-500 hover:dark:outline-emerald-500
       hover:scale-105 active:scale-100 active:theme-a;
   }
   
-  .dropbox-file-i-desc {
+  // Dropbox List-style Selected Files
+  .dbx-sf-list {
     @apply 
-      max-w-24 mb-0.5 
-      overflow-hidden text-ellipsis text-nowrap
-      transition-all cursor-pointer select-none
-      font-semibold italic;
+      px-2 py-1 row justify-between items-center gap-1.5
+      transition-all cursor-pointer
+      faded-box opacity-75
+      border-b border-default
+      
+      // hover:scale-105 active:scale-100 active:theme-a
+    ;
   }
   
-  .dropbox-file-i-close-btn {
+  // theme variants
+  .dbx-sf-box-default {
+    @apply 
+      [&_.dbx-sf-desc]:text-slate-700 dark:[&_.dbx-sf-desc]:text-colors
+      hover:outline-blue-400 hover:dark:outline-slate-500
+    ;
+  }
+  
+  .dbx-sf-box-green {
+    @apply [&_.dbx-sf-desc]:ok-text hover:outline-ok;
+  }
+  
+  .dbx-sf-box-blue {
+    @apply [&_.dbx-sf-desc]:primary-text hover:outline-focus;
+  }
+  
+  
+  .dbx-sf-desc {
+    @apply 
+      mb-0.5 font-semibold italic
+      transition-all cursor-pointer select-none
+      overflow-hidden text-ellipsis text-nowrap;
+  }
+  
+  .dbx-sf-box-close-btn {
     @apply 
       i-interactive size-6
-      hover:i-light-color active:theme-a; 
+      hover:i-light-color active:theme-a
+      hover:scale-125 dark:hover:scale-110 active:scale-100; 
   }
   
   // #endregion

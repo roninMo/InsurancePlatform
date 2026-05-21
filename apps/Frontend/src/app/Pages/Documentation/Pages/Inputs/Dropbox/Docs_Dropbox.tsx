@@ -106,7 +106,7 @@ export const Docs_Dropbox = () => {
       </Variants>
 
       <div className='span-12 py-2 pt-10' id="param-table">
-        <Dropdown label='Checkbox Parameters' openByDefault>
+        <Dropdown label='Dropbox Parameters' openByDefault>
           <ParamTable 
             params={paramTableItems} 
             additionalStyles='mt-4' 

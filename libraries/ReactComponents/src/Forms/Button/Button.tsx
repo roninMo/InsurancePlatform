@@ -42,30 +42,32 @@ export const Button = ({
 }: ButtonProps) => {
 
   return (
-    <button 
-      type={type} 
-      onClick={(e) => onClick ? onClick(e) : null}
-      disabled={disabled}
-      className={`button-base 
-        ${  size == 'default' ? 'btn-al-d' 
-          : size == 'md'      ? 'btn-al-md' 
-          : size == 'lg'      ? 'btn-al-lg'
-          : size == 'xl'      ? 'btn-al-xl'
-          : ''
-        } 
+    <div>
+      <button 
+        type={type} 
+        onClick={(e) => onClick ? onClick(e) : null}
+        disabled={disabled}
+        className={`button-base 
+          ${  size == 'default' ? 'btn-al-d' 
+            : size == 'md'      ? 'btn-al-md' 
+            : size == 'lg'      ? 'btn-al-lg'
+            : size == 'xl'      ? 'btn-al-xl'
+            : ''
+          } 
 
-        ${  color == 'primary'    ? 'btn-el-primary' 
-          : color == 'gray'       ? 'btn-el-gray' 
-          : color == 'gray-focus' ? 'btn-el-gray-focus' 
-          : '' 
-        }
+          ${  color == 'primary'    ? 'btn-el-primary' 
+            : color == 'gray'       ? 'btn-el-gray' 
+            : color == 'gray-focus' ? 'btn-el-gray-focus' 
+            : '' 
+          }
 
-        ${additionalStyles}
-      `}
-    >
-      
-      {icon && <Icon variant={icon} styles={iconStyles ? iconStyles : undefined} />}
-      {displayText && displayText}
-    </button>
+          ${additionalStyles}
+        `}
+      >
+        
+        {icon && <Icon variant={icon} styles={iconStyles ? iconStyles : undefined} />}
+        {displayText && displayText}
+      </button>
+    </div>
   );
 }

@@ -1,10 +1,11 @@
-import { DragEvent, MouseEvent, useEffect, useRef } from 'react';
+import { DragEvent, memo, MouseEvent, useEffect, useReducer, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
 import styles from './Dropbox.module.scss';
+import { Button } from '../Button/Button';
 
 
 /** The file input type's props. These should be memoized. */
@@ -16,7 +17,7 @@ export interface FileUploadProps {
   accept?: string;
 	
 	/** Event function for handling the input's changeEvent. Can be used alongside Rhf's change event. */
-  handleFiles: (files: FileList | null) => void;
+  handleFiles: (files: File[] | null) => void;
 	
 	/** Whether to accept multiple files */
   multiple?: boolean;
@@ -33,6 +34,12 @@ export interface DropboxProps extends FileUploadProps {
 	/** Additional styles for the Dropbox.	*/
   additionalStyles?: string;
 	
+  /** The variant of the file list you want enabled by default */
+  fileListType?: FileListVariant;
+  
+  /** The color theme of the select files list */
+  fileListTheme?: FileListTheme;
+  
 	/** Optional custom icon for the file upload drop zone. */
   customIcon?: IconTypes;
 	
@@ -56,26 +63,57 @@ export interface DropboxProps extends FileUploadProps {
 export const Dropbox = ({ 
   name, label, description, handleFiles, multiple, accept, 
   disableHookForms, error, disabled, required,
-  additionalStyles, customIcon, iconStyles 
+  additionalStyles, fileListType = 'list', fileListTheme = 'green', customIcon, iconStyles 
 }: DropboxProps) => {
   const dropboxRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const internalFiles = useRef<FileList>(null);
+  const internalFiles = useRef<File[]>([]);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   
   // Input binding logic
-  const { field } = useController({name}) || {};
+  const { field } = useController({ name, defaultValue: [] }) || {};
   const { getValues } = useFormContext() || {};
-  const isRhfMode = !disableHookForms && field;
+  const isRhfMode = !disableHookForms && !!field;
   const formValues = getValues && getValues(name);
   
-  console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
-    !disableHookForms ? formValues : internalFiles,
-  );
   
+  /** Returns the current files that we have for this input */
+  const getFiles = (): File[] => {
+    if (isRhfMode) {
+      if (!field.value || !Array.isArray(field.value)) return [];
+      return field.value;
+    }
+    
+    // default logic
+    return internalFiles.current;
+  }
+  
+  /** Error state */ 
+  const getError = (): boolean => !disabled && !!error;
+  
+  /** Utility to handle passing the new data to the events, native input, and rerender logic */
+  const updateComponentState = (files: File[]) => {
+    // Update react hook form's value
+    if (isRhfMode) field.onChange(files);
+    
+    // update our internal state, and rerender for the selected file list
+    else {
+      internalFiles.current = files;
+      forceUpdate();
+    }
+    
+    
+    // any additional logic / custom state handling
+    handleFiles(files); 
+    
+    // !Important: This allows the 'change' event to trigger if the user selects the same file again
+    // The native input will only capture the first file from the list, we clear that after the onChange to handle this behavior w/useController
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
   
   /**
    * Handles passing the captured files to each of the proper events for input and state logic. 
-   * 
+   * w
    * By default, this component should handle it's own rerenders, and 
    * since this is a custom input, we're passing the files directly to the rhf onChange and our change event.
    * 
@@ -83,27 +121,40 @@ export const Dropbox = ({
    * @param selected    The @see SelectItem that was just selected.
    */
   const handleFileUpload = (files: FileList | null) => {
-    let newFiles = files;
+    if (!files || files.length === 0) return;
+    
+    const uploadedFilesArray = Array.from(files);
+    let updatedFiles: File[] = [];
+    console.log('adding new files? ', uploadedFilesArray);
     
     // If it's a multi file, add the additional files, otherwise capture the current file.
-    if (multiple && (files instanceof FileList)) {
-      const fileData: DataTransfer = new DataTransfer();
+    if (multiple) {
       const currentFiles = getFiles();
-      
-      // add the current and new files to the list.
-      for (let i = 0; i < currentFiles?.length; i++) fileData.items.add(currentFiles[i]);
-      for (let i = 0; i < files?.length; i++) fileData.items.add(files[i]);
-      newFiles = fileData.files;
-    }
+      // Filter out files from our current state if they match incoming file names
+      const uniqueCurrentFiles = currentFiles.filter(
+        (currentFile) => !uploadedFilesArray.some((newFile) => newFile.name === currentFile.name)
+      );
+
+      // Merge remaining unique existing files with the newly uploaded ones
+      updatedFiles = [...uniqueCurrentFiles, ...uploadedFilesArray];
+    } else updatedFiles = [uploadedFilesArray[0]];
     
-    console.log(`handleFileUpload(${name}), old files: `, getFileList,
-      `\n newFiles: `, newFiles
+    
+    console.log(`handleFileUpload(${name}), old files: `, uploadedFilesArray,
+      `\n updatedFiles: `, updatedFiles
     );
-    // TODO: We should add an option to switch between, and also a list of the current files below the dropbox
     
-    if (isRhfMode) field.onChange(newFiles); 
-    else internalFiles.current = newFiles; // custom state ref capture
-    handleFiles(newFiles); // additional logic / custom state handling
+    // pass the updated state to the proper events
+    updateComponentState(updatedFiles);
+  }
+  
+  /** Removes a file from the current list of files */
+  const removeFileFromList = (fileToRemove: File) => {
+    const currentFiles = getFiles();
+    const filteredFiles = currentFiles.filter((file) => file.name !== fileToRemove.name);
+    
+    // pass the updated state to the proper events
+    updateComponentState(filteredFiles);
   }
   
   /** When a user clicks on the dropbox, it invoke's the file input's native event top open the file selection menu */
@@ -119,42 +170,9 @@ export const Dropbox = ({
     handleFileUpload(files);
   }
   
-  /** Removes a file from the current list of files */
-  const removeFileFromList = (fileToRemove: File) => {
-    let fileList: FileList | null = getFileList();
-    const newList = new DataTransfer();
-    if (!(fileList instanceof FileList)) return;
-    
-    // Create a new list and remove the current file
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i];
-      if (file.name != fileToRemove.name) {
-        newList.items.add(fileList[i])
-      }
-    }
-    
-    if (isRhfMode) field.onChange(newList.files);
-    else internalFiles.current = newList.files;
-  }
-  
-  /** Returns the current files that we have for this input */
-  const getFiles = (): File[] => {
-    let files: File[] = [];
-    let fileList: FileList | null = getFileList();
-    
-    if (!fileList) return [];
-    for (let i = 0; i < fileList?.length; i++) {
-      files.push(fileList[i]);
-    }
-    
-    return files;
-  }
-  
-  /** Returns the current fileList. */
-  const getFileList = (): FileList | null => isRhfMode ? formValues : internalFiles.current;
-  
-  /** Error state */ 
-  const getError = (): boolean => !disabled && !!error;
+  console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
+    getFiles(),
+  );
   
   
   //--------------------------------------//
@@ -205,6 +223,9 @@ export const Dropbox = ({
     };
   }, []);
   
+  /** Changes the display for the currently selected files */
+  const [sfVariant, setSfVariant] = useState<FileListVariant>(fileListType);
+  const onChangeSfVariant = (variant: FileListVariant) => setSfVariant(variant);
   
   return (
     <Container className='dropbox-c' ref={dropboxRef}>
@@ -246,20 +267,56 @@ export const Dropbox = ({
         { getError() ? error : description } &nbsp;
       </ErrorAndDesc>
       
-      <div className='dropbox-file-c'>
-        { getFiles().map((file) => 
-          <div className='dropbox-file-i'>
-            <span className='dropbox-file-i-desc'>{ file.name }</span>
-            <div onClick={() => removeFileFromList(file)}>
-              <Icon variant='Close' styles='dropbox-file-i-close-btn' />
-            </div>
+      
+      {/* Selected files */}
+      <SelectedFileList 
+        show={getFiles()?.length >= 1} styles='p-1'
+        cStyles={getFiles()?.length >= 1 ? 'animate-fade-in' : 'animate-fade-out'}
+      >
+        <div className='dropbox-sf-dropdown-hc'>
+          <div className='dropbox-sf-dropdown-h'>
+            Files
           </div>
-        )}
-      </div>
+          
+          <Button 
+            displayText='List' 
+            onClick={() => onChangeSfVariant('list')}
+            color='none' additionalStyles={`dropbox-sf-dd-var-l ${sfVariant == 'list' ? 'selected-box' : ''}`} 
+          />
+          <Button 
+            displayText='Box' 
+            onClick={() => onChangeSfVariant('box')}
+            color='none' additionalStyles={`dropbox-sf-dd-var-b ${sfVariant == 'box' ? 'ok-box' : ''}`} 
+          />
+        </div>
+        
+        <Ht show={sfVariant == 'box'} styles={`${sfVariant == 'box' ? 'animate-fade-in' : 'animate-fade-out'}`}>
+          <SelectedFiles 
+            files={getFiles()} name={name} 
+            variant='box' theme={fileListTheme}
+            removeFileFromList={removeFileFromList}
+          />
+        </Ht>
+        <Ht show={sfVariant == 'list'} styles={`${sfVariant == 'list' ? 'animate-fade-in' : 'animate-fade-out'}`}>
+          <SelectedFiles 
+            files={getFiles()} name={name} 
+            variant='list' theme={fileListTheme}
+            removeFileFromList={removeFileFromList}
+          />
+        </Ht>
+      </SelectedFileList>
     </Container>
   );
 }
 
+
+// Styled Components
+const Container = styled.div``;
+const FileUpload = styled.div``;
+const Descriptions = styled.div``;
+const SelectedFileList = styled(Ht)``;
+const ErrorAndDesc = styled(Ht)``;
+const HiddenInput = styled.input``;
 
 /* File types 
   - Images image/* or image/png, image/jpeg
@@ -270,9 +327,102 @@ export const Dropbox = ({
 export const defaultFilesTypes = '.pdf, .doc, .docx, .txt';
 
 
-// Styled Components
-const Container = styled.div``;
-const FileUpload = styled.div``;
-const Descriptions = styled.div``;
-const ErrorAndDesc = styled(Ht)``;
-const HiddenInput = styled.input``;
+/** The variant of the file list you want enabled by default */
+export type FileListVariant = 'list' | 'box';
+  
+/** The color theme of the select files list */
+export type FileListTheme = 'default' | 'green' | 'blue';
+
+const SelectedFiles = memo(({ name, files, removeFileFromList, variant, theme }: { 
+  name: string,
+  files: File[] | null,  
+  removeFileFromList: (fileToRemove: File) => void;
+  variant: FileListVariant,
+  theme: FileListTheme,
+}) => {
+  if (variant == 'list') return (
+    <div className='dropbox-file-c-l'>
+      { files?.map((file) => 
+        <SelBox key={`${name}-sf-list-${file.name}`}
+          className={`dbx-sf-list
+            ${theme == 'default' ? 'dbx-sf-box-default hover:faded-def-box' : ''}
+            ${theme == 'blue' ? 'dbx-sf-box-blue hover:selected-box' : ''}
+            ${theme == 'green' ? 'dbx-sf-box-green hover:ok-box' : ''}
+          `} 
+        >
+          <span className='dbx-sf-desc hover:theme-f'>
+            <span className='input-colors not-italic pr-2'>
+              Filename:
+            </span> 
+            { file.name }
+          </span>
+          <div onClick={() => removeFileFromList(file)}>
+            <Icon variant='Close' styles='dbx-sf-box-close-btn' />
+          </div>
+        </SelBox>
+      )}
+    </div>
+  );
+  
+  // else variant == 'box'
+  return (
+    <div className='dropbox-file-c-b'>
+      { files?.map((file) => 
+        <SelBox key={`${name}-sf-box-${file.name}`}
+          className={`dbx-sf-box
+            ${theme == 'default' ? 'dbx-sf-box-default' : ''}
+            ${theme == 'blue' ? 'dbx-sf-box-blue' : ''}
+            ${theme == 'green' ? 'dbx-sf-box-green' : ''}
+          `} 
+        >
+          <span className='dbx-sf-desc max-w-24'>
+            { file.name }
+          </span>
+          <div onClick={() => removeFileFromList(file)}>
+            <Icon variant='Close' styles='dbx-sf-box-close-btn' />
+          </div>
+        </SelBox>
+      )}
+    </div>
+  );
+}, (prevProps, nextProps) => {
+  
+  // If the input itself has been rebuilt for another form
+  if (prevProps.name !== nextProps.name) {
+    return false;
+  }
+  
+  // If the display has changed, rerender
+  if (prevProps.variant !== nextProps.variant || prevProps.theme !== nextProps.theme) {
+    return false; 
+  }
+  
+  // Check if the files passed in have inherently changed
+  const prevFiles = prevProps.files;
+  const newFiles = nextProps.files;
+  
+  // if they added or removed a file
+  if (prevFiles?.length !== newFiles?.length) {
+    return false;
+  }
+  
+  // if the file count is the same, check if the files in the array (via the order) are the same.
+  if (newFiles?.length && prevFiles?.length) {
+    for (let i = 0; i < newFiles?.length; i++) {
+      const newFile = newFiles[i];
+      const prevFile = prevFiles[i];
+      
+      if (newFile.name !== prevFile.name || newFile.size !== prevFile.size) {
+        return false;
+      }
+    }
+  }
+  
+  // If nothing changed, safely skip the rerender
+  return true; 
+});
+
+
+// Selected Files Styled Components
+const SelBox = styled.div``;
+

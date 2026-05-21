@@ -9,16 +9,16 @@ export const Example_Dropbox = ({ error, disabled }: {
   disabled: boolean;
 }) => {
   const { getValues } = useFormContext() || {};
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[] | null>([]);
   
-  const handleFiles = (files: FileList | null) => {
+  const handleFiles = (files: File[] | null) => {
     // React hook forms
     console.log('getValues: ', getValues());
     const formValue = getValues('fileUploadFormName');
     
     // Capturing state manually
     console.log('files uploaded: ', files);
-    setFiles(files);
+    // setFiles(files);
   }
 
   return (
@@ -26,9 +26,8 @@ export const Example_Dropbox = ({ error, disabled }: {
       name="fileUploadFormName"
       label="Upload files"
       description='The description of the dropbox.'
-      // value={files}
       handleFiles={handleFiles}
-      // disableHookForms
+      disableHookForms
       multiple
       accept='image/*, .pdf, .doc, .docx, .txt'
       customIcon='Canvas'
