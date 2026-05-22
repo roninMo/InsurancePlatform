@@ -74,13 +74,13 @@ export const Docs_Tooltip = () => {
       </h3>
 
       <div className='span-12'>
-        <div className='p-2 showcase-text'>
+        <div className='p-2 pb-4 showcase-text'>
           The <Kw>Tooltip</Kw> component is a highly efficient custom tooltip that works on hover with any component that utilizes the <Kw>TooltipService</Kw>. 
           It's a useContext function that gives you access to show and hide functions for rendering the tooltip without causing any extra overhead, 
           and doesn't rerender any other components in your application. The props passed into these function are also stable, and though they're objects they don't need to be memoized.
         </div>
         
-        <div className='p-2 showcase-text'>
+        <div className='p-2 pb-4 showcase-text'>
           The <Kw>Tooltip</Kw> is very dynamic, and will handle rendering and transitioning smoothly anywhere on the screen, 
           to switching views on the fly if it goes out of bounds of the viewport,
           and has it's own overflow logic with smoothed scrolling for content that doesn't fit within it's container.
@@ -88,7 +88,7 @@ export const Docs_Tooltip = () => {
       </div>
       
       <div className='span-12'>
-        <div className='p-2 showcase-text'>
+        <div className='p-2 pb-4 showcase-text'>
           There are multiple variants of the tooltip. From 
           the <Kw>text</Kw> variant, that accepts the displayed text and additional styles for you to customize the tooltip. 
           The <Kw>code</Kw> variant allows you to pass code snippets in for it to render.
@@ -97,7 +97,7 @@ export const Docs_Tooltip = () => {
       </div>
 
       <div className='span-12'>
-        <p className='p-2 showcase-text'>
+        <p className='p-2 pb-4 showcase-text'>
           If you need more a popup notification, try using the &nbsp;
           <span 
             onMouseEnter={() => show({ code: getSourceCode(ModalCodeSnippets, "Example_PopupModal"), type: "component" })} 

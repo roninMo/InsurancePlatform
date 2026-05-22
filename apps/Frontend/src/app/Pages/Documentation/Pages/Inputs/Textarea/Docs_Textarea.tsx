@@ -79,7 +79,7 @@ export const Docs_Textarea = () => {
       </h3>
 
       <div className='span-12'>
-        <p className='p-2 showcase-text'>
+        <p className='p-2 pb-4 showcase-text'>
           The <Kw>textarea</Kw> is designed to be used for a variety of scenarios with lots of customization that works alongside
           the input with ease. Each variant helps you handle both multi line content, or chat boxes for workspaces like jira
           or media apps, and you can add your own list of metadata tags to suit your needs. 
@@ -90,7 +90,7 @@ export const Docs_Textarea = () => {
           and <Kw>Post</Kw>,
         </p> 
         
-        <p className='p-2 showcase-text'>
+        <p className='p-2 pb-4 showcase-text'>
           The <Kw>MetadataTags</Kw> could be a list of additional functionality for the textarea, 
           Each one is under the hood is a styled button with an icon and optionally a label, with an event function for 
           when the user interacts with it. 
@@ -108,13 +108,13 @@ export const Docs_Textarea = () => {
           </span>.
         </p>
 
-        <p className='p-2 showcase-text'>
+        <p className='p-2 pb-4 showcase-text'>
           You can use them for things like tagging coworkers in a post,
           adding labels to new tasks you're commenting about, or assigning a calender dates for 
           upcoming tasks and deadlines that need to be completed by. 
         </p>
         
-        <p className='p-2 showcase-text'>
+        <p className='p-2 pb-4 showcase-text'>
           There's also <Kw>attachFile</Kw> functionality to this specific input, which should be memoized to prevent extra rerenders if
           you need your page to be performant. For <Kw>submitting</Kw>, 
           or if you need a post button for the input, reference the submission props.

@@ -47,8 +47,29 @@ export const Documentation = () => {
             - variants mask params should optionally enable/disable their mask
             - there should be a new param for adding a mask through this class, or a custom one
 
+    - add all the content and util components to the library
+      - Content
+        - alert
+        - card
+        - icon
+        - dropdown
+      - Utils
+        - modal
+        - tooltip
+        - HashLink
+        
+    - add the rest of the UniversalEventHandlers to the form components
+      - button
+      - checkbox
+      - dropbox
+      - input
+      - radio
+      - radioTable
+      - select
+      - slider
+      - textarea
     
-    - Select component fixes
+    - Component Efficiency and Rerendering (Refactor)
       1. Check if both Rhf and the custom state handling are working properly
       2. Check all component rerenders
       3. Check error/disabled state have proper rerenders
@@ -62,6 +83,27 @@ export const Documentation = () => {
         x radioTable onSelect (both)
 
     - go back through the docs and update them again
+      - Forms
+        - button
+        - checkbox
+        - dropbox
+        - input
+        - radio
+        - radioTable
+        - select
+        - slider
+        - textarea
+      - Content
+        - alert
+        - card
+        - icon
+        - dropdown
+      - Utils
+        - modal
+        - tooltip
+        - HashLink
+
+    - Finished with the Docs Page and all the universal components!
 
     - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
       - add documentation to UpdateRecord, and move it to the library utils
@@ -103,6 +145,11 @@ export const Documentation = () => {
     - each component ref should have a parent, component, alias (it's label or input value), and props to display as a second sidebar popover
     - check to enable disable logging, and selectable to show current rerenders and logging
     - tabs should be console, filtered, by component, and settings
+    
+    - devlogs should be captured for each component, with a log type
+      - rerender (render specific)
+      - info, log, warn, error
+      - with a filter to select what types are shown (btn select individual, shift+select multiple)
 
 
     - vite ATS code to attach the parentComponentName as a prop to all components

@@ -73,13 +73,13 @@ export const Docs_HashLink = () => {
       </h3>
 
       <div className='span-12'>
-        <div className='p-2 showcase-text'>
+        <div className='p-2 pb-4 showcase-text'>
           The <Kw>HashLink</Kw> component is a dynamic react router <Kw>Link</Kw> that's built to add hashLink navigation functionality 
           and make it easier and more efficient to use the Link element. It has multiple <Kw>Types</Kw> for how you're navigating, 
           and allows you to add a label or your own custom content that's wrapped within it.
         </div>
         
-        <div className='p-2 showcase-text'>
+        <div className='p-2 pb-4 showcase-text'>
           By default the hashLink adds state to navigation that the application uses to handle scrolling to a hashLink like "/home#introduction"
           during a navigation. The types are <Kw>router</Kw>, which is the default behavior. 
           <Kw>page</Kw>, for navigating to a another site in a new tab, and adds nohttp referrer for safety.

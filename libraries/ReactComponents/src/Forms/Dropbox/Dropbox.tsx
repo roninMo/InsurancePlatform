@@ -70,7 +70,7 @@ export const Dropbox = ({
   const internalFiles = useRef<File[]>([]);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   
-  // Input binding logic
+  // * Input binding logic
   const { field } = useController({ name, defaultValue: [] }) || {};
   const { getValues } = useFormContext() || {};
   const isRhfMode = !disableHookForms && !!field;
@@ -113,7 +113,7 @@ export const Dropbox = ({
   
   /**
    * Handles passing the captured files to each of the proper events for input and state logic. 
-   * w
+   * 
    * By default, this component should handle it's own rerenders, and 
    * since this is a custom input, we're passing the files directly to the rhf onChange and our change event.
    * 
@@ -125,7 +125,6 @@ export const Dropbox = ({
     
     const uploadedFilesArray = Array.from(files);
     let updatedFiles: File[] = [];
-    console.log('adding new files? ', uploadedFilesArray);
     
     // If it's a multi file, add the additional files, otherwise capture the current file.
     if (multiple) {
@@ -134,17 +133,16 @@ export const Dropbox = ({
       const uniqueCurrentFiles = currentFiles.filter(
         (currentFile) => !uploadedFilesArray.some((newFile) => newFile.name === currentFile.name)
       );
-
+      
       // Merge remaining unique existing files with the newly uploaded ones
       updatedFiles = [...uniqueCurrentFiles, ...uploadedFilesArray];
     } else updatedFiles = [uploadedFilesArray[0]];
     
     
-    console.log(`handleFileUpload(${name}), old files: `, uploadedFilesArray,
-      `\n updatedFiles: `, updatedFiles
-    );
-    
     // pass the updated state to the proper events
+    // console.log(`handleFileUpload(${name}), old files: `, uploadedFilesArray,
+    //   `\n updatedFiles: `, updatedFiles
+    // );
     updateComponentState(updatedFiles);
   }
   
@@ -170,9 +168,10 @@ export const Dropbox = ({
     handleFileUpload(files);
   }
   
-  console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
-    getFiles(),
-  );
+  // ? Rerender state
+  // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
+  //   getFiles(),
+  // );
   
   
   //--------------------------------------//

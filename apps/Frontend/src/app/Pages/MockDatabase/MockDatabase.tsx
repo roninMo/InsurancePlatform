@@ -246,6 +246,10 @@ export const MockDatabase = () => {
 	const dbTooltip = useMemo(() => ({ text: 'The selected database.' }), []);
 	const tableTooltip = useMemo(() => ({ text: 'The tables to search.' }), []);
   const formMethods = useForm({
+		mode: 'onSubmit',
+		reValidateMode: 'onBlur',
+		
+		// Validation
     resolver: yupResolver(schema),
     defaultValues: {
       database: undefined,

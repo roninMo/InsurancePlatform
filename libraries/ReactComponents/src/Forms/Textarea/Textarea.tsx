@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState } from "react";
+import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState, RefObject, useReducer, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { FileUploadProps } from "../Dropbox/Dropbox";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
@@ -30,10 +30,15 @@ export interface TextareaProps {
   /** The placeholder for the textarea. */
   placeholder?: string;
 
-  /** If you're overriding Rhf with useState, explicitly set the value. You can use the onChange to handle update events. */
-  value?: string;
+  // Handling state
+  /** Optional Event to update the changed value before submitting the value to rhf or an internal uncontrolled ref. */
+  onUpdateValue?: (prevValue: string, event: ChangeEvent<HTMLTextAreaElement>) => string;
+  
+	/** Whether to use Rhf or custom state through the onChange event */
+  disableHookForms?: boolean;
   // onChange?: (e: ChangeEvent<any>) => void; 
   
+  // Form / Validation
   /** Error message, if there's an error. */
   error?: string;
 
@@ -55,6 +60,7 @@ export interface TextareaProps {
   submitButtonDisabled?: boolean;
   submitButtonType?: 'button' | 'submit';
 
+  // Misc
   /** The attach file props object needs to be memoized when used to prevent extra rerenders. */
 	attachFile?: FileUploadProps;
 
@@ -64,42 +70,143 @@ export interface TextareaProps {
 
 /** Tag events for custom logic that you want to run in parallel with the textarea.  */
 export interface MetadataTagProps {
+  /** Optional, you can use either an icon, label, or both for each actionable bubble event. */
   tagLabel?: string;
+  
+  /** Optional, you can use either an icon, label, or both for each actionable bubble event. */
   tagIcon?: IconTypes;
+  
+  /** The styles for the provided icon. */
   iconStyles?: string;
+  
+  /** The action event for this specific metadata tag. Can be used for anything alongside this captured form input. */
   onClickTag?: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
 }
 
 
-// The input functionality of the textarea
-const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
-  const { type = 'default', name, value, placeholder, metadataTags, attachFile,
-    error = false, disabled, required, 
-    onSubmit, submitButtonText, submitButtonDisabled = false, submitButtonType = 'button',
-    onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave,
-    ...props
+/** The input functionality of the textarea. */
+const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { localInputRef: RefObject<HTMLTextAreaElement | null> }) => {
+  const { 
+    type = 'default', name, placeholder, 
+    onUpdateValue, disableHookForms, localInputRef, disabled, required, 
+    onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave, onSubmit,
   } = allProps;
-
-  // Input bindings
-  const { register, getValues } = useFormContext() || {};
   
-    // Input binding logic
-    const isRHFMode = !!register && value === undefined;
-    const rhfBindings = isRHFMode ? register(name) : null;
-    // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange });
+  // * Input binding logic
+  const { register, getValues, getFieldState, control, trigger, clearErrors } = useFormContext() || {};
+  const isRHFMode = !disableHookForms && !!register;
+  const rhfBindings = isRHFMode ? register(name) : null;
   
-    // Intercept changes cleanly
-    const handleOnChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-      if (isRHFMode && rhfBindings) rhfBindings.onChange(e);
-      if (onChange) onChange(e);
-    };
+  // validation logic
+  const debouncer = useRef<NodeJS.Timeout>(undefined);
+  useEffect(() => () => clearTimeout(debouncer.current), []);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   
-    const handleOnBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
-      if (isRHFMode && rhfBindings) rhfBindings.onBlur(e);
-      if (onBlur) onBlur(e);
+  
+  /** Handles validation debouncing (if we need to validate) */
+  const keypressDebouncer = (newValue: string) => {
+    // const isInRevalidateMode = formState.isSubmitted;
+    const isInRevalidateMode = control?._formState?.isSubmitted || false;
+    
+    // If we no longer need to validate
+    if (!isInRevalidateMode || (isInRevalidateMode && !newValue) || disabled) {
+      debouncer.current && clearTimeout(debouncer.current);
+      
+      // check if we should clear any current errors
+      const { error } = getFieldState(name);
+      if (!!error) clearErrors(name);
+      return;
     }
-
-
+    
+    // If it was submitted and still has active errors, refresh and run validations
+    if (debouncer.current) clearTimeout(debouncer.current);
+    debouncer.current = setTimeout(() => {
+      trigger(name);
+      // forceUpdate(); // let rhf's validation logic handle rerenders
+      // console.log(`running validations`);
+    }, 450);
+  }
+  
+  // ? Nested Rerender state
+  console.log(`InputComponent Rerendered ${name}-${type}: isRhfMode(${isRHFMode})`,
+    `\n bindings: `, { 
+      onChange:     !!onChange ?    { func: onChange } : undefined,
+      onUpdateValue:  !!onUpdateValue ? { func: onUpdateValue } : undefined,
+      onSubmit:     !!onSubmit ?    { func: onSubmit } : undefined,
+      onFocus:      !!onFocus  ?    { func: onFocus }  : undefined,
+      onBlur:       !!onBlur   ?    { func: onBlur }   : undefined,
+    },
+  );
+  
+  /** Either Rhf's captured form value, or the internal ref for custom state. */
+  const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
+  
+  
+  /**
+   * Adds any input masking or custom logic to the input before updating the input component directly. 
+   * * Updates the target value during each event before being passed to Rhf's and optional OnChange events.
+   * 
+   * ---
+   * @param event       The native changeEvent data tied to the input event.
+   */
+  const handleUpdateValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    // Handle input masking edits here
+    // const inputMask = getInputMask(type);
+    // if (inputMask) InputMask(event, mask, acceptedKeys); // ex: (e, "(___)-___-____", "regexForCharsOnly")
+    
+    // Additional edits from the optional function
+    if (onUpdateValue) onUpdateValue(getValue(), event);
+  }
+  
+  
+  /**
+   * Links event logic with custom user event logic for both Rhf and custom state handling.  
+   * 
+   * By default, this component should handle it's own rerenders, and 
+   * onSelect / onChange shouldn't inherently cause hierarchical rerenders.
+   * 
+   * ---
+   * @param event       The native changeEvent data tied to the input event.
+   */
+  const handleOnChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    handleUpdateValue(event); // Masking / other custom updates 
+    console.log(`${name}-${type} handleOnChange(): value(${getValue()})`,
+      `\n event data: `, { value: event.target.value, event: event }
+    );
+    
+    // react hook forms event and optional event logic
+    if (isRHFMode && rhfBindings) rhfBindings.onChange(event);
+    if (onChange) onChange(event);
+    
+    // update the internal ref so the input reflects the updated value (for non Rhf inputs)
+    if (localInputRef.current) {
+      const targetValue = event.target.value;
+      localInputRef.current.value = targetValue;
+    }
+    
+    // Finally, add a debouncer for handling input validations for keystrokes after a brief duration
+    if (isRHFMode && rhfBindings) {
+      keypressDebouncer(event.target.value);
+    }
+  };
+  
+  
+  /** Links custom events with Rhf's event bindings */
+  const handleOnBlur = (event: FocusEvent<HTMLTextAreaElement>) => {
+    if (isRHFMode && rhfBindings) rhfBindings.onBlur(event);
+    if (onBlur) onBlur(event);
+  }
+  
+  
+  /** Safe Unified Ref Callback */
+  const handleRef = (node: HTMLTextAreaElement | null) => {
+    localInputRef.current = node; // Store it locally for our increment buttons
+    if (isRHFMode && rhfBindings?.ref) {
+      rhfBindings.ref(node); // Pass it along to React Hook Form
+    }
+  };
+  
+  
   return (
     <textarea 
         id={name}
@@ -109,11 +216,12 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
         // Rhf or useState handling
         {...(() => {
           if (isRHFMode && rhfBindings) {
-            const { onChange: _, onBlur: __, ...rest } = rhfBindings;
+            const { ref: _, onChange: __, onBlur: ___, ...rest } = rhfBindings;
             return rest;
           }
-          return { name, value }; // default behavior
+          return { name }; // default behavior
         })()}
+        ref={handleRef}
         onChange={handleOnChange}
         onBlur={handleOnBlur}
         
@@ -127,7 +235,6 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
           ${type == 'box' ? 'ta-b-base' : ''}
           ${type == 'post' ? `ta-p-base` : ''}
         `}
-        { ...props }
       />
   );
 }
@@ -136,17 +243,53 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers) => {
 export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   const { 
     type = 'default', name, label, description, 
-    value, attachFile, metadataTags = true,
-    error = false, required = false, disabled = false, 
+    onUpdateValue, disableHookForms, attachFile, metadataTags = true,
+    error, required = false, disabled = false, 
     onSubmit, submitButtonText, submitButtonDisabled = false, submitButtonType = 'button', 
   } = allProps;
-
-
+  // * Input binding logic
+  const { register, getValues, getFieldState, control } = useFormContext() || {};
+  const isRHFMode = !disableHookForms && !!register;
+  const { error: errors } = getFieldState(name, control?._formState); // second arg prevents the internal JavaScript Proxy from adding a tracking flag to your component.
+  const localInputRef = useRef<HTMLTextAreaElement | null>(null); // When not using rhf
+  
+  /** Either Rhf's captured form value, or the internal ref for custom state. */
+  const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
+  
+  // ? Rerender state
+  console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), data: `, 
+    { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
+    `\n submitButton: `, { text: submitButtonText, disabled: submitButtonDisabled, type: submitButtonType, onSubmit },
+    `\n attachFile: `, { file: getValues(attachFile?.name || ' '), props: attachFile},
+    `\n metadataTags: `, metadataTags,
+  );
+  
+  
   //--------------------------------//
   // Memoized content               //
   //--------------------------------//
-  // default, box style's ButtonsAndLinks section, and the post style's header section
+  // Memoize the actual input, and safely pass it's props
+  const MemoedInput = useMemo(() => {
+    const { onFocus, onChange, onBlur, onMouseEnter, onMouseLeave, onClick } = allProps;
+    
+    return (
+      <InputComponent 
+        type={type} name={name}
+        onChange={onChange} onUpdateValue={onUpdateValue}
+        disableHookForms={disableHookForms} localInputRef={localInputRef} 
+        required={required} disabled={disabled} // error={error}
+        onFocus={onFocus} onBlur={onBlur} onClick={onClick}
+        onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+        onSubmit={onSubmit} 
+      />
+    );
+  }, [name, type, disableHookForms, required, disabled]);
+  
+  
+  // ? Default and Box style's ButtonsAndLinks section
   const MemoizedContent = useMemo(() => {
+    console.log(`${name}(${type}) MemoizedContent Rerendered`, { disabled, submitButtonDisabled });
+    
     if (type == 'default') return (
       <ButtonsAndLinks className={`ta-d-btn-links`}>
         <PrecedingInputElements className="ta-d-attach-file">
@@ -154,16 +297,16 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
             <AttachFileElement 
               name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
               multiple={attachFile?.multiple} accept={attachFile?.accept} 
-              required={required} disabled={disabled}
+              required={required} disabled={disabled} isRhfMode={isRHFMode}
               iconStyles={`ta-d-icon 
                 ${disabled ? 'ta-d-attach-file-d' : 'ta-d-attach-file-ha'}`} 
             />
           }
-
-          <MetadataTagElements type='post' metadataTags={metadataTags} id={name} disabled={disabled} />
+          
+          <MetadataTagElements type='post' metadataTags={metadataTags} name={name} disabled={disabled} />
           {/* TODO: emoji plugin for input text - https://www.npmjs.com/package/emoji-picker-react */}
         </PrecedingInputElements>
-
+        
         { onSubmit && 
           <SubsequentInputElements>
             <Button 
@@ -185,15 +328,15 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
             <AttachFileElement 
               name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
               multiple={attachFile?.multiple} accept={attachFile?.accept} 
-
+              
               iconStyles={`ta-d-icon ${disabled ? 'i-d-color' : ''}`} 
-              required={required} disabled={disabled}
+              required={required} disabled={disabled} isRhfMode={isRHFMode}
             >
               <p className="italic transition-all">Attach a file</p>
             </AttachFileElement>
           }
         </div>
-
+        
         { onSubmit && 
           <div className="margin-auto-div-fix">
             <Button 
@@ -211,58 +354,61 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 
     if (type == 'post') return (<></>);
   }, [type, disabled, submitButtonDisabled]);
-
-
-    // Post Memoized content
-    const [showPreview, setShowPreview] = useState<'write' | 'preview'>('write');
-    const togglePreview = (type: 'write' | 'preview') => setShowPreview(type);
-    const PostSectionHeader = useMemo(() => (<>
-      { label && <h4 className="py-2 ta-p-label">{ label }</h4> }
-
-      <ButtonsAndLinks className="row justify-between items-center py-2">
-        <div className="row gap-2">
-          <Button 
-            displayText="Write" 
-            onClick={() => togglePreview('write')} 
-            size="default" 
-            color={showPreview == 'write' ? 'gray' : 'gray-focus'}
-          />
-          <Button 
-            displayText="Preview" 
-            onClick={() => togglePreview('preview')} 
-            size="default" 
-            color={showPreview == 'preview' ? 'gray' : 'gray-focus'}
-          />
-        </div>
-
-        { showPreview == 'write' && 
-          <div className="animate-fade-in">
-            <MetadataTagElements type='post' metadataTags={metadataTags} id={name} disabled={disabled} />
+  
+  
+  // ? Post variant's header section (the header write/preview and metadata tags)
+  const [showPreview, setShowPreview] = useState<'write' | 'preview'>('write');
+  const togglePreview = (type: 'write' | 'preview') => setShowPreview(type);
+  
+  const PostSectionHeader = useMemo(() => {
+    console.log(`${name}(${type}) MemoizedContent Rerendered`, { showPreview });
+    return (
+      <>
+        { label && <h4 className="py-2 ta-p-label">{ label }</h4> }
+        <ButtonsAndLinks className="row justify-between items-center py-2">
+          <div className="row gap-2">
+            <Button 
+              displayText="Write" 
+              onClick={() => togglePreview('write')} 
+              size="default" 
+              color={showPreview == 'write' ? 'gray' : 'gray-focus'}
+            />
+            <Button 
+              displayText="Preview" 
+              onClick={() => togglePreview('preview')} 
+              size="default" 
+              color={showPreview == 'preview' ? 'gray' : 'gray-focus'}
+            />
           </div>
-        }
-      </ButtonsAndLinks>
-    </>), [showPreview]);
-
-
+          
+          { showPreview == 'write' && 
+            <div className="animate-fade-in">
+              <MetadataTagElements type='post' metadataTags={metadataTags} name={name} disabled={disabled} />
+            </div>
+          }
+        </ButtonsAndLinks>
+      </>
+    );
+  }, [showPreview]);
 
 
   //--------------------------------//
   // default style                  //
   //--------------------------------//
-	
   if (type === 'default') {
     return (
       <div className="w-full flex flex-col gap-2">
-        { label && 
-          <h4 className="ta-d-label">{ label }</h4> 
-        }
+        { label && <h4 className="ta-d-label">{ label }</h4> }
         <Container className="rowStart gap-2 justify-items-start items-start">
           <Avatar className="ta-d-avatar">
             <Icon variant='Profile' styles="size-4" />  
           </Avatar>
-
+          
           <InputContainer className="w-full col group">
-            <InputComponent { ...allProps } />
+            {/* Textarea Input */}
+            { MemoedInput }
+            
+            {/* Pill Actions, and Submit Button */}
             <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
             { MemoizedContent }
           </InputContainer>
@@ -283,16 +429,16 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   //--------------------------------//
   else if (type == 'box') {
     return (<>
-      <Container className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
+      <InputContainer className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
         { label && <h4 className="ta-b-label">{ label }</h4> }
-				<InputComponent { ...allProps } />
+				{/* Textarea Input */}
+        { MemoedInput }
         
-        {/* Pill action buttons */}
-        <MetadataTagElements type='box' metadataTags={metadataTags} id={name} disabled={disabled} />
-
+        {/* Pill actions and Submit Button */}
+        <MetadataTagElements type='box' metadataTags={metadataTags} name={name} disabled={disabled} />
         <FocusBar className={`focus-bar ${error && !disabled ? 'focus-bar-err' : ''}`} />
         { MemoizedContent }
-      </Container>
+      </InputContainer>
       
       <ErrAndDescElements 
         type={type} description={description} 
@@ -310,37 +456,37 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
     return (
       <Container>
         { PostSectionHeader }
-
+        
         <Ht show={showPreview == 'preview'}>
           <div className="ta-p-preview-c">
-            { value ? value : 'Preview content will render here.' }
+            { getValue() ? getValue() : 'Preview content will render here.' }
           </div>
         </Ht>
-
+        
         <InputContainer className={`ta-p-c group 
           ${!disabled && error ? 'outline-error' : 'outline-styles'}
           ${showPreview == 'write' ? 'bg-default' : ''}
         `}>
+          {/* Textarea input */}
           <Ht show={showPreview == 'write'}>
-            <InputComponent { ...allProps } />
+            { MemoedInput }
           </Ht>
-
+          
           <FocusBar className={`${showPreview == 'write' ? 'focus-bar' : ''} ${error && !disabled ? 'focus-bar-err' : ''}`} />
-          <div className={`ta-p-btn-links ${showPreview == 'write' ? 'border-styles border-t' : ''}`}>
+          <ButtonsAndLinks className={`ta-p-btn-links ${showPreview == 'write' ? 'border-styles border-t' : ''}`}>
             <div className={`ta-b-attach-file ${!disabled ? 'ta-b-attach-file-ha' : 'ta-b-attach-file-d'}`}>
               { attachFile?.handleFiles && 
                 <AttachFileElement 
                   name={attachFile?.name} handleFiles={attachFile?.handleFiles} 
                   multiple={attachFile?.multiple} accept={attachFile?.accept} 
-
                   iconStyles={`ta-d-icon ${disabled ? 'i-d-color' : ''}`} 
-                  required={required} disabled={disabled}
+                  required={required} disabled={disabled} isRhfMode={isRHFMode}
                 >
                   <p className="italic transition-all">Attach a file</p>
                 </AttachFileElement>
               }
             </div>
-
+            
             <div className="margin-auto-div-fix">
               { onSubmit && (
                 <Button 
@@ -353,7 +499,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
                 />
               )}
             </div>
-          </div>
+          </ButtonsAndLinks>
         </InputContainer>
         
         <ErrAndDescElements 
@@ -367,8 +513,8 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
 }
 
 
-// Universal error and description handling
-const ErrAndDescElements = memo(({ type, error, disabled, description }: any) => (
+/** Universal error and description handling for all variants */
+const ErrAndDescElements = ({ type, error, disabled, description }: any) => (
   <ErrorAndDescription 
     show={description || (error && !disabled)} 
     styles={`${type == 'default' ? 'ta-d-d-c' : type == 'box' ? 'ta-d-b-c' : 'ta-d-p-c'}`}
@@ -376,11 +522,27 @@ const ErrAndDescElements = memo(({ type, error, disabled, description }: any) =>
   >
     { (!disabled && error) ? error : description } &nbsp;
   </ErrorAndDescription>
-), (prev, next) => (prev.error === next.error && prev.disabled === next.disabled));
+);
 
 
-// additional action events to capture metadata during input captures. ex. Due dates, tags, etc.
-const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagElementProps) => {
+
+/** Strictly for the component to render the props */
+interface MetadataTagElementProps { 
+  /** The textarea's current variant. */
+  type: TextareaTypes;
+  
+  /** The action bubbles for the current textarea. */
+  metadataTags?: MetadataTagProps[] | boolean;
+  
+  /** Used for the mapped keys, and other non essential state. */
+  name: string;
+  
+  /** Whether the textarea is currently disabled. */
+  disabled: boolean;
+};
+
+/** Additional action events to capture metadata during input captures. ex. Due dates, tags, etc. */ 
+const MetadataTagElements = memo(({ type, metadataTags, name, disabled }: MetadataTagElementProps) => {
   const getIconStyles = (styles?: string, defaultStyles?: string): string => 
     (styles ? styles : defaultStyles || '') + ` ${disabled ? 'i-d-color' : ''}`; 
 
@@ -394,7 +556,7 @@ const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagEl
       <div className="row gap-4">
         { metadataTags.map(({tagIcon, iconStyles, onClickTag}: MetadataTagProps) => {
           if (tagIcon) return (
-            <div onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagIcon}`}>
+            <div onClick={(e) => onClickTag && onClickTag(e)} key={`${name}-${tagIcon}`}>
               <Icon variant={tagIcon} styles={getIconStyles(iconStyles, 'ta-d-icon')} /> 
             </div>
           )}
@@ -406,7 +568,7 @@ const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagEl
     if (type == 'box') return (
       <PillActions className="metadata-tag-styles">
         { metadataTags.map(({tagLabel, tagIcon, iconStyles, onClickTag }: MetadataTagProps) => 
-          <div className="ta-pill-actions" onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagLabel}`}>
+          <div className="ta-pill-actions" onClick={(e) => onClickTag && onClickTag(e)} key={`${name}-${tagLabel}`}>
             { tagIcon && <Icon variant={tagIcon} styles={getIconStyles(iconStyles, 'metadata-tag-icon-b')} />}
             { tagLabel }
           </div>
@@ -419,7 +581,7 @@ const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagEl
       <div className="row gap-4">
         { metadataTags.map(({tagIcon, iconStyles, onClickTag }: MetadataTagProps) => {
           if (tagIcon) return (
-            <div onClick={(e) => onClickTag && onClickTag(e)} key={`${id}-${tagIcon}`}>
+            <div onClick={(e) => onClickTag && onClickTag(e)} key={`${name}-${tagIcon}`}>
               <Icon variant={tagIcon} styles={getIconStyles(iconStyles, 'metadata-tag-icon-p')} /> 
             </div>
           )}
@@ -455,27 +617,94 @@ const MetadataTagElements = ({ type, metadataTags, id, disabled }: MetadataTagEl
   }
 
   return (<></>);
+}, (prevProps, nextProps) => {
+  
+  // If the input itself has been rebuilt for another form
+  if (prevProps.type !== nextProps.type || prevProps.name !== nextProps.name) {
+    return false;
+  }
+  
+  // If the form's input was disabled, rerender
+  if (prevProps.disabled !== nextProps.disabled) {
+    return false; 
+  }
+  
+  // Check if the metadata tags have changed
+  const prevTags = prevProps.metadataTags;
+  const nextTags = nextProps.metadataTags;
+  const prevWasBoolean = (prevTags === true || prevTags === false);
+  const nextWasBoolean = (nextTags === true || nextTags === false);
+  if (prevWasBoolean !== nextWasBoolean) return false; // strictly a visual appearance option, but add here for safety
+  
+  // actual logic
+  if (!prevWasBoolean && !nextWasBoolean && (prevTags !== undefined && nextTags !== undefined)) {
+    if (prevTags.length !== nextTags.length) return false; // efficiency check
+    
+    const nextMap = new Map(nextTags.map(item => [item.tagLabel, item]));
+    return prevTags.every(prevItem => {
+      const nextItem = nextMap.get(prevItem.tagLabel);
+      if (!nextItem) return false; // Item was replaced
+      if (prevItem.tagLabel !== nextItem.tagLabel) return false;
+      if (prevItem.tagIcon !== nextItem.tagIcon) return false;
+      if (prevItem.iconStyles !== nextItem.iconStyles) return false;
+      // Skip function check and hope we aren't doing anything too finnicky
+    });
+  }
+  
+  // If nothing changed, safely skip the rerender
+  return true; 
+});
+
+
+/** Textarea's file attachment component props */
+export interface TA_FileUploadProps extends FileUploadProps {
+  /** The styles of the file attachment icon */
+  iconStyles: string;
+  
+  /** Whether the uploaded file is required. */
+  required?: boolean;
+  /** Whether the uploaded file is disabled. */
+  disabled?: boolean;
+  
+  /** Whether we're currently using react hook forms */
+  isRhfMode: boolean;
+  
+  /** Whether it's an icon, or an icon with additional things like a text element. */
+  children?: ReactNode;
 }
-
-const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, required, disabled, children }: TA_FileUploadProps) => {
+const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, required, disabled, isRhfMode, children }: TA_FileUploadProps) => {
+  const { setValue } = useFormContext() || {};
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  
   // invoke the file input's native event for opening the file selection.
   const onClickDropdown = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     fileInputRef?.current?.click();
   }
-
+  
+  /** Input binding for rhf and additional event logic during file upload. */
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files: File[] = Array.from(event?.target?.files || []);
+    
+    // Synthetic update and validation
+    if (isRhfMode) setValue(name, files, { shouldDirty: true, shouldValidate: true });
+    
+    // ? Additional event logic
+    handleFiles(files);
+    
+    // !Important: This allows the 'change' event to trigger if the user selects the same file again
+    if (event.target) {
+      event.target.value = '';
+    }
+  }
+  
   if (true) return (
     <div onClick={onClickDropdown} className="rowStart gap-2">
       <HiddenInput 
-        name={name} type="file" ref={fileInputRef}
-        onChange={(e) => handleFiles(e.target.files)}
-
-        accept={accept || ''}
-        multiple={multiple}
-        className='sr-only'
-
+        type="file"
+        ref={fileInputRef} onChange={handleFileChange}
         disabled={disabled} required={required}
+        accept={accept || ''} multiple={multiple}
+        className='sr-only'
       />
       <Icon variant='AttachFile'  styles={iconStyles} />
       { children }
@@ -483,19 +712,6 @@ const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, re
   );
 }
 
-
-interface MetadataTagElementProps { 
-  type: TextareaTypes;
-  metadataTags?: MetadataTagProps[] | boolean;
-  id: string;
-  disabled: boolean;
-};
-export interface TA_FileUploadProps extends FileUploadProps {
-  iconStyles: string;
-  required?: boolean;
-  disabled?: boolean;
-  children?: ReactNode;
-}
 
 
 // Default metadata tags
@@ -527,6 +743,7 @@ export const defaultPostMetadataTags:MetadataTagProps[] = [
     onClickTag: () => {},
   },
 ];
+
 
 // Styled Components
 const InputContainer = styled.div``;

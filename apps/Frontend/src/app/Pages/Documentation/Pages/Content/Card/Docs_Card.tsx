@@ -78,7 +78,7 @@ export const Docs_Card = () => {
       </h3>
 
       <div className='span-12'>
-        <div className='p-2 showcase-text'>
+        <div className='p-2 pb-4 showcase-text'>
           The <Kw>Card</Kw> component is a themed container with variants that allow you to structure your content
           in specific ways to suit your needs. It's easy to use and highly customizable, give it a try.
           
@@ -92,7 +92,7 @@ export const Docs_Card = () => {
       </div>
 
       <div className='span-12'>
-        <p className='p-2 showcase-text'>
+        <p className='p-2 pb-4 showcase-text'>
           If you're just looking for more of a notification-like element with various themes, use &nbsp;
           <span 
             onMouseEnter={() => show({ code: getSourceCode(AlertCodeSnippets, "Example_Alert"), type: "component" })} 

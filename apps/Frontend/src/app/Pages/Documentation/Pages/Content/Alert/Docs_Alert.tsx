@@ -76,7 +76,7 @@ export const Docs_Alert = () => {
       </h3>
 
       <div className='span-12'>
-        <div className='p-2 showcase-text'>
+        <div className='p-2 pb-4 showcase-text'>
           The alert component is for displaying themed notifications for the projects I'm working on. It accepts any content, 
           and functions like a normal div element, allowing you to create a quick notification, or dynamic content while using
           the themes for specific states based on the type of notification you need. The alert types are 
@@ -90,7 +90,7 @@ export const Docs_Alert = () => {
       </div>
 
       <div className='span-12'>
-        <p className='p-2 showcase-text'>
+        <p className='p-2 pb-4 showcase-text'>
           If you're just looking for a container to add content dynamically or in a uniform and themed manner, use &nbsp;
           <span 
             onMouseEnter={() => show({ code: getSourceCode(CardCodeSnippets, "Example_Card"), type: "component" })} 
