@@ -30,11 +30,12 @@ export const Documentation = () => {
     - Add react hook forms soon alongside the option to add state to the value for custom scenarios
       - Go back to the input and textarea
         - Change custom state handling to useRefs, and use focus events for rerenders
+          x textarea
+          - input
         - Add a couple functions for input masking and optionally editing on the fly
-          - A class for handling masks that take in a couple arguments
-            - a mask, where underscores are wildcard characters from the user 
-              ex: phone - (___)-___-____
-            - a regex string for acceptable characters
+          x A class for handling masks that take in a couple arguments
+            x A mask, where underscores are wildcard characters from the user - ex: phone - (___)-___-____
+            x A regex string for acceptable characters
             - Then find a way to add this alongside input components
           - input::onFocus(), onChange(), onBlur()
             - rerenders should be now tied to focus or blur events, or a delay after typing.

@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState, RefObject, useReducer, useEffect } from "react";
+import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState, RefObject, useReducer, useEffect, FormEvent } from "react";
 import { useFormContext } from "react-hook-form";
 import { FileUploadProps } from "../Dropbox/Dropbox";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
@@ -32,7 +32,7 @@ export interface TextareaProps {
 
   // Handling state
   /** Optional Event to update the changed value before submitting the value to rhf or an internal uncontrolled ref. */
-  onUpdateValue?: (prevValue: string, event: ChangeEvent<HTMLTextAreaElement>) => string;
+  onUpdateValue?: (prevValue: string, event: FormEvent<HTMLTextAreaElement>) => string;
   
 	/** Whether to use Rhf or custom state through the onChange event */
   disableHookForms?: boolean;
@@ -149,7 +149,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { loc
    * ---
    * @param event       The native changeEvent data tied to the input event.
    */
-  const handleUpdateValue = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleUpdateValue = (event: FormEvent<HTMLTextAreaElement>) => {
     // Handle input masking edits here
     // const inputMask = getInputMask(type);
     // if (inputMask) InputMask(event, mask, acceptedKeys); // ex: (e, "(___)-___-____", "regexForCharsOnly")
@@ -169,7 +169,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { loc
    * @param event       The native changeEvent data tied to the input event.
    */
   const handleOnChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    handleUpdateValue(event); // Masking / other custom updates 
+    // handleUpdateValue(event); // Masking / other custom updates 
     console.log(`${name}-${type} handleOnChange(): value(${getValue()})`,
       `\n event data: `, { value: event.target.value, event: event }
     );
@@ -222,6 +222,7 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { loc
           return { name }; // default behavior
         })()}
         ref={handleRef}
+        onBeforeInput={handleUpdateValue}
         onChange={handleOnChange}
         onBlur={handleOnBlur}
         
