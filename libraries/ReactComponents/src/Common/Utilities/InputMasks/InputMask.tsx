@@ -119,6 +119,28 @@ class InputMask {
                 - if not, add the mask's character, and rerun this step
                 - if we found a wildcard, add the valid character here
               - once this is completed, we have the newly updated value, and should calculate the cursor position 
+							
+							
+							
+							
+					* Let's change this up a bit
+						- Start with initializing the mask on the input, adding it as the placeholder
+						- when they type we need to check if we've autofilled the mask
+						- after we do, handle overwriting the current characters at the cursor locations and shifting to find where the next wildcard is
+						- pastes handle selection insertion and clearing old removed values our paste didnt get to
+						- deletions handle single, mutliple highlighted, or ctrl xcuts
+						
+						const inputType = event.nativeEvent.inputType;
+
+if ([
+  'deleteContentBackward', 
+  'deleteContentForward', 
+  'deleteByCut'
+].includes(inputType)) {
+  // Content was deleted
+}
+
+
        */
       if (this.mask) {
         const splitMask = this.mask.split('');
