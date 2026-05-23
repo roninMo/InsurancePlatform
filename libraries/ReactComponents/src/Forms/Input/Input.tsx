@@ -299,7 +299,7 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
   // Error handling
   const getError = (): boolean => (!!error && !disabled);
 
-  // Input binding logic
+  // * Input binding logic
   const isRHFMode = !!register && value === undefined;
   const rhfBindings = isRHFMode ? register(name) : null;
   // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange });

@@ -79,7 +79,7 @@ export const Select = ({
   const { show, hide } = tooltipContext || {};  
   const selectOrder = useRef<Record<number, string>>({ 0: '' });
   
-  // Input binding logic
+  // * Input binding logic
   const isRhfMode = !disableHookForms;
   const { field } = useController({name}) || {};
   const { getValues } = useFormContext() || {};
