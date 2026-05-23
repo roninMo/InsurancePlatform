@@ -132,13 +132,14 @@ class InputMask {
 						
 						const inputType = event.nativeEvent.inputType;
 
-if ([
-  'deleteContentBackward', 
-  'deleteContentForward', 
-  'deleteByCut'
-].includes(inputType)) {
-  // Content was deleted
-}
+            // Condition for handles backspaces: single/multi deletion inputs
+            if ([
+              'deleteContentBackward', 
+              'deleteContentForward', 
+              'deleteByCut'
+            ].includes(inputType)) {
+              // The content was deleted, update the displayed input w/mask
+            }
 
 
        */
@@ -253,11 +254,9 @@ if ([
     }
     
     
-    // ? User pressed backspace
-    // Custom mask logic: Should we jump over a slash or dash mask?
-    else if (actionType == 'deleteContentBackward') {
+    // ? User pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
+    if (['deleteContentBackward', 'deleteContentForward', 'deleteByCut'].includes(actionType)) {
       // Handle deleting the proper character, and removing / skipping over the input mask's characters
-      
       
     }
     
@@ -448,4 +447,3 @@ export type InputMaskProps =
     acceptableChars?: never; 
   };
 
-  
