@@ -447,3 +447,33 @@ export type InputMaskProps =
     acceptableChars?: never; 
   };
 
+<<<<<<< HEAD
+=======
+	
+	
+	- cursor start and end is 6
+	- user inserts the number is 5
+	- the current value is (000)-111-2222
+	- would change to (000)-511-2222
+	
+	for the raw value: 
+	
+	0001112222
+  
+	the index would be 3
+	
+	
+	just loop through the mask until we get to cursorStart
+		- capture all the masked non-wildcard character
+		- subtract it from the index
+		
+	
+	
+		
+	if they highlighted multiple characters (cursorStart != cursorEnd)
+		- the cursorStart index we add would be the same
+		- we should replace any removed characters with wildcards
+		
+	
+	
+>>>>>>> 7d05dcc63e61a2752b94c7dc7cd1aab657b27186
