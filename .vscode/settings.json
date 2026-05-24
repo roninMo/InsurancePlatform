@@ -9,6 +9,7 @@
     "Demandjump",
     "devlog",
     "Hashbar",
+    "janky",
     "navigations",
     "nori",
     "NUMS",
@@ -37,34 +38,89 @@
     ".*styles.*", 
     ".*Styles.*" // Or another pattern
   ],
+  // Forces Tailwind autocomplete box to pop open instantly inside custom attributes
+  "tailwindCSS.experimental.classRegex": [
+    "Styles\\s*=\\s*([^;]*)"
+  ],
 
-  // JsDoc specific styling
+
+  // TODO let's move some of this to the base settings?
+  //------------------------------------------------------------------//
+  // User Preference specific styles (While using Night Owl Theme)    //
+  //------------------------------------------------------------------//
+  
+  /** 
+  * ? JSDoc (function, var, etc.) popup hover custom theme styles 
+  * * (Changes the look to be like the default Rider/VScode Dark Theme)
+  */
   "workbench.colorCustomizations": {
     "editorHoverWidget.background": "#1e222a",
     "editorHoverWidget.border": "#3e4451",
     "editorHoverWidget.statusBarBackground": "#21252b",
     "textBlockCodeBlock.background": "#282c34"
   },
-
-  // Editor specific stuff for the terminal
+  
+  
+  /** 
+  * Vscode's QoL settings
+  * Includes a variety of stuff
+  */
+  // --- VsCode Sidebar --- //
+  "workbench.activityBar.location": "top", // sidebar tab icons
+  "workbench.editor.pinnedTabsOnSeparateRow": true, // second tab row
+  // "workbench.editor.wrapTabs": true, // messy
+  // "workbench.editor.tabSizing": "fit",
+  
+  // --- Visuals --- //
+  "editor.cursorBlinking": "smooth", // smooth fading
+  "editor.smoothScrolling": true, // animated scrolling
+  "editor.cursorSurroundingLines": 8, // arrow keys near the bottom will traverse
+  "editor.linkedEditing": true, // edits the opening/closing tabs at the same time
+  
+  // --- Smart Tab Naming for Monorepos --- //
+  "workbench.editor.customLabels.patterns": {
+    "**/apps/**/index.*": "${dirname}/index.${ext}",
+    "**/libs/**/index.*": "${dirname}/index.${ext}"
+  },
+  
+  
+  /** 
+  * Vscode's terminal
+  * Primarily adjusting the font, as well as some other settings
+  */
+  // --- General ---
+  "terminal.integrated.shellIntegration.showCommandGuide": true,
+  "terminal.integrated.rightClickBehavior": "copyPaste",
+  
+  // --- Smooth Rendering & Cursor Control ---
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.smoothScrolling": true,
+  "terminal.integrated.mouseWheelScrollSensitivity": 1.5,
+  
+  // --- Utils ---
+  // "terminal.integrated.persistentSessionReviveProcess": "never",
+  
+  
+  
+  // --- Important --- //
+  "terminal.integrated.gpuAcceleration": "on",
+  "terminal.integrated.shellIntegration.enabled": true,
+  
+  // --- Terminal Styling --- //
   "terminal.integrated.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
   "terminal.integrated.fontSize": 14,
   "editor.fontLigatures": true,
   "terminal.integrated.fontWeight": "normal",
   "terminal.integrated.letterSpacing": 0.5,
   "terminal.integrated.lineHeight": 1.2,
-
-  // Professional Cursor & Styling
-  "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.cursorBlinking": true,
-  "terminal.integrated.gpuAcceleration": "on",
-
-  // Clean up the UI
+  
+  // Tab layout
   "terminal.integrated.tabs.enabled": true,
   "terminal.integrated.tabs.location": "left",
   "terminal.integrated.tabs.title": "${process}",
   // "terminal.integrated.tabs.separator": " :test: ", // Isn't working 
-  "terminal.integrated.tabs.description": "${process}: ${shellPromptInput}",
+  "terminal.integrated.tabs.description": "${process}",
   
   
   /** 
@@ -92,7 +148,7 @@
     },
     {
       "tag": "*",
-      "color": "#3ec2d6",
+      "color": "#4bbcdc",
       "strikethrough": false, "underline": false, "backgroundColor": "#00000033",
       "bold": false, "italic": true
     },
@@ -101,11 +157,20 @@
       "color": "#12b362",
       "strikethrough": false, "underline": false, "backgroundColor": "#00000033",
       "bold": false, "italic": true
-    },    {
+    },    
+    {
       "tag": "<-",
       "color": "#a94ada", "backgroundColor": "#00000033",
       "strikethrough": false, "underline": false,
       "bold": false, "italic": true
     },
-  ]
+    {
+      "tag": "todo",
+      "color": "#FF8C00", "backgroundColor": "#00000033",
+      "strikethrough": false, "underline": false,
+      "bold": false, "italic": true
+    },
+  ],
+  
+  
 }
