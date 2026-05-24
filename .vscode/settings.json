@@ -61,5 +61,51 @@
 
   // Clean up the UI
   "terminal.integrated.tabs.enabled": true,
-  "terminal.integrated.tabs.location": "right"
+  "terminal.integrated.tabs.location": "left",
+  "terminal.integrated.tabs.title": "${process}",
+  // "terminal.integrated.tabs.separator": " :test: ", // Isn't working 
+  "terminal.integrated.tabs.description": "${process}: ${shellPromptInput}",
+  
+  
+  /** 
+  * Tagged comment themes
+  */
+  "better-comments.multilineComments": true,
+  "better-comments.highlightPlainText": true,
+  "better-comments.tags": [
+    // ! This comment's color is red -> error/fallback?
+    // ? This comment's current color is blue -> condition/scenario?
+    // * This comment's current color is turquoise -> special notes?
+    // -> This comment's color is green -> return scenario?
+    // <- This comment's color is purple -> misc comment.
+    {
+      "tag": "!",
+      "color": "#fa3d3e", "backgroundColor": "#00000033",
+      "strikethrough": false, "underline": false,
+      "bold": false, "italic": true
+    },
+    {
+      "tag": "?",
+      "color": "#7499ff",
+      "strikethrough": false, "underline": false, "backgroundColor": "#00000033",
+      "bold": false, "italic": true
+    },
+    {
+      "tag": "*",
+      "color": "#3ec2d6",
+      "strikethrough": false, "underline": false, "backgroundColor": "#00000033",
+      "bold": false, "italic": true
+    },
+    {
+      "tag": "->",
+      "color": "#12b362",
+      "strikethrough": false, "underline": false, "backgroundColor": "#00000033",
+      "bold": false, "italic": true
+    },    {
+      "tag": "<-",
+      "color": "#a94ada", "backgroundColor": "#00000033",
+      "strikethrough": false, "underline": false,
+      "bold": false, "italic": true
+    },
+  ]
 }

@@ -19,17 +19,21 @@ class InputMask {
      * --- 
      * @Example  charsNumsSpecialChars = &nbsp; /^[A-Za-z0-9\s!@#$%^&*()_+=\-[\]{}|;:'",.<>/?`~]+$/
     */
-  protected _acceptedChars: RegExp | undefined;
+  protected _filter: RegExp | undefined;
   
-  /** The stored previous value from the last time the mask was run, or explicitly defined from @see setPrevValue() */
-  protected _prevValue: string;
+  /** The raw input value without the mask. @note this still applies the filter. */
+  protected rawInputValue: string;
+  
+  /** The cached input value after applying the mask. */
+  protected maskedInputValue: string;
   
   
   /** Default constructor, initializes everything to undefined */
   constructor(mask: string | undefined = undefined, acceptedChars: RegExp | undefined = undefined) {
     this._mask = mask;
-    this._acceptedChars = acceptedChars;
-    this._prevValue = '';
+    this._filter = acceptedChars;
+    this.rawInputValue = '';
+    this.maskedInputValue = '';
   }
   
   /**
@@ -73,6 +77,288 @@ class InputMask {
    * @returns An object that returns whether we canceled the onBeforeInput via `preventDefault`, and if we invoked the `onChange` manually.
    */
   public evaluate(event: FormEvent<HTMLInputElement | HTMLTextAreaElement>): MaskEventHandle {
+    if (!event) return { canceledBeforeInput: false, invokedOnChange: false }; // ! the event was invalid
+    
+    /*
+      * Logic
+        - cursor start and end is 6
+        - user inserts the number is 5
+        - the current value is (000)-111-2222
+        - would change to (000)-511-2222
+        
+        for the raw value: 
+        
+        0001112222
+        
+        the index would be 3
+        
+        
+        just loop through the mask until we get to cursorStart
+          - capture all the masked non-wildcard character
+          - subtract it from the index
+        
+        if they highlighted multiple characters (cursorStart != cursorEnd)
+          - the cursorStart index we add would be the same
+          - we should replace any removed characters with wildcards
+        
+      
+    */
+    
+    const input = event.target as HTMLTextAreaElement | HTMLInputElement;
+    const inputName = input.name;
+    const nativeEvent = event.nativeEvent as InputEvent; // browser event, not react's synthetic event ^
+    
+    const actionType = nativeEvent.inputType as InputActionType; // The keyed action
+    const insertedText = nativeEvent.data || ''; // null/empty during deletions
+    let filteredInsert = insertedText;
+    console.log(`${inputName}::Evaluating input mask`, { mask: this.mask, filter: this.filter, event },
+      `\n native event data: `, { actionType, insertedText },
+      `\n input target: `, { inputName, input }
+    );
+    
+    // Retrieve the changed input value from the native 
+    const cursorStart = input.selectionStart ?? 0; // cursor location
+    const cursorEnd = input.selectionEnd ?? 0; // highlighted?
+    const prevValue = this.rawInputValue;
+    const prevMaskedValue = this.maskedInputValue;
+    const currentValue = input.value;
+    let newValue = '';
+    
+    // ! This comment's color is red -> error/fallback?
+    // ? This comment's current color is blue -> condition/scenario?
+    // * This comment's current color is turquoise -> special notes?
+    // -> This comment's color is green -> return scenario?
+    // < This comment's color is purple -> misc comment.
+    
+    
+    // * First update the raw value
+    // * After that, apply the mask to the updated value
+    
+    // ? User typed a single character
+    if (actionType == 'insertText' || actionType == 'insertFromPaste') {
+      // Start with adding a filter
+      if (this.isFilterEnabled()) {
+        filteredInsert = this.filter(insertedText);
+        
+        // -> Early out, there's no valid text to insert
+        if (!!filteredInsert) {
+          
+        }
+      }
+    }
+    
+    
+    // ? User pasted some text
+    if (actionType == 'insertFromPaste') {
+    }
+    
+    
+    // ? User pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
+    if (
+      actionType == 'deleteContentBackward' || 
+      actionType == 'deleteContentForward' || 
+      actionType == 'deleteByCut'
+    ) {
+      // Handle deleting the proper character, and removing / skipping over the input mask's characters
+      
+    }
+    
+    
+    // ! Fallback for other unhandled browser inputs
+    // For logging purposes
+    const calculatedNewValue = 
+      currentValue.substring(0, cursorStart) + 
+      insertedText + 
+      currentValue.substring(cursorEnd);
+    console.error(`${inputName}::InputMask(${this.mask}) encountered an error while evaluating the mask on a keypress.`,
+      `\n The previous input entry's actionType was ${actionType}, returning the event unaffected, newValue: `, { prevValue, calculatedNewValue, insertedText },
+      `\n Event data: `, { nativeEvent, input, event },
+    );
+    
+    // Let the normal event run it's course
+    return { canceledBeforeInput: false, invokedOnChange: false };
+  }
+  
+  
+  
+  // Input Filter Logic
+  /**
+   * Uses a RegExp expression to `filter` out any unwanted characters to a string.
+   * 
+   * ---
+   * @Example
+   * ```ts
+   * const currentValue = 'abc123';
+   * const numbersOnly = /[^\d]/g; 
+   * 
+   * const filtered = this.filterChars(currentValue, numbersOnly); 
+   * console.log(filtered); // Returns: 123
+   * 
+   * ```
+   * ---
+   * @param chars           The characters we want to filter.
+   * @param filterRegex     The RegExp we're using to filter characters.
+   * 
+   * @returns The filtered version of the value.
+   */
+  public filter(chars: string | null, filterRegex?: RegExp): string {
+    const charsToFilter = chars || '';
+    const filterExp = filterRegex || this.filterExp;
+    // .replace replaces every matching bad character with an empty string
+    return charsToFilter.replace(filterExp, "");
+  }
+  
+  
+  
+  
+  //--------------------------------//
+  // Event Functions                //
+  //--------------------------------//
+  /**
+   * Update the cursor's `location` based on the original and the updated text.
+   * 
+   * ---
+   * @param input         A reference to the input to update the cursor's location.
+   * @param newValue      The updated value that we're passing to the `onChange`.
+   * @param prevValue     The current or previous value for this input.
+   * @param cursorStart   The cursor's location, or the highlighted selection's starting location.
+   * @param cursorEnd     The highlighted selection's end location, or the same as cursorStart.
+   * 
+   * @returns The filtered version of the value.
+   */
+  protected updateCursorPosition(
+    input: HTMLInputElement | HTMLTextAreaElement,
+    newValue: string, prevValue: string, 
+    cursorStart: number, cursorEnd: number
+  ): void {
+    const isHighlight = cursorStart != cursorEnd;
+    const startingLocation = isHighlight ? cursorEnd : cursorStart;
+    const addedCharacters = newValue.length - prevValue.length;
+    
+    // Start from the cursor's location, or where the highlight ended.
+    // The previous location + or - the inserted / removed text (pastes with less text will subtract to where the copy ended)
+    const newCursorPos = Math.min(
+      Math.max(0, startingLocation + addedCharacters),
+      newValue.length
+    );
+    
+    // update the input's cursor location
+    input.setSelectionRange(newCursorPos, newCursorPos);
+  }
+  
+  
+  /**
+   * Utility function to cancel out onBeforeInput invocations and run `onChange` with a custom mask/filtered value.
+   * * This is being used with `onBeforeInput` events to handle manual calls to the input's internal `onChange` event. 
+   *   
+   * ---
+   * @param event             The onBeforeInput event we're interacting with.
+   * @param preventDefault    Whether we want to prevent `onBeforeInput` from inserting characters into the input.
+   * @param invokeOnChange    invokes the input's `onChange` with a new value. Leave `undefined` to skip.
+   */
+  protected handleNativeEventLogic(
+    event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, 
+    invokeOnChange: string | undefined = undefined, // false
+    preventDefault: boolean = true, 
+  ): void {
+    const input = event.target as HTMLTextAreaElement | HTMLInputElement;
+    const nativeEvent = event.nativeEvent as InputEvent; // browser event, not react's synthetic event ^
+    
+    // ? Stop the browser from inserting the raw, unmasked characters
+    if (preventDefault) {
+      event.preventDefault();
+    }
+
+    // ? Manually call onChange: assign the masked value to the element
+    // ! Changing this property directly triggers React's internal onChange tracker
+    if (invokeOnChange !== undefined) {
+      input.value = invokeOnChange; // invokes onChange
+      
+      // * Dispatches a synthetic input change notification
+      const tracker = (input as any)._valueTracker;
+      if (tracker) {
+        tracker.setValue(invokeOnChange);
+      }
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+  
+  
+  //--------------------------------//
+  // Utility Functions              //
+  //--------------------------------//
+  protected createHashIndex(value: string | null | undefined): Record<number, string> {
+    const characters = (value || "").split("");
+    return Object.fromEntries(characters.map((char, index) => [index, char]));
+  }
+  
+  
+  protected isMaskEnabled(): boolean {
+    return !!this.mask;
+  }
+  
+  /**
+   * Retrieves the input mask. Only filters characters if this is left undefined.
+   *   
+   * ---
+   * @Example
+   * ```ts
+   * const phoneMask = '(___) - ___ - ____';
+   * const numbersOnly = /^\d+$/;
+   * 
+   * const inputMask = new MaskBase(phoneMask, numbersOnly);
+   * console.log(inputMask.getMask()); // Returns: '(___) - ___ - ____'
+   * 
+   * 
+   * ```
+   * 
+   * ---
+   * @returns The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
+   */
+  public get mask(): string {
+    return this._mask || "";
+  }
+  
+  
+  protected isFilterEnabled(): boolean {
+    return !!this.filterExp;
+  }
+  
+  /**
+   * Retrieves the accepted characters expression. Any character is accepted if left undefined.
+   *   
+   * ---
+   * @Example
+   * ```ts
+   * const phoneMask = '(___) - ___ - ____';
+   * const numbersOnly = /^\d+$/;
+   * 
+   * const inputMask = new MaskBase(phoneMask, numbersOnly);
+   * console.log(inputMask.getAcceptedChars()); // Returns: /^\d+$/
+   * 
+   * 
+   * ```
+   * 
+   * ---
+   * @returns The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
+   */
+  public get filterExp(): RegExp {
+    return this._filter || /(?!)/;
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  public oldEvaluate(event: FormEvent<HTMLInputElement | HTMLTextAreaElement>): MaskEventHandle {
     if (!event) return { canceledBeforeInput: false, invokedOnChange: false };
     
     const input = event.target as HTMLTextAreaElement | HTMLInputElement;
@@ -327,12 +613,18 @@ class InputMask {
     newValue: string, prevValue: string, 
     cursorStart: number, cursorEnd: number
   ): void {
-    // Keep the cursor position up to date after the filter stripped out some characters
-    const addedCharsCount = newValue.length - prevValue.length;
+    const isHighlight = cursorStart != cursorEnd;
+    const startingLocation = isHighlight ? cursorEnd : cursorStart;
+    const addedCharacters = newValue.length - prevValue.length;
+    
+    // Start from the cursor's location, or where the highlight ended.
+    // The previous location + or - the inserted / removed text (pastes with less text will subtract to where the copy ended)
     const newCursorPos = Math.min(
-      newValue.length,
-      Math.max(0, cursorStart)
+      Math.max(0, startingLocation + addedCharacters),
+      newValue.length
     );
+    
+    // update the input's cursor location
     input.setSelectionRange(newCursorPos, newCursorPos);
   }
   
@@ -374,53 +666,6 @@ class InputMask {
   }
   
   
-  //----------------------------------//
-  // Utility functions                //
-  //----------------------------------//
-  /**
-   * Retrieves the input mask. Only filters characters if this is left undefined.
-   *   
-   * ---
-   * @Example
-   * ```ts
-   * const phoneMask = '(___) - ___ - ____';
-   * const numbersOnly = /^\d+$/;
-   * 
-   * const inputMask = new MaskBase(phoneMask, numbersOnly);
-   * console.log(inputMask.getMask()); // Returns: '(___) - ___ - ____'
-   * 
-   * 
-   * ```
-   * 
-   * ---
-   * @returns The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
-   */
-  public get mask(): string | undefined {
-    return this._mask;
-  }
-  
-  
-  /**
-   * Retrieves the accepted characters expression. Any character is accepted if left undefined.
-   *   
-   * ---
-   * @Example
-   * ```ts
-   * const phoneMask = '(___) - ___ - ____';
-   * const numbersOnly = /^\d+$/;
-   * 
-   * const inputMask = new MaskBase(phoneMask, numbersOnly);
-   * console.log(inputMask.getAcceptedChars()); // Returns: /^\d+$/
-   * 
-   * 
-   * ```
-   * 
-   * ---
-   * @returns The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
-   */
-  public get acceptedChars(): RegExp | undefined {
-    return this._acceptedChars;
-  }
 }
 
 
@@ -447,8 +692,6 @@ export type InputMaskProps =
     acceptableChars?: never; 
   };
 
-<<<<<<< HEAD
-=======
 	
 	
 	- cursor start and end is 6
@@ -476,4 +719,3 @@ export type InputMaskProps =
 		
 	
 	
->>>>>>> 7d05dcc63e61a2752b94c7dc7cd1aab657b27186
