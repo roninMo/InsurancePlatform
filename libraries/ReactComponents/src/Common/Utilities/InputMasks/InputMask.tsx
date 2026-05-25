@@ -3,7 +3,7 @@ import { ChangeEvent, FormEvent, RefObject } from "react";
 
 export type MaskEventHandle = { canceledBeforeInput: boolean, invokedOnChange: string | boolean };
 export type InputActionType = 
-| 'insertText' | 'insertFromPaste' 
+| 'insertText' | 'insertCompositionText' | 'insertFromPaste' 
 | 'deleteContentBackward' | 'deleteContentForward' | 'deleteByCut';
 
 // TODO - add multiple constructors to enable a mask + filter from this config
@@ -20,22 +20,13 @@ export type MaskConfig = {
 
 /** A standard class to be used for creating custom masks that use a mask and/or filtered accepted characters. */
 class InputMask {
-    /** 
-     * An input mask that uses underscores to represent wildcard characters that are filled from the user's input.  
-     * 
-     * --- 
-     * @Example  PhoneMask = " ( ___ ) - ___ - ____ "
-    */
+  /** An input mask that uses wildcard characters to defined what's filled from the user's input. */
   protected _mask: string | undefined;
   
+  /** The mask's wildcard character. Must be defined to determine where the wildcards are when evaluating the mask. */
   protected _maskWildcardCharacter: string | undefined;
   
-    /** 
-     * A regExp expression designed to filter the accepted characters for the input.  
-     * 
-     * --- 
-     * @Example  charsNumsSpecialChars = &nbsp; /^[A-Za-z0-9\s!@#$%^&*()_+=\-[\]{}|;:'",.<>/?`~]+$/
-    */
+  /** A regExp expression designed to filter the accepted characters for the input. */
   protected _filter: RegExp | undefined;
   
   /** The raw input value without the mask. @note this still applies the filter. */
@@ -56,6 +47,9 @@ class InputMask {
     this.rawInputValue = '';
     this.maskedInputValue = '';
   }
+  
+  
+  
   
   /**
    * Evaluates an input's new value from the onBeforeInput event using 
@@ -121,32 +115,32 @@ class InputMask {
     // Calculated input values
     const prevValue = input.value;
     let newValue = prevValue;
-    console.log(`${inputName}::Evaluating input mask`, { mask: this.mask, filter: this.filter, event },
-      `\n native event data: `, { actionType, insertedText },
-      `\n input target: `, { inputName, input }
+    console.log(`\n${inputName}::Evaluating and updating input from user event(${actionType}), maskData: `, { mask: this.mask, filter: this.filter, event },
+      `\n native event data: `, { actionType, insertedText, [inputName]: input, nativeEvent },
+      `\n current data: `, { currentRawValue: prevRawValue, currentMaskedValue: prevMaskedValue,
+        cursor: { start: cursorStart, end: cursorEnd }, 
+      },
     );
     
     
-    // ! This comment's color is red -> error/fallback?
-    // ? This comment's current color is blue -> condition/scenario?
-    // * This comment's current color is turquoise -> special notes?
-    // -> This comment's color is green -> return scenario?
-    // <- This comment's color is purple -> misc comment.
-    
-    
     // ? User typed a single character
-    if (actionType == 'insertText' || actionType == 'insertFromPaste') {
+    if ( actionType == 'insertText' 
+      || actionType == 'insertCompositionText'
+      || actionType == 'insertFromPaste'
+    ) {
       let addedText = insertedText;
       
       // * If we're using a filter
       if (this.isFilterEnabled()) {
         filteredInsert = this.filter(insertedText);
         
-        // -> Early out, there's no valid text to add
+        // <- Early out, there's no valid text to add
         if (!filteredInsert) {
-          this.handleNativeEventLogic(event, undefined, true); // cancel the events
-          this.updateCursorPosition(input, cursorStart, cursorStart, newValue, 0);
-          return { canceledBeforeInput: false, invokedOnChange: false }; // input left as-is
+          this.handleNativeEventLogic(event, undefined); // cancel the events
+          this.updateState(prevRawValue, prevMaskedValue); // update internal state tracking
+          this.updateCursorPosition(input, cursorStart, cursorEnd, newValue, 0);
+          console.log(`${inputName}::Cancelled - The added text was filtered, aborting the onChange event. data: `, { insertedText, filteredInsert, filter: this._filter });
+          return { canceledBeforeInput: true, invokedOnChange: false }; // input left as-is
         }
         
         addedText = filteredInsert;
@@ -158,81 +152,28 @@ class InputMask {
       let end = cursorEnd;
       let maskNonWCChars = 0; // mask chars between the selection (non-wildcard)
       if (this.isMaskEnabled()) {
-        let startOffset = 0;
-        let endOffset = 0;
-        
-        // Loop through the mask and find the cursor's start/end locations for the raw value
-        for (let i = 0; i < this.mask.length; i++) {
-          const maskChar = this.mask[i];
-          if (i < cursorStart && maskChar !== this.wildcard) startOffset++;
-          if (i < cursorEnd && maskChar !== this.wildcard) endOffset++;
-          if (i >= cursorEnd) break;
-        }
-        
-        // insert the added text to the raw value, (less/extra text) -> (add wildcards / overwrite chars)
+        // offsets for the cursor location after removing the mask parts of the string
+        const { startOffset, endOffset } = this.getRawCursorLocation(start, end);
         start = cursorStart - startOffset;
         end = cursorEnd - endOffset;
         maskNonWCChars = endOffset - startOffset;
       }
       
-      // * Recalculate the mask
-      newRawValue = this.calcRawValue(addedText, prevRawValue, start, end); // filter & mask calc
-      let newMaskValue = '';
-      for (let i = 0; i < this.mask.length; i++) {
-        const maskChar = this.mask[i];
-        const inputChar = newRawValue.slice(i, i + 1);
-        
-        if (maskChar != this.wildcard) newMaskValue += maskChar;
-        else newMaskValue += inputChar ? inputChar : this.wildcard;
-      }
+      // Handle building the mask from the raw input value
+      newRawValue = this.addToRawValue(addedText, prevRawValue, start, end); // filter & mask calc
+      const newMaskValue = this.buildInputMask(newRawValue);
       
       // -> Successfully recreated the mask for single/multi insert and paste inputs
-      this.handleNativeEventLogic(event, newMaskValue, true); // call the onChange w/maskInput
-      this.updateCursorPosition(input, cursorStart, cursorEnd, newMaskValue, maskNonWCChars); // after the added text
+      this.handleNativeEventLogic(event, newMaskValue); // call the onChange w/maskInput
+      this.updateState(newRawValue, newMaskValue); // update internal state tracking
+      this.updateCursorPosition(input, cursorStart, cursorEnd, newMaskValue, addedText.length, maskNonWCChars); // after the added text
+      console.log(`${inputName}::Completed - Recreated the mask for the single/multi insert, and paste actions. Event data: `, 
+        { newRawValue, newMaskValue, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled() },
+        `\n Cursor specific tracking: `, { cursor: { start, end }, maskNonWildCardChars: maskNonWCChars },
+      );
       return { canceledBeforeInput: true, invokedOnChange: newMaskValue }; 
     }
     
-    
-    /*
-      * Example -> user's adds 6 when cursor is at the 6th index (the first one)
-        - (000)-[cursor]111-2222
-        
-        ? logical flow
-          - cursor start and end is 6
-          - user inserts the number is 5
-          - currentValue: (000)-111-2222
-          - updatedValue: (000)-511-2222
-          - cursor is after the 5
-        
-        ? recalculate the new value and reapply the mask
-          - overwrite the values in the raw input for individual inserts
-          - for highlighted selections scenarios:
-            - overwrite pasted characters that take up extra space examples:
-              - pasted 333 when they highlighted 11-22 (add non-wildcards)
-                  (000)-111-2222 -> (000)-133-3_22 // cursor remains after the last 3
-              - pasted 33333 when they highlighted 11-22
-                - (000)-111-2222 -> (000)-133-3332 // cursor remains after the last 3
-                
-        // ? Handle changing the new cursor location to where the last character is appended
-            * Calculation: start +  selectionLength - (selectionLength - insertedCharCount) + (maskNonWCChars)
-            * selectionLength = cursorEnd - cursorStart
-            * insertedCharCount = addedText.length
-            * maskNonWCChars = endOffset - startOffset
-              - if the selection was 4 chars and they only had added 3 chars
-                -> their's a wildcard at the last location, and the cursor before it to easily add text
-              - if the selection was 4 chars and they added 5 chars
-                -> extra text overwrote the char after the selection, and the cursor is after the final char
-                    
-                
-          - for deletion scenarios
-            - do not shift, overwrite with wildcards
-              - deleted the final one
-                  (000)-111-2222 -> (000)-11_-2222 // cursor is before the first wildcard
-              - deleted 11-22
-                - (000)-111-2222 -> (000)-1__-__22 // cursor is before the first wildcard
-      
-      
-    */
     
     // ? User pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
     if (
@@ -241,29 +182,68 @@ class InputMask {
       actionType == 'deleteByCut'
     ) {
       
+      // * update the raw value
+      let newRawValue = '';
+      let start = cursorStart;
+      let end = cursorEnd;
+      let maskNonWCChars = 0; // mask chars between the selection (non-wildcard)
+      const deletionCount = (end - start) > 0 ? (end - start) : 1;
+      if (this.isMaskEnabled()) {
+        const { startOffset, endOffset } = this.getRawCursorLocation(start, end);
+        // offsets for the cursor location after removing the mask parts of the string
+        start = cursorStart - startOffset;
+        end = cursorEnd - endOffset;
+        maskNonWCChars = endOffset - startOffset;
+      }
+      
+      // * update the raw value
+      newRawValue = this.removeFromRawValue(prevRawValue, start, end, actionType);
+      const newMaskValue = this.buildInputMask(newRawValue);
+      
+      // -> Successfully recreated the mask for single/multi insert and paste inputs
+      this.handleNativeEventLogic(event, newMaskValue); // call the onChange w/maskInput
+      this.updateState(newRawValue, newMaskValue); // update internal state tracking
+      
+      // back one, or remove highlight
+      const startAfterDeletion = deletionCount == 1 ? cursorStart - 1 : cursorStart; 
+      const endAfterDeletion = deletionCount == 1 ? startAfterDeletion : cursorStart;
+      this.updateCursorPosition(input, startAfterDeletion, endAfterDeletion, newMaskValue, 0, maskNonWCChars); 
+      console.log(`${inputName}::Completed - Recreated the mask for a delete event. Event data: `, 
+        { newRawValue, newMaskValue, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled() },
+        `\n Cursor specific tracking: `, { cursor: { start, end }, maskNonWildCardChars: maskNonWCChars },
+      );
+      return { canceledBeforeInput: true, invokedOnChange: newMaskValue }; 
     }
     
     
-    // ! Fallback for other unhandled browser inputs
-    // For logging purposes
-    const calculatedNewValue = 
-      newValue.substring(0, cursorStart) + 
-      insertedText + 
-      newValue.substring(cursorEnd);
+    
+    // ! Fallback: we don't want to break the mask input, so just prevent this event from occurring
     console.error(`${inputName}::InputMask(${this.mask}) encountered an error while evaluating the mask on a keypress.`,
-      `\n The previous input entry's actionType was ${actionType}, returning the event unaffected, newValue: ${newValue}`, { prevValue, calculatedNewValue, insertedText },
+      `\n The previous input entry's actionType was ${actionType}, returning the event unaffected: `, { prevRawValue, prevMaskedValue, insertedText },
       `\n Event data: `, { nativeEvent, input, event },
     );
     
-    // Let the normal event run it's course
-    return { canceledBeforeInput: false, invokedOnChange: false };
+    this.handleNativeEventLogic(event, undefined); // prevent the event from editing the mask's value
+    return { canceledBeforeInput: true, invokedOnChange: false };
   }
   
   
   
   
-  
-  public calcRawValue(inserted: string, prevValue: string, cursorStart: number, cursorEnd: number): string {
+  /**
+   * Inserts the new text into the raw value in a couple different ways
+   *  * `Filter only`: It additively inserts the text based on the cursor's location or selection. Just like the `native` behavior.
+   *  * `Mask`: It will `overwrite` the text in the current selection. Will add wildcards in empty spaces from a highlight + paste combination.
+   * 
+   * **Note:** This preserve's the placement of the text for mask variations on highlighted multi select inserts, and will overwrite extra characters based on the paste.
+   * 
+   * ---
+   * @param inserted              The user's inserted text, whether it was a single key, a selection and a key or a paste.
+   * @param cursorStart           The cursor's start location.
+   * @param cursorEnd             The cursor's end location.
+   * @returns                     The new raw input value.
+   */
+  protected addToRawValue(inserted: string, prevValue: string, cursorStart: number, cursorEnd: number): string {
     if (!prevValue) return '';
     if (!inserted) return prevValue;
     
@@ -287,7 +267,7 @@ class InputMask {
         }
         
         // Add wildcards within the highlighted text if there are no more characters to add
-        else if (charsToAdd.length == 0 && cursorEnd > i) {
+        else if (charsToAdd.length == 0 && i < cursorEnd) {
           currentChar = this.wildcard;
         }
       }
@@ -298,6 +278,83 @@ class InputMask {
     
     return newRawValue;
   }
+  
+  
+  /**
+   * Delete the raw value's characters just like the native event.
+   * 
+   * **Note:** Uses the cursor's `selection` to determine what's deleted.
+   * 
+   * ---
+   * @param prevValue             The input's current value without the mask applied.
+   * @param cursorStart           The cursor's start location.
+   * @param cursorEnd             The cursor's end location.
+   * @returns                     The new raw input value.
+   */
+  protected removeFromRawValue(prevValue: string, cursorStart: number, cursorEnd: number, actionType: InputActionType): string {
+    if (!prevValue) return '';
+    if (cursorStart > cursorEnd) {
+      console.error(`removeFromRawValue(${prevValue}): An error occurred from one of the inputMask calculations, invalid input data: `, { prevValue, cursorStart, cursorEnd });
+      return prevValue;
+    }
+    
+    const isMultipleCharacters = (cursorEnd - cursorStart) > 0;
+    if (isMultipleCharacters) {
+      const firstHalf = prevValue.substring(0, cursorStart);
+      const secondHalf = prevValue.substring(cursorEnd);
+      return firstHalf + secondHalf;
+    }
+    
+    // handle deleting the value
+    const deleteIndex = actionType == 'deleteContentForward' ? cursorStart : cursorStart - 1;
+    if (deleteIndex < 0) return prevValue; // Guard against out-of-bounds backspace at the very beginning of the input
+    
+    const firstHalf = prevValue.substring(0, deleteIndex);
+    const secondHalf = prevValue.substring(deleteIndex + 1);
+    return firstHalf + secondHalf;
+  }
+  
+  
+  /**
+   * Builds the `masked` input value from the raw input value provided to the function.
+   * Every time this is ran, it creates the full masked value, with `wildcards` in place of empty characters.
+   * 
+   * **Note:** Will always build from the beginning to the end for the masked values; 
+   * however the raw value will capture wildcards if the user adds spaces or edits different parts of the mask. 
+   * 
+   * ---
+   * @param rawValue            The input value without the mask applied.
+   * @returns                   The masked input value.
+   */
+  public buildInputMask(rawValue: string): string {
+    let newMaskValue = '';
+    
+    for (let i = 0; i < this.mask.length; i++) {
+      const maskChar = this.mask[i];
+      const inputChar = rawValue.substring(i, i + 1);
+      
+      if (maskChar != this.wildcard) newMaskValue += maskChar;
+      else newMaskValue += inputChar ? inputChar : maskChar; // this.wildcard;
+    }
+    
+    return newMaskValue;
+  }
+  
+  
+  /**
+   * Updates the internal references of the input's current value for the `InputMask`.
+   * 
+   * We keep an internal reference of the `unmasked` version of the value, and edit that before returning the value with the applied mask.
+   * 
+   * ---
+   * @param rawInputValue           The input value without the mask applied.
+   * @param maskedInputValue        The masked input value.
+   */
+  protected updateState(rawInputValue: string, maskedInputValue: string): void {
+    this.rawInputValue = rawInputValue;
+    this.maskedInputValue = maskedInputValue;
+  }
+  
   
   
   
@@ -316,6 +373,9 @@ class InputMask {
    * const filtered = this.filter(currentValue, numbersOnly); 
    * console.log(filtered); // Returns: 123
    * 
+   * // Example filter styled RegExp
+   * const charsNumsSpecialChars = /^[A-Za-z0-9\s!@#$%^&*()_+=\-[\]{}|;:'",.<>/?`~]+$/;
+   * 
    * ```
    * ---
    * @param chars           The characters we want to filter.
@@ -323,7 +383,7 @@ class InputMask {
    * @param chars           The characters we want to filter.
    * @param filterRegex     The RegExp we're using to filter characters.
    * 
-   * @returns The filtered version of the value.
+   * @returns       The filtered version of the value.
    */
   public filter(chars: string | null, filterRegex?: RegExp): string {
     const charsToFilter = chars || '';
@@ -333,7 +393,12 @@ class InputMask {
   }
   
   
-  /** Whether the filter is enabled */
+  /**
+   * Whether we have the `filter` enabled or valid.
+   * 
+   * ---
+   * @returns       Whether the filter is defined
+   */
   protected isFilterEnabled(): boolean {
     return !!this.filterExp;
   }
@@ -355,7 +420,7 @@ class InputMask {
    * ```
    * 
    * ---
-   * @returns The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
+   * @returns       The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
    */
   public get filterExp(): RegExp {
     return this._filter || /(?!)/;
@@ -367,13 +432,21 @@ class InputMask {
   //--------------------------------//
   // Mask                           //
   //--------------------------------//
-  /** Whether the mask is enabled */
+  /**
+   * Whether we have the `mask` enabled or valid. 
+   * If undefined, we're only using a `filter`.
+   * 
+   * ---
+   * @returns              Whether the mask is enabled / valid
+   */
   protected isMaskEnabled(): boolean {
     return !!this.mask;
   }
   
   /**
-   * Retrieves the input mask. Only filters characters if this is left undefined.
+   * Retrieves the `input mask`. 
+   * 
+   * **Note:** This can be undefined, and you should use {@link isMaskEnabled()} before using.
    *   
    * ---
    * @Example
@@ -388,15 +461,47 @@ class InputMask {
    * ```
    * 
    * ---
-   * @returns The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
+   * @returns       The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
    */
   public get mask(): string {
     return this._mask || "";
   }
   
-  /** Retrieves the mask's wildcard character. */
+  
+  /**
+   * Retrieves the mask's wildcard character. Will return an empty string if the class is not using a mask.
+   * @note This can be undefined, and you should use `isMaskEnabled()` before using.
+   * 
+   * ---
+   * @returns       Whether the mask is enabled / valid
+   */
   public get wildcard(): string {
     return this._maskWildcardCharacter || "";
+  }
+  
+  
+  /**
+   * Uses the mask to find the cursor locations for the raw input by counting it's non-wildcard template characters.
+   * 
+   * ---
+   * @param cursorStart    The cursor's start location
+   * @param cursorEnd      The cursor's end location
+   * 
+   * @returns              A destructurable object that contains the offsets for the cursor's start and end locations.
+   */
+  protected getRawCursorLocation(cursorStart: number, cursorEnd: number): { startOffset: number, endOffset: number; } {
+    let startOffset: number = 0;
+    let endOffset: number = 0;
+    
+    // Loop through the mask and find the cursor's start/end locations for the raw value
+    for (let i = 0; i < this.mask.length; i++) {
+      const maskChar = this.mask[i];
+      if (i < cursorStart && maskChar !== this.wildcard) startOffset++;
+      if (i < cursorEnd && maskChar !== this.wildcard) endOffset++;
+      if (i >= cursorEnd) break;
+    }
+    
+    return { startOffset, endOffset };
   }
   
   
@@ -406,16 +511,23 @@ class InputMask {
   // Event Functions                //
   //--------------------------------//
   /**
-   * Update the cursor's `location` based on the original and the updated text.
+   * Update the cursor's `location` based on 
+   * how much was highlighted versus how much we added, 
+   * and offset by the `mask's` characters (non-wildcard).
+   * 
+   * ---
+   * 
+   * ### Equation  
+   *  * CursorStart +  ( selection - (selection - insertedCharCount) + masksNonWildCardChars )  
    * 
    * ---
    * @param input         A reference to the input to update the cursor's location.
    * @param newValue      The updated value that we're passing to the `onChange`.
    * @param prevValue     The current or previous value for this input.
    * @param cursorStart   The cursor's location, or the highlighted selection's starting location.
-   * @param cursorEnd     The highlighted selection's end location, or the same as cursorStart.
+   * @param cursorEnd     The highlighted selection's end location, or the same as cursorStart.  
    * 
-   * @returns The filtered version of the value.
+   * @returns             The filtered version of the value.
    */
   protected updateCursorPosition(
     input: HTMLInputElement | HTMLTextAreaElement,
@@ -471,196 +583,49 @@ class InputMask {
   }
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  public oldEvaluate(event: FormEvent<HTMLInputElement | HTMLTextAreaElement>): MaskEventHandle {
-    if (!event) return { canceledBeforeInput: false, invokedOnChange: false };
-    
-    const input = event.target as HTMLTextAreaElement | HTMLInputElement;
-    const inputName = input.name;
-    const nativeEvent = event.nativeEvent as InputEvent; // browser event, not react's synthetic event ^
-    
-    const actionType = nativeEvent.inputType; // The keyed action
-    const insertedText = nativeEvent.data; // null/empty during deletions
-    let addedText = insertedText || '';
-    console.log(`${inputName}::Evaluating input mask`, { mask: this.mask, acceptableChars: this.filterExp, event },
-      `\n native event data: `, { actionType, insertedText },
-      `\n input target: `, { inputName, input }
-    );
-    
-    // Retrieve the changed input value from the native 
-    const start = input.selectionStart ?? 0; // cursor location
-    const end = input.selectionEnd ?? 0; // highlighted?
-    const prevValue = input.value;
-    let newValue = prevValue;
-    
-    
-    // ? User typed a single character
-    if (actionType == 'insertText') {
-      // Early out if we didn't actually add anything
-      if (!insertedText) {
-        return { canceledBeforeInput: false, invokedOnChange: false };
-      }
-      
-      // filter out any characters that aren't accepted with this mask
-      if (this.filterExp) {
-        addedText = this.filter(insertedText);
-        if (!addedText) { // If there are no characters that would be added from this, early out
-          this.handleNativeEventLogic(event, undefined, true); // cancel the events
-          return { canceledBeforeInput: true, invokedOnChange: false }; // input left as-is
-        }
-      }
-      
-      // mask logic
-      if (this.mask) {
-        const splitMask = this.mask.split('');
-        const firstHalf = prevValue.substring(0, start); // values up to where we inserted text (safe mask formatting)
-        const secondHalf = prevValue.substring(end); // Everything after this needs the mask format stripped
-        
-        // ? (no wildcards) nowhere else to add characters in the mask. 
-        const restOfMask = this.mask.substring(start);
-        if (!restOfMask.includes('_')) {
-          // Move the cursor over one to show the value was computed with the mask (but retain the same value)
-          this.handleNativeEventLogic(event, undefined, true); // cancel the events
-          // this.updateCursorPosition(input, newValue, prevValue, start + 1, start + 1);
-          return { canceledBeforeInput: false, invokedOnChange: false }; // input left as-is
-        } 
-        
-        
-        // ? The added text + the mask's potential formatted characters
-        let maskedInsertedText = ''; // The inserted text, w/mask's non wildcard characters
-        let insertIndex = start;
-        for (let i = insertIndex; i < splitMask.length; i++) {
-          const currMaskChar = splitMask[i];
-          
-          // add this to the text we're inserting, and continue to search for the next wildcard
-          if (currMaskChar !== '_') maskedInsertedText += currMaskChar; // add the mask's format characters
-          else {
-            maskedInsertedText += addedText; // add the user's keyed character
-            break;
-          }
-        }
-        
-        
-        // ? recalculate the secondHalf of the formatted string
-        const splitSecondHalf = secondHalf.split('');
-        let rawSecondHalf: string[] = []; // user typed characters extracted from the mask input
-        for (let i = insertIndex; i < splitMask.length; i++) { // uses prevValues index split
-          if (!(splitSecondHalf.length > i - insertIndex)) break; // No chars of value left
-          
-          // Retrieve the wildcard characters from the second have of the current input value
-          const currMaskChar = splitMask[i];
-          const secondHalfChar = splitSecondHalf[i];
-          if (currMaskChar === '_') rawSecondHalf.push(secondHalfChar);
-        }
-        
-        
-        // ? Construct the new formatted masked value for the inserted and second half of the value
-        let reEvaluatedSecondHalf = '';
-        const currentCombinedLength = firstHalf.length + maskedInsertedText.length;
-        let rawDataWriteIdx = 0;
-
-        for (let i = currentCombinedLength; i < splitMask.length; i++) {
-          const currMaskChar = splitMask[i];
-          if (currMaskChar !== '_') { // mask's formatted characters
-            reEvaluatedSecondHalf += currMaskChar;
-          } else {
-            if (rawDataWriteIdx < rawSecondHalf.length) { // second half of user's characters
-              reEvaluatedSecondHalf += rawSecondHalf[rawDataWriteIdx];
-              rawDataWriteIdx++;
-            } else {
-              reEvaluatedSecondHalf += '_'; // Pad with wildcard if out of data
-            }
-          }
-        }
-        
-        // ? finally, combine the values for the properly masked input
-        let newMaskedValue = firstHalf + maskedInsertedText + reEvaluatedSecondHalf;
-        
-        // Block native input, assign custom value, and calculate layout positions
-        this.handleNativeEventLogic(event, newMaskedValue);
-        const cursorJump = maskedInsertedText.length;
-        // this.updateCursorPosition(input, newMaskedValue, prevValue, start + cursorJump, end + cursorJump);
-        
-        // notify the onBeforeInput that used this mask
-        return { canceledBeforeInput: true, invokedOnChange: newMaskedValue };
-      }
-      
-      
-      // * if we're only filtering the input
-      else {
-        // calculate the new value
-        const rawPredictedVal = 
-          prevValue.substring(0, start) 
-          + addedText || '' 
-          + prevValue.substring(end);
-        
-        // check if we need to filter the text
-        if (this.filterExp) newValue = this.filter(rawPredictedVal);
-        else newValue = rawPredictedVal;
-        
-        // null the onBeforeInput event and call onChange with the masked value
-        this.handleNativeEventLogic(event, newValue);
-        
-        // Keep the cursor position up to date to the new location
-        // this.updateCursorPosition(input, newValue, prevValue, start + addedText.length, end + addedText.length);
-        
-        // notify the onBeforeInput that used this mask
-        return { canceledBeforeInput: true, invokedOnChange: newValue };
-      }
-    }
-    
-    
-    // ? User pasted some text
-    if (actionType == 'insertFromPaste') {
-      // We need to strip out the current mask's non wildcard characters and reevaluate it
-      
-      // from the prevValue's text we can find the rawPrevValue
-      // find where we pasted the text
-      //   - keep track of where this is pasted within the masked input
-      //   - ideally remove the formatted mask, and insert the new text in the proper location
-      // after combining it that way, re-evaluate the mask, and perform an update via onChange
-    }
-    
-    
-    // ? User pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
-    if (['deleteContentBackward', 'deleteContentForward', 'deleteByCut'].includes(actionType)) {
-      // Handle deleting the proper character, and removing / skipping over the input mask's characters
-      
-    }
-    
-    
-    // ! Fallback for other unhandled browser inputs
-    // For logging purposes
-    const currentValue = input.value;
-    const calculatedNewValue = 
-      currentValue.substring(0, start) + 
-      insertedText + 
-      currentValue.substring(end);
-    console.error(`${inputName}::InputMask(${this.mask}) encountered an error while evaluating the mask on a keypress.`,
-      `\n The previous input entry's actionType was ${actionType}, returning the event unaffected, newValue: `, { prevValue, calculatedNewValue, insertedText },
-      `\n Event data: `, { nativeEvent, input, event },
-    );
-    
-    // Let the normal event run it's course
-    return { canceledBeforeInput: false, invokedOnChange: false };
-  }
-  
-  
 }
 
+
+/*
+  * Example -> user's adds 6 when cursor is at the 6th index (the first one)
+    - (000)-[cursor]111-2222
+    
+    ? logical flow
+      - cursor start and end is 6
+      - user inserts the number is 5
+      - currentValue: (000)-111-2222
+      - updatedValue: (000)-511-2222
+      - cursor is after the 5
+    
+    ? recalculate the new value and reapply the mask
+      - overwrite the values in the raw input for individual inserts
+      - for highlighted selections scenarios:
+        - overwrite pasted characters that take up extra space examples:
+          - pasted 333 when they highlighted 11-22 (add non-wildcards)
+              (000)-111-2222 -> (000)-133-3_22 // cursor remains after the last 3
+          - pasted 33333 when they highlighted 11-22
+            - (000)-111-2222 -> (000)-133-3332 // cursor remains after the last 3
+            
+    // ? Handle changing the new cursor location to where the last character is appended
+        * Calculation: start +  selectionLength - (selectionLength - insertedCharCount) + (maskNonWCChars)
+        * selectionLength = cursorEnd - cursorStart
+        * insertedCharCount = addedText.length
+        * maskNonWCChars = endOffset - startOffset
+          - if the selection was 4 chars and they only had added 3 chars
+            -> their's a wildcard at the last location, and the cursor before it to easily add text
+          - if the selection was 4 chars and they added 5 chars
+            -> extra text overwrote the char after the selection, and the cursor is after the final char
+                
+            
+      - for deletion scenarios
+        - do not shift, overwrite with wildcards
+          - deleted the final one
+              (000)-111-2222 -> (000)-11_-2222 // cursor is before the first wildcard
+          - deleted 11-22
+            - (000)-111-2222 -> (000)-1__-__22 // cursor is before the first wildcard
+  
+  
+*/
 
 
 export type InputMaskProps = 

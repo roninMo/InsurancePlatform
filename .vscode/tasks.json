@@ -1,0 +1,54 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pre-Build Libraries",
+      "type": "shell",
+      "command": "npx nx run-many --targets=build --projects=ReactComponents,Classes",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "icon": {
+        "id": "coffee",
+        "color": "terminal.ansiMagenta"
+      }
+    },
+    {
+      "label": "Deployment",
+      "type": "shell",
+      "command": "npx nx run ReactComponents:build && npx nx run Frontend:serve",
+      "dependsOn": "Pre-Build Libraries",
+      "dependsOrder": "sequence",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": { // Remove the endless loading icon...
+        "owner": "custom",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "Ready in|Local:|Compiled successfully|Failed to compile"
+        },
+        "pattern": {
+          "regexp": "."
+        }
+      },
+      "icon": {
+        "id": "window-active",
+        "color": "terminal.ansiBlue"
+      }
+    }
+  ]
+}
