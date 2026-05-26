@@ -1,33 +1,158 @@
 import { ChangeEvent, FormEvent, RefObject } from "react";
+import { Filter_NUMS_ONLY, Validate_EMAIL, Validate_PASS_HS } from "./RegExpFilters";
 
 
+
+/** The configuration to build the mask part of an {@link InputMask} */
+export type MaskConfig = {
+  /** 
+   * An input mask that uses underscores to represent wildcard characters that are filled from the user's input. 
+   * 
+   * --- 
+   * **Example**  
+   * ```ts
+   * const phoneMask = " ( ___ ) - ___ - ____ ";
+   * ```
+  */
+  mask: string;
+  
+  /** The mask's wildcard character. This is used for handling custom masks. If left undefined, the default value is "_". */
+  maskWildCardCharacter: string;
+  
+  /** Whether we should additionally filter out any non-wildcard characters this mask uses from the user's inputted text. */
+  filterNonWildCardsFromInput?: boolean;
+  
+  /** Whether to use the mask's template as the input's placeholder. */
+  useMaskAsPlaceholder?: boolean;
+}
+
+
+/** A universal prop for adding the {@link InputMask} to components */
+export type InputMaskProps = {
+  /** The configuration for creating an `InputMask`. @note pass this in as a stable reference to prevent rerenders. */
+  inputMask?: MaskConfig;
+  
+  /** 
+   * A RegExp expression designed to `filter` the accepted characters for the input. 
+   * 
+   * --- 
+   * **Usages**  
+   * ```ts
+   * const numbersOnly = /[^\d]/g; 
+   * const charsNumsSpecialChars = /^[A-Za-z0-9\s!@#$%^&*()_+=\-[\]{}|;:'",.<>/?`~]+$/;
+   * ```
+  */
+  filter?: RegExp;
+}
+
+
+//----------------------------------------//
+// Prebuilt Mask Configurations           //
+//----------------------------------------//
+export const phoneMask: InputMaskProps = {
+  filter: Filter_NUMS_ONLY,
+  inputMask: {
+    mask: '(___)-___-____',
+    maskWildCardCharacter: '_',
+    useMaskAsPlaceholder: true,
+    // filterNonWildCardsFromInput: false
+  },
+  
+}
+export const creditCardMask: InputMaskProps = {
+  filter: Filter_NUMS_ONLY,
+  inputMask: {
+    mask: '____-____-____-____',
+    maskWildCardCharacter: '_',
+    useMaskAsPlaceholder: true,
+    // filterNonWildCardsFromInput: false
+  },
+}
+export const creditCardExpMask: InputMaskProps = {
+  filter: Filter_NUMS_ONLY,
+  inputMask: {
+    mask: '__/__',
+    maskWildCardCharacter: '_',
+    useMaskAsPlaceholder: true,
+    // filterNonWildCardsFromInput: false
+  },
+}
+
+// Filter masks
+export const emailFilter: InputMaskProps = {
+  filter: Validate_EMAIL
+}
+export const passwordFilter: InputMaskProps = {
+  filter: Validate_PASS_HS
+}
+export const numbersOnly: InputMaskProps = {
+  filter: Filter_NUMS_ONLY
+}
+
+
+
+
+/** The metadata returned from the InputMask notifying you of what we did with the onChange event. */
 export type MaskEventHandle = { canceledBeforeInput: boolean, invokedOnChange: string | boolean };
+
+/** The Input's Native Event classified inputTypes. */
 export type InputActionType = 
 | 'insertText' | 'insertCompositionText' | 'insertFromPaste' 
 | 'deleteContentBackward' | 'deleteContentForward' | 'deleteByCut';
 
-// TODO - add multiple constructors to enable a mask + filter from this config
-export type MaskConfig = {
-  mask: string;
-  maskWildcard: string;
-  
-  /** A RegExp expression to add a filter to the inserted text. */
-  filter?: RegExp;
-  
-  /** Whether we should additionally filter out any non-wildcard characters this mask uses from the user's inputted text. */
-  filterNonWildCardsFromInput?: boolean;
-}
 
-/** A standard class to be used for creating custom masks that use a mask and/or filtered accepted characters. */
-class InputMask {
+/**
+ * ### **InputMask**
+ * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
+ * 
+ * ---
+ * **Remarks**
+ * * This uses onBeforeInput to override the default onChangeEvent logic, and pass the masked input as the value.
+ * * This **only** invokes the `onChange` event **IF** it's a valid change to the mask, which includes: 
+ *    1. If it's valid text that add's or removes from the `mask's format`. 
+ *    2. If the text inserted wasn't filtered out from the `acceptedChars`.
+ *    3. If you `pasted text` somewhere, and the masked input was re-evaluated entirely.
+ *    4. If the input passed in wasn't activated from a native event's `inputType`, we will prevent the event from occurring.
+ *   
+ * ---
+ * #### Initialization
+ * ```ts
+ * const numbersOnly: RegExp = /[^\d]/g; 
+ * const maskConfig: MaskConfig = {
+ *   mask: "(___)-___-____",
+ *   maskWildCardCharacter: "_",
+ *   filterNonWildCardsFromInput: true
+ * }; 
+ * const inputMask = new InputMask(maskConfig, filter);
+ * const inputValue = "1112223333"; 
+ * // Usage: call evaluate() in the **onBeforeInput** event
+ * // Expected output: "(111)-222-3333" 
+ *  
+ * ```
+ * 
+ * ---
+ * #### InputMask types
+ *  * **Filter Only**: `InputMask(filter)`
+ *  * **Mask Only**: `InputMask(maskConfig)`
+ *  * **Mask + Filter**: `InputMask(maskConfig, filter)`
+ * &nbsp;
+ */
+export class InputMask {
+  /** A regExp expression designed to filter the accepted characters for the input. */
+  protected _filter: RegExp | undefined;
+  
   /** An input mask that uses wildcard characters to defined what's filled from the user's input. */
   protected _mask: string | undefined;
   
   /** The mask's wildcard character. Must be defined to determine where the wildcards are when evaluating the mask. */
   protected _maskWildcardCharacter: string | undefined;
   
-  /** A regExp expression designed to filter the accepted characters for the input. */
-  protected _filter: RegExp | undefined;
+  /** Whether we should additionally filter out any non-wildcard characters this mask uses from the user's inputted text. */
+  protected _filterMaskChars: boolean | undefined;
+  
+  /** The mask's unique non-wild characters. If we're filtering them out from the input, they're done manually. */
+  protected _maskCachedNWChars: string[] | undefined;
+  
   
   /** The raw input value without the mask. @note this still applies the filter. */
   protected rawInputValue: string;
@@ -36,34 +161,142 @@ class InputMask {
   protected maskedInputValue: string;
   
   
-  /** Default constructor, initializes everything to undefined */
-  constructor(maskConfig: MaskConfig, filter: RegExp | undefined = undefined) {
-    const config = maskConfig || {};
+  
+  
+  //----------------------------------------------------------------------------//
+  // Constructor Overloads                                                      //
+  //----------------------------------------------------------------------------//
+  /**
+   * ### **InputMask** - Filter Only
+   * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
+   * 
+   * ---
+   * #### Initialization
+   * ```ts
+   * const numbersOnly: RegExp = /[^\d]/g; 
+   * const inputFilter = new InputMask(numbersOnly);
+   * 
+   * ```
+   * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
+   * 
+   * ---
+   * #### Params
+   * @param filter        A **RegExp** designed for filtering certain text from a string.
+   */
+  constructor(filter: RegExp); 
+  
+  
+  /**
+   * ### **InputMask** - Mask Only
+   * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
+   * 
+   * ---
+   * #### Initialization
+   * ```ts
+   * const maskConfig: MaskConfig = {
+   *   mask: "(___)-___-____",
+   *   maskWildCardCharacter: "_",
+   *   filterNonWildCardsFromInput: true
+   * }; 
+   * const inputMask = new InputMask(maskConfig);
+   * 
+   * ```
+   * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
+   * 
+   * ---
+   * #### Params
+   * @param maskConfig    The configuration for building the inputMask
+   */
+  constructor(maskConfig: MaskConfig); 
+  
+  
+  /**
+   * ### **InputMask** - Mask Only
+   * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
+   * 
+   * ---
+   * #### Initialization
+   * ```ts
+   * const numbersOnly: RegExp = /[^\d]/g; 
+   * const maskConfig: MaskConfig = {
+   *   mask: "(___)-___-____",
+   *   maskWildCardCharacter: "_",
+   *   filterNonWildCardsFromInput: true
+   * }; 
+   * const inputMask = new InputMask(maskConfig, filter);
+   * 
+   * ```
+   * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
+   * 
+   * ---
+   * #### Params
+   * @param maskConfig    The configuration for building the inputMask
+   * @param filter        A **RegExp** designed for filtering certain text from a string.
+   */
+  constructor(maskConfig: MaskConfig, filter: RegExp); 
+  
+  
+  
+  
+  //----------------------------------------------------------------------------//
+  // Implementation                                                             //
+  //----------------------------------------------------------------------------//
+  constructor(
+    arg1: RegExp | MaskConfig,
+    arg2?: RegExp
+  ) {
+    let filter: RegExp | undefined;
+    let config: Partial<MaskConfig> = {};
     
-    this._mask = config.mask;
-    this._maskWildcardCharacter = config.maskWildcard;
+    // ? constructor(filter)
+    if (arg1 instanceof RegExp) {
+      filter = arg1;
+    } 
+    else {
+      // ? constructor(maskConfig)
+      config = arg1 || {};
+      
+      // ? constructor(maskConfig, filter)
+      if (arg2 instanceof RegExp) {
+        filter = arg2;
+      }
+    }
     
+    
+    // -> Initialize the base values
     this._filter = filter;
+    this._mask = config.mask;
+    this._maskWildcardCharacter = config.maskWildCardCharacter;
+    this._filterMaskChars = config.filterNonWildCardsFromInput;
+    if (this._filterMaskChars && this._mask && this._maskWildcardCharacter) {
+      this._maskCachedNWChars = this.getNonWildcardChars(this._mask, this._maskWildcardCharacter);
+    }
+    
     this.rawInputValue = '';
     this.maskedInputValue = '';
+    
+    // 
   }
   
   
   
   
   /**
+   * ### InputMask::evaluate( `onBeforeInputEvent` )
    * Evaluates an input's new value from the onBeforeInput event using 
    * the native event's state and the previous value for reference.
    * 
-   * * This is intended to be used in onBeforeInput only
-   * * This invokes the `onChange` event IF it's a valid change to the mask, which includes: 
+   * ---
+   * **Remarks**
+   * * This uses onBeforeInput to override the default onChangeEvent logic, and pass the masked input as the value.
+   * * This **only** invokes the `onChange` event **IF** it's a valid change to the mask, which includes: 
    *    1. If it's valid text that add's or removes from the `mask's format`. 
    *    2. If the text inserted wasn't filtered out from the `acceptedChars`.
-   *    3. If you `pasted text` somewhere, and the mask re-evaluated the value entirely.
-   *    4. All other scenarios won't trigger the change event for efficiency purposes.
+   *    3. If you `pasted text` somewhere, and the masked input was re-evaluated entirely.
+   *    4. If the input passed in wasn't activated from a native event's `inputType`, we will prevent the event from occurring.
    *   
    * ---
-   * @Example
+   * #### Example
    * ```ts
    * // During the onBeforeInput event's function logic: 
    * const handleOnBeforeInput = (event: FormEvent<HTMLInputElement>) => {
@@ -504,6 +737,29 @@ class InputMask {
     return { startOffset, endOffset };
   }
   
+  /**
+   * Captures all non-wildcard characters from a mask, and stores them in an array.
+   * 
+   * ---
+   * @param mask            The input mask template string
+   * @param wildcard        The input mask's wildcard character.
+   * 
+   * @returns              An array of all the mask's unique characters.
+   */
+  protected getNonWildcardChars(mask: string, wildcard: string): string[] {
+    const nonWCChars: string[] = [];
+    const maskChars = mask.split("");
+    
+    for (let i = 0; i < mask.length; i++) {
+      const char = maskChars[i];
+      if (char == wildcard) continue;
+      
+      // Capture unique mask template characters.
+      if (!nonWCChars.includes(char)) nonWCChars.push(char);
+    }
+    
+    return nonWCChars;
+  }
   
   
   
@@ -626,27 +882,4 @@ class InputMask {
   
   
 */
-
-
-export type InputMaskProps = 
-| { 
-    /** 
-     * An input mask that uses underscores to represent wildcard characters that are filled from the user's input. 
-     * 
-     * --- 
-     * @Example  PhoneMask = " ( ___ ) - ___ - ____ "
-    */
-    mask?: string; 
-    /** A regex pattern for the acceptable strings from the user's keyed characters.  */
-    acceptableChars?: RegExp;
-    /** The input's event that we're using the mask on. */
-    event?: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>; 
-  } 
-| { 
-    mask?: never; 
-    /** @deprecated CANNOT use 'event' without the defined input mask. */
-    event?: never; 
-    /** @deprecated CANNOT use 'acceptableChars' without the defined input mask. */
-    acceptableChars?: never; 
-  };
 

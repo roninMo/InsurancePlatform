@@ -112,6 +112,7 @@ export const Checkbox = ({
     return false;
   } 
   
+  // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
   //   !disableHookForms ? formValues : Object.values(items).filter(item => item.checked),
   //   `\n selected from : `, { vals: Object.values(items).map(i => i.value) },

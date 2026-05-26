@@ -100,6 +100,7 @@ export const RadioGroup = ({
   /** Uses rhf's capture values, or the reference passed in for determining whether the radio item's been selected. */
   const isSelected = (item: RadioItem): boolean => !disableHookForms ? formValues == item.value : !!item.selected;
   
+  // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
   //   !disableHookForms ? formValues : radioItems.filter(item => item.selected)?.[0] || [],
   //   `\n selected from : `, radioItems,

@@ -1,10 +1,15 @@
 {
   "version": "2.0.0",
+  // In order for this to work. in VSCode, the shortcuts are 
+  // * Ctrl + Shift + P
+  // ? Type "Tasks: Manage Automatic Tasks", and then press enter
+  // -> Enable "Allow Automatic Tasks"
   "tasks": [
     {
       "label": "Pre-Build Libraries",
       "type": "shell",
       "command": "npx nx run-many --targets=build --projects=ReactComponents,Classes",
+      // "command": "npx nx run ReactComponents:build --output-style=tui",
       "problemMatcher": [],
       "presentation": {
         "echo": false,
@@ -22,9 +27,11 @@
     {
       "label": "Deployment",
       "type": "shell",
-      "command": "npx nx run ReactComponents:build && npx nx run Frontend:serve",
+      // "command": "npx nx run-many --targets=build,serve --projects=ReactComponents,Frontend --parallel=false",
+      "command": "npx nx run Frontend:serve --output-style=tui",
       "dependsOn": "Pre-Build Libraries",
       "dependsOrder": "sequence",
+      "runOptions": { "runOn": "folderOpen" }, // This will trigger pre-build libraries to run on start as well.
       "isBackground": true,
       "presentation": {
         "echo": true,

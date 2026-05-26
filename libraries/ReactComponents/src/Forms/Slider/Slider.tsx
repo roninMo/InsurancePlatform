@@ -33,6 +33,8 @@ export const Slider = ({
   
   const internalValue = useRef<boolean>(false); // custom state handling
   const [, forceUpdate] = useReducer(x => x + 1, 0);
+  
+  // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${isRHFMode}) value: `, isRHFMode ? formValue : internalValue.current);
 
   /**

@@ -133,7 +133,7 @@ export const Select = ({
   }
   
   
-  // Render and state
+  // * Rerender state
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n data: `, 
   //   isRhfMode ? multiSelect ? Array.isArray(getSelectedVals<true>()) 

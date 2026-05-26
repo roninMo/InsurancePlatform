@@ -168,7 +168,7 @@ export const Dropbox = ({
     handleFileUpload(files);
   }
   
-  // ? Rerender state
+  // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
   //   getFiles(),
   // );

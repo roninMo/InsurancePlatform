@@ -83,6 +83,7 @@ export const RadioTable = ({
   const getError = (item?: RadioItem): boolean => !!error && !getDisabled(item);
   const getDisabled = (item?: RadioItem): boolean => disabled || !!(item && item.disabled);
   
+  // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
   //   !disableHookForms ? formValues : radioItems.filter(item => item.selected)?.[0] || [],
   //   `\n selected from : `, radioItems,

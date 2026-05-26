@@ -1,5 +1,6 @@
 import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState, RefObject, useReducer, useEffect, FormEvent } from "react";
 import { useFormContext } from "react-hook-form";
+import { InputMask, InputMaskProps } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 import { FileUploadProps } from "../Dropbox/Dropbox";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
@@ -15,58 +16,59 @@ export type TextareaTypes = 'default' | 'box' | 'post';
 
 /** The props for the textarea component. */
 export interface TextareaProps {
+  // * Form and display
   /** The variant of the textarea we're using. */
   type?: TextareaTypes;
-
+  
   /** The form name of the textarea. Rhf uses this in it's register functions. */
   name: string;
-
+  
   /** The textarea's label. */
   label?: string;
   
   /** The description of the textarea. */
   description?: string;
-
+  
   /** The placeholder for the textarea. */
   placeholder?: string;
-
+  
   // Handling state
-  /** Optional Event to update the changed value before submitting the value to rhf or an internal uncontrolled ref. */
+  /** Optional Event to update the event.currentTarget.value to pass to the onChange event. If you're using an input mask, this edit is ignored entirely. */
   onUpdateValue?: (prevValue: string, event: FormEvent<HTMLTextAreaElement>) => string;
   
 	/** Whether to use Rhf or custom state through the onChange event */
   disableHookForms?: boolean;
   // onChange?: (e: ChangeEvent<any>) => void; 
   
-  // Form / Validation
+  // * Form / Validation
   /** Error message, if there's an error. */
   error?: string;
-
+  
   /** Whether the textarea is disabled. */
   disabled?: boolean;
-
+  
   /** Whether the textarea is required. */
   required?: boolean;
   
-
-  // Optional Submit button props
+  // * Optional Submit button props
   /** The function that's ran when you press the submit button. */
   onSubmit?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
   
   /** The display text for the submit button. */
   submitButtonText?: string;
-
+  
   /** Whether the submit button is explicitly disabled. The default disabled prop doesn't affect the button. */
   submitButtonDisabled?: boolean;
   submitButtonType?: 'button' | 'submit';
-
+  
   // Misc
   /** The attach file props object needs to be memoized when used to prevent extra rerenders. */
 	attachFile?: FileUploadProps;
-
+  
   /** Custom interactive buttons for various functionality you'd like to implement alongside this input component */ 
   metadataTags?: MetadataTagProps[] | boolean;
 }
+
 
 /** Tag events for custom logic that you want to run in parallel with the textarea.  */
 export interface MetadataTagProps {
@@ -85,10 +87,10 @@ export interface MetadataTagProps {
 
 
 /** The input functionality of the textarea. */
-const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { localInputRef: RefObject<HTMLTextAreaElement | null> }) => {
+const InputComponent = (allProps: TextareaProps & InputMaskProps & UniversalEventHandlers & { localInputRef: RefObject<HTMLTextAreaElement | null> }) => {
   const { 
     type = 'default', name, placeholder, 
-    onUpdateValue, disableHookForms, localInputRef, disabled, required, 
+    onUpdateValue, disableHookForms, localInputRef, inputMask, filter, disabled, required, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave, onSubmit,
   } = allProps;
   
@@ -96,6 +98,15 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { loc
   const { register, getValues, getFieldState, control, trigger, clearErrors } = useFormContext() || {};
   const isRHFMode = !disableHookForms && !!register;
   const rhfBindings = isRHFMode ? register(name) : null;
+  
+  // input mask 
+  const mask = useRef<InputMask | undefined>(
+    (inputMask && filter) ? new InputMask(inputMask, filter) : 
+    (inputMask) ? new InputMask(inputMask) : 
+    (filter) ? new InputMask(filter) : 
+    undefined
+  );
+  const usingInputMask = mask.current && (inputMask || filter);
   
   // validation logic
   const debouncer = useRef<NodeJS.Timeout>(undefined);
@@ -105,6 +116,8 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { loc
   
   /** Handles validation debouncing (if we need to validate) */
   const keypressDebouncer = (newValue: string) => {
+    if (!isRHFMode) return;
+    
     // const isInRevalidateMode = formState.isSubmitted;
     const isInRevalidateMode = control?._formState?.isSubmitted || false;
     
@@ -118,16 +131,16 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { loc
       return;
     }
     
-    // If it was submitted and still has active errors, refresh and run validations
+    // If it was submitted and still has active errors, refresh to run validations
     if (debouncer.current) clearTimeout(debouncer.current);
     debouncer.current = setTimeout(() => {
       trigger(name);
       // forceUpdate(); // let rhf's validation logic handle rerenders
-      // console.log(`running validations`);
+      // console.log(`running validations for ${name}`, { value: getValue() });
     }, 450);
   }
   
-  // ? Nested Rerender state
+  // * Nested Rerender state
   console.log(`InputComponent Rerendered ${name}-${type}: isRhfMode(${isRHFMode})`,
     `\n bindings: `, { 
       onChange:     !!onChange ?    { func: onChange } : undefined,
@@ -150,12 +163,15 @@ const InputComponent = (allProps: TextareaProps & UniversalEventHandlers & { loc
    * @param event       The native changeEvent data tied to the input event.
    */
   const handleUpdateValue = (event: FormEvent<HTMLTextAreaElement>) => {
-    // Handle input masking edits here
-    // const inputMask = getInputMask(type);
-    // if (inputMask) InputMask(event, mask, acceptedKeys); // ex: (e, "(___)-___-____", "regexForCharsOnly")
+    // Input masking
+    if (usingInputMask) {
+      mask.current?.evaluate(event);
+    }
     
-    // Additional edits from the optional function
-    if (onUpdateValue) onUpdateValue(getValue(), event);
+    // Otherwise, handle custom edits from the onUpdateValue function
+    else if (onUpdateValue) {
+      onUpdateValue(getValue(), event);
+    }
   }
   
   
@@ -251,13 +267,13 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   // * Input binding logic
   const { register, getValues, getFieldState, control } = useFormContext() || {};
   const isRHFMode = !disableHookForms && !!register;
-  const { error: errors } = getFieldState(name, control?._formState); // second arg prevents the internal JavaScript Proxy from adding a tracking flag to your component.
+  const { error: errors } = getFieldState(name, control?._formState); // <- second arg prevents the internal JavaScript Proxy from adding a tracking flag to your component.
   const localInputRef = useRef<HTMLTextAreaElement | null>(null); // When not using rhf
   
   /** Either Rhf's captured form value, or the internal ref for custom state. */
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
   
-  // ? Rerender state
+  // * Rerender state
   console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), data: `, 
     { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
     `\n submitButton: `, { text: submitButtonText, disabled: submitButtonDisabled, type: submitButtonType, onSubmit },
@@ -287,10 +303,11 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
   }, [name, type, disableHookForms, required, disabled]);
   
   
-  // ? Default and Box style's ButtonsAndLinks section
+  // * Default and Box style's ButtonsAndLinks section
   const MemoizedContent = useMemo(() => {
     console.log(`${name}(${type}) MemoizedContent Rerendered`, { disabled, submitButtonDisabled });
     
+    // Each variant's memoized components
     if (type == 'default') return (
       <ButtonsAndLinks className={`ta-d-btn-links`}>
         <PrecedingInputElements className="ta-d-attach-file">
@@ -321,7 +338,7 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         }
       </ButtonsAndLinks>
     );
-
+    
     if (type == 'box') return (
       <ButtonsAndLinks className="ta-b-btn-links">
         <div className={`ta-b-attach-file ${!disabled ? 'ta-b-attach-file-ha' : 'ta-b-attach-file-d'}`}>
@@ -352,12 +369,12 @@ export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
         }
       </ButtonsAndLinks>
     );
-
+    
     if (type == 'post') return (<></>);
   }, [type, disabled, submitButtonDisabled]);
   
   
-  // ? Post variant's header section (the header write/preview and metadata tags)
+  // * Post variant's header section (the header write/preview and metadata tags)
   const [showPreview, setShowPreview] = useState<'write' | 'preview'>('write');
   const togglePreview = (type: 'write' | 'preview') => setShowPreview(type);
   
@@ -546,12 +563,12 @@ interface MetadataTagElementProps {
 const MetadataTagElements = memo(({ type, metadataTags, name, disabled }: MetadataTagElementProps) => {
   const getIconStyles = (styles?: string, defaultStyles?: string): string => 
     (styles ? styles : defaultStyles || '') + ` ${disabled ? 'i-d-color' : ''}`; 
-
+  
   //--------------------------------//
   // metadata tags                  //
   //--------------------------------//
   if (Array.isArray(metadataTags)) {
-
+    
     // Default variant
     if (type == 'default') return (
       <div className="row gap-4">
@@ -564,7 +581,7 @@ const MetadataTagElements = memo(({ type, metadataTags, name, disabled }: Metada
         )}
       </div>
     );
-
+    
     // Box variant
     if (type == 'box') return (
       <PillActions className="metadata-tag-styles">
@@ -576,7 +593,7 @@ const MetadataTagElements = memo(({ type, metadataTags, name, disabled }: Metada
         )}
       </PillActions>
     );
-
+    
     // Post variant
     if (type == 'post') return (
       <div className="row gap-4">
@@ -601,7 +618,7 @@ const MetadataTagElements = memo(({ type, metadataTags, name, disabled }: Metada
         <div className="ta-pill-actions"> <Icon variant="Calendar"  styles="metadata-tag-icon-b" /> Due Date </div>
       </PillActions>
     );
-
+    
     else if (type == 'post') return (
       <div className="row gap-4">
         <Icon variant="Link"        styles="metadata-tag-icon-p" />
@@ -609,14 +626,14 @@ const MetadataTagElements = memo(({ type, metadataTags, name, disabled }: Metada
         <Icon variant="AtSymbol"    styles="metadata-tag-icon-p" />
       </div>
     );
-
+    
     else if (type == 'default') return (
       <div className="row gap-4">
         <Icon variant='Smile'       styles="ta-d-icon" />
       </div>
     )
   }
-
+  
   return (<></>);
 }, (prevProps, nextProps) => {
   
