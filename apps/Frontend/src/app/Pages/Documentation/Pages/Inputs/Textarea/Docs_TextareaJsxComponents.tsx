@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo } from "react";
+import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo, FormEvent } from "react";
 import { FileUploadProps, MetadataTagProps, Textarea } from "@Project/ReactComponents";
 
 
@@ -16,7 +16,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
       { tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
-  const onValueUpdated = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -52,7 +52,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         placeholder="input text..."
         
         // onUpdateValue={customUpdateValue}
-        onChange={(e) => onValueUpdated(e)}
+        onChange={(e) => onChangeValue(e)}
         // disableHookForms
 
         onSubmit={onSubmitTextarea}
@@ -85,7 +85,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
     { tagLabel: 'due date', tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
-  const onValueUpdated = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
     // setValue(newValue);
   }
@@ -120,8 +120,8 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         description="The description of the textarea."
         placeholder="input text..."
         
-        // onUpdateValue={customUpdateValue}
-        onChange={(e) => onValueUpdated(e)}
+        // onUpdateValue={onUpdateValue}
+        onChange={(e) => onChangeValue(e)}
         // disableHookForms
 
         onSubmit={onSubmitTextarea}
@@ -154,7 +154,7 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
     { tagIcon: 'AtSymbol',    onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
-  const onValueUpdated = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
     setValue(newValue);
   }
@@ -190,7 +190,7 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
         placeholder="input text..."
         
         // onUpdateValue={customUpdateValue}
-        onChange={(e) => onValueUpdated(e)}
+        onChange={(e) => onChangeValue(e)}
         // disableHookForms
 
         onSubmit={onSubmitTextarea}

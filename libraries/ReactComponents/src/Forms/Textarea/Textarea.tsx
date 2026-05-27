@@ -1,6 +1,6 @@
 import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState, RefObject, useReducer, useEffect, FormEvent } from "react";
 import { useFormContext } from "react-hook-form";
-import { InputMask, InputMaskProps } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
+import { InputMask, MaskOpts } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 import { FileUploadProps } from "../Dropbox/Dropbox";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
@@ -15,7 +15,7 @@ import styles from './Textarea.module.scss';
 export type TextareaTypes = 'default' | 'box' | 'post';
 
 /** The props for the textarea component. */
-export interface TextareaProps {
+export interface TextareaProps<T extends MaskOpts> {
   // * Form and display
   /** The variant of the textarea we're using. */
   type?: TextareaTypes;
@@ -33,8 +33,11 @@ export interface TextareaProps {
   placeholder?: string;
   
   // Handling state
-  /** Optional Event to update the event.currentTarget.value to pass to the onChange event. If you're using an input mask, this edit is ignored entirely. */
-  onUpdateValue?: (prevValue: string, event: FormEvent<HTMLTextAreaElement>) => string;
+  /** Whether you're using a mask. If you have a custom class for this, declare it in the {@link Textarea}'s template arguments. */
+  maskOpts?: T;
+  
+  /** Optional Event to update the event.currentTarget.value to pass to the  onChange event. If you're using an input mask, this edit is ignored entirely. */
+  onUpdateValue?: (prevValue: string, event: FormEvent<HTMLTextAreaElement>) => void;
   
 	/** Whether to use Rhf or custom state through the onChange event */
   disableHookForms?: boolean;
@@ -87,10 +90,15 @@ export interface MetadataTagProps {
 
 
 /** The input functionality of the textarea. */
-const InputComponent = (allProps: TextareaProps & InputMaskProps & UniversalEventHandlers & { localInputRef: RefObject<HTMLTextAreaElement | null> }) => {
+const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts = MaskOpts> ( allProps: 
+  & TextareaProps<MO> 
+  & UniversalEventHandlers 
+  & { localInputRef: RefObject<HTMLTextAreaElement | null> } 
+  & { MaskClass?: { new (...args: any[]): Mask }; } // Explicitly type the constructor to return the generic type 'Mask'
+) => {
   const { 
-    type = 'default', name, placeholder, 
-    onUpdateValue, disableHookForms, localInputRef, inputMask, filter, disabled, required, 
+    type = 'default', name, placeholder, maskOpts, MaskClass = InputMask,
+    onUpdateValue, disableHookForms, localInputRef, disabled, required, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave, onSubmit,
   } = allProps;
   
@@ -99,14 +107,9 @@ const InputComponent = (allProps: TextareaProps & InputMaskProps & UniversalEven
   const isRHFMode = !disableHookForms && !!register;
   const rhfBindings = isRHFMode ? register(name) : null;
   
-  // input mask 
-  const mask = useRef<InputMask | undefined>(
-    (inputMask && filter) ? new InputMask(inputMask, filter) : 
-    (inputMask) ? new InputMask(inputMask) : 
-    (filter) ? new InputMask(filter) : 
-    undefined
-  );
-  const usingInputMask = mask.current && (inputMask || filter);
+  // input mask
+  const mask = useRef<InputMask | undefined>( maskOpts ? new MaskClass(maskOpts) : undefined );
+  const usingInputMask = mask.current && (maskOpts?.inputMask || maskOpts?.filter);
   
   // validation logic
   const debouncer = useRef<NodeJS.Timeout>(undefined);
@@ -257,7 +260,8 @@ const InputComponent = (allProps: TextareaProps & InputMaskProps & UniversalEven
 }
 
 
-export const Textarea = (allProps: TextareaProps & UniversalEventHandlers) => {
+export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = MaskOpts>
+(allProps: TextareaProps<MaskOpts> & UniversalEventHandlers) => {
   const { 
     type = 'default', name, label, description, 
     onUpdateValue, disableHookForms, attachFile, metadataTags = true,

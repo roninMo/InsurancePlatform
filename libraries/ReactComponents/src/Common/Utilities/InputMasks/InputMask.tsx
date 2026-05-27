@@ -27,8 +27,8 @@ export type MaskConfig = {
 }
 
 
-/** A universal prop for adding the {@link InputMask} to components */
-export type InputMaskProps = {
+/** For subClassing the {@link InputMask} and safely passing the props to components. */
+export type MaskOpts = {
   /** The configuration for creating an `InputMask`. @note pass this in as a stable reference to prevent rerenders. */
   inputMask?: MaskConfig;
   
@@ -43,13 +43,15 @@ export type InputMaskProps = {
    * ```
   */
   filter?: RegExp;
+  
+  // Additional props added here through subclasses
 }
 
 
 //----------------------------------------//
 // Prebuilt Mask Configurations           //
 //----------------------------------------//
-export const phoneMask: InputMaskProps = {
+export const phoneMask: MaskOpts = {
   filter: Filter_NUMS_ONLY,
   inputMask: {
     mask: '(___)-___-____',
@@ -59,7 +61,7 @@ export const phoneMask: InputMaskProps = {
   },
   
 }
-export const creditCardMask: InputMaskProps = {
+export const creditCardMask: MaskOpts = {
   filter: Filter_NUMS_ONLY,
   inputMask: {
     mask: '____-____-____-____',
@@ -68,7 +70,7 @@ export const creditCardMask: InputMaskProps = {
     // filterNonWildCardsFromInput: false
   },
 }
-export const creditCardExpMask: InputMaskProps = {
+export const creditCardExpMask: MaskOpts = {
   filter: Filter_NUMS_ONLY,
   inputMask: {
     mask: '__/__',
@@ -79,13 +81,13 @@ export const creditCardExpMask: InputMaskProps = {
 }
 
 // Filter masks
-export const emailFilter: InputMaskProps = {
+export const emailFilter: MaskOpts = {
   filter: Validate_EMAIL
 }
-export const passwordFilter: InputMaskProps = {
+export const passwordFilter: MaskOpts = {
   filter: Validate_PASS_HS
 }
-export const numbersOnly: InputMaskProps = {
+export const numbersOnly: MaskOpts = {
   filter: Filter_NUMS_ONLY
 }
 
@@ -236,25 +238,75 @@ export class InputMask {
   constructor(maskConfig: MaskConfig, filter: RegExp); 
   
   
+  /**
+   * ### **InputMask** - Component Initializer
+   * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
+   * 
+   * **note** This allows you to initialize subclassed `InputMasks` easily through other components.
+   * 
+   * ---
+   * #### Initialization
+   * ```ts
+   * const numbersOnly: RegExp = /[^\d]/g; 
+   * const maskConfig: MaskConfig = {
+   *   mask: "(___)-___-____",
+   *   maskWildCardCharacter: "_",
+   *   filterNonWildCardsFromInput: true
+   * }; 
+   * 
+   * const options: InputMaskOptions = {
+   *   inputMask: {   // <-- InputMaskConfig
+   *     mask: "(___)-___-____",
+   *     maskWildCardCharacter: "_",
+   *     filterNonWildCardsFromInput: true
+   *   },
+   *   filter: /[^\d]/g     // <-- numbers only regExp
+   * };
+   * const inputMask = new InputMask(maskConfig, filter);
+   * 
+   * ```
+   * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
+   * 
+   * ---
+   * #### Params
+   * @param maskConfig    The configuration for building the inputMask
+   * @param filter        A **RegExp** designed for filtering certain text from a string.
+   */
+  constructor(options: MaskOpts); 
+  
   
   
   //----------------------------------------------------------------------------//
   // Implementation                                                             //
   //----------------------------------------------------------------------------//
   constructor(
-    arg1: RegExp | MaskConfig,
+    arg1: RegExp | MaskConfig | MaskOpts,
     arg2?: RegExp
   ) {
     let filter: RegExp | undefined;
-    let config: Partial<MaskConfig> = {};
+    let config: Partial<MaskConfig> | undefined = {};
+    let options: Partial<MaskOpts> = {};
     
-    // ? constructor(filter)
+    // -> constructor(filter)
     if (arg1 instanceof RegExp) {
       filter = arg1;
     } 
+    
+    // ? Mask or filter
     else {
-      // ? constructor(maskConfig)
-      config = arg1 || {};
+      if (arg2 === undefined) {
+        const maskOrOpts = arg1 || {};
+        
+        // -> constructor(maskConfig)
+        if ('mask' in maskOrOpts) config = maskOrOpts;
+        
+        // -> constructor(options)
+        else {
+          options = maskOrOpts;
+          filter = options?.filter;
+          config = options?.inputMask;
+        }
+      }
       
       // ? constructor(maskConfig, filter)
       if (arg2 instanceof RegExp) {
@@ -264,18 +316,18 @@ export class InputMask {
     
     
     // -> Initialize the base values
-    this._filter = filter;
-    this._mask = config.mask;
-    this._maskWildcardCharacter = config.maskWildCardCharacter;
-    this._filterMaskChars = config.filterNonWildCardsFromInput;
-    if (this._filterMaskChars && this._mask && this._maskWildcardCharacter) {
-      this._maskCachedNWChars = this.getNonWildcardChars(this._mask, this._maskWildcardCharacter);
+    if (filter) this._filter = filter;
+    if (config) {
+      this._mask = config.mask;
+      this._maskWildcardCharacter = config.maskWildCardCharacter;
+      this._filterMaskChars = config.filterNonWildCardsFromInput;
+      if (this._filterMaskChars && this._mask && this._maskWildcardCharacter) {
+        this._maskCachedNWChars = this.getNonWildcardChars(this._mask, this._maskWildcardCharacter);
+      }
     }
     
     this.rawInputValue = '';
     this.maskedInputValue = '';
-    
-    // 
   }
   
   
