@@ -4,58 +4,57 @@
   // * Ctrl + Shift + P
   // ? Type "Tasks: Manage Automatic Tasks", and then press enter
   // -> Enable "Allow Automatic Tasks"
+  // or in settings.json: "task.allowAutomaticTasks": "on",
   "tasks": [
+    //------------------------------//
+    // Build External Libraries     //
+    //------------------------------//
     {
       "label": "Pre-Build Libraries",
-      "type": "shell",
+      "type": "shell", //  "runOptions": { "runOn": "folderOpen" },
       "command": "npx nx run-many --targets=build --projects=ReactComponents,Classes",
-      // "command": "npx nx run ReactComponents:build --output-style=tui",
-      "problemMatcher": [],
+      // * "command": "npx nx run ReactComponents:build --output-style=tui",
       "presentation": {
-        "echo": false,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "dedicated",
+        "focus": false, "reveal": "silent",
+        "panel": "dedicated", "echo": false, "clear": true,
         "showReuseMessage": false,
-        "clear": true
       },
-      "icon": {
-        "id": "coffee",
-        "color": "terminal.ansiMagenta"
-      }
+      "icon": { "id": "coffee", "color": "terminal.ansiMagenta" },
     },
+    
+    
+    //------------------------------//
+    // Serve App (Deployment)       //
+    //------------------------------//
     {
       "label": "Deployment",
-      "type": "shell",
-      // "command": "npx nx run-many --targets=build,serve --projects=ReactComponents,Frontend --parallel=false",
       "command": "npx nx run Frontend:serve --output-style=tui",
-      "dependsOn": "Pre-Build Libraries",
-      "dependsOrder": "sequence",
-      "runOptions": { "runOn": "folderOpen" }, // This will trigger pre-build libraries to run on start as well.
-      "isBackground": true,
+      // * "command": "npx nx run-many --targets=build,serve --projects=ReactComponents,Frontend --parallel=false",
+      "type": "shell", "isBackground": true, // remove loading spinner...
+      "dependsOn": "Pre-Build Libraries", "dependsOrder": "sequence", // run "Pre-Build Libraries" first
+      "runOptions": { "runOn": "folderOpen" }, // This will trigger the "Pre-Build Libraries" task to run on start as well.
+      "icon": { "id": "window-active", "color": "terminal.ansiBlue" },
       "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated",
+        "focus": false, "reveal": "always",
+        "panel": "dedicated", "echo": true, "clear": false,
         "showReuseMessage": false,
-        "clear": false
       },
-      "problemMatcher": { // Remove the endless loading icon...
-        "owner": "custom",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": ".",
-          "endsPattern": "Ready in|Local:|Compiled successfully|Failed to compile"
-        },
-        "pattern": {
-          "regexp": "."
-        }
+    },
+    
+    
+    //------------------------------//
+    // Default Console Tab          //
+    //------------------------------//
+    {
+      "label": "Console",
+      "command": "powershell", 
+      "type": "shell", "isBackground": true, "runOptions": {  "runOn": "folderOpen" },
+      "icon": { "id": "terminal", "color": "terminal.ansiGreen" },
+      "presentation": {
+        "focus": true, "reveal": "always",
+        "panel": "shared", "echo": true,
+        "close": false,
       },
-      "icon": {
-        "id": "window-active",
-        "color": "terminal.ansiBlue"
-      }
-    }
+    },
   ]
 }
