@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo, FormEvent } from "react";
 import { FileUploadProps, MetadataTagProps, Textarea } from "@Project/ReactComponents";
+import { phoneMask } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 
 
 export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDisabled }: {
@@ -85,6 +86,10 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
     { tagLabel: 'due date', tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLTextAreaElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, prevValue);
+  }
+  
   const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
     // setValue(newValue);
@@ -120,9 +125,10 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         description="The description of the textarea."
         placeholder="input text..."
         
-        // onUpdateValue={onUpdateValue}
+        onUpdateValue={onUpdateValue}
+        maskOpts={phoneMask}
         onChange={(e) => onChangeValue(e)}
-        // disableHookForms
+        disableHookForms
 
         onSubmit={onSubmitTextarea}
         submitButtonText="Post"

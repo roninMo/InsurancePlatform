@@ -93,7 +93,7 @@ export interface MetadataTagProps {
 const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts = MaskOpts> ( allProps: 
   & TextareaProps<MO> 
   & UniversalEventHandlers 
-  & { localInputRef: RefObject<HTMLTextAreaElement | null> } 
+  & { localInputRef: RefObject<HTMLTextAreaElement | undefined> } 
   & { MaskClass?: { new (...args: any[]): Mask }; } // Explicitly type the constructor to return the generic type 'Mask'
 ) => {
   const { 
@@ -110,12 +110,20 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
   // input mask
   const mask = useRef<InputMask | undefined>( maskOpts ? new MaskClass(maskOpts) : undefined );
   const usingInputMask = mask.current && (maskOpts?.inputMask || maskOpts?.filter);
+  console.log(`usingInputMask: ${usingInputMask}, data: `, { maskOpts, mask: mask.current });
   
   // validation logic
   const debouncer = useRef<NodeJS.Timeout>(undefined);
   useEffect(() => () => clearTimeout(debouncer.current), []);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   
+  // Cleanup on unmount
+  useEffect(() => {
+    () => {
+      clearTimeout(debouncer.current); // onKeypress validations
+      if (mask.current) mask.current.cleanup(); // Event listeners
+    }
+  }, []);
   
   /** Handles validation debouncing (if we need to validate) */
   const keypressDebouncer = (newValue: string) => {
@@ -219,9 +227,17 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
   
   /** Safe Unified Ref Callback */
   const handleRef = (node: HTMLTextAreaElement | null) => {
-    localInputRef.current = node; // Store it locally for our increment buttons
+    // Store it locally for our increment buttons
+    localInputRef.current = node || undefined; 
+    
+    // Pass it along to React Hook Form
     if (isRHFMode && rhfBindings?.ref) {
-      rhfBindings.ref(node); // Pass it along to React Hook Form
+      rhfBindings.ref(node); 
+    }
+    
+    // Pass a reference to the actual input to our input mask
+    if (mask.current && node) {
+      mask.current.initEventListeners(node);
     }
   };
   
@@ -261,25 +277,25 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
 
 
 export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = MaskOpts>
-(allProps: TextareaProps<MaskOpts> & UniversalEventHandlers) => {
+(allProps: TextareaProps<MO> & UniversalEventHandlers) => {
   const { 
-    type = 'default', name, label, description, 
+    type = 'default', name, label, description, placeholder, 
     onUpdateValue, disableHookForms, attachFile, metadataTags = true,
-    error, required = false, disabled = false, 
+    error, required = false, disabled = false, maskOpts,
     onSubmit, submitButtonText, submitButtonDisabled = false, submitButtonType = 'button', 
   } = allProps;
   // * Input binding logic
   const { register, getValues, getFieldState, control } = useFormContext() || {};
   const isRHFMode = !disableHookForms && !!register;
   const { error: errors } = getFieldState(name, control?._formState); // <- second arg prevents the internal JavaScript Proxy from adding a tracking flag to your component.
-  const localInputRef = useRef<HTMLTextAreaElement | null>(null); // When not using rhf
+  const localInputRef = useRef<HTMLTextAreaElement | undefined>(undefined); // When not using rhf
   
   /** Either Rhf's captured form value, or the internal ref for custom state. */
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
   
   // * Rerender state
-  console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), data: `, 
-    { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
+  console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}) `, 
+    `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
     `\n submitButton: `, { text: submitButtonText, disabled: submitButtonDisabled, type: submitButtonType, onSubmit },
     `\n attachFile: `, { file: getValues(attachFile?.name || ' '), props: attachFile},
     `\n metadataTags: `, metadataTags,
@@ -296,8 +312,8 @@ export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = 
     return (
       <InputComponent 
         type={type} name={name}
-        onChange={onChange} onUpdateValue={onUpdateValue}
-        disableHookForms={disableHookForms} localInputRef={localInputRef} 
+        onChange={onChange} onUpdateValue={onUpdateValue} placeholder={placeholder}
+        disableHookForms={disableHookForms} localInputRef={localInputRef} maskOpts={maskOpts}
         required={required} disabled={disabled} // error={error}
         onFocus={onFocus} onBlur={onBlur} onClick={onClick}
         onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
