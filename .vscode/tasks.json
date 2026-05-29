@@ -7,6 +7,22 @@
   // or in settings.json: "task.allowAutomaticTasks": "on",
   "tasks": [
     //------------------------------//
+    // Default Console Tab          //
+    //------------------------------//
+    {
+      "label": "Console",
+      "command": "powershell", 
+      "type": "shell", "isBackground": true, "runOptions": {  "runOn": "folderOpen" },
+      "icon": { "id": "terminal", "color": "terminal.ansiGreen" },
+      "presentation": {
+        "focus": true, "reveal": "always",
+        "panel": "shared", "echo": true,
+        "close": false,
+      },
+    },
+    
+    
+    //------------------------------//
     // Build External Libraries     //
     //------------------------------//
     {
@@ -38,22 +54,6 @@
         "focus": false, "reveal": "always",
         "panel": "dedicated", "echo": true, "clear": false,
         "showReuseMessage": false,
-      },
-    },
-    
-    
-    //------------------------------//
-    // Default Console Tab          //
-    //------------------------------//
-    {
-      "label": "Console",
-      "command": "powershell", 
-      "type": "shell", "isBackground": true, "runOptions": {  "runOn": "folderOpen" },
-      "icon": { "id": "terminal", "color": "terminal.ansiGreen" },
-      "presentation": {
-        "focus": true, "reveal": "always",
-        "panel": "shared", "echo": true,
-        "close": false,
       },
     },
   ]

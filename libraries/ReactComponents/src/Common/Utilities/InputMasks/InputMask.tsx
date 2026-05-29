@@ -95,7 +95,7 @@ export const numbersOnly: MaskOpts = {
 
 
 /** The metadata returned from the InputMask notifying you of what we did with the onChange event. */
-export type MaskEventHandle = { canceledBeforeInput: boolean, invokedOnChange: string | boolean };
+export type MaskEventHandle = string | false;
 
 /** The Input's Native Event classified inputTypes. */
 export type InputActionType = 
@@ -166,7 +166,7 @@ export class InputMask {
   
   
   // * Capturing the type of input actions we're retrieving from the user
-  protected currentInputActionType: InputActionType | undefined;
+  protected listenerInputType: InputActionType | undefined;
   protected inputRef: HTMLInputElement | HTMLTextAreaElement | undefined;
   protected addedEventListeners: boolean = false;
   
@@ -367,7 +367,7 @@ export class InputMask {
    *    const handle = inputMask.evaluate(currentValue, event); 
    * 
    *    console.log(handle);
-   *    // { canceledBeforeInput: true, invokedOnChange: 'newMaskedValue' }
+   *    // { invokedOnChange: 'newMaskedValue' }
    *    // !if invokedOnChange is defined, evaluate() manually called onChange with the new value.
    * }
    * 
@@ -385,35 +385,39 @@ export class InputMask {
    * 
    * @returns An object that returns whether we canceled the onBeforeInput via `preventDefault`, and if we invoked the `onChange` manually.
    */
-  public evaluate(event: FormEvent<HTMLInputElement | HTMLTextAreaElement>): MaskEventHandle {
-    if (!event) return { canceledBeforeInput: false, invokedOnChange: false }; // ! the event was invalid
+  public evaluate(e: Event, listenerActionType: InputActionType): MaskEventHandle {
+    if (!e) return false; // ! the event was invalid
+    if (!this.inputRef) return false; // ! we don't have a reference to the input we're masking
     
-    // Input and Event information
-    const input = event.target as HTMLTextAreaElement | HTMLInputElement;
+    // ? Extract the event's information based on the input type
+    const input = this.inputRef;
     const inputName = input.name;
-    const nativeEvent = event.nativeEvent as InputEvent; // browser event, not react's synthetic event ^
+    const { 
+      actionType, 
+      insertedText, 
+      event 
+    } = this.handleUserInputEvent(listenerActionType, e as any);
     
     // Retrieve the changed input value from the native 
     const cursorStart = input.selectionStart ?? 0; // cursor location
     const cursorEnd = input.selectionEnd ?? 0; // highlighted?
-    
-    // User action information
-    const insertedText = nativeEvent.data || ''; // null/empty during deletions
-    const actionType = this.currentInputActionType; // this.getInputType(nativeEvent, insertedText, cursorStart, cursorEnd); // The keyed action
-    let filteredInsert = insertedText;
-    
     
     // Cached refs
     const prevRawValue = this.rawInputValue;
     const prevMaskedValue = this.maskedInputValue;
     
     // Calculated input values
+    let filteredInsert = insertedText;
     const prevValue = input.value;
     let newValue = prevValue;
-    console.log(`\nMaskEval::Evaluating and updating input from user event(${actionType}), maskData: `, { inputName, mask: this.mask, filter: this.filterExp, event },
-      `\n native event data: `, { actionType, insertedText, [inputName]: input, nativeEvent },
+    
+    // * logging
+    const maskTemplate = prevMaskedValue ? prevMaskedValue : this.mask;
+    const cursorString = maskTemplate.substring(0, cursorStart) + '|' + maskTemplate.substring(cursorStart, cursorEnd) + '|' + maskTemplate.substring(cursorEnd);
+    console.log(`\n\nMaskEval::Evaluating and updating input from user event(${actionType}), maskData: `, { inputName, mask: this.mask, filter: this.filterExp, event },
+      `\n native event data: `, { actionType, insertedText, [inputName]: input },
       `\n current data: `, { currentRawValue: prevRawValue, currentMaskedValue: prevMaskedValue },
-      `\n cursor: `, { start: cursorStart, end: cursorEnd },
+      `\n cursor: `, { start: cursorStart, end: cursorEnd, vis: cursorString },
     );
     
     
@@ -430,42 +434,44 @@ export class InputMask {
         
         // <- Early out, there's no valid text to add
         if (!filteredInsert) {
-          this.handleNativeEventLogic(event, undefined); // cancel the events
+          this.handleNativeEventLogic(undefined); // cancel the events
           this.updateState(prevRawValue, prevMaskedValue); // update internal state tracking
           this.updateCursorPosition(input, cursorStart, cursorEnd, newValue, 0);
           console.log(`MaskEval::${actionType}: Cancelled - The added text was filtered out, aborting the onChange event. data: `, { insertedText, filteredInsert, filter: this.filterExp, inputName });
-          return { canceledBeforeInput: true, invokedOnChange: false }; // input left as-is
+          return false; // input left as-is
         }
         
         addedText = filteredInsert;
       }
       
       // * update the raw value
-      let newRawValue = '';
       let start = cursorStart;
       let end = cursorEnd;
       let maskNonWCChars = 0; // mask chars between the selection (non-wildcard)
-      if (this.isMaskEnabled()) {
-        // offsets for the cursor location after removing the mask parts of the string
-        const { startOffset, endOffset } = this.getRawCursorLocation(start, end);
-        start = cursorStart - startOffset;
-        end = cursorEnd - endOffset;
-        maskNonWCChars = endOffset - startOffset;
-      }
+      // if (this.isMaskEnabled()) {
+      //   // offsets for the cursor location after removing the mask parts of the string
+      //   const { startOffset, endOffset } = this.getRawCursorLocation(start, end);
+      //   start = cursorStart - startOffset;
+      //   end = cursorEnd - endOffset;
+      //   maskNonWCChars = endOffset - startOffset;
+      // }
       
       // Handle building the mask from the raw input value
-      newRawValue = this.addToRawValue(addedText, prevRawValue, start, end); // filter & mask calc
+      const { newRawValue, rawCursorStart, rawCursorEnd } = this.addToRawValue(addedText, prevRawValue, start, end); // filter & mask calc
+      const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(rawCursorStart, rawCursorEnd);
       const newMaskValue = this.buildInputMask(newRawValue);
+      // start = rawCursorStart; // masked cursor location
+      // end = rawCursorEnd;
       
       // -> Successfully recreated the mask for single/multi insert and paste inputs
-      this.handleNativeEventLogic(event, newMaskValue); // call the onChange w/maskInput
+      this.handleNativeEventLogic(newMaskValue); // call the onChange w/maskInput
       this.updateState(newRawValue, newMaskValue); // update internal state tracking
-      this.updateCursorPosition(input, cursorStart, cursorEnd, newMaskValue, addedText.length, maskNonWCChars); // after the added text
+      this.updateCursorPosition(input, maskedCursorStart, maskedCursorEnd, newMaskValue, addedText.length, maskNonWCChars); // after the added text
       console.log(`MaskEval::${actionType}: Completed - Recreated the mask for the single/multi insert, and paste actions. Event data: `, 
         { newRawValue, newMaskValue, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
         `\n Cursor specific tracking: `, { cursor: { start, end }, maskNonWildCardChars: maskNonWCChars },
       );
-      return { canceledBeforeInput: true, invokedOnChange: newMaskValue }; 
+      return newMaskValue; 
     }
     
     
@@ -495,7 +501,7 @@ export class InputMask {
       const newMaskValue = this.buildInputMask(newRawValue);
       
       // -> Successfully recreated the mask for single/multi insert and paste inputs
-      this.handleNativeEventLogic(event, newMaskValue); // call the onChange w/maskInput
+      this.handleNativeEventLogic(newMaskValue); // call the onChange w/maskInput
       this.updateState(newRawValue, newMaskValue); // update internal state tracking
       
       // back one, or remove highlight
@@ -506,7 +512,7 @@ export class InputMask {
         { newRawValue, newMaskValue, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
         `\n Cursor specific tracking: `, { cursor: { start, end }, maskNonWildCardChars: maskNonWCChars },
       );
-      return { canceledBeforeInput: true, invokedOnChange: newMaskValue }; 
+      return newMaskValue; 
     }
     
     
@@ -514,11 +520,11 @@ export class InputMask {
     // ! Fallback: we don't want to break the mask input, so just prevent this event from occurring
     console.error(`MaskEval::InputMask(${this.mask}) encountered an error while evaluating the mask on a keypress.`,
       `\n The previous input entry's actionType was ${actionType}, returning the event unaffected: `, { prevRawValue, prevMaskedValue, insertedText, inputName },
-      `\n Event data: `, { nativeEvent, input, event },
+      `\n Event data: `, { input, event },
     );
     
-    this.handleNativeEventLogic(event, undefined); // prevent the event from editing the mask's value
-    return { canceledBeforeInput: true, invokedOnChange: false };
+    this.handleNativeEventLogic(undefined); // prevent the event from editing the mask's value
+    return false;
   }
   
   
@@ -541,107 +547,86 @@ export class InputMask {
    * @param cursorEnd             The cursor's end location.
    * @returns                     The new raw input value.
    */
-  protected getInputType(nativeEvent: InputEvent, insertedText: string, cursorStart: number, cursorEnd: number): InputActionType {
-    let actionType: InputActionType =  nativeEvent.inputType as InputActionType; // This is almost never defined
-    
-    /*
-      InputActionTypes:
-        
-        'insertText'
-          - added (one or multiple) characters, could be a highlighted selection
-          'insertFromPaste'
-            - pasted selection at a specific location, or over a highlighted selection
-          'deleteContentBackward'
-            - removes (one or multiple) characters, could be a highlighted selection
-          'deleteContentForward'
-            - Without using extra native event listeners, we cannot check if this was removed using the 'delete' key
-          'deleteByCut'
-            - Ctrl + X scenario // ? can we infer this from a coded deletion? -> Yes
-          
-          'insertCompositionText'
-            - inferred from mobile events, used above
-    
-      Logic
-        // ? 1. Check if they added a single character
-          - (InsertedText) retrieve the added character
-          - (Cursor) capture cursor start/end locations
-        // * InputTypes ['insertText']
-
-        // ? 2. Check if they added multiple characters
-          - (InsertedText) retrieve the added characters
-          - (Cursor) capture cursor start/end locations
-        // * InputTypes ['insertFromPaste']
-
-        // ? 3. Check if they removed a character
-          - (InsertedText) there is no inserted text data
-          - (Cursor) capture cursor start/end locations
-        // * InputTypes ['deleteContentBackward', 'deleteByCut']
-        
-        // TODO Add an event listener for key events + shortcuts?
-
-    */
-    
-    return 'insertText';
-  }
-  
-  
-  /**
-   * Inserts the new text into the raw value in a couple different ways
-   *  * `Filter only`: It additively inserts the text based on the cursor's location or selection. Just like the `native` behavior.
-   *  * `Mask`: It will `overwrite` the text in the current selection. Will add wildcards in empty spaces from a highlight + paste combination.
-   * 
-   * **Note:** This preserve's the placement of the text for mask variations on highlighted multi select inserts, and will overwrite extra characters based on the paste.
-   * 
-   * ---
-   * @param inserted              The user's inserted text, whether it was a single key, a selection and a key or a paste.
-   * @param cursorStart           The cursor's start location.
-   * @param cursorEnd             The cursor's end location.
-   * @returns                     The new raw input value.
-   */
-  protected addToRawValue(inserted: string, prevValue: string, cursorStart: number, cursorEnd: number): string {
-    if (!inserted) return prevValue;
+  protected addToRawValue(inserted: string, prevValue: string, cursorStart: number, cursorEnd: number): 
+    { newRawValue: string, rawCursorStart: number, rawCursorEnd: number } 
+  {
+    if (!inserted) return { newRawValue: prevValue, rawCursorStart: cursorStart, rawCursorEnd: cursorEnd };
     const currentValue = prevValue || '';
     
     // ? Filter only -> additive
     if (!this.isMaskEnabled()) {
-      const newValue = 
+      const newRawValue = 
         currentValue.substring(0, cursorStart) + 
         inserted + 
         currentValue.substring(cursorEnd);
-      console.log(`addToRawValue::filterOnly: data`, { prevValue: currentValue, newValue, inserted });
-      return newValue;
+      console.log(`addToRawValue(filterOnly) data:`, { prevValue: currentValue, newRawValue, inserted });
+      return { newRawValue, rawCursorStart: newRawValue.length, rawCursorEnd: newRawValue.length };
     }
     
-    // ? Mask logic -> overwrite
-    let newRawValue = '';
-    const charsToAdd = inserted.split("");
-    let endLocation = cursorEnd; // extra room if they highlighted/pasted over mask-template characters
-    const log_addedChars: string[] = [];
     
-    if (currentValue.length == 0) newRawValue = inserted;
-    else for (let i = 0; i < currentValue.length; i++) {
-      let currentChar = currentValue[i];
-      
-      if (cursorStart <= i) {
-        
-        // If we still have characters to add, overwrite the current value
-        if (charsToAdd.length) {
-          currentChar = charsToAdd.shift() || currentChar;
+    // ? Mask logic -> overwrite, add extras, remove overflow
+    let newRawValue = '';
+    let newCursorLocation = 0;
+    const charactersToAdd = inserted.split("");
+    if (currentValue.length != 0) {
+      for (let i = 0; i < currentValue.length; i++) {
+        let currentChar = currentValue[i];
+        if (cursorStart <= i) {
+          // If we have characters to add, overwrite
+          if (charactersToAdd.length) {
+            currentChar = charactersToAdd.shift() || currentChar;
+            newCursorLocation = i + 1; 
+          }
+          
+          // Remove the current value's characters if this is a highlight
+          else if (cursorStart != cursorEnd && i < cursorEnd) {
+            currentChar = '';
+          }
         }
         
-        // Add wildcards within the highlighted text if there are no more characters to add
-        else if (charsToAdd.length == 0 && i < endLocation) {
-          currentChar = this.wildcard;
-        }
+        newRawValue += currentChar;
+        newCursorLocation++;
+        // console.log()
+        // TODO - fix the cursor location not being updated properly
+        // Right now, it works because we're setting the location of the raw cursor to the end of the string
+        // This doesn't account for cursors in random places of the string
+        // Easy fix - add by one on insert and preserve initial cursor locations (mask template fixed style)
+        // Hard way - we find the rawCursorLocation from our function, and take the current mask location and offset it
+        
+        // <- We are passing the raw values to our findMaskedCursorLocation to calculate it's new location from the raw value
+        // -> This is then passed to the updateCursorLocation to update it within the input.
+        // ? Having it incrementally like this allows us to account for more scenarios at the cost of a headache, and weird scenarios you have to watch out for
+        // ? We should be able to capture the new cursor location from the last character added from the current cursor location + 1
+        // TODO check that highlighted selections work properly with this (it should just be set to cursorStart + charactersAdded)
+        // Log everything because we're getting finnicky behavior when this is edited
       }
       
-      // build the new raw value
-      newRawValue += currentChar;
-      log_addedChars.push(currentChar);
+      // if we still have leftover characters to add, append them to the newRawValue
+      if (charactersToAdd.length) {
+        newRawValue += charactersToAdd.join('');
+        newCursorLocation += charactersToAdd.length;
+      }
     }
     
-    console.log(`addToRawValue::masked - Completed, data: `, { prevValue: currentValue, newRawValue, inserted, buildLoop: log_addedChars });
-    return newRawValue;
+    // if the cursor position was after the current characters, add to it
+    else if (cursorStart >= currentValue.length) {
+      newRawValue = currentValue + inserted;
+      newCursorLocation = currentValue.length + inserted.length;
+    }
+    
+    // -> Return the new raw value
+    const maxLength = this.mask.split("").filter(char => char == this.wildcard).length;
+    const clampedRawValue = newRawValue.substring(0, maxLength);
+    console.log(`addToRawValue(masked) - Completed, data: `, 
+      { prevRawValue: currentValue, inserted, newRawValue: clampedRawValue, unclamped: newRawValue },
+      `\ncursorLocation: `, { rawStart: cursorStart, rawEnd: cursorEnd, newCursorLocation, 
+        cursorRef: clampedRawValue.substring(0, newCursorLocation) + '|' + clampedRawValue.substring(newCursorLocation) },
+    );
+    return { 
+      newRawValue: clampedRawValue, 
+      rawCursorStart: newCursorLocation, 
+      rawCursorEnd: newCursorLocation 
+    };
   }
   
   
@@ -707,7 +692,7 @@ export class InputMask {
     for (let i = 0; i < this.mask.length; i++) {
       const maskChar = this.mask[i];
       const inputChar = rawValue.substring(rawValueIndex, rawValueIndex + 1);
-      console.log(`current input character: ${inputChar}`, { rawValue });
+      // console.log(`current input character: ${inputChar}`, { rawValue });
       
       let addedChar: string;
       if (maskChar != this.wildcard) addedChar = maskChar;
@@ -720,8 +705,50 @@ export class InputMask {
       newMaskValue += addedChar;
     }
     
-    console.log(`buildInputMask finished: `, { newMaskValue, rawValue });
+    // console.log(`buildInputMask finished: `, { newMaskValue, rawValue });
     return newMaskValue;
+  }
+  
+  
+  /** Updates the raw cursor locations with the mask's template values so it's in sync with the masked input value. */
+  protected findMaskedCursorLocations(rawCursorStart: number, rawCursorEnd: number, mask?: string, wildcard?: string): { maskedCursorStart: number, maskedCursorEnd: number } {
+    if (!mask) mask = this.mask;
+    if (!wildcard) wildcard = this.wildcard;
+    if (!this.mask /* !mask */ || !wildcard) {
+      console.error(`Calling findMaskedCursorLocation on an input mask that only filter's it's input! Pass in params or initialize the mask!`, { mask, wildcard });
+      return { } as any;
+    }
+    
+    // capture the count of template characters to find the cursor location for a masked input
+    let startCountdown: number = rawCursorStart;
+    let endCountdown: number = rawCursorEnd;
+    let maskedCursorStart: number = -1;
+    let maskedCursorEnd: number = -1;
+    for (let i = 0; i < mask.length; i++) { // find the cursor location by counting through the wildcards and adding the template chars
+      let maskChar = mask[i];
+      if (maskChar == wildcard) {
+        if (startCountdown != 0) startCountdown--;
+        if (endCountdown != 0) endCountdown--;
+        
+        if (startCountdown == 0 && maskedCursorStart == -1) maskedCursorStart = rawCursorStart == rawCursorEnd ? i + 1 : i;
+        if (endCountdown == 0   && maskedCursorEnd == -1) maskedCursorEnd = rawCursorStart == rawCursorEnd ? i + 1 : i;
+        console.log(`index(${i}), endCountdown(${endCountdown}), maskStart(${maskedCursorStart}) maskEnd(${maskedCursorEnd})`, { isHighlight: rawCursorStart != rawCursorEnd})
+        if (!startCountdown && !endCountdown) break;
+      }
+    }
+    
+    // If we still haven't set the cursor value, it's because the template chars + the user's input has reached the bounds of the mask
+    if (maskedCursorStart == -1) maskedCursorStart = mask.length;
+    if (maskedCursorEnd == -1) maskedCursorEnd = mask.length;
+    
+    const newCursorString = mask.substring(0, maskedCursorStart) + '|' + mask.substring(maskedCursorStart, maskedCursorEnd) + '|' + mask.substring(maskedCursorEnd);
+    console.log(`findMaskedCursorLocation()  data: `, {newCursorString},
+      `\ncursorLocs`, {
+        rawStart: rawCursorStart, rawEnd: rawCursorEnd, 
+        maskedStart: maskedCursorStart, maskedEnd: maskedCursorEnd, 
+        maskLength: mask.length 
+    });
+    return { maskedCursorStart, maskedCursorEnd };
   }
   
   
@@ -737,7 +764,7 @@ export class InputMask {
   protected updateState(rawInputValue: string, maskedInputValue: string): void {
     this.rawInputValue = rawInputValue;
     this.maskedInputValue = maskedInputValue;
-    console.log(`successfully updated the InputMask class's state: `, { rawInputValue, maskedInputValue });
+    console.log(`UpdateState() InputMaskState: `, { rawInputValue, maskedInputValue });
   }
   // #endregion
   
@@ -778,7 +805,7 @@ export class InputMask {
     // .replace replaces every matching bad character with an empty string
     
     const filteredChars = charsToFilter.replace(filterExp, "");
-    console.log(`filter() finished, data: `, { filteredVal: filteredChars, chars, filterExp });
+    // console.log(`filter() finished, data: `, { filteredVal: filteredChars, chars, filterExp });
     return filteredChars;
   }
   
@@ -952,10 +979,14 @@ export class InputMask {
     insertedCharCount: number, maskNonWCChars: number = 0
   ): void {
     // ? How much was highlighted versus how much we added, offset by the mask's characters (non-wildcard)
-    const selectionLength = cursorEnd - cursorStart;
-    const addedTextOffset = selectionLength - (selectionLength - insertedCharCount) + maskNonWCChars;
+    // const selectionLength = cursorEnd - cursorStart;
+    // const addedTextOffset = selectionLength - (selectionLength - insertedCharCount) + maskNonWCChars;
+    // const newCursorPos = Math.min( Math.max(0, 
+    //   cursorStart + addedTextOffset),
+    //   newValue.length
+    // );
     const newCursorPos = Math.min( Math.max(0, 
-      cursorStart + addedTextOffset),
+      cursorEnd),
       newValue.length
     );
     
@@ -972,23 +1003,21 @@ export class InputMask {
    * @param preventDefault    Whether we want to prevent `onBeforeInput` from inserting characters into the input.
    * @param invokeOnChange    invokes the input's `onChange` with a new value. Leave `undefined` to skip.
    */
-  protected handleNativeEventLogic(
-    event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, 
+  protected handleNativeEventLogic( 
     invokeOnChange: string | undefined = undefined, // false
-    preventDefault: boolean = true, 
+    // preventDefault: boolean = true, 
   ): void {
-    const input = event.target as HTMLTextAreaElement | HTMLInputElement;
-    const nativeEvent = event.nativeEvent as InputEvent; // browser event, not react's synthetic event ^
+    if (!this.inputRef) return;
+    const input = this.inputRef;
     
     // ? Stop the browser from inserting the raw, unmasked characters
-    if (preventDefault) {
-      event.preventDefault();
-    }
+    // if (preventDefault) { // <- this is handled in the input's onBeforeInput() event if it's using the mask
+    //   event.preventDefault();
+    // }
 
     // ? Manually call onChange: assign the masked value to the element
-    // ! Changing this property directly triggers React's internal onChange tracker
     if (invokeOnChange !== undefined) {
-      input.value = invokeOnChange; // invokes onChange
+      input.value = invokeOnChange; // ! Changing this property directly triggers React's internal onChange tracker
       
       // * Dispatches a synthetic input change notification
       const tracker = (input as any)._valueTracker;
@@ -1032,17 +1061,6 @@ export class InputMask {
     this.inputRef.removeEventListener('paste', this.onPaste, true);
   }
   
-  /** Listener for when the user pastes some text. */
-  protected onPaste = (ev: Event): void => {
-    this.currentInputActionType = 'insertFromPaste';
-    console.log(`\nThe user just pasted some text, inputActionType: ${this.currentInputActionType}`, { event: ev });
-  }
-  
-  /** Listener for when the user cuts some text. */
-  protected onCut = (ev: Event): void => {
-    this.currentInputActionType = 'deleteByCut';
-    console.log(`\nThe user just cut some text, inputActionType: ${this.currentInputActionType}`, { event: ev });
-  }
   
   /** 
    * Listener for when the adds or deletes text. 
@@ -1050,11 +1068,87 @@ export class InputMask {
    * `Defaults to insertText:`  We're not going to check every key, just certain ones for adding/removing text.
   */
   protected onKeyPress = (e: Event): void => {
-    const ev = e as any;
-    if      (ev.key == 'Backspace') this.currentInputActionType = 'deleteContentBackward';
-    else if (ev.key == 'Delete')    this.currentInputActionType = 'deleteContentForward';
-    else  /*(ev.key == 'anyKey')*/  this.currentInputActionType = 'insertText';
-    console.log(`\nThe user just pressed the ${ev.key} key, inputActionType: ${this.currentInputActionType}`, { event: ev });
+    const keyboardEvent = e as KeyboardEvent;
+    const key = keyboardEvent?.key;
+    if (!e || !key) return;
+    
+    // * Keys to ignore
+    if (['Unidentified', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key)) return;
+    
+    // * Captured event keys
+    else if (key == 'Backspace') this.listenerInputType = 'deleteContentBackward';
+    else if (key == 'Delete')    this.listenerInputType = 'deleteContentForward';
+    else  /*(key == 'anyKey')*/  this.listenerInputType = 'insertText';
+    
+    this.evaluate(keyboardEvent, this.listenerInputType);
+    console.log(`\nuser(${this.listenerInputType}): just pressed the ${key} key`, { keyboardEvent });
+  }
+  
+  
+  /** Listener for when the user pastes some text. */
+  protected onPaste = (e: Event): void => {
+    const pasteEvent = e as ClipboardEvent;
+    
+    if (e && pasteEvent?.clipboardData) {
+      const paste = pasteEvent.clipboardData.getData('text');
+      this.listenerInputType = 'insertFromPaste';
+      this.evaluate(pasteEvent, this.listenerInputType);
+      console.log(`\nuser(${this.listenerInputType}): just pasted some text`, { paste, event: e });
+    }
+  }
+  
+  
+  /** Listener for when the user cuts some text. */
+  protected onCut = (e: Event): void => {
+    const clipboardEvent = e as ClipboardEvent & any;
+    
+    if (e && clipboardEvent.clipboardData) {
+      this.listenerInputType = 'deleteByCut';
+      clipboardEvent.key = '';
+      this.evaluate(clipboardEvent, this.listenerInputType);
+      console.log(`\nuser(${this.listenerInputType}): just cut some text`, { event: e });
+    }
+  }
+  
+  
+  /** Invokes {@link evaluate() which then calculates the new masked input value and calls the onChange event.} */
+  protected handleUserInputEvent( ...[actionType, event]:
+    | [ listenerInputType: Extract<InputActionType, 'insertText'>,            event: KeyboardEvent, ]
+    | [ listenerInputType: Extract<InputActionType, 'insertFromPaste'>,       event: ClipboardEvent, ]
+    | [ listenerInputType: Extract<InputActionType, 'deleteContentBackward'>, event: KeyboardEvent, ]
+    | [ listenerInputType: Extract<InputActionType, 'deleteContentForward'>,  event: KeyboardEvent, ]
+    | [ listenerInputType: Extract<InputActionType, 'deleteByCut'>,           event: ClipboardEvent, ]
+    | [ listenerInputType: Extract<InputActionType, 'insertCompositionText'>, event: KeyboardEvent, ] 
+  ):  
+    | { actionType: Extract<InputActionType, 'insertText'>,             event: KeyboardEvent  | undefined, insertedText: string }
+    | { actionType: Extract<InputActionType, 'insertFromPaste'>,        event: ClipboardEvent | undefined, insertedText: string }
+    | { actionType: Extract<InputActionType, 'insertCompositionText'>,  event: KeyboardEvent  | undefined, insertedText: string }
+    | { actionType: Extract<InputActionType, 'deleteContentBackward'>,  event: KeyboardEvent  | undefined, insertedText: string }
+    | { actionType: Extract<InputActionType, 'deleteContentForward'>,   event: KeyboardEvent  | undefined, insertedText: string }
+    | { actionType: Extract<InputActionType, 'deleteByCut'>,            event: ClipboardEvent | undefined, insertedText: string }
+  {
+    // This just turned into a mapping of event types for each return, but I don't think this works when you pass unknown vars when it's called
+    if (actionType == 'insertText' && event?.key) return {
+      actionType, event, insertedText: event.key
+    }
+    if (actionType == 'insertFromPaste' && event?.clipboardData) return {
+      actionType, event, insertedText: event.clipboardData.getData('text')
+    }
+    if (actionType == 'insertCompositionText' && event?.key) return {
+      actionType, event, insertedText: event.key
+    }
+    if (actionType == 'deleteContentBackward') return {
+      actionType, event, insertedText: ''
+    }
+    if (actionType == 'deleteContentForward') return {
+      actionType, event, insertedText: ''
+    }
+    if (actionType == 'deleteByCut') return {
+      actionType, event, insertedText: ''
+    }
+    
+    
+    return { actionType, event, insertedText: '' } as any;
   }
   // #endregion
   
