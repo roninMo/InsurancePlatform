@@ -412,70 +412,65 @@ export class InputMask {
     let newValue = prevValue;
     
     // * logging
-    const maskTemplate = prevMaskedValue ? prevMaskedValue : this.mask;
-    const cursorString = maskTemplate.substring(0, cursorStart) + '|' + maskTemplate.substring(cursorStart, cursorEnd) + '|' + maskTemplate.substring(cursorEnd);
     console.log(`\n\nMaskEval::Evaluating and updating input from user event(${actionType}), maskData: `, { inputName, mask: this.mask, filter: this.filterExp, event },
       `\n native event data: `, { actionType, insertedText, [inputName]: input },
       `\n current data: `, { currentRawValue: prevRawValue, currentMaskedValue: prevMaskedValue },
-      `\n cursor: `, { start: cursorStart, end: cursorEnd, vis: cursorString },
+      `\n cursor: `, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }), cursorStart, cursorEnd, },
     );
     
     
-    // ? User typed a single character
+    // #region - User typed or pasted something
     if ( actionType == 'insertText' 
       || actionType == 'insertCompositionText'
       || actionType == 'insertFromPaste'
     ) {
       let addedText = insertedText;
       
-      // * If we're using a filter
+      // ? If we're using a filter
       if (this.isFilterEnabled()) {
         filteredInsert = this.filter(insertedText);
         
-        // <- Early out, there's no valid text to add
-        if (!filteredInsert) {
+        if (filteredInsert) addedText = filteredInsert;
+        else { // <- Early out, there's no valid text to add
           this.handleNativeEventLogic(undefined); // cancel the events
           this.updateState(prevRawValue, prevMaskedValue); // update internal state tracking
           this.updateCursorPosition(input, cursorStart, cursorEnd, newValue, 0);
-          console.log(`MaskEval::${actionType}: Cancelled - The added text was filtered out, aborting the onChange event. data: `, { insertedText, filteredInsert, filter: this.filterExp, inputName });
+          console.log(`Cancelled MaskEval::${actionType}: The added text was filtered out, aborting the onChange event. data: `, { insertedText, filteredInsert, filter: this.filterExp, inputName });
           return false; // input left as-is
         }
-        
-        addedText = filteredInsert;
       }
       
-      // * update the raw value
-      let start = cursorStart;
-      let end = cursorEnd;
-      let maskNonWCChars = 0; // mask chars between the selection (non-wildcard)
-      // if (this.isMaskEnabled()) {
-      //   // offsets for the cursor location after removing the mask parts of the string
-      //   const { startOffset, endOffset } = this.getRawCursorLocation(start, end);
-      //   start = cursorStart - startOffset;
-      //   end = cursorEnd - endOffset;
-      //   maskNonWCChars = endOffset - startOffset;
-      // }
+      // ? Calc the new raw value
+      const { rawCursorStart, rawCursorEnd } = this.getRawCursorFromMasked(cursorStart, cursorEnd);
+      const newRawValue = this.addToRawValue(addedText, prevRawValue, rawCursorStart, rawCursorEnd);
       
-      // Handle building the mask from the raw input value
-      const { newRawValue, rawCursorStart, rawCursorEnd } = this.addToRawValue(addedText, prevRawValue, start, end); // filter & mask calc
-      const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(rawCursorStart, rawCursorEnd);
+      // ? Create the masked input
+      const newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, addedText.length); // redundant
+      const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(newCursorLocation, newCursorLocation);
       const newMaskValue = this.buildInputMask(newRawValue);
-      // start = rawCursorStart; // masked cursor location
-      // end = rawCursorEnd;
       
       // -> Successfully recreated the mask for single/multi insert and paste inputs
       this.handleNativeEventLogic(newMaskValue); // call the onChange w/maskInput
       this.updateState(newRawValue, newMaskValue); // update internal state tracking
-      this.updateCursorPosition(input, maskedCursorStart, maskedCursorEnd, newMaskValue, addedText.length, maskNonWCChars); // after the added text
-      console.log(`MaskEval::${actionType}: Completed - Recreated the mask for the single/multi insert, and paste actions. Event data: `, 
-        { newRawValue, newMaskValue, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
-        `\n Cursor specific tracking: `, { cursor: { start, end }, maskNonWildCardChars: maskNonWCChars },
+      this.updateCursorPosition(input, maskedCursorStart, maskedCursorEnd, newMaskValue, addedText.length, 0); // after the added text
+      
+      // <- kelp me
+      console.log(`Completed MaskEval::${actionType}: Recreated the mask for the single/multi insert, and paste actions. Event data: `, 
+        { value: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }), 
+        start: maskedCursorStart, end: maskedCursorEnd, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
+      );
+      console.log(`cursor history () data:`, 
+        `\nprevRaw:   `, { cursor: this.logRawCursorPos(rawCursorStart, rawCursorEnd, prevRawValue) },
+        `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
+        `\nprevMasked:`, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }) },
+        `\nnewMasked: `, { cursor: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }) },
       );
       return newMaskValue; 
     }
+    // #endregion
     
     
-    // ? User pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
+    // #region - User pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
     if (
       actionType == 'deleteContentBackward' || 
       actionType == 'deleteContentForward' || 
@@ -514,6 +509,7 @@ export class InputMask {
       );
       return newMaskValue; 
     }
+    // #endregion
     
     
     
@@ -535,6 +531,46 @@ export class InputMask {
   //--------------------------------//
   // #region Primary Functions
   /**
+   * Uses the **mask's** cursor locations to find the locations for the **raw input** by counting it's **non-wildcard** template characters.
+   * 
+   * ---
+   * @param mStart          The mask's cursor start location
+   * @param mEnd            The mask's cursor end location
+   * 
+   * @returns               A destructurable object that contains the `rawCursorStart` and `rawCursorEnd`.
+   */
+  protected getRawCursorFromMasked(mStart: number, mEnd: number, opts?: { mask?: string, wildcard?: string }): { rawCursorStart: number, rawCursorEnd: number } {
+    const mask = opts?.mask || this.mask;
+    const wildcard = opts?.wildcard || this.wildcard;
+    if (!mask || !wildcard) {
+      console.error(`getRawCursorFromMasked() is missing properties to find the rawCursorLocation. Data: `, { mask, wildcard, mStart, mEnd });
+      return { rawCursorStart: mStart, rawCursorEnd: mEnd };
+    }
+    
+    // Capture the non-wildcard characters up to each index and subtract them.
+    let rawCursorStart = mask.length;
+    let rawCursorEnd = mask.length;
+    let nonWildcards = 0;
+    for (let i = 0; i < mask.length; i++) {
+      const maskChar = mask[i];
+      
+      if (mStart == i) rawCursorStart = i - nonWildcards;
+      if (mEnd == i) rawCursorEnd = i - nonWildcards;
+      
+      if (maskChar != wildcard) {
+        nonWildcards++;
+      }
+    }
+    
+    console.log(`getRawCursorFromMasked() cursorInformation:`, { mStart, mEnd, rawCursorStart, rawCursorEnd },
+      `\nmasked: `, { masked: this.logCursorPos(mStart, mEnd, { maskedVal: this.maskedInputValue }) }, 
+      `\nraw:    `, { masked: this.logRawCursorPos(rawCursorStart, rawCursorEnd, this.rawInputValue) },
+    );
+    return { rawCursorStart, rawCursorEnd };
+  }
+  
+  
+  /**
    * Inserts the new text into the raw value in a couple different ways
    *  * `Filter only`: It additively inserts the text based on the cursor's location or selection. Just like the `native` behavior.
    *  * `Mask`: It will `overwrite` the text in the current selection. Will add wildcards in empty spaces from a highlight + paste combination.
@@ -547,86 +583,47 @@ export class InputMask {
    * @param cursorEnd             The cursor's end location.
    * @returns                     The new raw input value.
    */
-  protected addToRawValue(inserted: string, prevValue: string, cursorStart: number, cursorEnd: number): 
-    { newRawValue: string, rawCursorStart: number, rawCursorEnd: number } 
-  {
-    if (!inserted) return { newRawValue: prevValue, rawCursorStart: cursorStart, rawCursorEnd: cursorEnd };
+  protected addToRawValue(inserted: string, prevValue: string, cursorStart: number, cursorEnd: number): string {
     const currentValue = prevValue || '';
+    if (!inserted) return prevValue;
+    
     
     // ? Filter only -> additive
     if (!this.isMaskEnabled()) {
-      const newRawValue = 
-        currentValue.substring(0, cursorStart) + 
-        inserted + 
-        currentValue.substring(cursorEnd);
+      const newRawValue = currentValue.substring(0, cursorStart) + inserted + currentValue.substring(cursorEnd);
       console.log(`addToRawValue(filterOnly) data:`, { prevValue: currentValue, newRawValue, inserted });
-      return { newRawValue, rawCursorStart: newRawValue.length, rawCursorEnd: newRawValue.length };
+      return newRawValue;
     }
     
     
     // ? Mask logic -> overwrite, add extras, remove overflow
     let newRawValue = '';
-    let newCursorLocation = 0;
-    const charactersToAdd = inserted.split("");
-    if (currentValue.length != 0) {
-      for (let i = 0; i < currentValue.length; i++) {
-        let currentChar = currentValue[i];
-        if (cursorStart <= i) {
-          // If we have characters to add, overwrite
-          if (charactersToAdd.length) {
-            currentChar = charactersToAdd.shift() || currentChar;
-            newCursorLocation = i + 1; 
-          }
-          
-          // Remove the current value's characters if this is a highlight
-          else if (cursorStart != cursorEnd && i < cursorEnd) {
-            currentChar = '';
-          }
-        }
-        
-        newRawValue += currentChar;
-        newCursorLocation++;
-        // console.log()
-        // TODO - fix the cursor location not being updated properly
-        // Right now, it works because we're setting the location of the raw cursor to the end of the string
-        // This doesn't account for cursors in random places of the string
-        // Easy fix - add by one on insert and preserve initial cursor locations (mask template fixed style)
-        // Hard way - we find the rawCursorLocation from our function, and take the current mask location and offset it
-        
-        // <- We are passing the raw values to our findMaskedCursorLocation to calculate it's new location from the raw value
-        // -> This is then passed to the updateCursorLocation to update it within the input.
-        // ? Having it incrementally like this allows us to account for more scenarios at the cost of a headache, and weird scenarios you have to watch out for
-        // ? We should be able to capture the new cursor location from the last character added from the current cursor location + 1
-        // TODO check that highlighted selections work properly with this (it should just be set to cursorStart + charactersAdded)
-        // Log everything because we're getting finnicky behavior when this is edited
-      }
-      
-      // if we still have leftover characters to add, append them to the newRawValue
-      if (charactersToAdd.length) {
-        newRawValue += charactersToAdd.join('');
-        newCursorLocation += charactersToAdd.length;
-      }
-    }
-    
-    // if the cursor position was after the current characters, add to it
-    else if (cursorStart >= currentValue.length) {
-      newRawValue = currentValue + inserted;
-      newCursorLocation = currentValue.length + inserted.length;
-    }
-    
-    // -> Return the new raw value
     const maxLength = this.mask.split("").filter(char => char == this.wildcard).length;
-    const clampedRawValue = newRawValue.substring(0, maxLength);
-    console.log(`addToRawValue(masked) - Completed, data: `, 
-      { prevRawValue: currentValue, inserted, newRawValue: clampedRawValue, unclamped: newRawValue },
-      `\ncursorLocation: `, { rawStart: cursorStart, rawEnd: cursorEnd, newCursorLocation, 
-        cursorRef: clampedRawValue.substring(0, newCursorLocation) + '|' + clampedRawValue.substring(newCursorLocation) },
-    );
-    return { 
-      newRawValue: clampedRawValue, 
-      rawCursorStart: newCursorLocation, 
-      rawCursorEnd: newCursorLocation 
-    };
+    
+    // If it hasn't been set, initialize the value
+    if (currentValue.length == 0) {
+      newRawValue = inserted;
+      
+      // -> Return the new raw value
+      const clampedRawValue = newRawValue.substring(0, maxLength);
+      console.log(`addToRawValue() data:`, { clampedRawValue, unClamped: newRawValue });
+      return clampedRawValue;
+    }
+    
+    // * Logic: Edit the current value
+    else {
+      // insert & append the characters to existing raw value
+      const beforeCursor = prevValue.substring(0, cursorStart);
+      const cursorSel = inserted;
+      const rawAfterCursor = prevValue.substring(cursorEnd); // the actual value
+      const afterCursor = rawAfterCursor.substring(inserted.length); // handles both single and highlighted inputs
+      newRawValue = beforeCursor + cursorSel + afterCursor;
+      
+      // -> Calculate and return the new cursor position from the edit;
+      const clampedRawValue = newRawValue.substring(0, maxLength);
+      console.log(`addToRawValue() insertLogic:`, { clampedRawValue, beforeCursor, cursorSel, afterCursor, newRawValue });
+      return clampedRawValue;
+    }
   }
   
   
@@ -675,6 +672,33 @@ export class InputMask {
   
   
   /**
+   * Calculates the new **raw cursor** location from the current and the edit.
+   * * **note** if there was highlighted text, we start from the cursor's start location, and add the difference from the removed/pasted characters.
+   * 
+   * ---
+   * @param rawCursorStart          The mask's cursor start location
+   * @param rawCursorEnd            The mask's cursor end location
+   * @param diff                    The added/subtracted characters. For inserts/deletes, it's the **count**. For a paste, it's the difference from the **highlighted text**
+   * 
+   * @returns               the calculated `newRawCursorLocation`.
+   */
+  protected getNewRawCursorLocation(rawCursorStart: number, rawCursorEnd: number, diff: number): number {
+    let newCursorLocation = 0;
+    const isHighlighted = rawCursorStart != rawCursorEnd;
+    
+    if (!isHighlighted) newCursorLocation = rawCursorStart + diff;
+    else {
+      // 012345
+      // 01X2345 + 6
+      // 0|1234|5 + 66
+      const selectionLength = rawCursorEnd - rawCursorStart;
+      // const highlightedDiff = 
+    }
+    return rawCursorStart + diff;
+  }
+  
+  
+  /**
    * Builds the `masked` input value from the raw input value provided to the function.
    * Every time this is ran, it creates the full masked value, with `wildcards` in place of empty characters.
    * 
@@ -719,35 +743,21 @@ export class InputMask {
       return { } as any;
     }
     
-    // capture the count of template characters to find the cursor location for a masked input
-    let startCountdown: number = rawCursorStart;
-    let endCountdown: number = rawCursorEnd;
-    let maskedCursorStart: number = -1;
-    let maskedCursorEnd: number = -1;
-    for (let i = 0; i < mask.length; i++) { // find the cursor location by counting through the wildcards and adding the template chars
-      let maskChar = mask[i];
+    // Just make a hashmap
+    const wildcardMap: Map<number, number> = new Map();
+    let rawCursorIndex: number = 0;
+    for (let i = 0; i < mask.length; i++) {
+      const maskChar = mask[i];
       if (maskChar == wildcard) {
-        if (startCountdown != 0) startCountdown--;
-        if (endCountdown != 0) endCountdown--;
-        
-        if (startCountdown == 0 && maskedCursorStart == -1) maskedCursorStart = rawCursorStart == rawCursorEnd ? i + 1 : i;
-        if (endCountdown == 0   && maskedCursorEnd == -1) maskedCursorEnd = rawCursorStart == rawCursorEnd ? i + 1 : i;
-        console.log(`index(${i}), endCountdown(${endCountdown}), maskStart(${maskedCursorStart}) maskEnd(${maskedCursorEnd})`, { isHighlight: rawCursorStart != rawCursorEnd})
-        if (!startCountdown && !endCountdown) break;
+        wildcardMap.set(rawCursorIndex, i);
+        rawCursorIndex++;
       }
     }
     
-    // If we still haven't set the cursor value, it's because the template chars + the user's input has reached the bounds of the mask
-    if (maskedCursorStart == -1) maskedCursorStart = mask.length;
-    if (maskedCursorEnd == -1) maskedCursorEnd = mask.length;
-    
-    const newCursorString = mask.substring(0, maskedCursorStart) + '|' + mask.substring(maskedCursorStart, maskedCursorEnd) + '|' + mask.substring(maskedCursorEnd);
-    console.log(`findMaskedCursorLocation()  data: `, {newCursorString},
-      `\ncursorLocs`, {
-        rawStart: rawCursorStart, rawEnd: rawCursorEnd, 
-        maskedStart: maskedCursorStart, maskedEnd: maskedCursorEnd, 
-        maskLength: mask.length 
-    });
+    // -> Return the masked cursor locations
+    let maskedCursorStart = wildcardMap.get(rawCursorStart) || mask.length;
+    let maskedCursorEnd = wildcardMap.get(rawCursorEnd) || mask.length;
+    console.log(`findMaskedCursorLocations() cursorInformation:`, { rawCursorStart, rawCursorEnd, maskedCursorStart, maskedCursorEnd });
     return { maskedCursorStart, maskedCursorEnd };
   }
   
@@ -923,6 +933,56 @@ export class InputMask {
     return { startOffset, endOffset };
   }
   
+  
+  
+  protected logCursorPos(start: number, end: number, opts?: { mask?: string, wildcard?: string, maskedVal?: string, rawVal?: string } ): string {
+    const mask = opts?.mask || this.mask;
+    const wildcard = opts?.wildcard || this.wildcard;
+    if (!mask || !wildcard) {
+      console.error(`logCursorPosition() is missing properties to display the cursor location. Data: `, { mask, wildcard, start, end });
+      return 'CursorLogError';
+    }
+    
+    // ? Option to display the current value
+    let maskRef = mask; 
+    if (opts?.maskedVal) maskRef = opts?.maskedVal;
+    else if (opts?.rawVal) {
+      let newRef = '';
+      const rawChars = opts?.rawVal.split("");
+      for(const [index, char] of [...mask].entries()) {
+        if (char == wildcard && rawChars.length) newRef += rawChars.shift();
+        else newRef += char;
+      }
+      maskRef = newRef;
+    }
+    
+    // ? actual logic
+    const isHighlighted = start != end;
+    const beforeCursorStart = maskRef.substring(0, start);
+    const selection = maskRef.substring(start, end); // either the cursor location '', or the highlighted selection.
+    const afterCursorEnd = maskRef.substring(end);
+    
+    if (isHighlighted) return [beforeCursorStart, '|', selection, '|', afterCursorEnd].join("");
+    else               return [beforeCursorStart, '|', afterCursorEnd].join("");
+  }
+  
+  
+  protected logRawCursorPos(start: number, end: number, rawVal: string ): string {
+    if (rawVal === undefined || rawVal === null) {
+      console.error(`logRawCursorPos() is missing properties to display the cursor location. Data: `, { rawVal, start, end });
+      return 'CursorLogError';
+    }
+    
+    const isHighlighted = start != end;
+    const beforeCursorStart = rawVal.substring(0, start);
+    const selection = rawVal.substring(start, end); // either the cursor location '', or the highlighted selection.
+    const afterCursorEnd = rawVal.substring(end);
+    
+    if (isHighlighted) return [beforeCursorStart, '|', selection, '|', afterCursorEnd].join("");
+    else               return [beforeCursorStart, '|', afterCursorEnd].join("");
+  }
+  
+  
   /**
    * Captures all non-wildcard characters from a mask, and stores them in an array.
    * 
@@ -986,7 +1046,7 @@ export class InputMask {
     //   newValue.length
     // );
     const newCursorPos = Math.min( Math.max(0, 
-      cursorEnd),
+      cursorStart),
       newValue.length
     );
     
