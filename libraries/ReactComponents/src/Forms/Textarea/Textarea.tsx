@@ -174,19 +174,10 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
    * @param event       The native changeEvent data tied to the input event.
    */
   const handleUpdateValue = (event: FormEvent<HTMLTextAreaElement>) => {
-    
     console.log('onBeforeInput change event! ');
-    // Input masking
-    if (usingInputMask) {
-      event.preventDefault();
-      // console.log('using an inputMask: Preventing the default onBeforeInput logic to invoke the onChange() event');
-      
-      // console.log('calling the inputMask eval function! ');
-      // mask.current?.evaluate(event);
-    }
     
     // Otherwise, handle custom edits from the onUpdateValue function
-    else if (onUpdateValue) {
+    if (!usingInputMask && onUpdateValue) {
       onUpdateValue(getValue(), event);
     }
   }
