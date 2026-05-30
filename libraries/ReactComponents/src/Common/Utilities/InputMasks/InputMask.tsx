@@ -418,6 +418,10 @@ export class InputMask {
       `\n cursor: `, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }), cursorStart, cursorEnd, },
     );
     
+    // TODO - 'Ctrl' and other special key commands should prevent the user from adding text to the inputMask
+    // TODO - we need to add or update the keypress event listeners to ignore inputs until they keyUp certain keys
+    // ? brute force - track each specific modifier key [ctrl, alt, etc.], unless it's a paste event, and prevent key events while they're down
+    // ? find an alternative?
     
     // #region - User typed or pasted something
     if ( actionType == 'insertText' 
@@ -1132,10 +1136,26 @@ export class InputMask {
     const key = keyboardEvent?.key;
     if (!e || !key) return;
     
-    // * Keys to ignore
-    if (['Unidentified', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key)) return;
+    // Skip eval, and allow Ctrl+V, Ctrl+C, Ctrl+Z, Ctrl+A, etc., to reach their native listeners
+    if (keyboardEvent.ctrlKey || keyboardEvent.metaKey || keyboardEvent.altKey) {
+      const allowedShortcuts = ['c', 'v', 'x', 'z', 'a', 'r'];
+      if (!allowedShortcuts.includes(key.toLowerCase())) {
+        // We have listeners for paste and cut, the rest shouldn't affect typing
+      }
+      
+      // ! early out, they're pressing modifier keys
+      return; 
+    }
     
-    // * Captured event keys
+    // * Ignore structural navigation keys
+    if ([
+      'Unidentified', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight',
+      'Tab', 'Shift', 'Control', 'Alt', 'Meta', 'Escape', 'CapsLocks'
+    ].includes(key)) {
+      return;
+    }
+    
+    // ? Captured event keys
     else if (key == 'Backspace') this.listenerInputType = 'deleteContentBackward';
     else if (key == 'Delete')    this.listenerInputType = 'deleteContentForward';
     else  /*(key == 'anyKey')*/  this.listenerInputType = 'insertText';
