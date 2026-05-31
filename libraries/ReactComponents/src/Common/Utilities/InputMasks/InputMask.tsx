@@ -20,7 +20,7 @@ export type MaskConfig = {
   maskWildCardCharacter: string;
   
   /** Whether we should additionally filter out any non-wildcard characters this mask uses from the user's inputted text. */
-  filterNonWildCardsFromInput?: boolean;
+  filterNonWildcardsFromInput?: boolean;
   
   /** Whether to use the mask's template as the input's placeholder. */
   useMaskAsPlaceholder?: boolean;
@@ -57,7 +57,7 @@ export const phoneMask: MaskOpts = {
     mask: '(___)-___-____',
     maskWildCardCharacter: '_',
     useMaskAsPlaceholder: true,
-    // filterNonWildCardsFromInput: false
+    // filterNonWildcardsFromInput: false
   },
   
 }
@@ -67,7 +67,7 @@ export const creditCardMask: MaskOpts = {
     mask: '____-____-____-____',
     maskWildCardCharacter: '_',
     useMaskAsPlaceholder: true,
-    // filterNonWildCardsFromInput: false
+    // filterNonWildcardsFromInput: false
   },
 }
 export const creditCardExpMask: MaskOpts = {
@@ -76,7 +76,7 @@ export const creditCardExpMask: MaskOpts = {
     mask: '__/__',
     maskWildCardCharacter: '_',
     useMaskAsPlaceholder: true,
-    // filterNonWildCardsFromInput: false
+    // filterNonWildcardsFromInput: false
   },
 }
 
@@ -131,7 +131,7 @@ export type InputActionType =
  * const maskConfig: MaskConfig = {
  *   mask: "(___)-___-____",
  *   maskWildCardCharacter: "_",
- *   filterNonWildCardsFromInput: true
+ *   filterNonWildcardsFromInput: true
  * }; 
  * 
  * // unified ref function
@@ -160,19 +160,39 @@ export type InputActionType =
  */
 export class InputMask {
   // * Filter and mask
-  /** A regExp expression designed to filter the accepted characters for the input. */
+  /** 
+   * A regExp expression designed to filter the accepted characters for the input. There are two function that go alongside the `InputMask's` filter:
+   * 1. {@link filterExp()}: Is the get function for the filter's **RegExp**. Will return undefined if you're not using a filter.
+   * 2. {@link filter()}: Is the function that handles filtering text from a provided value.
+  */
   protected _filter: RegExp | undefined;
   
-  /** An input mask that uses wildcard characters to defined what's filled from the user's input. */
+  /** 
+   * An input mask that uses wildcard characters to defined what's filled from the user's input. 
+   * 
+   * **Note:** Do not access this directly, call **{@link mask()}** to retrieve the mask.
+   */
   protected _mask: string | undefined;
   
-  /** The mask's wildcard character. Must be defined to determine where the wildcards are when evaluating the mask. */
+  /** 
+   * The mask's wildcard character. Must be defined to determine where the wildcards are when evaluating the mask. 
+   * 
+   * **Note:** Do not access this directly, call **{@link wildcard()}** to retrieve this mask's wildcard character.
+   */
   protected _maskWildcardCharacter: string | undefined;
   
-  /** Whether we should additionally filter out any non-wildcard characters this mask uses from the user's inputted text. */
+  /** 
+   * Whether we should additionally filter out any non-wildcard characters this mask uses from the user's inputted text. 
+   * 
+   * **Note:** Do not access this directly, call **{@link shouldFilterMaskChars()}** to check if we're also filtering the mask's non-wildcard characters.
+   */
   protected _filterMaskChars: boolean | undefined;
   
-  /** The mask's unique non-wildcard characters. If we're filtering them out from the input, they're done manually. */
+  /** 
+   * The mask's unique non-wildcard characters. If we're filtering them out from the input, they're done manually. 
+   * 
+   * **Note:** Do not access this directly, call **{@link cachedNWcChars()}** to retrieve the cached non-wildcard characters for this mask.
+   */
   protected _maskCachedNWChars: string[] | undefined;
   
   
@@ -226,7 +246,7 @@ export class InputMask {
    * const maskConfig: MaskConfig = {
    *   mask: "(___)-___-____",
    *   maskWildCardCharacter: "_",
-   *   filterNonWildCardsFromInput: true
+   *   filterNonWildcardsFromInput: true
    * }; 
    * const inputMask = new InputMask(maskConfig);
    * 
@@ -251,7 +271,7 @@ export class InputMask {
    * const maskConfig: MaskConfig = {
    *   mask: "(___)-___-____",
    *   maskWildCardCharacter: "_",
-   *   filterNonWildCardsFromInput: true
+   *   filterNonWildcardsFromInput: true
    * }; 
    * const inputMask = new InputMask(maskConfig, filter);
    * 
@@ -279,14 +299,14 @@ export class InputMask {
    * const maskConfig: MaskConfig = {
    *   mask: "(___)-___-____",
    *   maskWildCardCharacter: "_",
-   *   filterNonWildCardsFromInput: true
+   *   filterNonWildcardsFromInput: true
    * }; 
    * 
    * const options: InputMaskOptions = {
    *   inputMask: {   // <-- InputMaskConfig
    *     mask: "(___)-___-____",
    *     maskWildCardCharacter: "_",
-   *     filterNonWildCardsFromInput: true
+   *     filterNonWildcardsFromInput: true
    *   },
    *   filter: /[^\d]/g     // <-- numbers only regExp
    * };
@@ -434,12 +454,6 @@ export class InputMask {
       `\n current data: `, { currentRawValue: prevRawValue, currentMaskedValue: prevMaskedValue },
       `\n cursor: `, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }), cursorStart, cursorEnd, },
     );
-    
-    // TODO - handle copying deleted to clipboard?
-    // - onCut event needs to saveToClipboard it's contents
-    
-    // TODO - add mask's non-wildcard characters filter to the mask's base filter functionality
-    // - add filter functionality for this._maskCachedNWChars if this._filterMaskChars is true
     
     
     // #region - User typed or pasted some text
@@ -612,7 +626,7 @@ export class InputMask {
       if (mEnd == i) rawCursorEnd = i - nonWildcards - emptySpaces;
       
       // Remove the mask only characters from the raw input's index
-      if (this._maskCachedNWChars?.includes(maskChar)) {
+      if (this.cachedNWcChars?.includes(maskChar)) {
         nonWildcards++;
       }
       
@@ -930,9 +944,28 @@ export class InputMask {
   public filter(chars: string | null, filterRegex?: RegExp): string {
     const charsToFilter = chars || '';
     const filterExp = filterRegex || this.filterExp;
-    // .replace replaces every matching bad character with an empty string
     
-    const filteredChars = charsToFilter.replace(filterExp, "");
+    // <- Early out if we're missing information
+    if (!charsToFilter || (!filterExp && !this._filterMaskChars)) {
+      console.error(`${this.inputRef?.name || this.mask}::filter() was ran without the proper information!`, { filterExp, charsToFilter, maskCachedNWcChars: this.cachedNWcChars });
+      return charsToFilter;
+    }
+    
+    // ? Handle the InputMask's base filter
+    let filteredChars = charsToFilter.replace(filterExp, "");
+    
+    // ? If there's an input mask, and we're filtering it's non-wildcard characters
+    if (this.isMaskEnabled() && this.shouldFilterMaskChars()) {
+      // {} To avoid brute forcing with multiple loops, we're creating a hash map from each character we're going to filter
+      const maskCharsMap: Record<string, boolean> = {}; // * Capture the non-wildcards for calculations
+      (this.cachedNWcChars || []).forEach(char => char && (maskCharsMap[char] = true));
+      
+      // * Loop through the currently filtered characters and remove the mask's template chars from it
+      let maskNWCFilterOutput = filteredChars.split('').filter(char => !maskCharsMap[char]).join('');
+      // console.log(`filter() finished, data: `, { initialFilter: filteredChars, filteredNWcText: maskNWCFilterOutput, chars, filterExp, cachedNWcChars });
+      return maskNWCFilterOutput;
+    }
+    
     // console.log(`filter() finished, data: `, { filteredVal: filteredChars, chars, filterExp });
     return filteredChars;
   }
@@ -1028,6 +1061,22 @@ export class InputMask {
   
   
   /**
+   * Retrieves the mask's **non-wildcard** characters in an array. Will return undefined if {@link _filterMaskChars} is set to false.
+   * @note In the event this is undefined, calling {@link shouldFilterMaskChars} to both check and define the `_maskCachedNWChars`.
+   * 
+   * ---
+   * @returns       Whether the mask is enabled / valid
+   */
+  public get cachedNWcChars(): string[] {
+    if (!this._maskCachedNWChars?.length) {
+      this._maskCachedNWChars = this.findNonWildcardChars(this.mask, this._maskWildcardCharacter || DEFAULT_INPUTMASK_WILDCARD);
+    }
+    
+    return this._maskCachedNWChars;
+  }
+  
+  
+  /**
    * Sets the `input mask`, and initializes it's dependent properties for the input mask's {@link evaluate()} function to work properly. 
    * It is essential to call this function every time you're updating the **{@link InputMask}**.
    * 
@@ -1037,11 +1086,15 @@ export class InputMask {
    * ---
    * @Example
    * ```ts
-   * const phoneMask = '(___) - ___ - ____';
    * const maskWildcard = '_';
+   * const phoneMaskConfig = {
+   *   mask: '(___) - ___ - ____', maskWildcardCharacter: '_',
+   *   filterNonWildcardsFromInput: true, useMaskAsPlaceholder: true
+   * };
    * 
    * inputMask.setMask(phoneMask, maskWildcard);
    * console.log(inputMask.getMask()); // Returns: '(___) - ___ - ____';
+   * // It also calculates the filter logic, as well as setting the wildcard which is used throughout the class.
    * 
    * 
    * ```
@@ -1055,21 +1108,76 @@ export class InputMask {
   public setMask(config: MaskConfig): void {
     const newMask = config.mask;
     const wildcard = config.maskWildCardCharacter;
-    const filterMaskChars = config.filterNonWildCardsFromInput; // TODO - add this logic to the mask's filter functionality
+    const filterMaskChars = config.filterNonWildcardsFromInput; 
     
+    // {} Clear out all the old mask data before initializing the new data
+    this._mask = '';
+    this._maskWildcardCharacter = undefined;
+    this._filterMaskChars = undefined;
+    this._maskCachedNWChars = undefined;
     
-    // ? Update the mask's state
+    // -> Update the mask's state
     this._mask = newMask;
     this._maskWildcardCharacter = wildcard || DEFAULT_INPUTMASK_WILDCARD;
     
-    // Update the mask's dependent information
-    if (this.mask && this._maskWildcardCharacter) {
-      this._maskCachedNWChars = this.getNonWildcardChars(this.mask, this._maskWildcardCharacter);
+    // -> Update the mask's dependent information
+    if (this.mask && this.wildcard) {
+      this._maskCachedNWChars = this.findNonWildcardChars(this.mask, this._maskWildcardCharacter);
       this._filterMaskChars = filterMaskChars;
     }
   }
   
   
+  /**
+   * Captures all non-wildcard characters from a mask, and stores them in an array.
+   * 
+   * ---
+   * @param mask            The input mask template string
+   * @param wildcard        The input mask's wildcard character.
+   * 
+   * @returns              An array of all the mask's unique characters.
+   */
+  protected findNonWildcardChars(mask: string, wildcard?: string): string[] {
+    if (!mask || !wildcard) {
+      console.error(`findNonWildcardChars was called with invalid data!`, { mask, wildcard }); 
+      return [];
+    }
+    
+    const nonWCChars: string[] = [];
+    const maskChars = mask.split("");
+    
+    for (let i = 0; i < mask.length; i++) {
+      const char = maskChars[i];
+      if (char == wildcard) continue;
+      
+      // Capture unique mask template characters.
+      if (!nonWCChars.includes(char)) nonWCChars.push(char);
+    }
+    
+    return nonWCChars;
+  }
+  
+  
+  protected shouldFilterMaskChars(): boolean {
+    // Validity checks
+    if (!this.isMaskEnabled() || !this._filterMaskChars) {
+      return false;
+    }
+    
+    // If the data hasn't been calculated, rebuild it here
+    return this.cachedNWcChars?.length != 0; // ? this is an eval and a get()
+  }
+  
+  
+  // #endregion
+  
+  
+  
+  
+  //--------------------------------//
+  // Utility                        //
+  //--------------------------------//
+  // #region Utility Functions
   /**
    * Returns a string displaying the location of the cursor on a maskedInput value.
    * @note This doesn't call **console.log**, it returns the string to be passed to it.
@@ -1138,32 +1246,8 @@ export class InputMask {
     if (isHighlighted) return [beforeCursorStart, '|', selection, '|', afterCursorEnd].join("");
     else               return [beforeCursorStart, '|', afterCursorEnd].join("");
   }
+  // #endregion 
   
-  
-  /**
-   * Captures all non-wildcard characters from a mask, and stores them in an array.
-   * 
-   * ---
-   * @param mask            The input mask template string
-   * @param wildcard        The input mask's wildcard character.
-   * 
-   * @returns              An array of all the mask's unique characters.
-   */
-  protected getNonWildcardChars(mask: string, wildcard: string): string[] {
-    const nonWCChars: string[] = [];
-    const maskChars = mask.split("");
-    
-    for (let i = 0; i < mask.length; i++) {
-      const char = maskChars[i];
-      if (char == wildcard) continue;
-      
-      // Capture unique mask template characters.
-      if (!nonWCChars.includes(char)) nonWCChars.push(char);
-    }
-    
-    return nonWCChars;
-  }
-  // #endregion
   
   
   
@@ -1306,8 +1390,14 @@ export class InputMask {
       return;
     }
     
+    // * Handling specific events
     // ? Allow for copy and paste events
     if (windowOrMacCtrlPressed && (key == 'c' || key == 'v')) {
+      return;
+    }
+    
+    // ? Allow for cut events
+    if (windowOrMacCtrlPressed && key == 'x') {
       return;
     }
     
@@ -1316,28 +1406,38 @@ export class InputMask {
       return;
     }
     
-    // ? Allow native behavior and prevent the press for the modifiers 'alt' or 'shift'.
-    if (keyboardEvent.altKey || keyboardEvent.shiftKey) {
+    // <- All other shortcuts, and modifier events (except for shift)
+    if (windowOrMacCtrlPressed || keyboardEvent.altKey) {
       return;
     }
     
     // * Ignore structural navigation keys
-    if ([
-      'unidentified', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright',
-      'tab', 'shift', 'control', 'alt', 'meta', 'escape', 'capslock'
-    ].includes(key)) {
-      console.log('structural nav keys, and misc');
+    // if ([
+    //   'unidentified', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright',
+    //   'tab', 'control', 'alt', 'meta', 'escape', 'capslock', 'insert'
+    // ].includes(key)) {
+    //   console.log('structural nav keys, and misc');
+    //   return;
+    // }
+    
+    // ? Captured key events we're looking for (insert character, backspace, or delete)
+    // -> The user pressed backspace / delete, invoke the event
+    if (key == 'backspace' || key == 'delete') {
+      this.listenerInputType = key == 'backspace' ? 'deleteContentBackward' : 'deleteContentForward';
+      inputEvent.preventDefault();
+      console.log(`\n\nuser(${this.listenerInputType}): just deleted some text.`, { keyboardEvent });
+      this.evaluate(keyboardEvent, this.listenerInputType);
+      return;
+    }    
+    
+    // -> The user inserted some text, invoke the event
+    if (key.length === 1) { // ? final safety check that this was a character they typed, and not a modifier key
+      this.listenerInputType = 'insertText';
+      console.log(`\n\nuser(${this.listenerInputType}): just pressed the ${key} key.`, { keyboardEvent });
+      inputEvent.preventDefault();
+      this.evaluate(keyboardEvent, this.listenerInputType);
       return;
     }
-    
-    // ? Captured event keys
-    else if (key == 'Backspace') this.listenerInputType = 'deleteContentBackward';
-    else if (key == 'Delete')    this.listenerInputType = 'deleteContentForward';
-    else  /*(key == 'anyKey')*/  this.listenerInputType = 'insertText';
-    
-    console.log(`\n\nuser(${this.listenerInputType}): just pressed the ${key} key`, { keyboardEvent });
-    inputEvent.preventDefault();
-    this.evaluate(keyboardEvent, this.listenerInputType);
   }
   
   
@@ -1348,7 +1448,7 @@ export class InputMask {
     if (inputEvent&& pasteEvent?.clipboardData) {
       const paste = pasteEvent.clipboardData.getData('text');
       this.listenerInputType = 'insertFromPaste';
-      console.log(`\n\nuser(${this.listenerInputType}): just pasted some text`, { paste, inputEvent });
+      console.log(`\n\nuser(${this.listenerInputType}): just pasted some text.`, { paste, inputEvent });
       inputEvent.preventDefault();
       this.evaluate(pasteEvent, this.listenerInputType);
     }
@@ -1357,14 +1457,21 @@ export class InputMask {
   
   /** Listener for when the user cuts some text. */
   protected onCut = (inputEvent: Event): void => {
-    const clipboardEvent = inputEvent as ClipboardEvent & any;
+    const clipboardEvent = inputEvent as ClipboardEvent;
     
-    if (inputEvent && clipboardEvent.clipboardData) {
+    if (inputEvent) {
       this.listenerInputType = 'deleteByCut';
-      clipboardEvent.key = '';
-      console.log(`\n\nuser(${this.listenerInputType}): just cut some text`, { inputEvent });
+      
+      // add the cut text to the user's clipboard
+      const highlightedText = window.getSelection()?.toString(); // ! Cut events do not allow you to retrieve the selection from the event.
+      navigator.clipboard.writeText(highlightedText || '');
+      
+      // Pass the event to the InputMask's evaluate
+      console.log(`\n\nuser(${this.listenerInputType}): just cut some text.`, { inputEvent, text: highlightedText });
+      const combinedEvent: any = clipboardEvent;
+      combinedEvent.key = '';
       inputEvent.preventDefault();
-      this.evaluate(clipboardEvent, this.listenerInputType); // TODO - handle copying deleted to clipboard?
+      this.evaluate(combinedEvent, this.listenerInputType); 
     }
   }
   
