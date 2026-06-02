@@ -134,9 +134,8 @@ export type InputActionType =
  *    4. The `inputType` is synthetic and recreated from each **keyed event**, and isn't passed to the actual event.
  * 
  * ----
- * #### Initialization
+ * #### Initialization: 
  * ```ts
- * 
  * // Create a ref for the inputMask, and initialize it in a useEffect, or when you attach the ref itself.
  * const numbersOnly: RegExp = /[^\d]/g; 
  * const maskConfig: MaskConfig = {
@@ -146,7 +145,7 @@ export type InputActionType =
  * }; 
  * 
  * // unified ref function
- * const inputMask = UseRef<InputMask>(new InputMask(maskConfig, filter));
+ * const inputMask = UseRef<InputMask>(new InputMask(maskConfig, filter)); // or InputMask.create(maskConfig, filter) for compatibility w/subclasses 
  * const handleRef = (node: HTMLTextAreaElement | null) => {
  *   // Pass the input element to your inputMask
  *   if (inputMask.current && node) {
@@ -384,6 +383,20 @@ export class InputMask {
     this.rawInputValue = '';
     this.maskedInputValue = '';
     this.history = new InputMaskHistory();
+  }
+  
+  
+  /** 
+   * For compatibility purposes, this class was created so we could handle constructing subclasses and the default with the same function.  
+   * 
+   * ---
+   * @see {@link InputMask|constructors}
+  */
+  static create<T extends InputMask>(
+    this: (typeof InputMask) & (new (config: MaskOpts) => T),
+    options: MaskOpts = {}
+  ): T {
+    return new this(options) as T;
   }
   // #endregion
   

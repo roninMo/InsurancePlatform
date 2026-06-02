@@ -7,12 +7,13 @@ import { TextInputTypes } from '../../../Forms/Input/Input'
 // #region CustomInputMask
 /**
  * ### CustomInputMask
- * The CustomInputMask is an {@link InputMask} that has predefined data, with option formatting overrides to fit your inputMask's needs.
+ * The CustomInputMask is an {@link InputMask} that has predefined data, with optional overrides to fit your inputMask's needs.
  * 
- * Each class has a specific {@link MaskOpts|Mask Config} for an {@link TextInputTypes|Input} type, with an 
+ * Each class has a specific {@link MaskOpts|Mask Config} for an {@link TextInputTypes|Input} type or for general use, with an 
  * optional `customFormat` that allows you to edit the **InputMask** while retaining it's logic and filter for that specific mask.
+ * There's also an `overrides` param if you want to edit the {@link MaskOpts} directly for a specific **InputMask**.
  * 
- * * **Remarks:** Use the {@link create} function to handle initialization.
+ * * **Remarks:** Use the {@link create|**create()**} function to handle initialization.
  * 
  * ----
  * ### Usage:
@@ -179,7 +180,7 @@ export class CustomInputMask extends InputMask {
     // * If there was a custom format provided, use it.
     if (customFormat && config && config?.inputMask) {
       config.inputMask.mask = customFormat;
-    }
+    }2  
     
     const Constructor = this; 
     return new Constructor(config) as T; // Constructor arg gotchas

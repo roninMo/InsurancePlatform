@@ -90,14 +90,15 @@ export interface MetadataTagProps {
 
 
 /** The input functionality of the textarea. */
-const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts = MaskOpts> ( allProps: 
-  & TextareaProps<MO> 
+const InputComponent = <TMask extends InputMask = InputMask, TMO extends MaskOpts = MaskOpts> ( allProps: 
+  & TextareaProps<TMO> 
   & UniversalEventHandlers 
   & { localInputRef: RefObject<HTMLTextAreaElement | undefined> } 
-  & { MaskClass?: { new (...args: any[]): Mask }; } // Explicitly type the constructor to return the generic type 'Mask'
+  & { MaskClass?: { new (config: TMO): TMask;  create(options: TMO): TMask; }} // Explicitly type the constructor to return the generic type 'Mask'
 ) => {
+  const MaskClass = allProps.MaskClass || (InputMask as NonNullable<typeof allProps.MaskClass>);
   const { 
-    type = 'default', name, placeholder, maskOpts, MaskClass = InputMask,
+    type = 'default', name, placeholder, maskOpts,
     onUpdateValue, disableHookForms, localInputRef, disabled, required, 
     onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave, onSubmit,
   } = allProps;
@@ -107,36 +108,31 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
   const isRHFMode = !disableHookForms && !!register;
   const rhfBindings = isRHFMode ? register(name) : null;
   
-  // input mask
-  const mask = useRef<InputMask | undefined>( maskOpts ? new MaskClass(maskOpts) : undefined );
+  // ? Masking
+  const mask = useRef<TMask | undefined>( maskOpts ? MaskClass.create(maskOpts) : undefined );
   const usingInputMask = mask.current && (maskOpts?.inputMask || maskOpts?.filter);
-  console.log(`usingInputMask: ${usingInputMask}, data: `, { maskOpts, mask: mask.current });
   
-  // validation logic
-  const debouncer = useRef<NodeJS.Timeout>(undefined);
-  useEffect(() => () => clearTimeout(debouncer.current), []);
+  // * validation logic
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  
-  // Cleanup on unmount
-  useEffect(() => {
+  const debouncer = useRef<NodeJS.Timeout>(undefined);
+  useEffect(() => { // ? Cleanup on unmount
     () => {
       clearTimeout(debouncer.current); // onKeypress validations
       if (mask.current) mask.current.cleanup(); // Event listeners
     }
   }, []);
   
+  
   /** Handles validation debouncing (if we need to validate) */
   const keypressDebouncer = (newValue: string) => {
     if (!isRHFMode) return;
     
-    // const isInRevalidateMode = formState.isSubmitted;
-    const isInRevalidateMode = control?._formState?.isSubmitted || false;
-    
     // If we no longer need to validate
+    const isInRevalidateMode = control?._formState?.isSubmitted || false;
     if (!isInRevalidateMode || (isInRevalidateMode && !newValue) || disabled) {
       debouncer.current && clearTimeout(debouncer.current);
       
-      // check if we should clear any current errors
+      // ? check if we should clear any current errors
       const { error } = getFieldState(name);
       if (!!error) clearErrors(name);
       return;
@@ -146,24 +142,25 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
     if (debouncer.current) clearTimeout(debouncer.current);
     debouncer.current = setTimeout(() => {
       trigger(name);
-      // forceUpdate(); // let rhf's validation logic handle rerenders
+      // forceUpdate(); // * let rhf's validation logic handle rerenders
       // console.log(`running validations for ${name}`, { value: getValue() });
     }, 450);
   }
   
-  // * Nested Rerender state
-  console.log(`InputComponent Rerendered ${name}-${type}: isRhfMode(${isRHFMode})`,
-    `\n bindings: `, { 
-      onChange:     !!onChange ?    { func: onChange } : undefined,
-      onUpdateValue:  !!onUpdateValue ? { func: onUpdateValue } : undefined,
-      onSubmit:     !!onSubmit ?    { func: onSubmit } : undefined,
-      onFocus:      !!onFocus  ?    { func: onFocus }  : undefined,
-      onBlur:       !!onBlur   ?    { func: onBlur }   : undefined,
-    },
-  );
   
   /** Either Rhf's captured form value, or the internal ref for custom state. */
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
+  
+  // * Nested Rerender state
+  // console.log(`InputComponent Rerendered ${name}-${type}: isRhfMode(${isRHFMode})`,
+  //   `\n bindings: `, { 
+  //     onChange:     !!onChange ?    { func: onChange } : undefined,
+  //     onUpdateValue:  !!onUpdateValue ? { func: onUpdateValue } : undefined,
+  //     onSubmit:     !!onSubmit ?    { func: onSubmit } : undefined,
+  //     onFocus:      !!onFocus  ?    { func: onFocus }  : undefined,
+  //     onBlur:       !!onBlur   ?    { func: onBlur }   : undefined,
+  //   },
+  // );
   
   
   /**
@@ -174,10 +171,7 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
    * @param event       The native changeEvent data tied to the input event.
    */
   const handleUpdateValue = (event: FormEvent<HTMLTextAreaElement>) => {
-    console.log('onBeforeInput change event! ');
-    
-    // Otherwise, handle custom edits from the onUpdateValue function
-    if (!usingInputMask && onUpdateValue) {
+    if (!usingInputMask && onUpdateValue) { // Otherwise, handle custom edits from the onUpdateValue function
       onUpdateValue(getValue(), event);
     }
   }
@@ -193,12 +187,11 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
    * @param event       The native changeEvent data tied to the input event.
    */
   const handleOnChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    // handleUpdateValue(event); // Masking / other custom updates 
-    console.log(`${name}-${type} handleOnChange(): value(${getValue()})`,
-      `\n event data: `, { value: event.target.value, event: event }
-    );
+    // console.log(`${name}-${type} handleOnChange(): value(${getValue()})`,
+    //   `\n event data: `, { value: event.target.value, event: event }
+    // );
     
-    // react hook forms event and optional event logic
+    // ? react hook forms event and optional event logic
     if (isRHFMode && rhfBindings) rhfBindings.onChange(event);
     if (onChange) onChange(event);
     
@@ -273,7 +266,7 @@ const InputComponent = <Mask extends InputMask = InputMask, MO extends MaskOpts 
 }
 
 
-export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = MaskOpts>
+export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts = MaskOpts>
 (allProps: TextareaProps<MO> & UniversalEventHandlers) => {
   const { 
     type = 'default', name, label, description, placeholder, 
@@ -291,12 +284,12 @@ export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = 
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
   
   // * Rerender state
-  console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}) `, 
-    `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
-    `\n submitButton: `, { text: submitButtonText, disabled: submitButtonDisabled, type: submitButtonType, onSubmit },
-    `\n attachFile: `, { file: getValues(attachFile?.name || ' '), props: attachFile},
-    `\n metadataTags: `, metadataTags,
-  );
+  // console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}) `, 
+  //   `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
+  //   `\n submitButton: `, { text: submitButtonText, disabled: submitButtonDisabled, type: submitButtonType, onSubmit },
+  //   `\n attachFile: `, { file: getValues(attachFile?.name || ' '), props: attachFile},
+  //   `\n metadataTags: `, metadataTags,
+  // );
   
   
   //--------------------------------//
@@ -307,7 +300,7 @@ export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = 
     const { onFocus, onChange, onBlur, onMouseEnter, onMouseLeave, onClick } = allProps;
     
     return (
-      <InputComponent 
+      <InputComponent<TM, MO> 
         type={type} name={name}
         onChange={onChange} onUpdateValue={onUpdateValue} placeholder={placeholder}
         disableHookForms={disableHookForms} localInputRef={localInputRef} maskOpts={maskOpts}
@@ -322,7 +315,7 @@ export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = 
   
   // * Default and Box style's ButtonsAndLinks section
   const MemoizedContent = useMemo(() => {
-    console.log(`${name}(${type}) MemoizedContent Rerendered`, { disabled, submitButtonDisabled });
+    // console.log(`${name}(${type}) MemoizedContent Rerendered`, { disabled, submitButtonDisabled });
     
     // Each variant's memoized components
     if (type == 'default') return (
@@ -396,7 +389,7 @@ export const Textarea = <M extends InputMask = InputMask, MO extends MaskOpts = 
   const togglePreview = (type: 'write' | 'preview') => setShowPreview(type);
   
   const PostSectionHeader = useMemo(() => {
-    console.log(`${name}(${type}) MemoizedContent Rerendered`, { showPreview });
+    // console.log(`${name}(${type}) MemoizedContent Rerendered (Post-Only): `, { showPreview });
     return (
       <>
         { label && <h4 className="py-2 ta-p-label">{ label }</h4> }
@@ -722,9 +715,7 @@ const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, re
     
     // Synthetic update and validation
     if (isRhfMode) setValue(name, files, { shouldDirty: true, shouldValidate: true });
-    
-    // ? Additional event logic
-    handleFiles(files);
+    handleFiles(files); // ? Additional event logic
     
     // !Important: This allows the 'change' event to trigger if the user selects the same file again
     if (event.target) {

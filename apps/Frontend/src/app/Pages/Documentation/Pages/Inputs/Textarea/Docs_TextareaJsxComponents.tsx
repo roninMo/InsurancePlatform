@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo, FormEvent } from "react";
 import { FileUploadProps, MetadataTagProps, Textarea } from "@Project/ReactComponents";
-import { phoneMask } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
+import { phoneMaskConfig } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 
 
 export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDisabled }: {
@@ -54,7 +54,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         
         // onUpdateValue={customUpdateValue}
         onChange={(e) => onChangeValue(e)}
-        // disableHookForms
+        disableHookForms
 
         onSubmit={onSubmitTextarea}
         submitButtonText="Post"
@@ -126,7 +126,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         placeholder="input text..."
         
         onUpdateValue={onUpdateValue}
-        maskOpts={phoneMask}
+        maskOpts={phoneMaskConfig}
         onChange={(e) => onChangeValue(e)}
         disableHookForms
 
