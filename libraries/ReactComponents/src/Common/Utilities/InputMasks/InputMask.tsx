@@ -8,7 +8,7 @@ export type MaskConfig = {
   /** 
    * An input mask that uses underscores to represent wildcard characters that are filled from the user's input. 
    * 
-   * --- 
+   * ---- 
    * **Example**  
    * ```ts
    * const phoneMask = " ( ___ ) - ___ - ____ ";
@@ -35,7 +35,7 @@ export type MaskOpts = {
   /** 
    * A RegExp expression designed to `filter` the accepted characters for the input. 
    * 
-   * --- 
+   * ---- 
    * **Usages**  
    * ```ts
    * const numbersOnly = /[^\d]/g; 
@@ -51,7 +51,7 @@ export type MaskOpts = {
 //----------------------------------------//
 // Prebuilt Mask Configurations           //
 //----------------------------------------//
-export const phoneMask: MaskOpts = {
+export const phoneMaskConfig: MaskOpts = {
   filter: Filter_NUMS_ONLY,
   inputMask: {
     mask: '(___)-___-____',
@@ -61,7 +61,7 @@ export const phoneMask: MaskOpts = {
   },
   
 }
-export const creditCardMask: MaskOpts = {
+export const ccMaskConfig: MaskOpts = {
   filter: Filter_NUMS_ONLY,
   inputMask: {
     mask: '____-____-____-____',
@@ -70,10 +70,20 @@ export const creditCardMask: MaskOpts = {
     // filterNonWildcardsFromInput: false
   },
 }
-export const creditCardExpMask: MaskOpts = {
+export const ccExpMaskConfig: MaskOpts = {
   filter: Filter_NUMS_ONLY,
   inputMask: {
     mask: '__/__',
+    maskWildCardCharacter: '_',
+    useMaskAsPlaceholder: true,
+    // filterNonWildcardsFromInput: false
+  },
+}
+
+export const ccvMaskConfig: MaskOpts = {
+  filter: Filter_NUMS_ONLY,
+  inputMask: {
+    mask: '___',
     maskWildCardCharacter: '_',
     useMaskAsPlaceholder: true,
     // filterNonWildcardsFromInput: false
@@ -87,7 +97,7 @@ export const emailFilter: MaskOpts = {
 export const passwordFilter: MaskOpts = {
   filter: Validate_PASS_HS
 }
-export const numbersOnly: MaskOpts = {
+export const numbersOnlyFilter: MaskOpts = {
   filter: Filter_NUMS_ONLY
 }
 
@@ -104,6 +114,7 @@ export type InputActionType =
 | 'deleteContentBackward' | 'deleteContentForward' | 'deleteByCut'
 | 'historyUndo' | 'historyRedo';
 
+
 /**
  * ### **InputMask**
  * This class allows you to add `filters` and `input masks` to your input. One caveat is that it attaches itself
@@ -113,16 +124,16 @@ export type InputActionType =
  * `filters` and/or `masks` them before directly editing the input value and calling it's respective **onChange**. This way
  * it handles mutating the data while invoking react's **rendering events**, as well as notifying libraries like **react-hook-forms** about updates.
  * 
- * ---
+ * ----
  * **Remarks**
- * * This uses onBeforeInput to override the default onChangeEvent logic, and pass the masked input as the value.
- * * This **only** invokes the `onChange` event **IF** it's a valid change to the mask, which includes: 
- *    1. If it's valid text that add's or removes from the `mask's format`. 
- *    2. If the text inserted wasn't filtered out from the `acceptedChars`.
- *    3. If you `pasted text` somewhere, and the masked input was re-evaluated entirely.
- *    4. If the input passed in wasn't activated from a native event's `inputType`, we will prevent the event from occurring.
- *   
- * ---
+ * * Subclassed versions of this handle initialization and can be used for specific inputs (i.e. PhoneMask "(___)-___-____")
+ * * This class **only** invokes the `onChange` event **IF** it's a valid change to the mask, which includes: 
+ *    1. If it's **valid text** that add's or removes from the `mask's format`. 
+ *    2. If the text inserted wasn't **filtered** out from the `acceptedChars`.
+ *    3. If you **pasted text** somewhere, and the masked input was re-evaluated entirely.
+ *    4. The `inputType` is synthetic and recreated from each **keyed event**, and isn't passed to the actual event.
+ * 
+ * ----
  * #### Initialization
  * ```ts
  * 
@@ -135,7 +146,7 @@ export type InputActionType =
  * }; 
  * 
  * // unified ref function
- * const inputMask = UseRef<InputMask(new InputMask(maskConfig, filter));
+ * const inputMask = UseRef<InputMask>(new InputMask(maskConfig, filter));
  * const handleRef = (node: HTMLTextAreaElement | null) => {
  *   // Pass the input element to your inputMask
  *   if (inputMask.current && node) {
@@ -151,7 +162,7 @@ export type InputActionType =
  *  
  * ```
  * 
- * ---
+ * ----
  * #### InputMask types
  *  * **Filter Only**: `InputMask(filter)`
  *  * **Mask Only**: `InputMask(maskConfig)`
@@ -220,7 +231,7 @@ export class InputMask {
    * ### **InputMask** - Filter Only
    * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
    * 
-   * ---
+   * ----
    * #### Initialization
    * ```ts
    * const numbersOnly: RegExp = /[^\d]/g; 
@@ -229,7 +240,7 @@ export class InputMask {
    * ```
    * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
    * 
-   * ---
+   * ----
    * #### Params
    * @param filter        A **RegExp** designed for filtering certain text from a string.
    */
@@ -240,7 +251,7 @@ export class InputMask {
    * ### **InputMask** - Mask Only
    * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
    * 
-   * ---
+   * ----
    * #### Initialization
    * ```ts
    * const maskConfig: MaskConfig = {
@@ -253,7 +264,7 @@ export class InputMask {
    * ```
    * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
    * 
-   * ---
+   * ----
    * #### Params
    * @param maskConfig    The configuration for building the inputMask
    */
@@ -264,7 +275,7 @@ export class InputMask {
    * ### **InputMask** - Mask Only
    * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
    * 
-   * ---
+   * ----
    * #### Initialization
    * ```ts
    * const numbersOnly: RegExp = /[^\d]/g; 
@@ -278,7 +289,7 @@ export class InputMask {
    * ```
    * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
    * 
-   * ---
+   * ----
    * #### Params
    * @param maskConfig    The configuration for building the inputMask
    * @param filter        A **RegExp** designed for filtering certain text from a string.
@@ -292,7 +303,7 @@ export class InputMask {
    * 
    * **note** This allows you to initialize subclassed `InputMasks` easily through other components.
    * 
-   * ---
+   * ----
    * #### Initialization
    * ```ts
    * const numbersOnly: RegExp = /[^\d]/g; 
@@ -315,7 +326,7 @@ export class InputMask {
    * ```
    * * **note:** You need to call {@link evaluate()} in the input's onBeforeInput() event.
    * 
-   * ---
+   * ----
    * #### Params
    * @param maskConfig    The configuration for building the inputMask
    * @param filter        A **RegExp** designed for filtering certain text from a string.
@@ -384,7 +395,7 @@ export class InputMask {
    * Evaluates an input's new value from the onBeforeInput event using 
    * the native event's state and the previous value for reference.
    * 
-   * ---
+   * ----
    * **Remarks**
    * * This uses onBeforeInput to override the default onChangeEvent logic, and pass the masked input as the value.
    * * This **only** invokes the `onChange` event **IF** it's a valid change to the mask, which includes: 
@@ -393,7 +404,7 @@ export class InputMask {
    *    3. If you `pasted text` somewhere, and the masked input was re-evaluated entirely.
    *    4. If the input passed in wasn't activated from a native event's `inputType`, we will prevent the event from occurring.
    *   
-   * ---
+   * ----
    * #### Example
    * ```ts
    * // During the onBeforeInput event's function logic: 
@@ -417,7 +428,7 @@ export class InputMask {
    * 
    * ```
    * 
-   * ---
+   * ----
    * @param event           The onBeforeInput or changeEvent that's tied to the input 
    * 
    * @returns An object that returns whether we canceled the onBeforeInput via `preventDefault`, and if we invoked the `onChange` manually.
@@ -454,6 +465,12 @@ export class InputMask {
       `\n current data: `, { currentRawValue: prevRawValue, currentMaskedValue: prevMaskedValue },
       `\n cursor: `, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }), cursorStart, cursorEnd, },
     );
+    
+    // TODO - handle copying deleted to clipboard?
+    // - onCut event needs to saveToClipboard it's contents
+    
+    // TODO - add mask's non-wildcard characters filter to the mask's base filter functionality
+    // - add filter functionality for this._maskCachedNWChars if this._filterMaskChars is true
     
     
     // #region - User typed or pasted some text
@@ -599,7 +616,7 @@ export class InputMask {
   /**
    * Uses the **mask's** cursor locations to find the locations for the **raw input** by counting it's **non-wildcard** template characters.
    * 
-   * ---
+   * ----
    * @param mStart          The mask's cursor **start** location.
    * @param mEnd            The mask's cursor **end** location.
    * 
@@ -649,7 +666,7 @@ export class InputMask {
    *  * `Filter only`: It **additively inserts** the text based on the cursor's location or selection. Just like the **native** behavior.
    *  * `Mask`: It will **overwrite** the text in the current selection. 
    * 
-   * ---
+   * ----
    * @param inserted              The user's inserted text, whether it was a single key, a selection and a key or a paste.
    * @param cursorStart           The raw **cursor's** start location.
    * @param cursorEnd             The raw **cursor's** end location.
@@ -710,7 +727,7 @@ export class InputMask {
    * 
    * **Note:** Uses the cursor's `selection` to determine what's deleted, but that was left out of this function because of **DRY**.
    * 
-   * ---
+   * ----
    * @param prevValue             The input's current value without the mask applied.
    * @param cursorStart           The raw **cursor's** start location.
    * @param cursorEnd             The raw **cursor's** end location.
@@ -753,7 +770,7 @@ export class InputMask {
    * Calculates the new **raw cursor** location from the current and the edit.
    * * **note** if there was highlighted text, we start from the cursor's start location, and add the difference from the removed/pasted characters.
    * 
-   * ---
+   * ----
    * @param rawCursorStart          The raw cursor's **start** location.
    * @param rawCursorEnd            The raw cursor's **end** location.
    * @param diff                    The added/subtracted characters. For inserts/deletes, it's the **count**. For a paste, it's the difference from the **highlighted text**
@@ -794,7 +811,7 @@ export class InputMask {
   /**
    * Uses the cursor location to determine how much was deleted, or if it was just a delete event.
    * 
-   * ---
+   * ----
    * @param rawCursorStart          The raw cursor's **start** location.
    * @param rawCursorEnd            The raw cursor's **end** location.
    * 
@@ -817,7 +834,7 @@ export class InputMask {
    * **Note:** Will always build from the beginning to the end for the masked values; 
    * however the raw value will capture wildcards if the user adds spaces or edits different parts of the mask. 
    * 
-   * ---
+   * ----
    * @param rawValue            The input value without the mask applied.
    * @returns                   The masked input value.
    */
@@ -852,7 +869,7 @@ export class InputMask {
    * 
    * **Remarks:** This is just a hash table using the mask's wildcards to map the indexes.  
    * 
-   * ---
+   * ----
    * @param rawCursorStart          The mask's cursor **start** location.
    * @param rawCursorEnd            The mask's cursor **end** location.
    * @param mask                    If you're using a custom **mask**, pass it here.
@@ -894,7 +911,7 @@ export class InputMask {
    * 
    * We keep an internal reference of the `unmasked` version of the value, and edit that before returning the value with the applied mask.
    * 
-   * ---
+   * ----
    * @param rawInputValue           The input value without the mask applied.
    * @param maskedInputValue        The masked input value.
    * @param selectionStart          The **cursor's** start location.
@@ -920,7 +937,7 @@ export class InputMask {
   /**
    * Uses a RegExp expression to `filter` out any unwanted characters to a string.
    * 
-   * ---
+   * ----
    * @Example
    * ```ts
    * const currentValue = 'abc123';
@@ -933,7 +950,7 @@ export class InputMask {
    * const charsNumsSpecialChars = /^[A-Za-z0-9\s!@#$%^&*()_+=\-[\]{}|;:'",.<>/?`~]+$/;
    * 
    * ```
-   * ---
+   * ----
    * @param chars           The characters we want to filter.
    * @param filterRegex     The RegExp we're using to filter characters.
    * @param chars           The characters we want to filter.
@@ -974,7 +991,7 @@ export class InputMask {
   /**
    * Whether we have the `filter` enabled or valid.
    * 
-   * ---
+   * ----
    * @returns       Whether the filter is defined
    */
   protected isFilterEnabled(): boolean {
@@ -985,7 +1002,7 @@ export class InputMask {
   /**
    * Retrieves the accepted characters expression. Any character is accepted if left undefined.
    *   
-   * ---
+   * ----
    * @Example
    * ```ts
    * const phoneMask = '(___) - ___ - ____';
@@ -997,7 +1014,7 @@ export class InputMask {
    * 
    * ```
    * 
-   * ---
+   * ----
    * @returns       The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
    */
   public get filterExp(): RegExp {
@@ -1016,7 +1033,7 @@ export class InputMask {
    * Whether we have the `mask` enabled or valid. 
    * If undefined, we're only using a `filter`.
    * 
-   * ---
+   * ----
    * @returns       Whether the mask is enabled / valid
    */
   protected isMaskEnabled(): boolean {
@@ -1028,7 +1045,7 @@ export class InputMask {
    * 
    * **Note:** This can be undefined, and you should use {@link isMaskEnabled()} before using.
    *   
-   * ---
+   * ----
    * @Example
    * ```ts
    * const phoneMask = '(___) - ___ - ____';
@@ -1040,7 +1057,7 @@ export class InputMask {
    * 
    * ```
    * 
-   * ---
+   * ----
    * @returns       The mask that we're currently using for this mask, or undefined if we're only using the class to filter characters.
    */
   public get mask(): string {
@@ -1052,7 +1069,7 @@ export class InputMask {
    * Retrieves the mask's wildcard character. Will return an empty string if the class is not using a mask.
    * @note This can be undefined, and you should use `isMaskEnabled()` before using.
    * 
-   * ---
+   * ----
    * @returns       Whether the mask is enabled / valid
    */
   public get wildcard(): string {
@@ -1064,7 +1081,7 @@ export class InputMask {
    * Retrieves the mask's **non-wildcard** characters in an array. Will return undefined if {@link _filterMaskChars} is set to false.
    * @note In the event this is undefined, calling {@link shouldFilterMaskChars} to both check and define the `_maskCachedNWChars`.
    * 
-   * ---
+   * ----
    * @returns       Whether the mask is enabled / valid
    */
   public get cachedNWcChars(): string[] {
@@ -1083,7 +1100,7 @@ export class InputMask {
    * **Note:** This function sets the values of the {@link _mask|mask}, 
    *  {@link _maskWildcardCharacter|maskWildcardCharacter}, and {@link _maskCachedNWChars|maskCachedNWChars}. Which are all used in various functions of this class
    *   
-   * ---
+   * ----
    * @Example
    * ```ts
    * const maskWildcard = '_';
@@ -1099,7 +1116,7 @@ export class InputMask {
    * 
    * ```
    * 
-   * ---
+   * ----
    * @param newMask     The new **mask** for this class.
    * @param wildcard    If you're using a custom **wildcard** (not "**_**"), then define it here.
    * 
@@ -1131,7 +1148,7 @@ export class InputMask {
   /**
    * Captures all non-wildcard characters from a mask, and stores them in an array.
    * 
-   * ---
+   * ----
    * @param mask            The input mask template string
    * @param wildcard        The input mask's wildcard character.
    * 
@@ -1182,7 +1199,7 @@ export class InputMask {
    * Returns a string displaying the location of the cursor on a maskedInput value.
    * @note This doesn't call **console.log**, it returns the string to be passed to it.
    * 
-   * ---
+   * ----
    * @param start   The mask's cursor **start** location.
    * @param end     The mask's cursor **end** location. 
    * @param opts    Optional values to **autofill** the mask with the current value, and for custom masks.
@@ -1225,7 +1242,7 @@ export class InputMask {
    * Returns a string displaying the location of the cursor on a rawInput value.
    * @note This doesn't call **console.log**, it returns the string to be passed to it.
    * 
-   * ---
+   * ----
    * @param start   The raw cursor's **start** location.
    * @param end     The raw cursor's **end** location. 
    * @param rawVal  The current raw value.
@@ -1258,7 +1275,7 @@ export class InputMask {
   /**
    * Update the **cursor's** location for a specific input element. 
    * 
-   * ---
+   * ----
    * @param cursorStart   The **cursor's** location, or the highlighted selection's starting location.
    * @param cursorEnd     The **highlighted selection's** end location, or the same as **cursorStart**.  
    * @param newValue      The updated value that we're passing to the **onChange**.
@@ -1295,7 +1312,7 @@ export class InputMask {
    * Utility function to cancel out onBeforeInput invocations and run `onChange` with a custom mask/filtered value.
    * * This is being used with `onBeforeInput` events to handle manual calls to the input's internal `onChange` event. 
    *   
-   * ---
+   * ----
    * @param event             The onBeforeInput event we're interacting with.
    * @param preventDefault    Whether we want to prevent `onBeforeInput` from inserting characters into the input.
    * @param invokeOnChange    invokes the input's `onChange` with a new value. Leave `undefined` to skip.
@@ -1544,7 +1561,7 @@ interface InputMaskHistoryState {
  * ### **InputMaskHistory**
  * This class uses an array to limit the history stack used for undo and redo events on this input. Should be called when you update the inputMask's state
  * 
- * ---
+ * ----
  * **Remarks**
  * * Any edit to the raw value will update the history and clear anything ahead of it in the stack, just like the normal undo/redo's functionality
  *   
