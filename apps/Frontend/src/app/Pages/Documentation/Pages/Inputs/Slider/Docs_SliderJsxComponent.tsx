@@ -12,7 +12,7 @@ export const Example_DefaultSlider = ({ error, disabled }: {
   
   const onChangeSlider = (e: ChangeEvent<HTMLInputElement>) => {
     // React hook forms
-    console.log('getValues: ', getValues());
+    console.log('getValues: ', getValues('sliderFormName'));
     const formValue = getValues('sliderFormName');
     
     // Capturing state manually

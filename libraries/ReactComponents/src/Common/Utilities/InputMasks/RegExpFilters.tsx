@@ -18,6 +18,8 @@ export const Filter_CHARS_NUMS = /[^A-Za-z0-9]/g;
 // Match anything that is NOT a letter, number, space, or standard symbol
 export const Filter_CHARS_NUMS_SPC = /[^A-Za-z0-9\s!@#$%^&*()_+=\-[\]{}|;:'",.<>/?`~]/g;
 
+// Match anything that is NOT a valid email character.
+export const Filter_Email_CHARS = /[^a-zA-Z0-9._%+\-@]/g;
 
 
 // ! These are validation expressions, not filter expressions
