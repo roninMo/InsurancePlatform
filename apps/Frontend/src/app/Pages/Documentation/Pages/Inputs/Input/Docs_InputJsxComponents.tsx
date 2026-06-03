@@ -1,5 +1,7 @@
-import { Dispatch, SetStateAction, useState, ChangeEvent, FocusEvent, useMemo, useContext } from "react";
+import { Dispatch, SetStateAction, useState, ChangeEvent, FocusEvent, useMemo, useContext, FormEvent } from "react";
 import { Input, TooltipService } from "@Project/ReactComponents";
+import { phoneMaskConfig } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
+import { useFormContext } from "react-hook-form";
 
 
 
@@ -9,33 +11,43 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { getValues } = useFormContext() || {};
   const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
   const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
-
+  
+  
   return (
     <div>
       <Input 
-        type="text"
+        type="text" 
         label="Text Input"
         placeholder="Type something..."
         description="The text input's description."
         
-        name={`text-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`textInputFormName`} 
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        mask={phoneMaskConfig} // Check that this works
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
@@ -51,17 +63,29 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [value, setValue] = useState<string>('0');
+  const { getValues } = useFormContext() || {};
+  const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -70,14 +94,12 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         placeholder="Type a number..."
         description="The number input's description."
         
-        name={`number-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`numberInputFormName`}
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
@@ -94,17 +116,29 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [value, setValue] = useState<string>('example@email.com');
+  const { getValues } = useFormContext() || {};
+  const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -113,18 +147,16 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         placeholder="Your email..."
         description="The email input's description."
         
-        name={`email-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`emailInputFormName`}
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
         // hideEmailIcon
+        // disableEmailFilter
       />
     </div>
   );
@@ -137,17 +169,29 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [value, setValue] = useState<string>('password');
+  const { getValues } = useFormContext() || {};
+  const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -156,14 +200,12 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         placeholder="Type your password..."
         description="The password input's description."
         
-        name={`password-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`passwordInputFormName`}
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
@@ -180,17 +222,29 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { getValues } = useFormContext() || {};
   const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -199,14 +253,12 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         placeholder="Type something..."
         description="The search input's description."
         
-        name={`search-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`searchInputFormName`}
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
@@ -224,17 +276,29 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { getValues } = useFormContext() || {};
   const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -243,20 +307,18 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         placeholder="Do something..."
         description="The policy number input's description."
         
-        name={`search-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`searchInputFormName`}
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
         
         // hidePolicyNumberIcon
-        // policyNumberMask={}
+        // disablePolicyMask
       />
     </div>
   );
@@ -269,17 +331,29 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [value, setValue] = useState<string>('(012)-345-6789');
+  const { getValues } = useFormContext() || {};
+  const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -288,20 +362,18 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
         placeholder="Type something..."
         description="The phone input's description."
         
-        name={`phone-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`phoneInputFormName`}
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
         
         // hidePhoneIcon
-        // phoneNumberMask={}
+        // disablePhoneMask
       />
     </div>
   );
@@ -314,17 +386,29 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [value, setValue] = useState<string>('0000-0000-0000-0000');
+  const { getValues } = useFormContext() || {};
+  const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -333,20 +417,18 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
         placeholder="Type something..."
         description="The credit card input's description."
         
-        name={`credit-card-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`credit-cardInputFormName`}
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}
         
         // hideCreditCardIcon
-        // creditCardMask={}
+        // disableCCMask
       />
     </div>
   );
@@ -359,17 +441,29 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [value, setValue] = useState<string>('0.00');
+  const { getValues } = useFormContext() || {};
+  const [value, setValue] = useState<string>('');
   
-  const onValueUpdated = (e: ChangeEvent<any>) => {
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLInputElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, {prevValue, e });
+  }
+  
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    // React hook forms
+    console.log('getValues: ', getValues('textInputFormName'));
+    const formValue = getValues('sliderFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
+    console.log('updated the value: ', newValue);
     setValue(newValue);
   }
-
+  
   // tooltip logic
   const tooltipContext = useContext(TooltipService);
-  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []);
-
+  const tooltipContent = useMemo(() => ({ text: "Tooltip text..." }), []); // prevent unnecessary object rerenders
+  
+  
   return (
     <div>
       <Input 
@@ -378,14 +472,12 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         placeholder="Type something..."
         description="The currency input's description."
         
-        name={`currency-input-form-name`} // using rhf
-        // value={value} // optional useState override
-        // onChange={e => onValueUpdated(e)}
-        error={error}
-        disabled={disabled}
-        
-        onFocus={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
-        onBlur={(e: FocusEvent<HTMLElement, Element>) => onValueUpdated(e)}
+        name={`currencyInputFormName`}
+        // disableHookForms
+        onUpdateValue={onUpdateValue}
+        onChange={onChangeValue}
+        // mask={}
+        error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
         tooltipContent={tooltipContent}

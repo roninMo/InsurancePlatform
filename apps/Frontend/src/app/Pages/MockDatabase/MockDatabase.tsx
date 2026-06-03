@@ -247,7 +247,7 @@ export const MockDatabase = () => {
 	const tableTooltip = useMemo(() => ({ text: 'The tables to search.' }), []);
   const formMethods = useForm({
 		mode: 'onSubmit',
-		reValidateMode: 'onBlur',
+		reValidateMode: 'onBlur', // Out input elements use de-bouncers to efficiently handle revalidation
 		
 		// Validation
     resolver: yupResolver(schema),
@@ -345,7 +345,8 @@ export const MockDatabase = () => {
 			{/* Navbar */}
 			<Navbar />
 			<div className='dropdown-spacing py-10' />
-
+			
+			{/* Main Section */}
 			<div className='row justify-center pt-20'>
 				<form onSubmit={handleSubmit(onSubmit)} className='spacing p-8 w-3/4 gap-2 bg-div outline-css outline-default'>
 					<h3 className='span-12 pb-10'> 
@@ -356,9 +357,8 @@ export const MockDatabase = () => {
 					<h4 className='span-12 pb-4'> 
 						React Hook forms example
 					</h4>
-					
 					<Card type='default' noBackground additStyles='spacing gap-y-4 gap-x-8 lg:p-8'>
-
+						
 						{/* Email */}
 						<div className='span-12 lg:span-6'>
 							<Input 
@@ -366,27 +366,25 @@ export const MockDatabase = () => {
 								label='Email' placeholder='email@example.com'
 								description="What is your account's email?"
 								
-								value={!usingRhf ? email : undefined} // useState override
-								onChange={updateEmail}
-								error={ errors?.user?.email?.message }
+								onBlur={updateEmail}
+								error={ errors?.user?.email?.message } // Check that we're validating properly
 								tooltipContext={tooltipContext} tooltipContent={emailTooltip}
 							/>
 						</div>
-
+						
 						{/* Password */}
 						<div className='span-12 lg:span-6'>
 							<Input 
 								type="password" name="user.password"
 								label='Password' placeholder='Enter your password'
 								description="The password of this account."
-
-								value={!usingRhf ? pass : undefined} // useState override
+								
 								onChange={updatePass}
 								error={ errors?.user?.password?.message }
 								tooltipContext={tooltipContext} tooltipContent={passwordTooltip}
 							/>
 						</div>
-
+						
 						
 						<h5 className='span-12 pt-10'> 
 							Database information
@@ -398,15 +396,16 @@ export const MockDatabase = () => {
 								name="database"
 								label='Select a database'
 								description='The databases that are saved to this account.'
-								placeholder='Select a database...'
-
+								placeholder={`Select a database...`}
+								// placeholder='Select a database...'
+								
 								values={Object.values(dbItems || {})}
 								onSelect={ updateDbItems }
 								error={ errors?.database?.message }
 								tooltipContext={tooltipContext} tooltipContent={dbTooltip}
 							/>
 						</div>
-
+						
 						{/* Tables (MultiSelect) */}
 						<div className='span-12 lg:span-6 col gap-2'>
 							<Select 
@@ -414,14 +413,14 @@ export const MockDatabase = () => {
 								label='Tables'
 								description="The tables that you'd like information about."
 								placeholder='Select some tables...'
-
+								
 								multiSelect
 								values={tableItems}
 								onSelect={updateTableItems}
 								error={ errors?.tables?.message }
 								tooltipContext={tooltipContext} tooltipContent={tableTooltip}
 							/>
-
+							
 							
 							{/* checkboxTest */}
 							<div className='pt-3 inline-flex'>
@@ -429,7 +428,7 @@ export const MockDatabase = () => {
 									name="checkboxTest" variant="inline"
 									label="Checkbox Test"
 									description="The Checkbox test's description."
-
+									
 									items={chbxItems}
 									onSelect={updateChbx}
 									disableHookForms={!usingRhf}
@@ -438,7 +437,7 @@ export const MockDatabase = () => {
 							</div>
 						</div>
 						{/* <div className='span-12 -mt-10' /> */}
-
+						
 						{/* retrieveServerData (Slider) */}
 						<div className='span-12 lg:span-6 pt-[18px]'>
 							<div className='inline-flex'>
@@ -446,8 +445,9 @@ export const MockDatabase = () => {
 									name="retrieveServerData"
 									label='Retrieve Server Data'
 									description='Download custom data from the server?'
-									value={retServerData}
 									onChange={updateRetServerData}
+									disableHookForms={!usingRhf}
+									error={ errors?.retrieveServerData?.message }
 								/>
 							</div>
 							<div className='pt-12 inline-flex'>
@@ -458,15 +458,15 @@ export const MockDatabase = () => {
 								/>
 							</div>
 						</div>
-
+						
 						{/* Rendered form values */}
 						<div className='spacing pt-4'>
 							<RenderedItems name="tables" styles='span-12 lg:span-6' />
 							<RenderedItems name="database" styles='span-12 lg:span-6' />
 							
 						</div>
-
-
+						
+						
 						{/* radioGroupTest */}
 						<div className='span-12 lg:span-6'>
 							<RadioGroup 
@@ -483,18 +483,18 @@ export const MockDatabase = () => {
 						</div>
 						
 						<div className='span-12 lg:span-6'>
-							{/* <RadioTable 
+							<RadioTable 
 								name="RadioTableTest"
 								label='RadioTable Test'
 								description="The RadioTable test's description."
 								radioItems={radioVals}
 								
-								currentValue={radioItem}
-								onSelect={(e, s) => updateRadio(e, s, 'rg')}
+								// currentValue={radioTableItem}
+								onSelect={updateRadioTable}
 								error={ errors?.radioTableTest?.message }
-							/> */}
+							/>
 						</div>
-
+						
 						{/* radioTableTest */}
 						<div className='span-12 lg:span-6'>
 							
@@ -504,7 +504,7 @@ export const MockDatabase = () => {
 						<div className='span-12 lg:span-6'>
 							
 						</div>
-
+						
 						{/* Textarea */}
 						<div className='span-12' />
 						<div className='span-12 pr-8'>
@@ -512,12 +512,11 @@ export const MockDatabase = () => {
 								type='default' name='textareaTest'
 								label='Textarea Label'
 								placeholder='Type something...'
-								// description='The textarea input for this form.'
-
-								value={!usingRhf ? textareaVal : undefined}
-								onChange={updateTextarea}
+								description='The textarea input for this form.'
+								
+								onBlur={updateTextarea}
 								error={ errors?.textareaTest?.message }
-
+								
 								submitButtonText='Submit' submitButtonType='submit'
 								onSubmit={handleSubmit(onSubmit, onInvalid)}
 							/>

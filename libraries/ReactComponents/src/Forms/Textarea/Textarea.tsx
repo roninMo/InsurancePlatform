@@ -1,6 +1,6 @@
 import { ChangeEvent, memo, FocusEvent, MouseEvent, ReactNode, useMemo, useRef, useState, RefObject, useReducer, useEffect, FormEvent } from "react";
 import { useFormContext } from "react-hook-form";
-import { InputMask, MaskOpts } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
+import { InputMask, MaskOpts, TMaskClass } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 import { FileUploadProps } from "../Dropbox/Dropbox";
 import { UniversalEventHandlers } from "../../Common/Utilities/Utils";
 import { Icon, IconTypes } from "../../Common/Icons/Icon";
@@ -16,7 +16,7 @@ export type TextareaTypes = 'default' | 'box' | 'post';
 
 /** The props for the textarea component. */
 export interface TextareaProps<T extends MaskOpts> {
-  // * Form and display
+  // {} Form and display
   /** The variant of the textarea we're using. */
   type?: TextareaTypes;
   
@@ -32,8 +32,8 @@ export interface TextareaProps<T extends MaskOpts> {
   /** The placeholder for the textarea. */
   placeholder?: string;
   
-  // Handling state
-  /** Whether you're using a mask. If you have a custom class for this, declare it in the {@link Textarea}'s template arguments. */
+  // {} Handling state
+  /** Whether you're using a mask. If you have a custom class for this, declare it in the **{@link Textarea|Textarea's}** template arguments. */
   maskOpts?: T;
   
   /** Optional Event to update the event.currentTarget.value to pass to the  onChange event. If you're using an input mask, this edit is ignored entirely. */
@@ -41,9 +41,11 @@ export interface TextareaProps<T extends MaskOpts> {
   
 	/** Whether to use Rhf or custom state through the onChange event */
   disableHookForms?: boolean;
-  // onChange?: (e: ChangeEvent<any>) => void; 
   
-  // * Form / Validation
+  /** To handle custom logic, or handling state without **react-hook-forms**. */
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  
+  // {} Form / Validation
   /** Error message, if there's an error. */
   error?: string;
   
@@ -52,6 +54,7 @@ export interface TextareaProps<T extends MaskOpts> {
   
   /** Whether the textarea is required. */
   required?: boolean;
+  
   
   // * Optional Submit button props
   /** The function that's ran when you press the submit button. */
@@ -90,11 +93,11 @@ export interface MetadataTagProps {
 
 
 /** The input functionality of the textarea. */
-const InputComponent = <TMask extends InputMask = InputMask, TMO extends MaskOpts = MaskOpts> ( allProps: 
-  & TextareaProps<TMO> 
-  & UniversalEventHandlers 
+const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends MaskOpts = MaskOpts> ( allProps: 
+  & TextareaProps<TMaskOpts> 
+  & Omit<UniversalEventHandlers, 'onChange'> 
+  & TMaskClass<TMask, TMaskOpts> // Explicitly type the constructor to return the generic type 'Mask'
   & { localInputRef: RefObject<HTMLTextAreaElement | undefined> } 
-  & { MaskClass?: { new (config: TMO): TMask;  create(options: TMO): TMask; }} // Explicitly type the constructor to return the generic type 'Mask'
 ) => {
   const MaskClass = allProps.MaskClass || (InputMask as NonNullable<typeof allProps.MaskClass>);
   const { 
@@ -220,12 +223,12 @@ const InputComponent = <TMask extends InputMask = InputMask, TMO extends MaskOpt
     // Store it locally for our increment buttons
     localInputRef.current = node || undefined; 
     
-    // Pass it along to React Hook Form
+    // Pass it along to react-hook-forms
     if (isRHFMode && rhfBindings?.ref) {
       rhfBindings.ref(node); 
     }
     
-    // Pass a reference to the actual input to our input mask
+    // Pass a reference to our input mask
     if (mask.current && node) {
       mask.current.initEventListeners(node);
     }
@@ -234,7 +237,7 @@ const InputComponent = <TMask extends InputMask = InputMask, TMO extends MaskOpt
   
   return (
     <textarea 
-        id={name}
+        name={name} id={name}
         placeholder={placeholder}
         disabled={disabled} required={required}
         
@@ -244,7 +247,7 @@ const InputComponent = <TMask extends InputMask = InputMask, TMO extends MaskOpt
             const { ref: _, onChange: __, onBlur: ___, ...rest } = rhfBindings;
             return rest;
           }
-          return { name }; // default behavior
+          return {};
         })()}
         ref={handleRef}
         onBeforeInput={handleUpdateValue}

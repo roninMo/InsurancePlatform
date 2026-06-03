@@ -1,49 +1,64 @@
-import { ChangeEvent, Dispatch, FocusEvent, RefObject, SetStateAction, useRef, useState } from 'react';
-import { InputMask, useMask } from '@react-input/mask';
+import { ChangeEvent, Dispatch, FocusEvent, FormEvent, RefObject, SetStateAction, useEffect, useReducer, useRef, useState } from 'react';
 import { FieldErrors, useFormContext } from 'react-hook-form';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
+import { InputMask, MaskOpts, TMaskClass } from '@Project/ReactComponents/Common/Utilities/InputMasks/InputMask';
 import { TooltipContextActions } from '../../Common/Utilities/Tooltip/TooltipProvider/TooltipProvider';
 import { TooltipContentProps } from '../../Common/Utilities/Tooltip/Tooltip';
+import { CCMask, EmailFilter, PhoneMask, PolicyMask } from '@Project/ReactComponents/Common/Utilities/InputMasks/Masks';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
-import { Icon } from '../../Common/Icons/Icon';
 import { Button } from '../Button/Button';
+import { Icon } from '../../Common/Icons/Icon';
 
 import styled from '@emotion/styled';
 import styles from './Input.module.scss';
 
 
+/** The input component's different variants. Each are specifically designed for certain input types, with additional styling for each */
 export type TextInputTypes = 'text' | 'number' | 'email' | 'password' | 'search' 
                           |  'policyNumber' | 'phone' | 'creditCard' | 'currency';
 
+/** The autocomplete types for certain input types. These help with autofill. */
 export type TextInputAutoCompleteTypes = 
   | "name" | "given-name" | "family-name" | "email" | "password" | "tel" 
   | "street-address" | "address-level2"| "address-level1" | "postal-code" | "country-name";
 
-export type InputProps = ConditionalVariantProps & {
+
+// #region InputProps
+/** The input component's props. Combined with {@link ConditionalVariantProps} for intellisense props that display contextually, to help remove clutter */
+export type InputProps<T extends MaskOpts = MaskOpts> = ConditionalVariantProps & {
+  // {} Form and display
   /** The variant of input we're using. Each has different functionality for each input type. */
   type?: TextInputTypes;
   
-  /** 
-   * The form name for this input. By default, we use react-hook-forms for handling state.
-   * If you want different logic, add an onChange and value prop to this component.
-   */
+  /** The form name of the input. Rhf uses this in it's register functions. */
   name: string;
   
   /** The label of this input */
   label: string;
+  
   /** The description of this input */
   description?: string;
-
+  
   /** The placeholder of this input */
   placeholder?: string;
   
+  // {} Handling State
+  /** Whether you're using a mask. If you have a custom class for this, declare it in the **{@link Input|Input's}** template arguments. */
+  mask?: T;
+  
+  /** Whether to use Rhf or custom state through the onChange event */
+  disableHookForms?: boolean;
+  
+  /** Optional Event to update the event.currentTarget.value to pass to the  onChange event. If you're using an input mask, this edit is ignored entirely. */
+  onUpdateValue?: (prevValue: string, event: FormEvent<HTMLInputElement>) => void;
+  
+  /** To handle custom logic, or handling state without **react-hook-forms**. */
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  
   /** An optional value if you're overriding hook forms with useState. Link to the state using the onChange event. */
-  value?: string;
-
-  /** You can use the onChange without it affecting rhf. Whether you define value determines if you're overriding the hook forms */
-  // onChange: ChangeEvent;
-
-	// Validation	
+  // value?: string;
+  
+	// {} Form/Validation
 	/** The error message, if there is one. */
   error?: string;
 		
@@ -52,34 +67,36 @@ export type InputProps = ConditionalVariantProps & {
 		
 	/** Whether this input is required. */
   required?: boolean;
-
-	// misc	
+  
+	// {} misc	
 	/** The context used to enable the tooltip @see TooltipProvider */
   tooltipContext?: TooltipContextActions;
 		
 	/** The content you'd like to display for the tooltip. Don't forget memoization to prevent rerenders. */
   tooltipContent?: TooltipContentProps;
 	
-	/** the specific autocompletetype you'd like to use. */
+	/** the specific autocompleteType you'd like to use. */
   autocomplete?: TextInputAutoCompleteTypes;
-
-  /* Variant Specific - ConditionalVariantProps */
+  
+  // {} Variant Specific - ConditionalVariantProps
   // hideIncrementButtons?: boolean;
   // hideEmailIcon?: boolean;
+  // disableEmailFilter?: boolean;
   // hideVisibilityIcon?: boolean;
   // sortButton?: boolean;
   // sortType?: SortType;
   // hidePolicyNumberIcon?: boolean;
-  // policyNumberMask?: RefObject<any>;
+  // disablePolicyMask?: RefObject<any>;
   // hidePhoneIcon?: boolean;
-  // phoneNumberMask?: RefObject<any>;
+  // disablePhoneMask?: RefObject<any>;
   // hideCreditCardIcon?: boolean;
-  // creditCardMask?: RefObject<any>;
+  // disableCCMask?: RefObject<any>;
   // hideMoneySign?: boolean;
   // hideCurrencyType?: boolean;
 }
 
 // #region conditional variant props 
+// disableEmailFilter
 type NumberVariantProps = 
 | { 
     /** An input that's oriented for using number specific values. */
@@ -100,12 +117,16 @@ type EmailVariantProps =
     type?: 'email';
     /** Whether to hide this variant's email icon.  */
     hideEmailIcon?: boolean;
+    /** The email's character filter. Filters out non-valid characters for creating a username. */
+    disableEmailFilter?: boolean;
   } 
 | { 
     /** The variant of input we're using. Each has different functionality for each input type. */
     type?: Exclude<TextInputTypes, 'email'>; 
     /** @deprecated CANNOT use 'hideEmailIcon' when 'type' isn't email. */
     hideEmailIcon?: never; 
+    /** @deprecated CANNOT use 'disableEmailFilter' when 'type' isn't email. */
+    disableEmailFilter?: never;
   };
 
 type PasswordVariantProps = 
@@ -118,8 +139,7 @@ type PasswordVariantProps =
 | { 
     /** The variant of input we're using. Each has different functionality for each input type. */
     type?: Exclude<TextInputTypes, 'password'>; 
-    /** @deprecated CANNOT use 'hideVisibilityIcon' when 'type' isn't     type?: Exclude<TextInputTypes, 'password'>; 
-. */
+    /** @deprecated CANNOT use 'hideVisibilityIcon' when 'type' isn't password. */
     hideVisibilityIcon?: never; 
   };
 
@@ -147,16 +167,16 @@ type PolicyNumberVariantProps =
     type?: 'policyNumber';
     /** Whether to hide the policy number icon for the input.  */
     hidePolicyNumberIcon?: boolean;
-    /** The policy number format we're using.  */
-    policyNumberMask?: RefObject<any>;
+    /** Whether to disable the default InputMask for the policy number. You can override the current with `maskOpts`, or disable this and pass in your own custom mask. */
+    disablePolicyMask?: boolean;
   } 
 | { 
     /** The variant of input we're using. Each has different functionality for each input type. */
     type?: Exclude<TextInputTypes, 'policyNumber'>; 
     /** @deprecated CANNOT use 'hidePolicyNumberIcon' when 'type' isn't policyNumber. */
     hidePolicyNumberIcon?: never; 
-    /** @deprecated CANNOT use 'policyNumberMask' when 'type' isn't policyNumber. */
-    policyNumberMask?: never;
+    /** @deprecated CANNOT use 'disablePolicyMask' when 'type' isn't policyNumber. */
+    disablePolicyMask?: never;
   };
 
 
@@ -166,16 +186,16 @@ type PhoneVariantProps =
     type?: 'phone';
     /** Whether to hide the phone icon for the input.  */
     hidePhoneIcon?: boolean;
-    /** The phone number format we're using.  */
-    phoneNumberMask?: RefObject<any>;
+    /** Whether to disable the default InputMask for the phone number. You can override the current with `maskOpts`, or disable this and pass in your own custom mask. */
+    disablePhoneMask?: boolean;
   } 
 | { 
     /** The variant of input we're using. Each has different functionality for each input type. */
     type?: Exclude<TextInputTypes, 'phone'>; 
     /** @deprecated CANNOT use 'hidePhoneIcon' when 'type' isn't phone. */
     hidePhoneIcon?: never; 
-    /** @deprecated CANNOT use 'phoneNumberMask' when 'type' isn't phone. */
-    phoneNumberMask?: never;
+    /** @deprecated CANNOT use 'disablePhoneMask' when 'type' isn't phone. */
+    disablePhoneMask?: never;
   };
 
 type CreditCardVariantProps = 
@@ -184,17 +204,18 @@ type CreditCardVariantProps =
     type?: 'creditCard';
     /** Whether to hide the credit card icon for the input.  */
     hideCreditCardIcon?: boolean;
-    /** The credit card number's format we're using.  */
-    creditCardMask?: RefObject<any>;
+    /** Whether to disable the default InputMask for the credit card. You can override the current with `maskOpts`, or disable this and pass in your own custom mask. */
+    disableCCMask?: boolean;
   } 
 | { 
     /** The variant of input we're using. Each has different functionality for each input type. */
     type?: Exclude<TextInputTypes, 'creditCard'>; 
     /** @deprecated CANNOT use 'hideCreditCardIcon' when 'type' isn't creditCard. */
     hideCreditCardIcon?: never; 
-    /** @deprecated CANNOT use 'creditCardMask' when 'type' isn't creditCard. */
-    creditCardMask?: never;
+    /** @deprecated CANNOT use 'disableCCMask' when 'type' isn't creditCard. */
+    disableCCMask?: never;
   };
+// TODO - add a variant for both CCExpDate and CCV
 
 type CurrencyVariantProps = 
 | { 
@@ -241,14 +262,15 @@ type AllVariantProps<T> = {
   [K in AllKeys<T>]?: PickType<T, K>;
 };
 // #endregion
+// #endregion
 
 
-
-export const Input = (props: InputProps & UniversalEventHandlers) => {
-  const { register, getValues } = useFormContext() || {}; // non rhf variant catch
-
-  // Base Props
-  const  {
+export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends MaskOpts = MaskOpts>
+  (props: InputProps<TMaskOpts> & Omit<UniversalEventHandlers, 'onChange'> & TMaskClass<TMask, TMaskOpts>) => 
+{
+  // #region Component State
+  const MaskClass = props.MaskClass || (InputMask as NonNullable<typeof props.MaskClass>);
+  const  { // * Base Props
     type = 'text', name, 
     label, description, placeholder, 
     error, disabled = false, required = false, 
@@ -256,88 +278,192 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
     tooltipContext, tooltipContent,
     autocomplete = 'none', 
     
-    value, onChange, 
+    onUpdateValue, onChange, disableHookForms, mask,
     onBlur, onFocus, onClick, 
     onMouseEnter, onMouseLeave
   } = props;
-
-  // Variant Specific conditionally rendered props
-  const {
+  
+  const { // * Variant Specific conditionally rendered props
     hideIncrementButtons, 
-    hideEmailIcon, 
+    hideEmailIcon, disableEmailFilter,
     hideVisibilityIcon, 
     sortButton, sortType, 
-    hidePolicyNumberIcon, policyNumberMask, 
-    hidePhoneIcon, phoneNumberMask, 
-    hideCreditCardIcon, creditCardMask, 
+    hidePolicyNumberIcon, disablePolicyMask, 
+    hidePhoneIcon, disablePhoneMask, 
+    hideCreditCardIcon, disableCCMask, 
     hideMoneySign, hideCurrencyType
   } = props as AllVariantProps<ConditionalVariantProps>;
-
+  
+  // * Input binding logic
+  const { register, getValues, getFieldState, control, clearErrors, trigger } = useFormContext() || {}; // non rhf variant catch
+  const isRHFMode = !disableHookForms && !!register;
+  const { error: errors } = getFieldState(name, control?._formState); // <- second arg prevents the internal JavaScript Proxy from adding a tracking flag to your component.
+  const rhfBindings = isRHFMode ? register(name) : null;
+  const localInputRef = useRef<HTMLInputElement | null>(null); // When not using rhf
+  
   // Other
-  const emailRegexValidation = `/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/`; // TODO: Removed for variation, implement react-hook-forms
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false); // Password visibility
   const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This could mess with seeing loading with actual load times
-
-  // TODO: when we use rhf, find a mask that works well with controlled components, or create our own
-  const getMaskRef = (type: TextInputTypes): RefObject<HTMLInputElement> | undefined => {
-    // if (type == 'phone') return phoneMaskRef;
+  
+  /** Retrieves the inputMask if there should be one */
+  const createInputMask = (): TMask | undefined => {
+    if (type == 'phone' && !disablePhoneMask)         return PhoneMask.create();
+    if (type == 'email' && !disableEmailFilter)       return EmailFilter.create();
+    if (type == 'creditCard' && !disableCCMask)       return CCMask.create();
+    if (type == 'policyNumber' && !disablePolicyMask) return PolicyMask.create();
+    if (MaskClass && mask) {
+      // return new MaskClass(maskOpts);
+      return MaskClass.create(mask);
+    }
+    
     return undefined;
   }
-
-  // Password visibility
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  // Used for retrieving the value for the increment buttons on the number variant
-  const localInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Retrieves the actual input type
+  
+  // ? Input mask
+  const inputMask = useRef<TMask | undefined>(createInputMask());
+  const usingInputMask = inputMask.current;
+  
+  
+  // * validation logic
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const debouncer = useRef<NodeJS.Timeout>(undefined);
+  useEffect(() => { // ? Cleanup on unmount
+    () => {
+      clearTimeout(debouncer.current); // onKeypress validations
+      if (inputMask.current) inputMask.current.cleanup(); // Event listeners
+    }
+  }, []);
+  
+  
+  /** Handles validation debouncing (if we need to validate) */
+  const keypressDebouncer = (newValue: string) => {
+    if (!isRHFMode) return;
+    
+    // If we no longer need to validate
+    const isInRevalidateMode = control?._formState?.isSubmitted || false;
+    if (!isInRevalidateMode || (isInRevalidateMode && !newValue) || disabled) {
+      debouncer.current && clearTimeout(debouncer.current);
+      
+      // ? check if we should clear any current errors
+      const { error } = getFieldState(name);
+      if (!!error) clearErrors(name);
+      return;
+    }
+    
+    // If it was submitted and still has active errors, refresh to run validations
+    if (debouncer.current) clearTimeout(debouncer.current);
+    debouncer.current = setTimeout(() => {
+      trigger(name);
+      // forceUpdate(); // * let rhf's validation logic handle rerenders
+      console.log(`running validations for ${name}`, { value: getValue() });
+    }, 450);
+  }
+  // #endregion
+  
+  
+  /** Either Rhf's captured form value, or the internal ref for custom state. */
+  const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
+  
+  /** Retrieves the input *element's* type */
   const getType = (): TextInputTypes => {
     if (type == 'number' || type == 'currency') return 'number';
-    if (type == 'password') return showPassword ? 'text' : 'password';
+    if (type == 'password') return passwordVisible ? 'text' : 'password';
     return 'text';
   }
-
-  // Error handling
+  
+  /** Returns whether we have an error for this component, and it's not currently disabled. */
   const getError = (): boolean => (!!error && !disabled);
-
-  // * Input binding logic
-  const isRHFMode = !!register && value === undefined;
-  const rhfBindings = isRHFMode ? register(name) : null;
-  // console.log(`isRhfMode: ${isRHFMode}, data: `, { value, rhfBindings, onChange });
-
-  // Intercept changes cleanly
-  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (isRHFMode && rhfBindings) {
-      rhfBindings.onChange(e);
+  
+  // * Rerender state
+  console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), isUsingMask(${!!usingInputMask})`, 
+    `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
+    `\n config: `, { inputMask, maskOptsProp: mask }
+  );
+  
+  
+  // #region Input Event Logic
+  /**
+   * Adds any input masking or custom logic to the input before updating the input component directly. 
+   * * Updates the target value during each event before being passed to Rhf's and optional OnChange events.
+   * 
+   * ---
+   * @param event       The native changeEvent data tied to the input event.
+   */
+  const handleUpdateValue = (event: FormEvent<HTMLInputElement>) => {
+    if (!usingInputMask && onUpdateValue) { // Otherwise, handle custom edits from the onUpdateValue function
+      onUpdateValue(getValue(), event);
+      console.log('onUpdateValue');
     }
-    if (onChange) onChange(e);
+  }
+  
+  
+  /**
+   * Links event logic with custom user event logic for both Rhf and custom state handling.  
+   * 
+   * By default, this component should handle it's own rerenders, and 
+   * onSelect / onChange shouldn't inherently cause hierarchical rerenders.
+   * 
+   * ---
+   * @param event       The native changeEvent data tied to the input event.
+   */
+  const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log(`${name}-${type} handleOnChange(): value(${getValue()})`,
+      `\n event data: `, { value: event.target.value, event: event }
+    );
+    
+    // ? react hook forms event and optional event logic
+    if (isRHFMode && rhfBindings) rhfBindings.onChange(event);
+    if (onChange) onChange(event);
+    
+    // update the internal ref so the input reflects the updated value (for non Rhf inputs)
+    if (localInputRef.current) {
+      const targetValue = event.target.value;
+      localInputRef.current.value = targetValue;
+    }
+    
+    // Finally, add a debouncer for handling input validations for keystrokes after a brief duration
+    if (isRHFMode && rhfBindings) {
+      keypressDebouncer(event.target.value);
+    }
   };
-
+  
+  
+  /** Links custom events with Rhf's event bindings */
   const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
     if (isRHFMode && rhfBindings) rhfBindings.onBlur(e);
     if (onBlur) onBlur(e);
   }
-
-  // Safe Unified Ref Callback
+  
+  
+  /** Safe Unified Ref Callback */
   const handleRef = (node: HTMLInputElement | null) => {
     localInputRef.current = node; // Store it locally for our increment buttons
+    
+    // Pass it along to react-hook-forms
     if (isRHFMode && rhfBindings?.ref) {
-      rhfBindings.ref(node); // Pass it along to React Hook Form
+      rhfBindings.ref(node); 
+    }
+    
+    // Pass a reference to our input mask
+    if (inputMask.current && node) {
+      inputMask.current.initEventListeners(node);
     }
   };
-
+  // #endregion
+  
+  
   return (
     <TextInput className='input'>
       <Label htmlFor={type} className="input-label"> 
         { label } 
       </Label>
-
+      
       <InputContainer className="input-container group">
         <input 
           // { ...props }
-          type={getType()} id={`${name}-${type}`}
+          name={name} type={getType()} id={`${name}-${type}`}
           placeholder={placeholder} autoComplete={autocomplete}
           disabled={disabled} required={required} 
-          ref={handleRef}
           
           // Rhf or useState handling
           {...(() => {
@@ -345,35 +471,37 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
               const { ref, onChange: _, onBlur: __, ...rest } = rhfBindings;
               return rest;
             }
-            return { name, value }; // default behavior
+            return {};
           })()}
-
-          // Other optional events
-          onFocus={(e) => onFocus && onFocus(e)}
+          ref={handleRef} 
+          onBeforeInput={handleUpdateValue}
           onChange={handleOnChange} // custom rhfBindings.onChange
           onBlur={handleOnBlur}
+          
+          // Other optional events
+          onFocus={(e) => onFocus && onFocus(e)}
           onClick={ (e) => onClick && onClick(e)}
           onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
           onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
-
+          
           className={`input-base peer
             ${!inputTypesWithoutIcons.includes(type) ? 'input-icon-spacing' : ''}
             ${getError() ? 'input-error' : ''}
           `}
         />
-
+        
         {/* Variant specific elements before and after the input element */}
         <PrecedingElements 
           type={type}
-          showPassword={showPassword} setShowPassword={setShowPassword}
+          showPassword={passwordVisible} setShowPassword={setPasswordVisible}
           hideEmailIcon={hideEmailIcon} hideVisibilityIcon={hideVisibilityIcon} hidePolicyNumberIcon={hidePolicyNumberIcon}
           hidePhoneIcon={hidePhoneIcon} hideCreditCardIcon={hideCreditCardIcon} hideMoneySign={hideMoneySign}
         />
-
+        
         <SubsequentElements
           type={type} name={name}
           disabled={disabled} error={getError()} 
-
+          
           tooltipContent={tooltipContent} tooltipContext={tooltipContext}
           
           hideIncrementButtons={hideIncrementButtons}
@@ -390,7 +518,7 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
           />
         </LoadingBar>
       </InputContainer>
-
+      
       {/* Error / Description messages */}
       <ErrorAndDesc show={!!description || getError()} styles='mt-2 ml-1' cStyles={getError() ? 'error-text' : 'text-colors'}>
         { getError() ? error : description } &nbsp;
@@ -405,6 +533,7 @@ export const Input = (props: InputProps & UniversalEventHandlers) => {
 //------------------------------------------//
 // Preceding Variant Elements               //
 //------------------------------------------//
+// #region Preceding Elements
 interface PrecedingElProps {
   type: TextInputTypes;
   showPassword: boolean;
@@ -432,7 +561,7 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({
     <VariantIcons className="input-preceding-el-c">
       <div className='input-preceding-el'>
         {VariantIcon && <VariantIcon />}
-
+        
         { (type == 'password' && !hideVisibilityIcon) && 
           <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
             { showPassword  &&  <Icon variant='EyeSlash' styles='input-icon-def' /> }
@@ -451,6 +580,7 @@ const PrecedingIcons: Partial<Record<TextInputTypes, React.FC>> = {
   'phone': () => <Icon variant='Phone'            styles='input-icon-def' />,
   'creditCard': () => <Icon variant='CreditCard'  styles='input-icon-def' />,
 };
+// #endregion
 
 
 
@@ -458,6 +588,7 @@ const PrecedingIcons: Partial<Record<TextInputTypes, React.FC>> = {
 //------------------------------------------//
 // Subsequent Variant Elements              //
 //------------------------------------------//
+// #region Subsequent Elements
 interface SubsequentElProps {
   name: string;
   type: TextInputTypes;
@@ -496,7 +627,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
       setValue(name, currentValue + (add ? 1 : -1), { shouldValidate: true });
       return;
     }
-
+    
     // Scenario A: Handled cleanly via React Hook Form cache
     if (isRHFMode) {
       const rawFormValue = getValues(name);
@@ -509,7 +640,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
       }
       return;
     }
-
+    
     // Scenario B: Read straight from the HTML DOM node value property
     if (inputRef && inputRef.current) {
       const domValue = inputRef.current.value;
@@ -527,7 +658,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
   return (
     <div className="input-subsequent-el-c">
       <div className="input-subsequent-el">
-
+        
         {/* Error / Tooltip icon */}
         <ErrorAndTooltipIcon className="input-tooltip-icon"
           onMouseEnter={() => tooltipContent && show?.(tooltipContent)} 
@@ -536,7 +667,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
           { error ? <Icon variant='OutlineWarning' styles='mr-2.5 input-sub-icon i-err-color' /> 
           :         <Icon variant='OutlineInfo' styles='mr-2.5 input-sub-icon' /> }
         </ErrorAndTooltipIcon>
-
+        
         {/* Increment buttons - type="number" */}
         { (type == 'number' && !hideIncrementButtons) && 
           <div className={`increment-btns ${!disabled && !error ? 'increment-btns-states' : error ? 'input-btns-error' : ''}`}>
@@ -552,7 +683,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
             />
           </div>
         }
-
+        
         {/* Currency Dropdown - type="currency" */}
         { (type == 'currency' && !hideCurrencyType) && 
           <CurrencySelectContainer className='row relative'>
@@ -568,7 +699,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
             </CurrencySelect>
           </CurrencySelectContainer>
         }
-
+        
         {/* Search Sort Button - type="search" */}
         { type == 'search' &&
           <SortSearchButton 
@@ -579,11 +710,12 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
             Sort
           </SortSearchButton>
         }
-
+        
       </div>
     </div>
   );
 }
+// #endregion
 
 
 // Component Styles

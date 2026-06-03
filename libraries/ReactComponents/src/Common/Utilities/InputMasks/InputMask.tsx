@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, RefObject } from "react";
-import { Filter_NUMS_ONLY, Validate_EMAIL, Validate_PASS_HS } from "./RegExpFilters";
+import { Filter_CHARS_NUMS, Filter_NUMS_ONLY, Validate_EMAIL, Validate_PASS_HS } from "./RegExpFilters";
 
 
 
@@ -47,6 +47,14 @@ export type MaskOpts = {
   // Additional props added here through subclasses
 }
 
+/** For components that want to use a templated ***{@link InputMask|InputMask Class}*** with their props easily. */
+export type TMaskClass<TMask extends InputMask, TMO extends MaskOpts> = { 
+  MaskClass?: { 
+    new (config: TMO): TMask; 
+    create(options: TMO): TMask; 
+  };
+};
+
 
 //----------------------------------------//
 // Prebuilt Mask Configurations           //
@@ -79,11 +87,19 @@ export const ccExpMaskConfig: MaskOpts = {
     // filterNonWildcardsFromInput: false
   },
 }
-
 export const ccvMaskConfig: MaskOpts = {
   filter: Filter_NUMS_ONLY,
   inputMask: {
     mask: '___',
+    maskWildCardCharacter: '_',
+    useMaskAsPlaceholder: true,
+    // filterNonWildcardsFromInput: false
+  },
+}
+export const PolicyMaskConfig: MaskOpts = {
+  filter: Filter_CHARS_NUMS,
+  inputMask: {
+    mask: '___-________',
     maskWildCardCharacter: '_',
     useMaskAsPlaceholder: true,
     // filterNonWildcardsFromInput: false
@@ -112,7 +128,7 @@ export type MaskEventHandle = string | false;
 export type InputActionType = 
 | 'insertText' | 'insertCompositionText' | 'insertFromPaste' 
 | 'deleteContentBackward' | 'deleteContentForward' | 'deleteByCut'
-| 'historyUndo' | 'historyRedo';
+| 'historyUndo' | 'historyRedo' | 'insertReplacementText';
 
 
 /**
@@ -196,7 +212,7 @@ export class InputMask {
    * 
    * **Note:** Do not access this directly, call **{@link shouldFilterMaskChars()}** to check if we're also filtering the mask's non-wildcard characters.
    */
-  protected _filterMaskChars: boolean | undefined;
+  protected _maskFilterChars: boolean | undefined;
   
   /** 
    * The mask's unique non-wildcard characters. If we're filtering them out from the input, they're done manually. 
@@ -220,6 +236,12 @@ export class InputMask {
   protected listenerInputType: InputActionType | undefined;
   protected inputRef: HTMLInputElement | HTMLTextAreaElement | undefined;
   protected addedEventListeners: boolean = false;
+  
+  /** Autofill events mixed with us invoking onChange will act as if we recreated a fresh new input, retriggering the autofill and causing infinite loops?  */
+  protected isUpdatingProgrammatically: boolean = false; // specifically for autofill scenarios
+  
+  /** The last value the nativeEvent captured during an autofill. Used to determine whether we should *{@link evaluate()}*. */
+  protected lastProcessedValue: string = '';
   
   
   //----------------------------------------------------------------------------//
@@ -462,29 +484,44 @@ export class InputMask {
     // Retrieve the changed input value from the native 
     const cursorStart = input.selectionStart ?? 0; // cursor location
     const cursorEnd = input.selectionEnd ?? 0; // highlighted?
+    let newCursorLocation = cursorStart;
     
     // Cached refs
     const prevRawValue = this.rawInputValue; // Right now these are technically the "current"
     const prevMaskedValue = this.maskedInputValue; // Right now these are technically the "current"
-    
-    // Calculated input values
+    let newRawValue = prevRawValue;
+    let newMaskValue = prevMaskedValue;
     let filteredInsert = insertedText;
-    const prevValue = input.value;
-    let newValue = prevValue;
     
     // * logging
     console.log(`\nMaskEval::Evaluating and updating input from user event(${actionType}), maskData: `, { inputName, mask: this.mask, filter: this.filterExp, event },
       `\n native event data: `, { actionType, insertedText, [inputName]: input },
-      `\n current data: `, { currentRawValue: prevRawValue, currentMaskedValue: prevMaskedValue },
-      `\n cursor: `, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }), cursorStart, cursorEnd, },
+      `\n current data: `, { currentRawValue: prevRawValue, currentMaskedValue: prevMaskedValue, inputValue: this?.inputRef?.value },
+      `\n cursor: `, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue, rawVal: prevRawValue }), cursorStart, cursorEnd, },
     );
     
-    // TODO - handle copying deleted to clipboard?
-    // - onCut event needs to saveToClipboard it's contents
     
-    // TODO - add mask's non-wildcard characters filter to the mask's base filter functionality
-    // - add filter functionality for this._maskCachedNWChars if this._filterMaskChars is true
-    
+    // 
+    /* 
+      TODO: we need to capture the state of an autofill event, and add it to the update history 
+        - We can capture autofill events in the native input event only
+        - We have no way to capture it's delete feature, that removes everything from the input
+          - Since this is a very specific action, find a way to capture this
+          
+        - Notes on autofill events
+          - An autofill paste bypasses everything, and only shows up in the onNativeInput event
+          - There's no legitimate way to capture an autofill delete event
+          - furthermore, if you add or remove text after either event, it will overwrite the previous action (the mixed up cursor pos messes this up even more)
+            - Tracking this in the history and updating the prevValue via updateState will fix this
+          
+          // ? No extra events occur, we could use the history with an extra value on whether it's an autofill to handle edits
+          // () This also is very problematic, so maybe just preventing the event altogether, or capturing it's contents for our own handling would be best
+          // -> If this is the case, we need to find a way to handle the deleting part of this event -> in nativeInput check if the text was cleared 
+          
+      TODO: We need adjusted events for ctrl + backspace/delete, they delete entire words 
+        - Is there a way to capture the deleted portion and have it re-evaluated to save time and effort?
+      TODO: Filter only deletes are deleting everything
+    */
     
     // #region - User typed or pasted some text
     // {} The user typed or pasted some text
@@ -502,38 +539,63 @@ export class InputMask {
         else { // <- Early out, there's no valid text to add
           this.handleNativeEventLogic(undefined); // cancel the events
           this.updateState(prevRawValue, prevMaskedValue, cursorStart, cursorEnd); // update internal state tracking
-          this.updateCursorPosition(cursorStart, cursorEnd, newValue, input);
+          this.updateCursorPosition(cursorStart, cursorEnd, prevRawValue, input);
           console.log(`Cancelled MaskEval::${actionType}: The added text was filtered out, aborting the onChange event. data: `, { insertedText, filteredInsert, filter: this.filterExp, inputName });
           return false; // input left as-is
         }
+        
+        // ? Filter Only - finish the calc here
+        if (!this.isMaskEnabled()) {
+          // Calc the new raw value
+          newRawValue = this.addToRawValue(addedText, prevRawValue, cursorStart, cursorEnd);
+          newCursorLocation = this.getNewRawCursorLocation(cursorStart, cursorEnd, addedText.length);
+          
+          // -> Successfully filtered the text for single/multi insert and paste inputs        
+          this.handleNativeEventLogic(newRawValue); // call the onChange w/filteredInput
+          this.updateState(newRawValue, newMaskValue, newCursorLocation, newCursorLocation); // update internal state tracking
+          this.updateCursorPosition(newCursorLocation, newCursorLocation, newRawValue, input); // after the added text
+          
+          console.log(`Completed MaskEval::${actionType}: Filtered the input for single/multi insert, and paste actions. Event data: `, 
+            { value: this.logCursorPos(newCursorLocation, newCursorLocation, { rawVal: newRawValue }), 
+              newCursorLocation, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
+          );
+          console.log(`cursor history () data:`, 
+            `\nprevRaw:   `, { cursor: this.logRawCursorPos(cursorStart, cursorEnd, prevRawValue) },
+            `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
+          );
+          return newRawValue;
+        }
       }
       
-      // ? Calc the new raw value
-      const { rawCursorStart, rawCursorEnd } = this.getRawCursorFromMasked(cursorStart, cursorEnd, prevMaskedValue);
-      const newRawValue = this.addToRawValue(addedText, prevRawValue, rawCursorStart, rawCursorEnd);
       
-      // ? Create the masked input
-      const newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, addedText.length);
-      const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(newCursorLocation, newCursorLocation);
-      const newMaskValue = this.buildInputMask(newRawValue);
+      // ? Mask Only - Create the masked input, and update the input
+      if (this.isMaskEnabled()) 
+        {
+        // Calc the new raw value
+        const { rawCursorStart, rawCursorEnd } = this.getRawCursorFromMasked(cursorStart, cursorEnd, prevMaskedValue);
+        newRawValue = this.addToRawValue(addedText, prevRawValue, rawCursorStart, rawCursorEnd);
+        newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, addedText.length);
+        const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(newCursorLocation, newCursorLocation);
+        
+        // -> Successfully recreated the mask for single/multi insert and paste inputs
+        newMaskValue = this.buildInputMask(newRawValue);
+        this.handleNativeEventLogic(newMaskValue); // call the onChange w/maskInput
+        this.updateState(newRawValue, newMaskValue, maskedCursorStart, maskedCursorEnd); // update internal state tracking
+        this.updateCursorPosition(maskedCursorStart, maskedCursorEnd, newMaskValue, input); // after the added text
+        
+        console.log(`Completed MaskEval::${actionType}: Recreated the mask for the single/multi insert, and paste actions. Event data: `, 
+          { value: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }), 
+            start: maskedCursorStart, end: maskedCursorEnd, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
+        );
+        console.log(`cursor history () data:`, 
+          `\nprevRaw:   `, { cursor: this.logRawCursorPos(rawCursorStart, rawCursorEnd, prevRawValue) },
+          `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
+          `\nprevMasked:`, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue, rawVal: prevRawValue }) },
+          `\nnewMasked: `, { cursor: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue, rawVal: newRawValue }) },
+        );
+        return newMaskValue;
+      }
       
-      // -> Successfully recreated the mask for single/multi insert and paste inputs
-      this.handleNativeEventLogic(newMaskValue); // call the onChange w/maskInput
-      this.updateState(newRawValue, newMaskValue, maskedCursorStart, maskedCursorEnd); // update internal state tracking
-      this.updateCursorPosition(maskedCursorStart, maskedCursorEnd, newMaskValue, input); // after the added text
-      
-      // <- kelp me
-      console.log(`Completed MaskEval::${actionType}: Recreated the mask for the single/multi insert, and paste actions. Event data: `, 
-        { value: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }), 
-        start: maskedCursorStart, end: maskedCursorEnd, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
-      );
-      console.log(`cursor history () data:`, 
-        `\nprevRaw:   `, { cursor: this.logRawCursorPos(rawCursorStart, rawCursorEnd, prevRawValue) },
-        `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
-        `\nprevMasked:`, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }) },
-        `\nnewMasked: `, { cursor: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }) },
-      );
-      return newMaskValue; 
     }
     // #endregion
     
@@ -545,39 +607,65 @@ export class InputMask {
       actionType == 'deleteContentForward' || 
       actionType == 'deleteByCut'
     ) {
-      // Delete by cut shouldn't evaluate if they didn't make a selection.
+      // ? Delete by cut shouldn't evaluate if they didn't make a selection.
       if (actionType == 'deleteByCut' && cursorStart == cursorEnd) {
         this.handleNativeEventLogic(undefined); // cancel the events
         this.updateState(prevRawValue, prevMaskedValue, cursorStart, cursorEnd); // update internal state tracking
-        this.updateCursorPosition(cursorStart, cursorEnd, newValue, input);
+        this.updateCursorPosition(cursorStart, cursorEnd, prevRawValue, input);
         console.log(`Cancelled MaskEval::${actionType}: The user inputted a cut event without a selection: `, { inputName });
         return false;
       }
       
-      // ? Calc the new raw value
-      const { rawCursorStart, rawCursorEnd } = this.getRawCursorFromMasked(cursorStart, cursorEnd, prevMaskedValue);
-      const removedChars = this.getRemovedCharacterCount(rawCursorStart, rawCursorEnd);
-      const newRawValue = this.removeFromRawValue(prevRawValue, rawCursorStart, rawCursorEnd, removedChars, actionType);
       
-      // ? Create the masked input
-      const newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, removedChars, actionType);
-      const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(newCursorLocation, newCursorLocation);
-      const newMaskValue = this.buildInputMask(newRawValue);
+      // ? Filter Only - finish the calc here
+      if (this.isFilterEnabled() && !this.isMaskEnabled()) {
+        // Calc the new raw value
+        const removedChars = this.getRemovedCharacterCount(cursorStart, cursorEnd);
+        const newRawValue = this.removeFromRawValue(prevRawValue, cursorStart, cursorEnd, removedChars, actionType);
+        const newCursorLocation = this.getNewRawCursorLocation(cursorStart, cursorEnd, removedChars, actionType);
+        
+        // -> Successfully recreated the mask for single/multi insert and paste inputs
+        this.handleNativeEventLogic(newRawValue); // call the onChange w/maskInput
+        this.updateState(newRawValue, newMaskValue, newCursorLocation, newCursorLocation); // update internal state tracking
+        this.updateCursorPosition(newCursorLocation, newCursorLocation, newRawValue, input); 
+        console.log(`Completed MaskEval::${actionType}: Deleted the content for the filtered input. Data: `, 
+          { value: this.logCursorPos(newCursorLocation, newCursorLocation, { rawVal: newRawValue }), 
+            newCursorLocation, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
+        );
+        console.log(`cursor history () data:`, 
+          `\nprevRaw:   `, { cursor: this.logRawCursorPos(cursorStart, cursorEnd, prevRawValue) },
+          `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
+        );
+        return newRawValue;
+      }
       
-      // -> Successfully recreated the mask for single/multi insert and paste inputs
-      this.handleNativeEventLogic(newMaskValue); // call the onChange w/maskInput
-      this.updateState(newRawValue, newMaskValue, maskedCursorStart, maskedCursorEnd); // update internal state tracking
-      this.updateCursorPosition(maskedCursorStart, maskedCursorEnd, newMaskValue, input); 
-      console.log(`Completed MaskEval::${actionType}: Recreated the mask for the delete event. Data: `, 
-        { value: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }), 
-        start: maskedCursorStart, end: maskedCursorEnd, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
-      );
-      console.log(`cursor history () data:`, 
-        `\nprevRaw:   `, { cursor: this.logRawCursorPos(rawCursorStart, rawCursorEnd, prevRawValue) },
-        `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
-        `\nprevMasked:`, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue }) },
-        `\nnewMasked: `, { cursor: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }) },
-      );
+      
+      // ? Mask Only - Calc the new raw value
+      if (this.isMaskEnabled()) {
+        const { rawCursorStart, rawCursorEnd } = this.getRawCursorFromMasked(cursorStart, cursorEnd, prevMaskedValue);
+        const removedChars = this.getRemovedCharacterCount(rawCursorStart, rawCursorEnd);
+        const newRawValue = this.removeFromRawValue(prevRawValue, rawCursorStart, rawCursorEnd, removedChars, actionType);
+        const newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, removedChars, actionType);
+        
+        // ? Create the masked input
+        const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(newCursorLocation, newCursorLocation);
+        const newMaskValue = this.buildInputMask(newRawValue);
+        
+        // -> Successfully recreated the mask for single/multi insert and paste inputs
+        this.handleNativeEventLogic(newMaskValue); // call the onChange w/maskInput
+        this.updateState(newRawValue, newMaskValue, maskedCursorStart, maskedCursorEnd); // update internal state tracking
+        this.updateCursorPosition(maskedCursorStart, maskedCursorEnd, newMaskValue, input); 
+        console.log(`Completed MaskEval::${actionType}: Recreated the mask for the delete event. Data: `, 
+          { value: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue }), 
+          start: maskedCursorStart, end: maskedCursorEnd, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
+        );
+        console.log(`cursor history () data:`, 
+          `\nprevRaw:   `, { cursor: this.logRawCursorPos(rawCursorStart, rawCursorEnd, prevRawValue) },
+          `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
+          `\nprevMasked:`, { cursor: this.logCursorPos(cursorStart, cursorEnd, { maskedVal: prevMaskedValue, rawVal: prevRawValue }) },
+          `\nnewMasked: `, { cursor: this.logCursorPos(maskedCursorStart, maskedCursorEnd, { maskedVal: newMaskValue, rawVal: newRawValue }) },
+        );
+      }
       return newMaskValue; 
     }
     // #endregion
@@ -594,9 +682,10 @@ export class InputMask {
       if (prevState) {
         console.log('there was a undo/redo state! data: ', prevState);
         const { rawInputValue, maskedInputValue, selectionStart, selectionEnd } = prevState;
-        this.handleNativeEventLogic(maskedInputValue); // call the onChange w/maskInput
+        this.handleNativeEventLogic(this.isMaskEnabled() ? maskedInputValue : rawInputValue); // call the onChange w/maskInput
         this.updateState(rawInputValue, maskedInputValue, selectionStart, selectionEnd, false);
         this.updateCursorPosition(selectionStart, selectionEnd, maskedInputValue, input); 
+        console.log('missing unto/redo state! data: ', { prevState, current: {  prevRawValue, prevMaskedValue, cursorStart, cursorEnd } });
         return maskedInputValue;
       } else {
         console.log('missing unto/redo state! data: ', { prevState, current: {  prevRawValue, prevMaskedValue, cursorStart, cursorEnd } });
@@ -608,6 +697,28 @@ export class InputMask {
     }
     // #endregion
     
+    
+    // #region - AutoFill events
+    if (actionType == 'insertReplacementText') {
+      newRawValue = insertedText;
+      newCursorLocation = this.getNewRawCursorLocation(cursorStart, cursorEnd, newRawValue.length);
+      
+      // -> Successfully autoFilled the text for single/multi insert and paste inputs        
+      this.handleNativeEventLogic(newRawValue); // call the onChange w/filteredInput
+      this.updateState(newRawValue, newMaskValue, newCursorLocation, newCursorLocation); // update internal state tracking
+      this.updateCursorPosition(newCursorLocation, newCursorLocation, newRawValue, input); // after the added text
+      
+      console.log(`Completed MaskEval::${actionType}: Filtered the input for single/multi insert, and paste actions. Event data: `, 
+        { value: this.logCursorPos(newCursorLocation, newCursorLocation, { rawVal: newRawValue }), 
+          newCursorLocation, wasFiltered: this.isFilterEnabled(), wasMasked: this.isMaskEnabled(), inputName },
+      );
+      console.log(`cursor history () data:`, 
+        `\nprevRaw:   `, { cursor: this.logRawCursorPos(cursorStart, cursorEnd, prevRawValue) },
+        `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
+      );
+      return newRawValue;
+    }
+    // #endregion
     
     // ! Fallback: we don't want to break the mask input, so just prevent this event from occurring
     console.error(`MaskEval::InputMask(${this.mask}) encountered an error while evaluating the mask on a keypress.`,
@@ -797,6 +908,11 @@ export class InputMask {
       return rawCursorStart + diff;
     }
     
+    // ? for autofill scenarios
+    if (actionType == 'insertReplacementText') {
+      return diff; // The autofill's length
+    }
+    
     // ? Delete scenarios
     const isHighlightedSelection = rawCursorStart != rawCursorEnd;
     let newCursorLocation = 0;
@@ -893,8 +1009,8 @@ export class InputMask {
   protected findMaskedCursorLocations(rawCursorStart: number, rawCursorEnd: number, mask?: string, wildcard?: string): { maskedCursorStart: number, maskedCursorEnd: number } {
     if (!mask) mask = this.mask;
     if (!wildcard) wildcard = this.wildcard;
-    if (!this.mask /* !mask */ || !wildcard) {
-      console.error(`Calling findMaskedCursorLocation on an input mask that only filter's it's input! Pass in params or initialize the mask!`, { mask, wildcard });
+    if ((!this.mask /* !mask */ || !wildcard) && this.isMaskEnabled()) {
+      console.error(`Calling findMaskedCursorLocation without a valid mask! Pass in params or initialize the mask!`, { mask, wildcard });
       return { } as any;
     }
     
@@ -936,7 +1052,7 @@ export class InputMask {
     if (updateHistory) {
       this.history.push({ rawInputValue, maskedInputValue, selectionStart, selectionEnd });
     }
-    console.log(`UpdateState() InputMaskState: `, { rawInputValue, maskedInputValue });
+    console.log(`UpdateState() InputMaskState: `, { rawInputValue, maskedInputValue, start: selectionStart, end: selectionEnd });
   }
   // #endregion
   
@@ -976,7 +1092,7 @@ export class InputMask {
     const filterExp = filterRegex || this.filterExp;
     
     // <- Early out if we're missing information
-    if (!charsToFilter || (!filterExp && !this._filterMaskChars)) {
+    if (!charsToFilter || (!filterExp && !this._maskFilterChars)) {
       console.error(`${this.inputRef?.name || this.mask}::filter() was ran without the proper information!`, { filterExp, charsToFilter, maskCachedNWcChars: this.cachedNWcChars });
       return charsToFilter;
     }
@@ -1091,7 +1207,7 @@ export class InputMask {
   
   
   /**
-   * Retrieves the mask's **non-wildcard** characters in an array. Will return undefined if {@link _filterMaskChars} is set to false.
+   * Retrieves the mask's **non-wildcard** characters in an array. Will return undefined if {@link _maskFilterChars} is set to false.
    * @note In the event this is undefined, calling {@link shouldFilterMaskChars} to both check and define the `_maskCachedNWChars`.
    * 
    * ----
@@ -1143,7 +1259,7 @@ export class InputMask {
     // {} Clear out all the old mask data before initializing the new data
     this._mask = '';
     this._maskWildcardCharacter = undefined;
-    this._filterMaskChars = undefined;
+    this._maskFilterChars = undefined;
     this._maskCachedNWChars = undefined;
     
     // -> Update the mask's state
@@ -1153,7 +1269,7 @@ export class InputMask {
     // -> Update the mask's dependent information
     if (this.mask && this.wildcard) {
       this._maskCachedNWChars = this.findNonWildcardChars(this.mask, this._maskWildcardCharacter);
-      this._filterMaskChars = filterMaskChars;
+      this._maskFilterChars = filterMaskChars;
     }
   }
   
@@ -1190,7 +1306,7 @@ export class InputMask {
   
   protected shouldFilterMaskChars(): boolean {
     // Validity checks
-    if (!this.isMaskEnabled() || !this._filterMaskChars) {
+    if (!this.isMaskEnabled() || !this._maskFilterChars) {
       return false;
     }
     
@@ -1222,29 +1338,40 @@ export class InputMask {
   protected logCursorPos(start: number, end: number, opts?: { mask?: string, wildcard?: string, maskedVal?: string, rawVal?: string } ): string {
     const mask = opts?.mask || this.mask;
     const wildcard = opts?.wildcard || this.wildcard;
-    if (!mask || !wildcard) {
+    let value = '';
+    if ((!mask || !wildcard) && !this.isFilterEnabled()) {
       console.error(`logCursorPosition() is missing properties to display the cursor location. Data: `, { mask, wildcard, start, end });
       return 'CursorLogError';
     }
     
-    // ? Option to display the current value
-    let maskRef = mask; 
-    if (opts?.maskedVal) maskRef = opts?.maskedVal;
-    else if (opts?.rawVal) {
-      let newRef = '';
-      const rawChars = opts?.rawVal.split("");
-      for(const [index, char] of [...mask].entries()) {
-        if (char == wildcard && rawChars.length) newRef += rawChars.shift();
-        else newRef += char;
-      }
-      maskRef = newRef;
+    // ? Filter only
+    if (!this.isMaskEnabled()) {
+      value = opts?.rawVal || '';
     }
     
-    // ? actual logic
+    
+    // ? mask - Option to display the current value
+    else {
+      let maskRef = mask; 
+      if (opts?.maskedVal) maskRef = opts?.maskedVal;
+      else if (opts?.rawVal) {
+        let newRef = '';
+        const rawChars = opts?.rawVal.split("");
+        for(const [index, char] of [...mask].entries()) {
+          if (char == wildcard && rawChars.length) newRef += rawChars.shift();
+          else newRef += char;
+        }
+        maskRef = newRef;
+      }
+      
+      value = maskRef;
+    }
+    
+    // ? mask logic
     const isHighlighted = start != end;
-    const beforeCursorStart = maskRef.substring(0, start);
-    const selection = maskRef.substring(start, end); // either the cursor location '', or the highlighted selection.
-    const afterCursorEnd = maskRef.substring(end);
+    const beforeCursorStart = value.substring(0, start);
+    const selection = value.substring(start, end); // either the cursor location '', or the highlighted selection.
+    const afterCursorEnd = value.substring(end);
     
     if (isHighlighted) return [beforeCursorStart, '|', selection, '|', afterCursorEnd].join("");
     else               return [beforeCursorStart, '|', afterCursorEnd].join("");
@@ -1369,6 +1496,7 @@ export class InputMask {
     input.addEventListener('keydown', this.onKeyPress, true);
     input.addEventListener('cut', this.onCut, true);
     input.addEventListener('paste', this.onPaste, true);
+    input.addEventListener('input', this.onAutoFill, true); 
     this.addedEventListeners = true;
   }
   
@@ -1406,7 +1534,7 @@ export class InputMask {
       const isRedo = windowOrMacCtrlPressed && keyboardEvent.shiftKey;
       const isUndo = !isRedo;
       
-      console.log('this was an undo/redo event!: ', keyboardEvent);
+      console.log('\n\nthis was an undo/redo event!: ', keyboardEvent);
       if (isUndo) {
         this.listenerInputType = 'historyUndo'; // we're not using actual history events, just our own InputMaskHistory state
         this.evaluate(inputEvent, this.listenerInputType);
@@ -1436,11 +1564,6 @@ export class InputMask {
       return;
     }
     
-    // <- All other shortcuts, and modifier events (except for shift)
-    if (windowOrMacCtrlPressed || keyboardEvent.altKey) {
-      return;
-    }
-    
     // * Ignore structural navigation keys
     // if ([
     //   'unidentified', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright',
@@ -1451,9 +1574,19 @@ export class InputMask {
     // }
     
     // ? Captured key events we're looking for (insert character, backspace, or delete)
-    // -> The user pressed backspace / delete, invoke the event
     if (key == 'backspace' || key == 'delete') {
       this.listenerInputType = key == 'backspace' ? 'deleteContentBackward' : 'deleteContentForward';
+      
+      // -> An autofill's deletion event, handle gracefully
+      // if (this.inputRef?.matches(':autofill') || this.inputRef?.matches(':-webkit-autofill')) {
+      //   // DO NOT call inputEvent.preventDefault() here!
+      //   // Let the browser natively break its autofill state block.
+      //   console.log(`\n\nUser pressed ${key} on an autoFilled field. Letting browser handle native clear.`);
+      //   inputEvent.preventDefault();
+      //   return; 
+      // }
+      
+      // -> The user pressed backspace / delete, invoke the event
       inputEvent.preventDefault();
       console.log(`\n\nuser(${this.listenerInputType}): just deleted some text.`, { keyboardEvent });
       this.evaluate(keyboardEvent, this.listenerInputType);
@@ -1468,6 +1601,14 @@ export class InputMask {
       this.evaluate(keyboardEvent, this.listenerInputType);
       return;
     }
+    
+    // <- All other shortcuts, and modifier events (except for shift)
+    if (windowOrMacCtrlPressed || keyboardEvent.altKey) {
+      return;
+    }
+    
+    // ?! disable scenarios where we don't know what will happen?
+    inputEvent.preventDefault();
   }
   
   
@@ -1505,6 +1646,51 @@ export class InputMask {
     }
   }
   
+  /** Listener to catch native browser injections like autofill before React updates */
+  protected onAutoFill = (inputEvent: Event): void => {
+    if (this.isUpdatingProgrammatically) return;
+    
+    // * Event information
+    const nativeEvent = inputEvent as InputEvent;
+    const target = inputEvent.target as HTMLInputElement;
+    const currentValue = target.value;
+    
+    const isAutoFill = target.matches(':autofill') || target.matches(':-webkit-autofill'); // ? (Safer) - inputType is unreliable, and this feels hacky as well.
+    console.warn(`This was a native input event: `, { isAutoFill, currentValue, nativeEvent, target });
+    return;
+    
+    
+    // {} GUARD: If the browser is trying to spam the exact same text, ignore it
+    if (currentValue === this.lastProcessedValue) {
+      inputEvent.preventDefault();
+      inputEvent.stopPropagation();
+      return;
+    }
+    
+    // ? Check if this is an autofill event
+    const isAutoFilled = // (Safer) - inputType is unreliable, and this feels hacky as well.
+      target.matches(':autofill') || 
+      target.matches(':-webkit-autofill');
+    
+    if (isAutoFilled && this.inputRef) {
+      this.listenerInputType = 'insertReplacementText'; 
+      const autoFilledValue = this.inputRef.value; // the complete raw autoFilled text
+      const customEvent: InputEvent & { text: string } = { ...nativeEvent, text: autoFilledValue };
+      
+      console.log(`\n\nuser(${this.listenerInputType}): autofill detected.`, { customEvent, text: autoFilledValue });
+      inputEvent.preventDefault();
+      inputEvent.stopPropagation();
+      
+      // ! Try and prevent a feedback loop. Calling OnChange from here WILL cause another input event, and an endless loop
+      this.isUpdatingProgrammatically = true;
+      try {
+        this.evaluate(customEvent, this.listenerInputType);
+      } finally {
+        this.isUpdatingProgrammatically = false;
+      }
+    }
+  }
+  
   
   /** Invokes {@link evaluate() which then calculates the new masked input value and calls the onChange event.} */
   protected handleUserInputEvent( ...[actionType, event]:
@@ -1516,6 +1702,7 @@ export class InputMask {
     | [ listenerInputType: Extract<InputActionType, 'insertCompositionText'>, event: KeyboardEvent, ] 
     | [ listenerInputType: Extract<InputActionType, 'historyUndo'>, event: KeyboardEvent, ] 
     | [ listenerInputType: Extract<InputActionType, 'historyRedo'>, event: KeyboardEvent, ] 
+    | [ listenerInputType: Extract<InputActionType, 'insertReplacementText'>, event: InputEvent & { text: '' }, ] 
   ):  
     | { actionType: Extract<InputActionType, 'insertText'>,             event: KeyboardEvent  | undefined, insertedText: string }
     | { actionType: Extract<InputActionType, 'insertFromPaste'>,        event: ClipboardEvent | undefined, insertedText: string }
@@ -1525,6 +1712,7 @@ export class InputMask {
     | { actionType: Extract<InputActionType, 'deleteByCut'>,            event: ClipboardEvent | undefined, insertedText: string }
     | { actionType: Extract<InputActionType, 'historyUndo'>,   event: KeyboardEvent  | undefined, insertedText: string }
     | { actionType: Extract<InputActionType, 'historyRedo'>,   event: KeyboardEvent  | undefined, insertedText: string }
+    | { actionType: Extract<InputActionType, 'insertReplacementText'>,   event: InputEvent & { text: '' } | undefined, insertedText: string }
   {
     // ? This just turned into a mapping of event types for each return, but I don't think this works when you pass unknown vars when it's called
     // () i.e you still have to do a if (actionType == 'insertText') for event to be of 'KeyboardEvent' type.
@@ -1551,6 +1739,9 @@ export class InputMask {
     }
     if (actionType == 'historyUndo') return {
       actionType, event, insertedText: event.key
+    }
+    if (actionType == 'insertReplacementText') return {
+      actionType, event, insertedText: event.text
     }
     
     return { actionType, event, insertedText: '' } as any;

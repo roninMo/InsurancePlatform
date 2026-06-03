@@ -1,4 +1,4 @@
-import { ccExpMaskConfig, ccMaskConfig, ccvMaskConfig, emailFilter, InputMask, MaskConfig, MaskOpts, numbersOnlyFilter, phoneMaskConfig } from "./InputMask";
+import { ccExpMaskConfig, ccMaskConfig, ccvMaskConfig, emailFilter, InputMask, MaskConfig, MaskOpts, numbersOnlyFilter, phoneMaskConfig, PolicyMaskConfig } from "./InputMask";
 import { Filter_CHARS_ONLY, Filter_CHARS_NUMS_SPC } from "./RegExpFilters";
 import { TextInputTypes } from '../../../Forms/Input/Input'
 
@@ -319,6 +319,29 @@ export class CCVMask extends CustomInputMask {
   protected static override defaultConfig: MaskOpts = ccvMaskConfig;
 }
 // #endregion
+
+
+// #region Policy Number Masks
+/**
+ * ### CCMask
+ * The Policy Number Mask is an {@link CustomInputMask|InputMask} that has predefined data, with option formatting overrides to fit your input mask's needs.
+ * 
+ * Each class has a specific {@link MaskOpts|Mask Config} for an {@link TextInputTypes|Input} type, with an 
+ * `options` arg that allow you to edit the **InputMask** while retaining it's logic and filter for that specific mask.
+ * 
+ * * **Remarks:** Use the {@link create} function to handle initialization.
+ * 
+ * ----
+ * ### Usage:
+ * ```ts
+ * const inputMask = UseRef<PolicyMask>(CCMask.create()); 
+ * // maskFormat: '____-____-____'
+ * ```
+ */
+export class PolicyMask extends CustomInputMask {
+  /** The policy number mask's configuration, predefined for each subclassed version. */
+  protected static override defaultConfig: MaskOpts = PolicyMaskConfig;
+}
 
 
 // #region Filter Only Masks
