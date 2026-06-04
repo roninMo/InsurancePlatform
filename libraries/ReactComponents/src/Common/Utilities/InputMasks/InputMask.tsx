@@ -503,25 +503,6 @@ export class InputMask {
     
     
     
-    /* 
-      TODO: we need to capture the state of an autofill event, and add it to the update history 
-        - We can capture autofill events in the native input event only
-        - We have no way to capture it's delete feature, that removes everything from the input
-          - Since this is a very specific action, find a way to capture this
-          
-        - Notes on autofill events
-          - An autofill paste bypasses everything, and only shows up in the onNativeInput event
-          - There's no legitimate way to capture an autofill delete event
-          - furthermore, if you add or remove text after either event, it will overwrite the previous action (the mixed up cursor pos messes this up even more)
-            - Tracking this in the history and updating the prevValue via updateState will fix this
-          
-          // ? No extra events occur, we could use the history with an extra value on whether it's an autofill to handle edits
-          // () This also is very problematic, so maybe just preventing the event altogether, or capturing it's contents for our own handling would be best
-          // -> If this is the case, we need to find a way to handle the deleting part of this event -> in nativeInput check if the text was cleared 
-          
-      TODO: We need adjusted events for ctrl + backspace/delete, they delete entire words 
-        - Is there a way to capture the deleted portion and have it re-evaluated to save time and effort?
-    */
     
     // #region - User typed or pasted some text
     // {} The user typed or pasted some text
@@ -607,6 +588,10 @@ export class InputMask {
       actionType == 'deleteContentForward' || 
       actionType == 'deleteByCut'
     ) {
+      const isHighlightedSelection = cursorStart != cursorEnd;
+      let windowsOrMacCtrlKeyPressed: boolean = false;
+      if (actionType != 'deleteByCut' && event) windowsOrMacCtrlKeyPressed = event.ctrlKey || event.metaKey;
+      
       // ? Delete by cut shouldn't evaluate if they didn't make a selection.
       if (actionType == 'deleteByCut' && cursorStart == cursorEnd) {
         this.updateState(prevRawValue, prevMaskedValue, cursorStart, cursorEnd); // update internal state tracking
@@ -619,10 +604,20 @@ export class InputMask {
       
       // ? Filter Only - finish the calc here
       if (this.isFilterEnabled() && !this.isMaskEnabled()) {
-        // Calc the new raw value
-        const removedChars = this.getRemovedCharacterCount(cursorStart, cursorEnd);
-        const newRawValue = this.removeFromRawValue(prevRawValue, cursorStart, cursorEnd, removedChars, actionType);
-        const newCursorLocation = this.getNewRawCursorLocation(cursorStart, cursorEnd, removedChars, actionType);
+        // {} Default Logic
+        // * Normal backspace/delete - single character  OR  highlighted text deletions  AND  nulled ctrl+backspaces from a highlighted selections
+        if (!windowsOrMacCtrlKeyPressed || isHighlightedSelection) { 
+          const removedChars = this.getRemovedCharacterCount(cursorStart, cursorEnd);
+          newRawValue = this.removeFromRawValue(prevRawValue, cursorStart, cursorEnd, removedChars, actionType);
+          newCursorLocation = this.getNewRawCursorLocation(cursorStart, cursorEnd, removedChars, actionType);
+        }
+        // {} Ctrl + Backspace/Delete logic on an raw value
+        // * This is the same logic as the native event's handling
+        else { // windowsOrMacCtrlKeyPressed && !isHighlightedSelection
+          newRawValue = this.ctrlRemoveFromRawValue(prevRawValue, cursorStart, actionType as any);
+          const removedChars = prevRawValue.length - newRawValue.length;
+          newCursorLocation = actionType == 'deleteContentBackward' ? cursorStart - removedChars : cursorStart;
+        }
         
         // -> Successfully recreated the mask for single/multi insert and paste inputs
         this.updateState(newRawValue, newMaskValue, newCursorLocation, newCursorLocation); // update internal state tracking
@@ -643,11 +638,176 @@ export class InputMask {
       // ? Mask Only - Calc the new raw value
       if (this.isMaskEnabled()) {
         const { rawCursorStart, rawCursorEnd } = this.getRawCursorFromMasked(cursorStart, cursorEnd, prevMaskedValue);
-        const removedChars = this.getRemovedCharacterCount(rawCursorStart, rawCursorEnd);
-        const newRawValue = this.removeFromRawValue(prevRawValue, rawCursorStart, rawCursorEnd, removedChars, actionType);
-        const newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, removedChars, actionType);
         
-        // ? Create the masked input
+        // {} Default Logic
+        // * Normal backspace/delete - single character  OR  highlighted text deletions  AND  nulled ctrl+backspaces from a highlighted selections
+        if (!windowsOrMacCtrlKeyPressed || isHighlightedSelection) { 
+          const removedChars = this.getRemovedCharacterCount(rawCursorStart, rawCursorEnd);
+          newRawValue = this.removeFromRawValue(prevRawValue, rawCursorStart, rawCursorEnd, removedChars, actionType);
+          newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, removedChars, actionType);
+        }
+        // {} Ctrl + Backspace/Delete logic on an raw value
+        // * We only allow it to delete the mask's individual segments. ie. (012)-345-6789| -> (012)-345-____
+        else { // windowsOrMacCtrlKeyPressed && !isHighlightedSelection
+          const cursorLocation = cursorStart; 
+          
+          // TODO - move this further down to account for locations before or after all wildcard segments
+          // <- Early out - pressed (Ctrl + Backspace) at the start of the input OR (Ctrl + Del) at the end of the input
+          if (actionType == 'deleteContentBackward' && cursorLocation == 0
+            || actionType == 'deleteContentForward' && cursorLocation >= this.mask.length) 
+          {
+            this.updateState(prevRawValue, prevMaskedValue, cursorStart, cursorStart);
+            this.handleNativeEventLogic(prevMaskedValue);
+            this.updateCursorPosition(cursorStart, cursorStart, prevRawValue);
+            return prevMaskedValue;
+          }
+          
+          // Capture the mask's individual text segments, and store them in a hash
+          const refMaskVal = this.buildInputMask(prevRawValue); // In the event the user hasn't typed yet
+          const maskSegments = new Map<number, [number, number]>();
+          let cachedSegment: [number, number] | null = null;
+          for(let i = 0; i < this.mask.length; i++) {
+            const maskChar = this.mask[i];
+            // ? start capturing a mask segment, or update the current one
+            if (maskChar == this.wildcard) {
+              if (!cachedSegment) cachedSegment = [i, i]; // found new portion of the mask
+              else                cachedSegment[1] = i; // otherwise update it's endLocation
+            }
+            
+            // ? We finished a segment, add it to the map, and clear it to find the next one
+            else if (cachedSegment) {
+              maskSegments.set(maskSegments.size, cachedSegment);
+              cachedSegment = null;
+            }
+          }
+          console.log(`created the mask segments from ${refMaskVal}(${prevRawValue})`, { maskSegments });
+          
+          
+          // The current cursor logic is logical, not user interactively designed
+          // If we're inbetween two cursor positions, they should delete the text of those locations
+          // <- For moving to previous segments because there's an empty one, that's incorrect 
+          // ? Instead, move to the beginning of an empty segment
+          // () Additionally, if we're at the beginning of a segment and press backspace, delete the previous segment, and vice versa
+          
+          // {} Find the cursor's location within or from the segments
+          // Loop through each portion of the mask, and find where the cursor should be
+          let foundSegment: boolean = false;
+          let cursorSegment: [number, number] | undefined;
+          let segmentCursorLocation: number = -1;
+          let lastNonEmptySegment: [number, number] | undefined;
+          for (const [i, [start, end]] of maskSegments.entries()) {
+            console.log(`MaskSegment(${i}): [start: ${start}, end: ${end}]`);
+            
+            // {} First find out if this is an empty segment
+            let isEmptySegment: boolean = refMaskVal.replace(this.wildcard, "").length == 0; // helps with early out on empty inputs
+            if (!isEmptySegment) lastNonEmptySegment = [start, end];
+            
+            // ? If the cursor is within one of the wildcard segments
+            if (cursorLocation >= start && cursorLocation <= end) {
+              if (!isEmptySegment) {
+                cursorSegment = [start, end];
+                segmentCursorLocation = cursorLocation;
+                foundSegment = true;
+                break;
+              }
+              
+              // * Check if there was a non empty segment and use it
+              else if (lastNonEmptySegment) {
+                cursorSegment = lastNonEmptySegment;
+                if (actionType == 'deleteContentBackward') segmentCursorLocation = cursorSegment[1];
+                if (actionType == 'deleteContentForward') segmentCursorLocation = cursorSegment[0];
+                foundSegment = true;
+                break;
+              }
+              
+              // * If not, move the cursor to the beginning of the first segment
+              else {
+                const firstSegment: [number, number] | undefined = maskSegments.get(0);
+                cursorSegment = firstSegment;
+                segmentCursorLocation = firstSegment?.[0] || 0;
+                foundSegment = !!cursorSegment;
+                break;
+              }
+            }
+            
+            // ? If the location is less than the current segment ("inbetween" catch all)
+            if (cursorLocation < start) {
+              // * Move the cursor to the end of the last segment to be deleted, or the beginning of the input
+              if (actionType == 'deleteContentBackward') {
+                const prevSegment: [number, number] | undefined = lastNonEmptySegment;
+                
+                // The end of the previous segment 
+                if (prevSegment) { 
+                  cursorSegment = prevSegment;
+                  segmentCursorLocation = prevSegment[1]; 
+                  foundSegment = true;
+                  break;
+                }
+                
+                // Move it to the beginning of the input
+                else { 
+                  cursorSegment = undefined;
+                  segmentCursorLocation = 0;
+                  foundSegment = false;
+                  break;
+                }
+              }
+              
+              // * Move the cursor to the beginning of this segment to be deleted, or the first segment if everything's empty
+              else if (actionType == 'deleteContentForward') {
+                // The beginning of the current segment
+                if (!isEmptySegment) {
+                  cursorSegment = [start, end];
+                  segmentCursorLocation = start;
+                  foundSegment = true;
+                  break;
+                }
+                
+                // Move it to the first segment if everything's empty
+                else {
+                  const firstSegment: [number, number] | undefined = maskSegments.get(0);
+                  cursorSegment = firstSegment;
+                  segmentCursorLocation = firstSegment?.[0] || 0;
+                  foundSegment = !!cursorSegment;
+                  break;
+                }
+              }
+            }
+          }
+          
+          // ? If we've gone through all the segments, and haven't found the segment
+          if (!foundSegment) {
+            // * Move the cursor to the last available wildcard
+            if (actionType == 'deleteContentBackward') { 
+              cursorSegment = maskSegments.get(maskSegments.size - 1);
+              segmentCursorLocation = cursorSegment ? cursorSegment[1] : this.mask.length;
+              foundSegment = !!cursorSegment;
+            }
+            
+            // * Move the cursor to the end of the input
+            if (actionType == 'deleteContentForward') {
+              cursorSegment = undefined;
+              segmentCursorLocation = this.mask.length;
+              foundSegment = false;
+            }
+          }
+          
+          // We have the segment, if there was one, and the cursor location
+          /*
+            if the segment was found
+              - find the raw cursor locations of the currentCursorLocation, and the start/end of the mask segment
+              - run the deletion logic on it using the raw cursor locations
+              - combine the beforeSegment, newSegment, and afterSegment into a new raw value
+              - finished
+              
+            if there's no segment, just the updated cursor location
+              - assume there wasn't 
+          
+          */
+        }
+        
+        
+        // * Create the masked input
         const { maskedCursorStart, maskedCursorEnd } = this.findMaskedCursorLocations(newCursorLocation, newCursorLocation);
         const newMaskValue = this.buildInputMask(newRawValue);
         
@@ -962,6 +1122,53 @@ export class InputMask {
   
   
   /**
+   * Delete segments of the raw value's characters just like the native input event's **Ctrl + Backspace/Delete** behavior.
+   * 
+   * **Note:** This assume's that there isn't a highlighted selection, and is intended for that use only.
+   * 
+   * ----
+   * @param text                  The input's value or a portion of it without the mask applied. (also for cutting ***mask*** segments)
+   * @param cursorPosition        The raw **cursor's** location on either the ***currentValue*** or the provided ***segment***.
+   * @param actionType            Whether the user deleted using **backspace**, **delete**
+   * 
+   * @returns                     The new raw input value.
+   */
+  protected ctrlRemoveFromRawValue(text: string, cursorPosition: number, backspaceOrDelete: Extract<InputActionType, 'deleteContentBackward' | 'deleteContentForward'>): string {
+    if (text === undefined || cursorPosition < 0 || cursorPosition > text.length) {
+      console.error(`ctrlRemoveFromRawValue(${backspaceOrDelete}): An error occurred from one of the inputMask calculations, invalid input data: `, { text, cursorPosition });
+      return text || '';
+    }
+    
+    // Divide the string into two parts using the cursor's location
+    const leftText: string = text.slice(0, cursorPosition);
+    const rightText: string = text.slice(cursorPosition);
+    let newRawText: string = text;
+    
+    // {} These match exactly how operating systems group words for deletion
+    // ? Simulate a Ctrl + Backspace event
+    if (backspaceOrDelete == 'deleteContentBackward') {
+      const ctrlBackspaceFilter = leftText.match(/(\s*\w+|\s+)?$/);  // Match trailing spaces followed by the word characters directly behind the cursor
+      
+      const charactersToDelete = ctrlBackspaceFilter ? ctrlBackspaceFilter[0].length : 0;
+      const newPrecedingText = leftText.slice(0, leftText.length - charactersToDelete);
+      newRawText = newPrecedingText + rightText;
+    }
+    
+    // ? Simulate a Ctrl + Delete event
+    if (backspaceOrDelete == 'deleteContentForward') {
+      const ctrlDeleteFilter = rightText.match(/^(\w+\s*|\s+)?/); // Match leading spaces followed by the word characters immediately ahead of the cursor
+      
+      const characterToDelete = ctrlDeleteFilter ? ctrlDeleteFilter[0].length : 0;
+      const newSubsequentText = rightText.slice(characterToDelete);
+      newRawText = leftText + newSubsequentText;
+    }
+    
+    console.log(`ctrlRemoveFromRawValue(${backspaceOrDelete}) data: `, { leftText, rightText, newRawText, prevText: text, cursorPosition });
+    return newRawText;
+  }
+  
+  
+  /**
    * Calculates the new **raw cursor** location from the current and the edit.
    * * **note** if there was highlighted text, we start from the cursor's start location, and add the difference from the removed/pasted characters.
    * 
@@ -1086,7 +1293,7 @@ export class InputMask {
     }
     
     // Just make a hashmap
-    const wildcardMap: Map<number, number> = new Map();
+    const wildcardMap = new Map<number, number>();
     const start = Math.max(0, rawCursorStart);
     const end = Math.max(0, rawCursorEnd);
     let rawCursorIndex: number = 0;
@@ -1583,6 +1790,7 @@ export class InputMask {
       )
     );
     
+    // TODO - check if this is okay?
     const newCursorPos = Math.min(
       Math.max(0, cursorStart),
       newValue.length
