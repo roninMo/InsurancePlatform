@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo, FormEvent } from "react";
 import { FileUploadProps, MetadataTagProps, Textarea } from "@Project/ReactComponents";
-import { phoneMaskConfig } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
+import { ccMaskConfig, charsNumsSpcFilter, charsOnlyFilter, emailFilter, numbersOnlyFilter, phoneMaskConfig } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 
 
 export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDisabled }: {
@@ -17,13 +17,17 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
       { tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLTextAreaElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, prevValue);
+  }
+  
   const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
-    setValue(newValue);
+    // setValue(newValue);
   }
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-    // Logic for handling input or form submission...
+    // Logic for handling form submission...
     console.log(`submitting the textarea's data`, { value, uploadedFiles});
   };
   
@@ -32,7 +36,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
     setUploadedFiles(files);
     console.log(`files uploaded: `, files);
   };
-
+  
   // Prevent unnecessary rerenders.
   const fileUpload: FileUploadProps = useMemo(() => ({
     name: 'textarea-upload-form-name',
@@ -40,8 +44,8 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
     handleFiles: onAttachFile,
     multiple: true
   }), []);
-
-
+  
+  
   return (
     <div>
       <Textarea  
@@ -52,18 +56,19 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         description="The description of the textarea."
         placeholder="input text..."
         
-        // onUpdateValue={customUpdateValue}
-        onChange={(e) => onChangeValue(e)}
+        onUpdateValue={onUpdateValue}
+        // maskOpts={charsNumsSpcFilter}
+        onChange={onChangeValue}
         disableHookForms
-
+        
         onSubmit={onSubmitTextarea}
         submitButtonText="Post"
         submitButtonDisabled={disabled}
-
+        
         error={error}
         disabled={disabled}
         required
-
+        
         attachFile={fileUpload}
         metadataTags={defaultMetadataTags}
       />
@@ -105,7 +110,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
     setUploadedFiles(files);
     console.log(`files uploaded: `, files);
   };
-
+  
   // Prevent unnecessary rerenders.
   const fileUpload: FileUploadProps = useMemo(() => ({
     name: 'textarea-upload-form-name',
@@ -113,8 +118,8 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
     handleFiles: onAttachFile,
     multiple: true
   }), []);
-
-
+  
+  
   return (
     <div className="pt-2">
       <Textarea  
@@ -126,18 +131,18 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         placeholder="input text..."
         
         onUpdateValue={onUpdateValue}
-        maskOpts={phoneMaskConfig}
-        onChange={(e) => onChangeValue(e)}
+        // maskOpts={charsNumsSpcFilter}
+        onChange={onChangeValue}
         disableHookForms
-
+        
         onSubmit={onSubmitTextarea}
-        submitButtonText="Post"
+        submitButtonText="Send"
         submitButtonDisabled={disabled}
-
+        
         error={error}
         disabled={disabled}
         required
-
+        
         attachFile={fileUpload}
         metadataTags={boxMetadataTags}
       />
@@ -160,22 +165,26 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
     { tagIcon: 'AtSymbol',    onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
+  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLTextAreaElement>) => {
+    console.log(`custom onUpdateValue ran, prevValue: `, prevValue);
+  }
+  
   const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e?.target?.value;
-    setValue(newValue);
+    // setValue(newValue);
   }
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     // Logic for handling form submission...
     console.log(`submitting the textarea's data`, { value, uploadedFiles});
   };
-
+  
   const onAttachFile = (files: File[] | null) => {
     // Additional logic for handling file attachments
     setUploadedFiles(files);
     console.log(`files uploaded: `, files);
   };
-
+  
   // Prevent unnecessary rerenders.
   const fileUpload: FileUploadProps = useMemo(() => ({
     name: 'textarea-upload-form-name',
@@ -183,8 +192,8 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
     handleFiles: onAttachFile,
     multiple: true
   }), []);
-
-
+  
+  
   return (
     <div>
       <Textarea  
@@ -195,18 +204,19 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
         description="The description of the textarea."
         placeholder="input text..."
         
-        // onUpdateValue={customUpdateValue}
-        onChange={(e) => onChangeValue(e)}
-        // disableHookForms
-
+        onUpdateValue={onUpdateValue}
+        // maskOpts={charsNumsSpcFilter}
+        onChange={onChangeValue}
+        disableHookForms
+        
         onSubmit={onSubmitTextarea}
         submitButtonText="Post"
         submitButtonDisabled={disabled}
-
+        
         error={error}
         disabled={disabled}
         required
-
+        
         attachFile={fileUpload}
         metadataTags={postMetadataTags}
       />

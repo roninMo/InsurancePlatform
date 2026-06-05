@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, RefObject } from "react";
-import { Filter_CHARS_NUMS, Filter_Email_CHARS, Filter_NUMS_ONLY, Validate_EMAIL, Validate_PASS_HS } from "./RegExpFilters";
+import { Filter_CHARS_NUMS, Filter_CHARS_NUMS_SPC, Filter_CHARS_ONLY, Filter_Email_CHARS, Filter_NUMS_ONLY, Validate_EMAIL, Validate_PASS_HS } from "./RegExpFilters";
 
 
 
@@ -115,6 +115,12 @@ export const passwordFilter: MaskOpts = {
 }
 export const numbersOnlyFilter: MaskOpts = {
   filter: Filter_NUMS_ONLY
+}
+export const charsOnlyFilter: MaskOpts = {
+  filter: Filter_CHARS_ONLY
+}
+export const charsNumsSpcFilter: MaskOpts = {
+  filter: Filter_CHARS_NUMS_SPC
 }
 
 
@@ -616,6 +622,7 @@ export class InputMask {
           newRawValue = this.ctrlRemoveFromRawValue(prevRawValue, cursorStart, actionType as any);
           const removedChars = prevRawValue.length - newRawValue.length;
           newCursorLocation = actionType == 'deleteContentBackward' ? cursorStart - removedChars : cursorStart;
+          console.log(`Ctrl + (${actionType}): FilterOnly: `, { newValue: this.logRawCursorPos(cursorStart, cursorStart, newRawValue), prevRawValue, removedChars, cursorStart },);
         }
         
         // -> Successfully recreated the mask for single/multi insert and paste inputs
@@ -1229,7 +1236,7 @@ export class InputMask {
     // {} These match exactly how operating systems group words for deletion
     // ? Simulate a Ctrl + Backspace event
     if (backspaceOrDelete == 'deleteContentBackward') {
-      const ctrlBackspaceFilter = leftText.match(/(\s*\w+|\s+)?$/);  // Match trailing spaces followed by the word characters directly behind the cursor
+      const ctrlBackspaceFilter = leftText.match(/(\s*\w+|\s+|[^\w\s]+)?$/);  // Matches trailing spaces w/word sequences OR a block of punctuation symbols before the cursor
       
       const charactersToDelete = ctrlBackspaceFilter ? ctrlBackspaceFilter[0].length : 0;
       const newPrecedingText = leftText.slice(0, leftText.length - charactersToDelete);
@@ -1238,7 +1245,7 @@ export class InputMask {
     
     // ? Simulate a Ctrl + Delete event
     if (backspaceOrDelete == 'deleteContentForward') {
-      const ctrlDeleteFilter = rightText.match(/^(\w+\s*|\s+)?/); // Match leading spaces followed by the word characters immediately ahead of the cursor
+      const ctrlDeleteFilter = rightText.match(/^(\w+\s*|\s+|[^\w\s]+)?/);  // Match leading spaces w/word characters OR a block of punctuation symbols after the cursor
       
       const charactersToDelete = ctrlDeleteFilter ? ctrlDeleteFilter[0].length : 0;
       const newSubsequentText = rightText.slice(charactersToDelete);
