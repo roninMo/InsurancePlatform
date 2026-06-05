@@ -53,7 +53,7 @@ export type InputProps<T extends MaskOpts = MaskOpts> = ConditionalVariantProps 
   onUpdateValue?: (prevValue: string, event: FormEvent<HTMLInputElement>) => void;
   
   /** To handle custom logic, or handling state without **react-hook-forms**. */
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onTyped?: (e: ChangeEvent<HTMLInputElement>) => void;
   
   /** An optional value if you're overriding hook forms with useState. Link to the state using the onChange event. */
   // value?: string;
@@ -266,7 +266,7 @@ type AllVariantProps<T> = {
 
 
 export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends MaskOpts = MaskOpts>
-  (props: InputProps<TMaskOpts> & Omit<UniversalEventHandlers, 'onChange'> & TMaskClass<TMask, TMaskOpts>) => 
+  (props: InputProps<TMaskOpts> & UniversalEventHandlers<HTMLInputElement> & TMaskClass<TMask, TMaskOpts>) => 
 {
   // #region Component State
   const MaskClass = props.MaskClass || (InputMask as NonNullable<typeof props.MaskClass>);
@@ -278,8 +278,8 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
     tooltipContext, tooltipContent,
     autocomplete = 'none', 
     
-    onUpdateValue, onChange, disableHookForms, mask,
-    onBlur, onFocus, onClick, 
+    onUpdateValue, onTyped, disableHookForms, mask,
+    onFocus, onChange, onBlur, onClick, 
     onMouseEnter, onMouseLeave
   } = props;
   
@@ -323,10 +323,10 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   const inputMask = useRef<TMask | undefined>(createInputMask());
   const usingInputMask = inputMask.current;
   
-  
   // * validation logic
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const debouncer = useRef<NodeJS.Timeout>(undefined);
+  const shouldValidate = useRef<boolean>(false);
   useEffect(() => { // ? Cleanup on unmount
     () => {
       clearTimeout(debouncer.current); // onKeypress validations
@@ -336,29 +336,34 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   
   
   /** Handles validation debouncing (if we need to validate) */
-  const keypressDebouncer = (newValue: string) => {
-    if (!isRHFMode) return;
-    
-    // If we no longer need to validate
-    const isInRevalidateMode = control?._formState?.isSubmitted || false;
-    if (!isInRevalidateMode || (isInRevalidateMode && !newValue) || disabled) {
-      debouncer.current && clearTimeout(debouncer.current);
+  const keypressDebouncer = (newValue: string, event: ChangeEvent<HTMLInputElement>) => {
+    // Check if we're currently validating this form value
+    if (isRHFMode && rhfBindings) {
+      const isInRevalidateMode = control?._formState?.isSubmitted || false;
+      if (!isInRevalidateMode || (isInRevalidateMode && !newValue) || disabled) {
+        // debouncer.current && clearTimeout(debouncer.current);
+        shouldValidate.current = false;
+        
+        // ? check if we should clear any current errors
+        const { error } = getFieldState(name);
+        if (!!error || disabled) clearErrors(name);
+      } 
       
-      // ? check if we should clear any current errors
-      const { error } = getFieldState(name);
-      if (!!error) clearErrors(name);
-      return;
+      // otherwise, we should validate the next time they stop typing
+      else { 
+        shouldValidate.current = true;
+      }
     }
     
     // If it was submitted and still has active errors, refresh to run validations
     if (debouncer.current) clearTimeout(debouncer.current);
     debouncer.current = setTimeout(() => {
-      trigger(name);
+      if (shouldValidate.current) trigger(name);
+      if (onTyped) onTyped(event); // custom event handling
       // forceUpdate(); // * let rhf's validation logic handle rerenders
-      console.log(`running validations for ${name}`, { value: getValue() });
+      // console.log(`running validations for ${name}`, { value: getValue() });
     }, 450);
   }
-  // #endregion
   
   
   /** Either Rhf's captured form value, or the internal ref for custom state. */
@@ -370,6 +375,9 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
     if (type == 'password') return passwordVisible ? 'text' : 'password';
     return 'text';
   }
+  
+  /** Retrieves the placeholder that's used */
+  const getPlaceholder = (): string | undefined => (inputMask.current && inputMask.current.useMaskAsPlaceholder && placeholder === undefined) ? inputMask.current.mask : placeholder;
   
   /** Returns whether we have an error for this component, and it's not currently disabled. */
   const getError = (): boolean => (!!error && !disabled);
@@ -392,7 +400,6 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   const handleUpdateValue = (event: FormEvent<HTMLInputElement>) => {
     if (!usingInputMask && onUpdateValue) { // Otherwise, handle custom edits from the onUpdateValue function
       onUpdateValue(getValue(), event);
-      console.log('onUpdateValue');
     }
   }
   
@@ -407,9 +414,9 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
    * @param event       The native changeEvent data tied to the input event.
    */
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(`${name}-${type} handleOnChange(): value(${getValue()})`,
-      `\n event data: `, { value: event.target.value, event: event }
-    );
+    // console.log(`${name}(${type})::handleOnChange(): "${getValue()}"`,
+    //   `\n event data: `, { value: event.target.value, event: event }
+    // );
     
     // ? react hook forms event and optional event logic
     if (isRHFMode && rhfBindings) rhfBindings.onChange(event);
@@ -422,9 +429,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
     }
     
     // Finally, add a debouncer for handling input validations for keystrokes after a brief duration
-    if (isRHFMode && rhfBindings) {
-      keypressDebouncer(event.target.value);
-    }
+    keypressDebouncer(event.target.value, event);
   };
   
   
@@ -462,7 +467,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
         <input 
           // { ...props }
           name={name} type={getType()} id={`${name}-${type}`}
-          placeholder={placeholder} autoComplete={autocomplete}
+          placeholder={getPlaceholder()} autoComplete={autocomplete}
           disabled={disabled} required={required} 
           
           // Rhf or useState handling

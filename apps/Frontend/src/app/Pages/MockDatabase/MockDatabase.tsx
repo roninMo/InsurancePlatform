@@ -284,7 +284,7 @@ export const MockDatabase = () => {
 	const [pass, setPass] = useState<string>('');
 	const [textareaVal, setTextareaVal] = useState<string>('');
 	const updateEmail = useCallback((e: ChangeEvent<any>) => { 
-		console.log(`${e?.target?.value}`); 
+		console.log(`update email value?: ${e?.target?.value}`); 
 		if (!usingRhf) setEmail(e?.target?.value); 
 	}, []);
 

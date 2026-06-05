@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction, useState, ChangeEvent, FocusEvent, useMemo, useContext, FormEvent } from "react";
+import { Dispatch, SetStateAction, useState, ChangeEvent, useMemo, useContext, FormEvent } from "react";
 import { Input, TooltipService } from "@Project/ReactComponents";
 import { phoneMaskConfig } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 import { useFormContext } from "react-hook-form";
 
 
 
-export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_TextInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -19,13 +19,13 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('textInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -45,8 +45,8 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
         name={`textInputFormName`} 
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        mask={phoneMaskConfig} // Check that this works
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -57,7 +57,7 @@ export const Example_TextInput = ({ error, setError, disabled, setDisabled }: {
 }
 
 
-export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_NumberInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -71,13 +71,13 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('numberInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -97,8 +97,8 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
         name={`numberInputFormName`}
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -110,7 +110,7 @@ export const Example_NumberInput = ({ error, setError, disabled, setDisabled }: 
 }
 
 
-export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_EmailInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -124,13 +124,13 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('emailInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -148,9 +148,10 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
         description="The email input's description."
         
         name={`emailInputFormName`}
+        // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -163,7 +164,7 @@ export const Example_EmailInput = ({ error, setError, disabled, setDisabled }: {
 }
 
 
-export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_PasswordInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -177,13 +178,13 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('passwordInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -203,8 +204,8 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
         name={`passwordInputFormName`}
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -216,7 +217,7 @@ export const Example_PasswordInput = ({ error, setError, disabled, setDisabled }
 }
 
 
-export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_SearchInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -230,13 +231,13 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('searchInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -256,8 +257,8 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
         name={`searchInputFormName`}
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -270,7 +271,7 @@ export const Example_SearchInput = ({ error, setError, disabled, setDisabled }: 
   );
 }
 
-export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_PolicyNumberInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -284,13 +285,13 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('policyInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -307,11 +308,11 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
         placeholder="Do something..."
         description="The policy number input's description."
         
-        name={`searchInputFormName`}
+        name={`policyInputFormName`}
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -325,7 +326,7 @@ export const Example_PolicyNumberInput = ({ error, setError, disabled, setDisabl
 }
 
 
-export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_PhoneInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -339,13 +340,13 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('phoneInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -359,14 +360,14 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
       <Input 
         type="phone"
         label="Phone Input"
-        placeholder="Type something..."
+        // placeholder=""
         description="The phone input's description."
         
         name={`phoneInputFormName`}
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -380,7 +381,7 @@ export const Example_PhoneInput = ({ error, setError, disabled, setDisabled }: {
 }
 
 
-export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_CreditCardInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -394,13 +395,13 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('creditCardInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -414,14 +415,14 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
       <Input 
         type="creditCard"
         label="Credit Card Input"
-        placeholder="Type something..."
+        placeholder="0000-0000-0000-0000"
         description="The credit card input's description."
         
-        name={`credit-cardInputFormName`}
+        name={`creditCardInputFormName`}
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}
@@ -435,7 +436,7 @@ export const Example_CreditCardInput = ({ error, setError, disabled, setDisabled
 }
 
 
-export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }: {
+export const Example_CurrencyInput = ({ error, disabled }: {
   error: string;
   setError?: Dispatch<SetStateAction<string>>;
   disabled: boolean;
@@ -449,13 +450,13 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // React hook forms
-    console.log('getValues: ', getValues('textInputFormName'));
-    const formValue = getValues('sliderFormName');
+    // react-hook-forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('currencyInputFormName');
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log('updated the value: ', newValue);
+    console.log(`updated the value: "${newValue}`);
     setValue(newValue);
   }
   
@@ -475,8 +476,8 @@ export const Example_CurrencyInput = ({ error, setError, disabled, setDisabled }
         name={`currencyInputFormName`}
         // disableHookForms
         onUpdateValue={onUpdateValue}
-        onChange={onChangeValue}
-        // mask={}
+        onTyped={onChangeValue}
+        // mask={phoneMaskConfig}
         error={error} disabled={disabled}
         
         tooltipContext={tooltipContext}

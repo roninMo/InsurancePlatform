@@ -37,13 +37,13 @@ export interface TextareaProps<T extends MaskOpts> {
   maskOpts?: T;
   
   /** Optional Event to update the event.currentTarget.value to pass to the  onChange event. If you're using an input mask, this edit is ignored entirely. */
-  onUpdateValue?: (prevValue: string, event: FormEvent<HTMLTextAreaElement>) => void;
+  onUpdateValue?: (pendingValue: string, event: FormEvent<HTMLTextAreaElement>) => void;
   
 	/** Whether to use Rhf or custom state through the onChange event */
   disableHookForms?: boolean;
   
-  /** To handle custom logic, or handling state without **react-hook-forms**. */
-  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  /** Just like the onChange, but doesn't trigger until after they stop typing. Use this to handle custom logic, or handling state without **react-hook-forms**. */
+  onTyped?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   
   // {} Form / Validation
   /** Error message, if there's an error. */
@@ -95,15 +95,15 @@ export interface MetadataTagProps {
 /** The input functionality of the textarea. */
 const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends MaskOpts = MaskOpts> ( allProps: 
   & TextareaProps<TMaskOpts> 
-  & Omit<UniversalEventHandlers, 'onChange'> 
+  & UniversalEventHandlers<HTMLTextAreaElement> 
   & TMaskClass<TMask, TMaskOpts> // Explicitly type the constructor to return the generic type 'Mask'
   & { localInputRef: RefObject<HTMLTextAreaElement | undefined> } 
 ) => {
   const MaskClass = allProps.MaskClass || (InputMask as NonNullable<typeof allProps.MaskClass>);
   const { 
     type = 'default', name, placeholder, maskOpts,
-    onUpdateValue, disableHookForms, localInputRef, disabled, required, 
-    onChange, onBlur, onFocus, onClick, onMouseEnter, onMouseLeave, onSubmit,
+    onTyped, disableHookForms, localInputRef, disabled, required, 
+    onFocus, onUpdateValue, onChange, onBlur, onClick, onMouseEnter, onMouseLeave, onSubmit,
   } = allProps;
   
   // * Input binding logic
@@ -118,6 +118,7 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   // * validation logic
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const debouncer = useRef<NodeJS.Timeout>(undefined);
+  const shouldValidate = useRef<boolean>(false);
   useEffect(() => { // ? Cleanup on unmount
     () => {
       clearTimeout(debouncer.current); // onKeypress validations
@@ -127,29 +128,38 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   
   
   /** Handles validation debouncing (if we need to validate) */
-  const keypressDebouncer = (newValue: string) => {
-    if (!isRHFMode) return;
-    
-    // If we no longer need to validate
-    const isInRevalidateMode = control?._formState?.isSubmitted || false;
-    if (!isInRevalidateMode || (isInRevalidateMode && !newValue) || disabled) {
-      debouncer.current && clearTimeout(debouncer.current);
+  const keypressDebouncer = (newValue: string, event: ChangeEvent<HTMLTextAreaElement>) => {
+    // Check if we're currently validating this form value
+    if (isRHFMode && rhfBindings) {
+      const isInRevalidateMode = control?._formState?.isSubmitted || false;
+      if (!isInRevalidateMode || (isInRevalidateMode && !newValue) || disabled) {
+        // debouncer.current && clearTimeout(debouncer.current);
+        shouldValidate.current = false;
+        
+        // ? check if we should clear any current errors
+        const { error } = getFieldState(name);
+        if (!!error || disabled) clearErrors(name);
+      } 
       
-      // ? check if we should clear any current errors
-      const { error } = getFieldState(name);
-      if (!!error) clearErrors(name);
-      return;
+      // otherwise, we should validate the next time they stop typing
+      else { 
+        shouldValidate.current = true;
+      }
     }
     
     // If it was submitted and still has active errors, refresh to run validations
     if (debouncer.current) clearTimeout(debouncer.current);
     debouncer.current = setTimeout(() => {
-      trigger(name);
+      if (shouldValidate.current) trigger(name);
+      if (onTyped) onTyped(event); // custom event handling
       // forceUpdate(); // * let rhf's validation logic handle rerenders
       // console.log(`running validations for ${name}`, { value: getValue() });
     }, 450);
   }
   
+  
+  /** Retrieves the placeholder that's used */
+  const getPlaceholder = (): string | undefined => (mask.current && mask.current.useMaskAsPlaceholder && placeholder === undefined) ? mask.current.mask : placeholder;
   
   /** Either Rhf's captured form value, or the internal ref for custom state. */
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
@@ -205,9 +215,7 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
     }
     
     // Finally, add a debouncer for handling input validations for keystrokes after a brief duration
-    if (isRHFMode && rhfBindings) {
-      keypressDebouncer(event.target.value);
-    }
+    keypressDebouncer(event.target.value, event);
   };
   
   
@@ -238,7 +246,7 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   return (
     <textarea 
         name={name} id={name}
-        placeholder={placeholder}
+        placeholder={getPlaceholder()}
         disabled={disabled} required={required}
         
         // Rhf or useState handling
@@ -270,10 +278,10 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
 
 
 export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts = MaskOpts>
-(allProps: TextareaProps<MO> & UniversalEventHandlers) => {
+(allProps: TextareaProps<MO> & UniversalEventHandlers<HTMLTextAreaElement>) => {
   const { 
     type = 'default', name, label, description, placeholder, 
-    onUpdateValue, disableHookForms, attachFile, metadataTags = true,
+    disableHookForms, attachFile, metadataTags = true,
     error, required = false, disabled = false, maskOpts,
     onSubmit, submitButtonText, submitButtonDisabled = false, submitButtonType = 'button', 
   } = allProps;
@@ -300,12 +308,12 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
   //--------------------------------//
   // Memoize the actual input, and safely pass it's props
   const MemoedInput = useMemo(() => {
-    const { onFocus, onChange, onBlur, onMouseEnter, onMouseLeave, onClick } = allProps;
+    const { onTyped, onFocus, onUpdateValue, onChange, onBlur, onMouseEnter, onMouseLeave, onClick } = allProps;
     
     return (
       <InputComponent<TM, MO> 
         type={type} name={name}
-        onChange={onChange} onUpdateValue={onUpdateValue} placeholder={placeholder}
+        onTyped={onTyped} onChange={onChange} onUpdateValue={onUpdateValue} placeholder={placeholder}
         disableHookForms={disableHookForms} localInputRef={localInputRef} maskOpts={maskOpts}
         required={required} disabled={disabled} // error={error}
         onFocus={onFocus} onBlur={onBlur} onClick={onClick}

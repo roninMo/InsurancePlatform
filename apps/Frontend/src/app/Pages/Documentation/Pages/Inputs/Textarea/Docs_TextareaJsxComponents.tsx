@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState, MouseEvent, ChangeEvent, useMemo, FormEvent } from "react";
+import { SubmitErrorHandler, SubmitHandler, useFormContext } from "react-hook-form";
 import { FileUploadProps, MetadataTagProps, Textarea } from "@Project/ReactComponents";
-import { ccMaskConfig, charsNumsSpcFilter, charsOnlyFilter, emailFilter, numbersOnlyFilter, phoneMaskConfig } from "@Project/ReactComponents/Common/Utilities/InputMasks/InputMask";
 
 
 export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDisabled }: {
@@ -9,6 +9,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { getValues, handleSubmit } = useFormContext() || {};
   const [value, setValue] = useState<string>('');
   const [uploadedFiles, setUploadedFiles] = useState<File[] | null>(null);
   const defaultMetadataTags: MetadataTagProps[] = useMemo(() => ([
@@ -17,18 +18,29 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
       { tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
-  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLTextAreaElement>) => {
-    console.log(`custom onUpdateValue ran, prevValue: `, prevValue);
+  const onUpdateValue = (pendingValue: string, e: FormEvent<HTMLTextAreaElement>) => {
+    console.log(`onUpdateValue, pendingValue: `, pendingValue);
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    // React hook forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('defaultTextareaFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
-    // setValue(newValue);
+    setValue(newValue);
+    console.log(`value changed to ${newValue}`);
   }
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    // Rhf submission data
+    const onSubmit: SubmitHandler<any> = (data) => console.log(`successfully submitted: `, data);
+    const onError: SubmitErrorHandler<any> = (error) => console.log(`an error occurred during submission: `, error);
+    handleSubmit(onSubmit, onError)();
+    
     // Logic for handling form submission...
-    console.log(`submitting the textarea's data`, { value, uploadedFiles});
+    console.log(`custom submission data retrieval: `, { value, uploadedFiles });
   };
   
   const onAttachFile = (files: File[] | null) => {
@@ -39,7 +51,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
   
   // Prevent unnecessary rerenders.
   const fileUpload: FileUploadProps = useMemo(() => ({
-    name: 'textarea-upload-form-name',
+    name: 'defaultTextareaUpload',
     accept: 'image/*, .pdf, .doc, .docx, .txt',
     handleFiles: onAttachFile,
     multiple: true
@@ -50,7 +62,7 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
     <div>
       <Textarea  
         type="default"
-        name="textarea-form-name"
+        name="defaultTextareaFormName"
         
         label="Default style"
         description="The description of the textarea."
@@ -58,8 +70,8 @@ export const Example_DefaultTextareaInput = ({ error, setError, disabled, setDis
         
         onUpdateValue={onUpdateValue}
         // maskOpts={charsNumsSpcFilter}
-        onChange={onChangeValue}
-        disableHookForms
+        onTyped={onChangeValue}
+        // disableHookForms
         
         onSubmit={onSubmitTextarea}
         submitButtonText="Post"
@@ -83,6 +95,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { getValues, handleSubmit } = useFormContext() || {};
   const [value, setValue] = useState<string>('');
   const [uploadedFiles, setUploadedFiles] = useState<File[] | null>(null);
   const boxMetadataTags: MetadataTagProps[] = useMemo(() => ([
@@ -91,18 +104,29 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
     { tagLabel: 'due date', tagIcon: 'Calendar',  onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
-  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLTextAreaElement>) => {
-    console.log(`custom onUpdateValue ran, prevValue: `, prevValue);
+  const onUpdateValue = (pendingValue: string, e: FormEvent<HTMLTextAreaElement>) => {
+    console.log(`onUpdateValue, pendingValue: `, pendingValue);
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    // React hook forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('boxTextareaFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
-    // setValue(newValue);
+    setValue(newValue);
+    console.log(`value changed to ${newValue}`);
   }
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    // Rhf submission data
+    const onSubmit: SubmitHandler<any> = (data) => console.log(`successfully submitted: `, data);
+    const onError: SubmitErrorHandler<any> = (error) => console.log(`an error occurred during submission: `, error);
+    handleSubmit(onSubmit, onError)();
+    
     // Logic for handling form submission...
-    console.log(`submitting the textarea's data`, { value, uploadedFiles});
+    console.log(`custom submission data retrieval: `, { value, uploadedFiles });
   };
   
   const onAttachFile = (files: File[] | null) => {
@@ -113,7 +137,7 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
   
   // Prevent unnecessary rerenders.
   const fileUpload: FileUploadProps = useMemo(() => ({
-    name: 'textarea-upload-form-name',
+    name: 'boxTextareaUpload',
     accept: 'image/*, .pdf, .doc, .docx, .txt',
     handleFiles: onAttachFile,
     multiple: true
@@ -123,8 +147,8 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
   return (
     <div className="pt-2">
       <Textarea  
+        name="boxTextareaFormName"
         type="box"
-        name="textarea-form-name"
         
         label="Box style"
         description="The description of the textarea."
@@ -132,8 +156,8 @@ export const Example_BoxTextareaInput = ({ error, setError, disabled, setDisable
         
         onUpdateValue={onUpdateValue}
         // maskOpts={charsNumsSpcFilter}
-        onChange={onChangeValue}
-        disableHookForms
+        onTyped={onChangeValue}
+        // disableHookForms
         
         onSubmit={onSubmitTextarea}
         submitButtonText="Send"
@@ -157,6 +181,7 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
   disabled: boolean;
   setDisabled?: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { getValues, handleSubmit } = useFormContext() || {};
   const [value, setValue] = useState<string>('');
   const [uploadedFiles, setUploadedFiles] = useState<File[] | null>(null);
   const postMetadataTags: MetadataTagProps[] = useMemo(() => ([
@@ -165,18 +190,29 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
     { tagIcon: 'AtSymbol',    onClickTag: () => {}, iconStyles: undefined},
   ]), []);
   
-  const onUpdateValue = (prevValue: string, e: FormEvent<HTMLTextAreaElement>) => {
-    console.log(`custom onUpdateValue ran, prevValue: `, prevValue);
+  const onUpdateValue = (pendingValue: string, e: FormEvent<HTMLTextAreaElement>) => {
+    console.log(`onUpdateValue, pendingValue: `, pendingValue);
   }
   
   const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    // React hook forms
+    console.log('\nreact-hook-forms getValues: ', getValues());
+    const formValue = getValues('postTextareaFormName');
+    
+    // Capturing state manually
     const newValue = e?.target?.value;
-    // setValue(newValue);
+    setValue(newValue);
+    console.log(`value changed to ${newValue}`);
   }
   
   const onSubmitTextarea = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    // Rhf submission data
+    const onSubmit: SubmitHandler<any> = (data) => console.log(`successfully submitted: `, data);
+    const onError: SubmitErrorHandler<any> = (error) => console.log(`an error occurred during submission: `, error);
+    handleSubmit(onSubmit, onError)();
+    
     // Logic for handling form submission...
-    console.log(`submitting the textarea's data`, { value, uploadedFiles});
+    console.log(`custom submission data retrieval: `, { value, uploadedFiles });
   };
   
   const onAttachFile = (files: File[] | null) => {
@@ -187,7 +223,7 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
   
   // Prevent unnecessary rerenders.
   const fileUpload: FileUploadProps = useMemo(() => ({
-    name: 'textarea-upload-form-name',
+    name: 'postTextareaUpload',
     accept: 'image/*, .pdf, .doc, .docx, .txt',
     handleFiles: onAttachFile,
     multiple: true
@@ -198,7 +234,7 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
     <div>
       <Textarea  
         type="post"
-        name="textarea-form-name"
+        name="postTextareaFormName"
         
         label="Post style"
         description="The description of the textarea."
@@ -206,8 +242,8 @@ export const Example_PostTextareaInput = ({ error, setError, disabled, setDisabl
         
         onUpdateValue={onUpdateValue}
         // maskOpts={charsNumsSpcFilter}
-        onChange={onChangeValue}
-        disableHookForms
+        onTyped={onChangeValue}
+        // disableHookForms
         
         onSubmit={onSubmitTextarea}
         submitButtonText="Post"
