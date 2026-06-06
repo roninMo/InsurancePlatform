@@ -1,5 +1,5 @@
 import { ReactNode, MouseEvent, useMemo } from 'react';
-import { Button, ButtonProps } from '@Project/ReactComponents';
+import { Button, ButtonProps } from '../../../Forms/Button/Button';
 
 import styled from '@emotion/styled';
 import styles from './Card.module.scss';

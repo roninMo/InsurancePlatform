@@ -1,12 +1,17 @@
-// Common
+// ? Common
 export { Icon } from './Icons/Icon';
 export type { IconTypes } from './Icons/Icon';
 
 
-// Content
+// ? Content
 export * from './Content/index';
 
-// Utilities
+
+// ? Utilities
+// Utility Components
+export * from './Utilities/Modal/Modal';
+
+
 // Record and Object Entry function helpers
 export * from './Utilities/RecordUtils/MakeRecord';
 export * from './Utilities/RecordUtils/MapRecord';

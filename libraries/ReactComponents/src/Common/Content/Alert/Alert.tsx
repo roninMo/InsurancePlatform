@@ -1,5 +1,5 @@
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
-import { Icon, IconTypes } from '@Project/ReactComponents';
+import { Icon, IconTypes } from '../../Icons/Icon';
 
 import styled from '@emotion/styled';
 import styles from './Alert.module.scss';

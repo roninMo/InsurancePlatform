@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Modal } from "../../../../../Components/Utils/Modal/Modal";
-import { Button } from "@Project/ReactComponents";
+import { Modal, Button } from "@Project/ReactComponents";
 import { Docs_Input } from "../../Inputs/Input/Docs_Input";
 
 

@@ -1,6 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { Icon, IconTypes } from "@Project/ReactComponents";
-import { Modal } from '../../../../Components/Utils/Modal/Modal';
+import { Icon, IconTypes, Modal } from "@Project/ReactComponents";
 
 import styled from '@emotion/styled';
 import styles from './PreviousWorks.module.scss';

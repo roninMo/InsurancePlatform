@@ -1,5 +1,5 @@
 import { Dispatch, MouseEvent, ReactNode, SetStateAction, useEffect, useId, useState } from 'react';
-import { Icon, IconTypes } from '@Project/ReactComponents';
+import { IconTypes, Icon } from '../../Icons/Icon';
 
 import styled from '@emotion/styled';
 import styles from './Modal.module.scss';

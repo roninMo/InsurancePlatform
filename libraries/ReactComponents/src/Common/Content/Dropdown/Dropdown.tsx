@@ -1,5 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
-import { Ht, Icon, IconTypes } from "@Project/ReactComponents";
+import { IconTypes, Icon } from "../../Icons/Icon";
+import { Ht } from "../HeightTransWrapper/HeightTransWrapper";
 
 import styled from "@emotion/styled";
 import styles from './Dropdown.module.scss';
