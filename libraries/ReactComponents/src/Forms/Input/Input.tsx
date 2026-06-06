@@ -25,7 +25,7 @@ export type TextInputAutoCompleteTypes =
 
 // #region InputProps
 /** The input component's props. Combined with {@link ConditionalVariantProps} for intellisense props that display contextually, to help remove clutter */
-export type InputProps<T extends MaskOpts = MaskOpts> = ConditionalVariantProps & {
+export type InputProps<TMaskOpts extends MaskOpts = MaskOpts> = ConditionalVariantProps & {
   // {} Form and display
   /** The variant of input we're using. Each has different functionality for each input type. */
   type?: TextInputTypes;
@@ -44,7 +44,7 @@ export type InputProps<T extends MaskOpts = MaskOpts> = ConditionalVariantProps 
   
   // {} Handling State
   /** Whether you're using a mask. If you have a custom class for this, declare it in the **{@link Input|Input's}** template arguments. */
-  mask?: T;
+  mask?: TMaskOpts;
   
   /** Whether to use Rhf or custom state through the onChange event */
   disableHookForms?: boolean;
@@ -307,10 +307,11 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   
   /** Retrieves the inputMask if there should be one */
   const createInputMask = (): TMask | undefined => {
-    if (type == 'phone' && !disablePhoneMask)         return PhoneMask.create();
-    if (type == 'email' && !disableEmailFilter)       return EmailFilter.create();
-    if (type == 'creditCard' && !disableCCMask)       return CCMask.create();
-    if (type == 'policyNumber' && !disablePolicyMask) return PolicyMask.create();
+    const maskOverrides = mask; // * for the sake of brevity
+    if (type == 'phone' && !disablePhoneMask)         return PhoneMask.create(maskOverrides);
+    if (type == 'email' && !disableEmailFilter)       return EmailFilter.create(maskOverrides);
+    if (type == 'creditCard' && !disableCCMask)       return CCMask.create(maskOverrides);
+    if (type == 'policyNumber' && !disablePolicyMask) return PolicyMask.create(maskOverrides);
     if (MaskClass && mask) {
       // return new MaskClass(maskOpts);
       return MaskClass.create(mask);

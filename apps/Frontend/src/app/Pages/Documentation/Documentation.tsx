@@ -38,15 +38,15 @@ export const Documentation = () => {
             x A regex string for acceptable characters
             - Then find a way to add this alongside input components
           - input::onFocus(), onChange(), onBlur()
-            - rerenders should be now tied to focus or blur events, or a delay after typing.
-            - use onChange for updating rhf after we've handled masks, and custom edits from updateValue()
-          - input::updateValue()
-            - handles editing the value after a user does a keypress
-              - not tied to state, does not cause rerenders, just the native input's value attr
-          - input::mask
-            - add default masks for each input type with masks
-            - variants mask params should optionally enable/disable their mask
-            - there should be a new param for adding a mask through this class, or a custom one
+            x rerenders should be now tied to focus or blur events, or a delay after typing.
+            x use onChange for updating rhf after we've handled masks, and custom edits from updateValue()
+          x input::updateValue()
+            x handles editing the value after a user does a keypress
+              x not tied to state, does not cause rerenders, just the native input's value attr
+          x input::mask
+            x add default masks for each input type with masks
+            x variants mask params should optionally enable/disable their mask
+            x there should be a new param for adding a mask through this class, or a custom one
 
     - add all the content and util components to the library
       - Content

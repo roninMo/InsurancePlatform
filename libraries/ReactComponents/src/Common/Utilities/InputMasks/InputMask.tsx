@@ -17,7 +17,7 @@ export type MaskConfig = {
   mask: string;
   
   /** The mask's wildcard character. This is used for handling custom masks. If left undefined, the default value is "_". */
-  maskWildCardCharacter: string;
+  maskWildCardCharacter?: string;
   
   /** Whether we should additionally filter out any non-wildcard characters this mask uses from the user's inputted text. */
   filterNonWildcardsFromInput?: boolean;
@@ -1688,7 +1688,7 @@ export class InputMask {
     
     // {} Clear out all the old mask data before initializing the new data
     this._mask = '';
-    this._maskWildcardCharacter = undefined;
+    this._maskWildcardCharacter = DEFAULT_INPUTMASK_WILDCARD;
     this._maskFilterChars = undefined;
     this._maskCachedNWChars = undefined;
     this._useMaskAsPlaceholder = undefined;
@@ -2251,7 +2251,7 @@ export class InputMask {
   }
   
   
-  /** Invokes {@link evaluate() which then calculates the new masked input value and calls the onChange event.} */
+  /** Invoked during {@link evaluate()}. Maps the specific type of event passed to us based on the input action. We tried this for easy type assertions, it's okay. */
   protected handleUserInputEvent( ...[actionType, event]:
     | [ listenerInputType: Extract<InputActionType, 'insertText'>,            event: KeyboardEvent, ]
     | [ listenerInputType: Extract<InputActionType, 'insertFromPaste'>,       event: ClipboardEvent, ]
