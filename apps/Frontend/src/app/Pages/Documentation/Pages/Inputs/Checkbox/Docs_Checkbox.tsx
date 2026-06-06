@@ -2,14 +2,13 @@
 import { useState, useMemo, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { Dropdown, getSourceCode, TooltipService } from "@Project/ReactComponents";
+import { Dropdown, getSourceCode, HashLink, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
-import { HashLink } from '../../../../../Components/Utils/HashLink/HashLink';
 import styled from '@emotion/styled';
 
 import CheckboxCodeSnippets from './Docs_CheckboxJsxComponents?raw';

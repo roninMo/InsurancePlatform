@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { HashLink } from '../../../../Components/Utils/HashLink/HashLink';
 import { DisplayedIcon } from '../Content/Icon/Docs_Icon';
 import { 
   Alert,
@@ -11,6 +10,7 @@ import {
   Dropbox, 
   Dropdown, 
   getValuesFromType, 
+  HashLink, 
   Icon, 
   IconTypes, 
   Input, 

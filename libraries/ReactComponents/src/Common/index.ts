@@ -10,6 +10,7 @@ export * from './Content/index';
 // ? Utilities
 // Utility Components
 export * from './Utilities/Modal/Modal';
+export * from './Utilities/HashLink/HashLink';
 
 
 // Record and Object Entry function helpers

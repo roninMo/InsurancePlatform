@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../../Components/Navbar/Navbar";
-import { HashLink } from "../../Components/Utils/HashLink/HashLink";
+import { HashLink } from "@Project/ReactComponents";
 
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import ErrorPageAnim from "../../../assets/lottie/404 Sleep Cat.json";

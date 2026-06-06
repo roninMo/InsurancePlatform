@@ -9,6 +9,7 @@ import {
   CheckboxItem,
   CheckboxProps,
   Dropbox, 
+  HashLink, 
   Input, 
   InputProps_Email, 
   RadioGroup, 
@@ -23,7 +24,6 @@ import {
   TooltipService,
   Icon, 
 } from '@Project/ReactComponents';
-import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import styles from './CustomContent.module.scss';

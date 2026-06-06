@@ -1,7 +1,6 @@
 import { memo, MouseEvent, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import { ScrollRestoration, useLocation, useNavigationType } from 'react-router-dom';
-import { hashLinkScrollRestoration, Icon } from '@Project/ReactComponents';
-import { HashLink } from '../Utils/HashLink/HashLink';
+import { HashLink, hashLinkScrollRestoration, Icon } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './Navbar.module.scss';

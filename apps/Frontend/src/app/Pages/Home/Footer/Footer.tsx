@@ -1,8 +1,7 @@
-import { Button, Icon } from '@Project/ReactComponents';
+import { Button, HashLink, Icon } from '@Project/ReactComponents';
 import styled from '@emotion/styled';
 
 import styles from './Footer.module.scss';
-import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
 
 
 export const Footer = () => {

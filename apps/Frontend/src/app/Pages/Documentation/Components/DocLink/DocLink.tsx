@@ -1,4 +1,4 @@
-import { HashLink } from '../../../../Components/Utils/HashLink/HashLink';
+import { HashLink } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './DocLink.module.scss';

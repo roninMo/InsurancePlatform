@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { HashLink } from "../../../../../Components/Utils/HashLink/HashLink";
+import { HashLink } from "@Project/ReactComponents";
 
 
 export const Example_DefaultHashLink = () => {

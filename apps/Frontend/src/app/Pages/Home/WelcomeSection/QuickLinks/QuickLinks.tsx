@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { IconTypes, Icon } from "@Project/ReactComponents";
+import { HashLink, IconTypes, Icon } from "@Project/ReactComponents";
 import { useInView } from 'react-intersection-observer';
-import { HashLink } from "../../../../Components/Utils/HashLink/HashLink";
 
 import styled from "@emotion/styled";
 import styles from './QuickLinks.module.scss';

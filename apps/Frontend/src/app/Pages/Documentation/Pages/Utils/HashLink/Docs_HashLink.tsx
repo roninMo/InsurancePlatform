@@ -236,7 +236,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceHashLinkSnippets from '../../../../../Components/Utils/HashLink/HashLink?raw';
+import SourceHashLinkSnippets from '@lib-rc/Common/Utilities/HashLink/HashLink?raw';
 const Code_NavTypes = getSourceCode(SourceHashLinkSnippets, 'NavTypes', 'type');
 const Code_NavigateOptions = getSourceCode(HashLinkCodeSnippets, 'NavigateOptions', 'interface');
 

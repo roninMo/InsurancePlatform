@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
-import { HashLink, HashLinkProps } from '../../../../Components/Utils/HashLink/HashLink';
-import { TooltipProps } from '@Project/ReactComponents';
+import { HashLink, HashLinkProps, TooltipProps } from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './Keyword.module.scss';
@@ -17,11 +16,11 @@ interface KeywordProps {
 
 export const Kw = ({ tooltip, link, onClick, children, styles, textStyles }: KeywordProps) => {
 	if (link) return (
-		<HashLink label={link.label} url={link.url} opts={link.opts}>
+		<HashLink url={link.url} opts={link.opts}>
 			<b className={`${styles ? styles : 'keyword'} ${textStyles ? textStyles : 'keyword-text'}`}>
 				{ children }
 			</b>
-			{/* TODO: use the universal tooltip component we're adding  */}
+			{/* // TODO - use the universal tooltip component we're adding  */}
 			{/* { tooltip && 
 				<Tooltip alignment={tooltip?.alignment} additionalStyles={tooltip?.additionalStyles}>
 					<div>Tooltip text!</div>

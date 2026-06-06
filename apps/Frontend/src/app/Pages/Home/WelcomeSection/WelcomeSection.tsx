@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
-import { Button, Dropdown, Modal } from '@Project/ReactComponents';
+import { Button, Dropdown, HashLink, Modal } from '@Project/ReactComponents';
 import { 
   InsuranceAppLinks, 
   MockDatabaseLinks, 

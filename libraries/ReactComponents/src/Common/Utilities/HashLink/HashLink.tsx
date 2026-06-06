@@ -1,7 +1,6 @@
 import { memo, ReactNode, useMemo } from "react";
 import { useNavigate, Link, useLocation, NavigateOptions } from "react-router-dom";
-import { hashLinkScrollRestoration } from "@Project/ReactComponents";
-
+import { hashLinkScrollRestoration } from "../../../Singletons/HashLinkScrollRef/HashLinkScrollRestoration";
 
 
 export type NavTypes = 'router' | 'page' | 'useNavigate';

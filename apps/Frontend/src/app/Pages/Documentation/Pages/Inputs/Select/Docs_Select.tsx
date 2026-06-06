@@ -325,7 +325,7 @@ const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'Toolti
 import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip?raw';
 const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
 
-import HashLinkSnippets from '../../../../../Components/Utils/HashLink/HashLink?raw';
+import HashLinkSnippets from '@lib-rc/Common/Utilities/HashLink/HashLink?raw';
 const Code_VariantProps = getSourceCode(HashLinkSnippets, 'VariantProps', 'type');
 const Code_NavTypeProps = getSourceCode(HashLinkSnippets, 'NavTypeProps', 'type');
 const Code_HashLinkPropsBase = getSourceCode(HashLinkSnippets, 'HashLinkPropsBase', 'interface');

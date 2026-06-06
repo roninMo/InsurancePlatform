@@ -1,9 +1,9 @@
 import { MouseEvent, Dispatch, SetStateAction, useState, useEffect} from "react";
-import { HashLink } from "../Utils/HashLink/HashLink";
+import { useLocation } from "react-router-dom";
+import { HashLink } from "@Project/ReactComponents";
 
 import styled from "@emotion/styled";
 import styles from './Sidebar.module.scss';
-import { useLocation } from "react-router-dom";
 
 
 export interface SidebarLinkProps {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { HashLink } from '../Utils/HashLink/HashLink';
+import { HashLink } from '@Project/ReactComponents';
 import { SidebarLinkProps, SubPageLinkProps } from '../Sidebar/Sidebar';
 import { DocumentationPage_SidebarLinks } from '../../Pages/Documentation/Documentation';
 
