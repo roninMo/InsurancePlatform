@@ -1,11 +1,10 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
-import { getSourceCode, getValuesFromType, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
+import { Dropdown, getSourceCode, getValuesFromType, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 import { buttonParamDescElements, buttonParamsList, buttonParamTypeElements } from '../../Inputs/Button/Docs_Button';
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
-import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
@@ -160,13 +159,13 @@ const paramContextsList: Record<string, ParamContext[]> = {
 const paramTypeElements: Record<string, React.FC> = {
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Example Dropdown') }} />, 
   'openByDefault': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('openByDefault', 'openByDefault', 'var') }} />, 
-  'icon': () => <ParamType type="IconTypes" optional tooltip={{ code: Code_IconTypes }} />,
+  'icon': () => <ParamType type="IconTypes" optional tooltip={{ code: dParArg('iconStyles', 'icon-classes') }} />,
   
   'openListener': () => <ParamType type="function" tooltip={{ code: Code_OpenListener }} />,
   'overrideOpen': () => <ParamType type="boolean" tooltip={{ code: dParArg('overrideOpen', 'overrideOpen', 'var') }} />,
   'children': () => <ParamType type="ReactNode" tooltip={{ text: "The component's that are nested within this jsx element." }} />,
   'styling': () => <ParamType type="" />,
-
+  
   'styles': () => <ParamType type="string" tooltip={{ code: dParArg('styles', 'container-classes')}} />, 
   'additStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additStyles', 'additional-classes')}} />,
   
@@ -178,8 +177,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceDropdownSnippets from '../../../../../Components/Content/Dropdown/Dropdown?raw';
-const Code_IconTypes = getSourceCode(SourceDropdownSnippets, 'CardType', 'type');
+import SourceDropdownSnippets from '@lib-rc/Common/Icons/Icon?raw';
 const Code_OpenListener = 'openListener?: Dispatch<SetStateAction<boolean>>;';
 
 
@@ -251,11 +249,11 @@ const paramDescriptionElements: Record<string, React.FC> = {
 
 // Combine with the button's documentation refs to prevent code duplication
 const combinedParamTypeEls: Record<string, React.FC> = {
+  ...buttonParamTypeElements,
   ...paramTypeElements,
-  ...buttonParamTypeElements
 }
 
 const combinedParamDescEls: Record<string, React.FC> = {
+  ...buttonParamDescElements,
   ...paramDescriptionElements,
-  ...buttonParamDescElements
 }

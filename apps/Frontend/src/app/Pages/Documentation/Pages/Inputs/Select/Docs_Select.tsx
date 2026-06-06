@@ -1,11 +1,10 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
+import { Dropdown, getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
-import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 import { ElementState } from '../../../Components/ShowcaseElement/ElementStates/ElementState';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';

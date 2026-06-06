@@ -1,11 +1,10 @@
 import { MouseEvent, useState, useMemo, useContext } from "react";
 import { ShowcaseElement, ParamContext } from "../../../Components/ShowcaseElement/ShowcaseElement";
 import { ShowcaseExample_StateRef } from "../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef";
-import { getSourceCode, TooltipService } from "@Project/ReactComponents";
+import { Dropdown, getSourceCode, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
 import { dParArg, ParamType } from "../../../Components/ParamType/ParamType";
-import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
 
 import { DocLink } from "../../../Components/DocLink/DocLink";
 import { Kw } from "../../../Components/Keyword/Keyword";
@@ -214,11 +213,11 @@ export const buttonParamTypeElements: Record<string, React.FC> = {
   'displayText': () => <ParamType type="string" tooltip={{ code: dParArg('displayText', 'Click me') }} />, 
   'onClick': () => <ParamType type="MouseEvent" tooltip={{ code: Code_onClickBtn, type: 'type' }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }}/>,
-
+  
   'size': () => <ParamType type="ButtonSizes" tooltip={{ code: Code_ButtonSzs, type: 'type' }}  />,
   'color': () => <ParamType type="ButtonColors" tooltip={{ code: Code_ButtonClrs, type: 'type' }} />,
   'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionalStyles', 'class-name') }} />,
-
+  
   'icon': () => <ParamType type="IconTypes" tooltip={{ code: dParArg('icon', 'iconName') }} />,
   'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'icon-class') }} />,
 };

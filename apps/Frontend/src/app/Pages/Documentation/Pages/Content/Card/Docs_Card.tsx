@@ -1,11 +1,10 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
-import { getSourceCode, getValuesFromType, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
+import { Dropdown, getSourceCode, getValuesFromType, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 import { buttonParamDescElements, buttonParamsList, buttonParamTypeElements } from '../../Inputs/Button/Docs_Button';
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
-import { Dropdown } from '../../../../../Components/Content/Dropdown/Dropdown';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
@@ -278,7 +277,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'linkText': () => <ParamType type="string" tooltip={{ code: dParArg('linkText', 'Click me') }} />,
   'onClickLink': () => <ParamType type="MouseEvent" tooltip={{ code: Code_OnClickLink }} />,
   
-
+  
   'styles': () => <ParamType type="string" tooltip={{ code: dParArg('styles', 'container-classes')}} />, 
   'additStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additStyles', 'additional-classes')}} />,
   
@@ -396,10 +395,10 @@ const paramDescriptionElements: Record<string, React.FC> = {
 // Combine with the button's documentation refs to prevent code duplication
 const combinedParamTypeEls: Record<string, React.FC> = {
   ...paramTypeElements,
-  ...buttonParamTypeElements
+  ...buttonParamTypeElements,
 }
 
 const combinedParamDescEls: Record<string, React.FC> = {
   ...paramDescriptionElements,
-  ...buttonParamDescElements
+  ...buttonParamDescElements,
 }

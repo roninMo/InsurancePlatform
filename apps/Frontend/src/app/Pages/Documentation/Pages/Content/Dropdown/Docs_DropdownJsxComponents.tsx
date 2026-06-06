@@ -1,5 +1,5 @@
+import { Dropdown } from "@Project/ReactComponents";
 import { ReactNode, useEffect, useState } from "react";
-import { Dropdown } from "../../../../../Components/Content/Dropdown/Dropdown";
 
 
 export const Example_Dropdown = ({ isThisTabOpen, paramTable }: {

@@ -3,8 +3,7 @@
 
 import { ReactNode, useContext, useId, useMemo, useState } from 'react';
 import { ParamContext } from '../ShowcaseElement/ShowcaseElement';
-import { Button, Ht, Icon, TooltipContentProps, TooltipService } from '@Project/ReactComponents';
-import { Dropdown } from '../../../../Components/Content/Dropdown/Dropdown';
+import { Button, Dropdown, Ht, Icon, TooltipContentProps, TooltipService } from '@Project/ReactComponents';
 import { Kw } from '../Keyword/Keyword';
 
 import styled from '@emotion/styled';
