@@ -1,4 +1,4 @@
-import { Alert, AlertType } from "../../../../../Components/Content/Alert/Alert";
+import { Alert, AlertType } from "@Project/ReactComponents";
 import { Card } from "../../../../../Components/Content/Card/Card";
 
 

@@ -2,9 +2,9 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { HashLink } from '../../../../Components/Utils/HashLink/HashLink';
-import { Alert } from '../../../../Components/Content/Alert/Alert';
 import { Card } from '../../../../Components/Content/Card/Card';
 import { 
+  Alert,
   Button, 
   Checkbox, 
   Dropbox, 
@@ -102,7 +102,7 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
         <h4 className='pb-2'>Input Component</h4>
         <Input 
           type='search' name='quicklink-input'
-          label='Example Input' value=''
+          label='Example Input' 
           placeholder='Type something...'
           description="The input's description."
           tooltipContent={{ text: "Tooltip text... "}} tooltipContext={tooltipContext}
@@ -120,7 +120,7 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
             type="default" name="quicklink-textarea"
             label="Box style"
             description="The description of the textarea."
-            placeholder="input text..." value=""
+            placeholder="input text..." 
 
             submitButtonText="Post" onSubmit={() => {}}
             attachFile={{} as any} metadataTags
@@ -221,7 +221,7 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
           label="Upload files" name="quicklink-fileUpload"
           description='The description of the dropbox.'
           
-          value={null} handleFiles={() => {}}
+          handleFiles={() => {}}
           multiple accept='image/*, .pdf, .doc, .docx, .txt'
         />
       </HashLink>
@@ -235,7 +235,6 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
         <Slider 
           label="Slider Component" name="quicklink-slider"
           description="The description of the slider."
-          value="true" 
           onChange={() => {}}
         />
       </HashLink>

@@ -1,6 +1,7 @@
 import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId, useContext, useMemo } from 'react';
 import { Card } from '../../../Components/Content/Card/Card';
 import { 
+  Alert,
   Button, 
   defaultBoxMetadataTags, 
   defaultPostMetadataTags, 
@@ -22,11 +23,10 @@ import {
   TooltipService,
   Icon, 
 } from '@Project/ReactComponents';
-
-import styles from './CustomContent.module.scss';
-import { Alert } from '../../../Components/Content/Alert/Alert';
 import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
 import { FormProvider, useForm } from 'react-hook-form';
+
+import styles from './CustomContent.module.scss';
 
 
 export const CustomContent = () => {
@@ -196,11 +196,9 @@ export const CustomContent = () => {
     description: 'What is your favorite food?',
 
     radioItems: favoriteFoods,
-    currentValue: favoriteFood,
     onSelect: selectedFavoriteFood,
 
-    error: radioItemError,
-    errorMessage: radioItemErrorMessage,
+    error: radioItemErrorMessage,
     disabled: false,
     required: false,
   };
@@ -219,10 +217,10 @@ export const CustomContent = () => {
   }
 
   // Dropbox component
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[] | null>(null);
   const [fileUploadError, setFileUploadError] = useState<boolean>(false);
   const [fileUploadDisabled, setFileUploadDisabled] = useState<boolean>(false);
-  const handleFiles = (files: FileList | null) => {
+  const handleFiles = (files: File[] | null) => {
     setFiles(files);
     console.log('files uploaded: ', files);
   }
@@ -240,7 +238,6 @@ export const CustomContent = () => {
             name="Input"
             label="Input"
             description=""
-            value={input}
             placeholder="Input text..."
             onChange={inputChanged}
             error={inputErrorMessage} 
@@ -267,7 +264,6 @@ export const CustomContent = () => {
           <Select 
             name="inputType"
             label="Input Type"
-            value={inputType}
             values={inputTypes}
             onSelect={inputTypeChanged}
           />
@@ -351,14 +347,12 @@ export const CustomContent = () => {
               name="fileUpload"
               label="Upload files"
               description='The description of the dropbox.'
-              value={files}
               handleFiles={handleFiles}
               // multiple
               // accept='image/*'
               customIcon='Canvas'
 
-              error={fileUploadError}
-              errorMessage='An error occurred.'
+              error={fileUploadError ? 'An error occurred.': undefined}
               disabled={fileUploadDisabled}
               required
             />
@@ -519,7 +513,6 @@ export const CustomContent = () => {
                 name="slider"
                 label="Slider"
                 description="A slider component"
-                value={slider}
                 onChange={onChangeSlider}
 
                 error={sliderErrorMessage}

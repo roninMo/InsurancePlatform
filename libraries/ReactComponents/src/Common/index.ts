@@ -6,7 +6,7 @@ export type { IconTypes } from './Icons/Icon';
 // Content
 export * from './Content/index';
 
-
+// Utilities
 // Record and Object Entry function helpers
 export * from './Utilities/RecordUtils/MakeRecord';
 export * from './Utilities/RecordUtils/MapRecord';

@@ -1,8 +1,7 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
 import { ShowcaseExample_StateRef } from '../../../Components/ShowcaseExampleStateRef/ShowcaseExampleStateRef';
-import { getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
-import { AlertType } from '../../../../../Components/Content/Alert/Alert';
+import { AlertType, getSourceCode, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -206,7 +205,7 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceAlertSnippets from '../../../../../Components/Content/Alert/Alert?raw';
+import SourceAlertSnippets from '@lib-rc/Common/Content/Alert/Alert?raw';
 const Code_AlertTypes = getSourceCode(SourceAlertSnippets, 'AlertType', 'type');
 
 
