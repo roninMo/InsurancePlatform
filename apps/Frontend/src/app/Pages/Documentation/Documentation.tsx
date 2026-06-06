@@ -47,8 +47,8 @@ export const Documentation = () => {
             x add default masks for each input type with masks
             x variants mask params should optionally enable/disable their mask
             x there should be a new param for adding a mask through this class, or a custom one
-    
-    
+
+
     - add all the content and util components to the library
       - Content
         - alert
@@ -70,7 +70,8 @@ export const Documentation = () => {
       - select
       - slider
       - textarea
-    
+
+
     - Component Efficiency and Rerendering (Refactor)
       1. Check if both Rhf and the custom state handling are working properly
       2. Check all component rerenders
@@ -78,12 +79,20 @@ export const Documentation = () => {
         x Select rendering (both)
         x checkbox events (both)
         x dropbox events (both)
-        - input onChange and other events
-          - add rerender stuff for the preceding and subsequent events
+        x input onChange and other events
         x textarea events and other things
         x slider events (both)
         x radioGroup onSelect (both)
         x radioTable onSelect (both)
+
+
+    - Let's add universal typing to our library, specifically for handling dynamic props
+      - start with Input's ConditionalVariantProps, and the AllVariantProps helper
+        - These allow us to add union types for certain variants in intellisense, 
+            while retrieving retaining type assertions without complications. 
+      - Move to the other form components and search for universal conditional props (styles) and add them
+      - If you find anything else, add them here.
+
 
     - go back through the docs and update them again
       - Forms
@@ -106,6 +115,12 @@ export const Documentation = () => {
         - tooltip
         - HashLink
 
+
+    
+    
+    
+    
+    
     - Finished with the Docs Page and all the universal components!
 
     - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
