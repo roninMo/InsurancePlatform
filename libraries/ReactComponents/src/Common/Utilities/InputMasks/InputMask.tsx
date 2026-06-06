@@ -1072,6 +1072,7 @@ export class InputMask {
           `\nnewRaw:    `, { cursor: this.logRawCursorPos(newCursorLocation, newCursorLocation, newRawValue) },
         );
       }
+      return newValue;
     }
     // #endregion
     
@@ -1468,7 +1469,7 @@ export class InputMask {
         inputActionType: this.listenerInputType || 'undefined'
       });
     }
-    console.log(`UpdateState() InputMaskState: `, { rawInputValue, maskedInputValue, start: selectionStart, end: selectionEnd, action: this.listenerInputType });
+    console.log(`UpdateState() InputMaskState: `, { rawInputValue, maskedInputValue, start: selectionStart, end: selectionEnd, action: this.listenerInputType, _history: this.history });
   }
   // #endregion
   
@@ -1974,6 +1975,7 @@ export class InputMask {
       if (!rawValue && !this._keepMaskVisibleWhenEmpty) newValue = "";
       
       // {} React calls onChange when this value is updated
+      console.log(`handleNativeEventLogic(${this.listenerInputType}): updating the input value to "${newValue}"`);
       input.value = newValue; // ! Changing this property directly triggers React's internal onChange tracker
       // if (invokeOnChange === '') console.log('handleNativeEventLogic() called onChange with an empty string!');
       
@@ -2175,45 +2177,76 @@ export class InputMask {
     const target = inputEvent.target as HTMLInputElement;
     
     // * Potential autofill information
-    const newValue = target.value;
-    const { inputActionType, curStart, curEnd, rawValue, maskedValue } = this.history.get() || {};
+    const inputValue = target.value;
+    const currUpdate = this.history.get() || {} as any;
+    const { inputActionType, curStart, curEnd, rawValue, maskedValue } = currUpdate;
     const hasAutofillSel = target.matches(':autofill') || target.matches(':-webkit-autofill'); 
-    // console.log(`nativeInputEvent(${this.listenerInputType})  Checking if this was an autofill event: data: `, 
-    //   `\n autofill:    `, { newValue, rawInput: this.rawInputValue, cachedInput: this.getCachedInputValue(), hasAutofillSel },
-    //   `\n actionType:  `, { historyActionType: inputActionType, currListenerType: this.listenerInputType },
-    //   `\n historyData: `, { id: this.history.currentId, rawValue, maskedValue, curStart, curEnd, _history: this.history }
+    
+    // ! Note: These events are ran when we call handleEventLogic(), and can cause an infinite loop where our data isn't updated or persisted (using history to fix this)
+    // console.log(`\n(nativeInputEvent) during ${this.listenerInputType} -  Checking if this was an autofill event: data: `, 
+    //   { inputValue, rawInput: this.rawInputValue, cachedInput: this.getCachedInputValue(), hasAutofillSel, historyActionType: inputActionType, currListenerType: this.listenerInputType },
+    //   `\n history: `, {  _history: this.history, id: this.history.currentId, rawValue, maskedValue, curStart, curEnd }
     // );
     
-    // ! Note: These events are ran when we call handleEventLogic(), and can cause an infinite loop where our data isn't updated or persisted
-    const isValidAutoFill = hasAutofillSel && newValue && newValue != this.rawInputValue;
+    
+    // ? Browser Input Autofill Add - Overwrite the value and store it in the history event
+    const isValidAutoFill = hasAutofillSel && inputValue && inputValue != this.rawInputValue;
     const prevActionWasAutofill = inputActionType == 'insertReplacementText';
-    // ? Browser Input Autofill Scenario - overwrite the value and store it in the history event
     if (isValidAutoFill && !prevActionWasAutofill) {
       this.listenerInputType = 'insertReplacementText'; 
       const customEvent: InputEvent & { text?: string } = nativeEvent;
-      customEvent.text = newValue;
+      customEvent.text = inputValue;
       
       // inputEvent.stopPropagation();
       inputEvent.preventDefault();
-      console.warn(`Autofill(ADD) event, persisting to evaluate: `, { newValue, customEvent });
+      console.warn(`Autofill(add) event, persisting to evaluate: `, { inputValue, customEvent });
       this.evaluate(customEvent, this.listenerInputType); // ! this will trigger an onChange, and browser behavior can become sporadic
       return;
     }
     
+    
+    // {} Instead of programmatically checking specific scenarios, let's use our own internal state tracking
     // ? Browser Input Autofill Deletion - All text was removed, check if the input contents magically disappeared
-    const prevUpdate = this.history.get(this.history.currentId - 1);
-    const lastUpdateRemovedAllText = this.history.get() && prevUpdate && prevUpdate.rawValue && !rawValue; 
-    const textHasBeenEmpty = this.history.get() && prevUpdate && !prevUpdate.rawValue && !rawValue;
-    if (!lastUpdateRemovedAllText && !textHasBeenEmpty) { // TODO - check if this event happens when we ctrl + delete. 
+    const prevUpdate = this.history.get(this.history.currentId - 1); // the history just updated, and the pointer is stored for the next instance
+    const userRemovedAllText = !!currUpdate && !!prevUpdate && !!prevUpdate.rawValue && rawValue == ''; 
+    const textHasBeenEmpty = (!!currUpdate && !!prevUpdate) && prevUpdate.rawValue == '' && rawValue == '';
+    // console.log(`autofill(clear): checking whether to run the clear autofill event`, 
+    //   `\n data: `, { inputVal: target.value, prevVal: prevUpdate?.rawValue, currentVal: rawValue },
+    //   `\n rawCalcs: `, { userRemovedAllText, textHasBeenEmpty, noTargetVal: !target.value },
+    //   `\n state: `, { currentStateEmpty: !rawValue, prevStateEmpty: !prevUpdate?.rawValue, current: currUpdate, prev: prevUpdate },
+    // );
+    if (!inputValue && !userRemovedAllText && !textHasBeenEmpty) { 
       this.listenerInputType = 'deleteReplacementText'; 
-      const customEvent: InputEvent & { text?: string } = nativeEvent;
-      customEvent.text = newValue;
-      
-      // inputEvent.stopPropagation();
       inputEvent.preventDefault();
-      console.warn(`Autofill(DEL) event, persisting to evaluate: `, { newValue, customEvent });
+      
+      const customEvent: InputEvent & { text?: string } = nativeEvent;
+      customEvent.text = inputValue;
+      console.warn(`Autofill(del) event, persisting to evaluate: `, { inputValue, customEvent });
       this.evaluate(customEvent, this.listenerInputType); // ! this will trigger an onChange, and browser behavior can become sporadic
       return;
+    }
+    
+    
+    // ? Other Browser Input Autofill Deletion Detection
+    // TODO - Autofill clear in google doesn't update the value until you autofill, but I don't know about other browser behavior
+    if (false) { 
+      // When Chrome cancels an autofill preview, it leaves the input as is.
+      const isChromiumCancel = (nativeEvent.inputType === undefined || nativeEvent.inputType === '') && !inputValue;
+      
+      // Firefox and Edge explicitly flag structural state resets with 'historyUndo' or 'insertReplacementText'
+      const isFirefoxCancel = (nativeEvent.inputType === 'historyUndo' || nativeEvent.inputType === 'insertReplacementText') && !inputValue;
+      
+      if (isChromiumCancel || isFirefoxCancel) {
+        this.listenerInputType = 'deleteReplacementText';
+        inputEvent.preventDefault();
+        
+        // Create custom event and forward payload
+        const customEvent: InputEvent & { text?: string } = nativeEvent;
+        customEvent.text = '';
+        console.warn(`Verified Autofill(cancel/clear) event detected via InputEvent signature.`, { nativeEvent, isChromiumCancel, isFirefoxCancel });
+        this.evaluate(customEvent, this.listenerInputType as any);
+        return;
+      }
     }
   }
   
@@ -2322,10 +2355,9 @@ class InputMaskHistory {
    * @returns         The current {@link InputMaskHistoryState|HistoryState} or a specified index, or null if there is none.
   */
   public get(index?: number): InputMaskHistoryState | null {
-    const pointer = index || this.pointer;
-    
+    const pointer = index !== undefined ? index : this.pointer;
     if (pointer < this.stack.length && pointer >= 0) {
-      return this.stack[this.pointer];
+      return this.stack[pointer];
     }
     return null;
   }
