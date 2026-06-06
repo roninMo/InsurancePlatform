@@ -279,7 +279,7 @@ export class CCMask extends CustomInputMask {
 
 /**
  * ### CCExpMask
- * The Credit Card Mask is an {@link CustomInputMask|InputMask} that has predefined data, with option formatting overrides to fit your input mask's needs.
+ * The Credit Card Exp Date Mask is an {@link CustomInputMask|InputMask} that has predefined data, with option formatting overrides to fit your input mask's needs.
  * 
  * Each class has a specific {@link MaskOpts|Mask Config} for an {@link TextInputTypes|Input} type, with an 
  * `options` arg that allow you to edit the **InputMask** while retaining it's logic and filter for that specific mask.
@@ -300,7 +300,7 @@ export class CCExpMask extends CustomInputMask {
 
 /**
  * ### CCVMask
- * The Credit Card Mask is an {@link CustomInputMask|InputMask} that has predefined data, with option formatting overrides to fit your input mask's needs.
+ * The CCV Mask is an {@link CustomInputMask|InputMask} that has predefined data, with option formatting overrides to fit your input mask's needs.
  * 
  * Each class has a specific {@link MaskOpts|Mask Config} for an {@link TextInputTypes|Input} type, with an 
  * `options` arg that allow you to edit the **InputMask** while retaining it's logic and filter for that specific mask.
@@ -323,7 +323,7 @@ export class CCVMask extends CustomInputMask {
 
 // #region Policy Number Masks
 /**
- * ### CCMask
+ * ### Policy
  * The Policy Number Mask is an {@link CustomInputMask|InputMask} that has predefined data, with option formatting overrides to fit your input mask's needs.
  * 
  * Each class has a specific {@link MaskOpts|Mask Config} for an {@link TextInputTypes|Input} type, with an 

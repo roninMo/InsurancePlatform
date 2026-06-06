@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, FocusEvent, FormEvent, RefObject, SetStateAction, useEffect, useReducer, useRef, useState } from 'react';
+import { ChangeEvent, Dispatch, FocusEvent, FormEvent, memo, RefObject, SetStateAction, useEffect, useReducer, useRef, useState } from 'react';
 import { FieldErrors, useFormContext } from 'react-hook-form';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { InputMask, MaskOpts, TMaskClass } from '@Project/ReactComponents/Common/Utilities/InputMasks/InputMask';
@@ -384,10 +384,10 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   const getError = (): boolean => (!!error && !disabled);
   
   // * Rerender state
-  console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), isUsingMask(${!!usingInputMask})`, 
-    `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
-    `\n config: `, { inputMask, maskOptsProp: mask }
-  );
+  // console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), isUsingMask(${!!usingInputMask})`, 
+  //   `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
+  //   `\n config: `, { inputMask, maskOptsProp: mask }
+  // );
   
   
   // #region Input Event Logic
@@ -498,7 +498,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
         
         {/* Variant specific elements before and after the input element */}
         <PrecedingElements 
-          type={type}
+          name={name} type={type}
           showPassword={passwordVisible} setShowPassword={setPasswordVisible}
           hideEmailIcon={hideEmailIcon} hideVisibilityIcon={hideVisibilityIcon} hidePolicyNumberIcon={hidePolicyNumberIcon}
           hidePhoneIcon={hidePhoneIcon} hideCreditCardIcon={hideCreditCardIcon} hideMoneySign={hideMoneySign}
@@ -511,7 +511,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
           tooltipContent={tooltipContent} tooltipContext={tooltipContext}
           
           hideIncrementButtons={hideIncrementButtons}
-          inputRef={localInputRef} isRHFMode={isRHFMode} incrementValue={handleOnChange}
+          inputRef={localInputRef} isRHFMode={isRHFMode} onChange={handleOnChange}
           
           sortButton={sortButton} sortType={sortType}
           hideCurrencyType={hideCurrencyType}
@@ -541,6 +541,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
 //------------------------------------------//
 // #region Preceding Elements
 interface PrecedingElProps {
+  name: string;
   type: TextInputTypes;
   showPassword: boolean;
   setShowPassword: Dispatch<SetStateAction<boolean>>;
@@ -553,15 +554,18 @@ interface PrecedingElProps {
   hideCreditCardIcon?: boolean;
   hideMoneySign?: boolean;
 }
-export const PrecedingElements: React.FC<PrecedingElProps> = ({ 
-  type, showPassword, setShowPassword, 
+export const PrecedingElements: React.FC<PrecedingElProps> = memo(({ 
+  name, type, showPassword, setShowPassword, 
   hideEmailIcon, hideVisibilityIcon, hidePolicyNumberIcon, 
   hidePhoneIcon, hideCreditCardIcon, hideMoneySign
-}) => {
-  const toggleShowPassword = (visible: boolean) => setShowPassword(visible);
+}) => {;
   const showVariantIcon = !hideEmailIcon || !hideVisibilityIcon || // TODO: Do we want to simplify the prop passed here?
     !hidePolicyNumberIcon || !hidePhoneIcon || !hideCreditCardIcon || !hideMoneySign;
   const VariantIcon: React.FC | undefined = showVariantIcon ? PrecedingIcons[type] || undefined : undefined;
+  
+  // * Rerender state
+  // console.log(`Input-PrecedingElements ${name} rerendered`)
+  
   
   return (
     <VariantIcons className="input-preceding-el-c">
@@ -569,7 +573,7 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({
         {VariantIcon && <VariantIcon />}
         
         { (type == 'password' && !hideVisibilityIcon) && 
-          <div onClick={() => toggleShowPassword(!showPassword)} className='input-password-vis'>
+          <div onClick={() => setShowPassword(!showPassword)} className='input-password-vis'>
             { showPassword  &&  <Icon variant='EyeSlash' styles='input-icon-def' /> }
             { !showPassword &&  <Icon variant='Eye' styles='input-icon-def' /> }
           </div>
@@ -577,7 +581,7 @@ export const PrecedingElements: React.FC<PrecedingElProps> = ({
       </div>
     </VariantIcons>
   );
-}
+});
 
 const inputTypesWithoutIcons = ['search', 'text', 'currency', 'number'];
 const PrecedingIcons: Partial<Record<TextInputTypes, React.FC>> = {
@@ -601,7 +605,7 @@ interface SubsequentElProps {
   
   disabled: boolean;
   error: boolean;
-
+  
   tooltipContent?: TooltipContentProps;
   tooltipContext?: TooltipContextActions;
   
@@ -609,45 +613,33 @@ interface SubsequentElProps {
   hideIncrementButtons?: boolean;
   inputRef?: RefObject<HTMLInputElement | null>;
   isRHFMode?: boolean;
-  incrementValue: (e: ChangeEvent<HTMLInputElement>) => void;
-
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  
   sortButton?: boolean;
   sortType?: SearchSortType;
   hideCurrencyType?: boolean;
 }
-export const SubsequentElements: React.FC<SubsequentElProps> = ({
+export const SubsequentElements: React.FC<SubsequentElProps> = memo(({
   name, type, disabled, error, 
   tooltipContext, tooltipContent, 
-  hideIncrementButtons, inputRef, isRHFMode, incrementValue,
-  sortButton, sortType,
-  hideCurrencyType
+  hideIncrementButtons, inputRef, isRHFMode, onChange,
+  sortButton, sortType, hideCurrencyType
 }) => {
   const { show, hide } = tooltipContext || {};
-  const { getValues, setValue } = useFormContext() || {};
-
+  const { getValues, setValue, control } = useFormContext() || {};
+  
   const onPressIncrementButtons = (add: boolean) => {
     // If we're using rhf
-    if (getValues(name) || getValues(name) === 0) {
-      if (!Number(getValues(name))) return;
-      const currentValue = Number(getValues(name)) || 0;
-      setValue(name, currentValue + (add ? 1 : -1), { shouldValidate: true });
-      return;
-    }
-    
-    // Scenario A: Handled cleanly via React Hook Form cache
-    if (isRHFMode) {
-      const rawFormValue = getValues(name);
-      const baseValue = (rawFormValue === undefined || rawFormValue === '') ? 0 : Number(rawFormValue);
+    const inputValue = getValues?.(name) === undefined ? 0 : getValues?.(name);
+    if (isRHFMode && !Number(inputValue)) {
       
-      if (!Number.isNaN(baseValue)) {
-        const nextValue = baseValue + (add ? 1 : -1);
-        setValue(name, nextValue, { shouldValidate: true });
-        incrementValue({ target: { value: String(nextValue) } } as any);
-      }
+      const currentValue = Number(inputValue) || 0;
+      const isInRevalidateMode = control?._formState?.isSubmitted || false; // TODO - should this be a global function because it's tied to rhf's validation modes?
+      setValue(name, currentValue + (add ? 1 : -1), { shouldValidate: isInRevalidateMode });
       return;
     }
     
-    // Scenario B: Read straight from the HTML DOM node value property
+    // Custom state or if rhf's not working
     if (inputRef && inputRef.current) {
       const domValue = inputRef.current.value;
       const baseValue = domValue === '' ? 0 : Number(domValue);
@@ -656,10 +648,14 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
         const nextValue = baseValue + (add ? 1 : -1);
         
         // Dispatch the change event back up to the user's custom state handler
-        incrementValue({ target: { value: String(nextValue) } } as any);
+        onChange && onChange({ target: { value: String(nextValue) } } as any); // call the onChange
       }
     }
   }
+  
+  // * Rerender state
+  // console.log(`Input-SubsequentElements ${name} rerendered`);
+  
   
   return (
     <div className="input-subsequent-el-c">
@@ -720,7 +716,46 @@ export const SubsequentElements: React.FC<SubsequentElProps> = ({
       </div>
     </div>
   );
-}
+// custom rerender functionality
+}, (prevProps, nextProps) => {
+  
+  // If configurations change, rerender
+  if ( prevProps.type !== nextProps.type 
+    || prevProps.name !== nextProps.name
+    || prevProps.isRHFMode !== nextProps.isRHFMode) {
+    return false;
+  }
+  
+  // Form / Validations
+  if (prevProps.disabled !== nextProps.disabled || prevProps.error !== nextProps.error) {
+    return false;
+  }
+  
+  // Input variant specific functionality
+  if (nextProps.type == 'number') {
+    if (prevProps.hideIncrementButtons !== nextProps.hideIncrementButtons) {
+      return false;
+    }
+  }
+  if (nextProps.type == 'search') {
+    if (prevProps.sortButton !== nextProps.sortButton) return false;
+    if (prevProps.sortType !== nextProps.sortType) return false;
+  }
+  if (nextProps.type == 'currency') {
+    if (prevProps.hideCurrencyType !== nextProps.hideCurrencyType) return false;
+  }
+  
+  // Tooltip specific edits - quick check that they passed in different content 
+  const prevTooltip = prevProps.tooltipContent as any;
+  const nextTooltip = prevProps.tooltipContent as any;
+  if (prevProps.tooltipContext !== nextProps.tooltipContext) return false;
+  if (prevTooltip?.text !== nextTooltip?.text || prevTooltip?.styles !== nextTooltip?.styles) return false;
+  if (prevTooltip?.code !== nextTooltip?.code || prevTooltip?.type !== nextTooltip?.type) return false;
+  if (prevTooltip?.children !== nextTooltip?.children) return false;
+  
+  // If nothing changed, safely skip the rerender
+  return true; 
+});
 // #endregion
 
 

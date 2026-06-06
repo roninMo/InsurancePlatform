@@ -25,7 +25,7 @@ export const Example_TextInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -77,7 +77,7 @@ export const Example_NumberInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -130,7 +130,7 @@ export const Example_EmailInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -184,7 +184,7 @@ export const Example_PasswordInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -237,7 +237,7 @@ export const Example_SearchInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -291,7 +291,7 @@ export const Example_PolicyNumberInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -346,7 +346,7 @@ export const Example_PhoneInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -401,7 +401,7 @@ export const Example_CreditCardInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   
@@ -456,7 +456,7 @@ export const Example_CurrencyInput = ({ error, disabled }: {
     
     // Capturing state manually
     const newValue = e?.target?.value;
-    console.log(`updated the value: "${newValue}`);
+    console.log(`updated the value: "${newValue}"`);
     setValue(newValue);
   }
   

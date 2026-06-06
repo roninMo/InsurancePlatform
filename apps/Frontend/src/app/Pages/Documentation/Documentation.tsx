@@ -27,17 +27,17 @@ export const Documentation = () => {
     - There's a bug with the navbar if you hover over and out and back to it before the duration ends
     - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
     
-    - Add react hook forms soon alongside the option to add state to the value for custom scenarios
-      - Go back to the input and textarea
-        - Change custom state handling to useRefs, and use focus events for rerenders
+    x Add react hook forms soon alongside the option to add state to the value for custom scenarios
+      x Go back to the input and textarea
+        x Change custom state handling to useRefs, and use focus events for rerenders
           x textarea
-          - input
-        - Add a couple functions for input masking and optionally editing on the fly
+          x input
+        x Add a couple functions for input masking and optionally editing on the fly
           x A class for handling masks that take in a couple arguments
             x A mask, where underscores are wildcard characters from the user - ex: phone - (___)-___-____
             x A regex string for acceptable characters
-            - Then find a way to add this alongside input components
-          - input::onFocus(), onChange(), onBlur()
+            x Then find a way to add this alongside input components
+          x input::onFocus(), onChange(), onBlur()
             x rerenders should be now tied to focus or blur events, or a delay after typing.
             x use onChange for updating rhf after we've handled masks, and custom edits from updateValue()
           x input::updateValue()
@@ -47,7 +47,8 @@ export const Documentation = () => {
             x add default masks for each input type with masks
             x variants mask params should optionally enable/disable their mask
             x there should be a new param for adding a mask through this class, or a custom one
-
+    
+    
     - add all the content and util components to the library
       - Content
         - alert
@@ -78,7 +79,8 @@ export const Documentation = () => {
         x checkbox events (both)
         x dropbox events (both)
         - input onChange and other events
-        - textarea events and other things
+          - add rerender stuff for the preceding and subsequent events
+        x textarea events and other things
         x slider events (both)
         x radioGroup onSelect (both)
         x radioTable onSelect (both)
