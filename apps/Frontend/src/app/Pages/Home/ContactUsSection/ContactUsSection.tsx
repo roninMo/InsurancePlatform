@@ -141,7 +141,6 @@ export const ContactUsSection = () => {
               type="text"
               label="First Name"
               placeholder="Your first name"
-              value={firstName}
               onChange={(e) => updateValue(e, setFirstName, 'firstName')}
 
               required={false}
@@ -157,7 +156,6 @@ export const ContactUsSection = () => {
               type="text"
               label="Last Name"
               placeholder="Your last name"
-              value={lastName}
               onChange={(e) => updateValue(e, setLastName, 'lastName')}
 
               required={false}
@@ -173,7 +171,6 @@ export const ContactUsSection = () => {
               type="email"
               label="Email"
               placeholder="Your email"
-              value={email}
               onChange={(e) => updateValue(e, setEmail, 'email')}
 
               required={false}
@@ -189,7 +186,6 @@ export const ContactUsSection = () => {
               type="phone"
               label="Phone Number"
               placeholder="Your phone number"
-              value={phone}
               onChange={(e) => updateValue(e, setPhone, 'phone')}
 
               required={false}
@@ -205,7 +201,6 @@ export const ContactUsSection = () => {
               type="box"
               name="ContactUs-Message"
               label="Email to schwegmank@gmail.com"
-              value={message}
               onChange={(e) => updateValue(e, setMessage, 'message')}
               placeholder="Enter text here..."
               description="Shoot me a message, I'll get back to you soon"

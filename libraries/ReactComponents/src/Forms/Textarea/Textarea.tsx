@@ -137,7 +137,7 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
         shouldValidate.current = false;
         
         // ? check if we should clear any current errors
-        const { error } = getFieldState(name);
+        const { error } = getFieldState?.(name) || {};
         if (!!error || disabled) clearErrors(name);
       } 
       
@@ -288,7 +288,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
   // * Input binding logic
   const { register, getValues, getFieldState, control } = useFormContext() || {};
   const isRHFMode = !disableHookForms && !!register;
-  const { error: errors } = getFieldState(name, control?._formState); // <- second arg prevents the internal JavaScript Proxy from adding a tracking flag to your component.
+  const { error: errors } = getFieldState?.(name, control?._formState) || {}; // <- second arg prevents the internal JavaScript Proxy from adding a tracking flag to your component.
   const localInputRef = useRef<HTMLTextAreaElement | undefined>(undefined); // When not using rhf
   
   /** Either Rhf's captured form value, or the internal ref for custom state. */

@@ -2,10 +2,10 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { HashLink } from '../../../../Components/Utils/HashLink/HashLink';
-import { Card } from '../../../../Components/Content/Card/Card';
 import { 
   Alert,
   Button, 
+  Card,
   Checkbox, 
   Dropbox, 
   getValuesFromType, 

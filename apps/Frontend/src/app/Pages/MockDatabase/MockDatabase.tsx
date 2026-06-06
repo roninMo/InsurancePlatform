@@ -3,8 +3,23 @@ import { FieldErrors, FormProvider, useForm, useFormContext } from 'react-hook-f
 import { yupResolver } from "@hookform/resolvers/yup"
 import { array, boolean, InferType, mixed, object, string } from 'yup';
 import { Navbar } from '../../Components/Navbar/Navbar';
-import { Card } from '../../Components/Content/Card/Card';
-import { Button, Checkbox, CheckboxItem, Input, makeRecord, mapRecord, RadioGroup, RadioItem, RadioTable, Select, SelectItem, Slider, Textarea, TooltipService } from '@Project/ReactComponents';
+import { 
+	Button, 
+	Card, 
+	Checkbox, 
+	CheckboxItem, 
+	Input, 
+	makeRecord, 
+	mapRecord, 
+	RadioGroup, 
+	RadioItem, 
+	RadioTable, 
+	Select, 
+	SelectItem, 
+	Slider, 
+	Textarea, 
+	TooltipService 
+} from '@Project/ReactComponents';
 
 import styled from '@emotion/styled';
 import styles from './MockDatabase.module.scss';
@@ -105,7 +120,7 @@ Context options
 			
 				
 	- Components
-		- siderbar (selected tables)
+		- sidebar (selected tables)
 		- tob bar
 		- content page
 		- bottom popover (select / new table)
@@ -121,7 +136,7 @@ Context options
 		- information page
 			- db stats, table stats, values stats
 		- values page
-			- TableItem (quick display, move/depete, dropdown -> table item values)
+			- TableItem (quick display, move/delete, dropdown -> table item values)
 			- edit value comp (modal on edit selection)
 		- edit page
 			- edit table components ^
@@ -193,7 +208,7 @@ const schema = object({
 				.required('Password is required')
 				.matches(pwdRegex, 'Password must be 8+ characters with 1 letter and 1 number'),
 		}),
-
+		
 	database: string()
     .oneOf(['databaseA', 'databaseB', 'databaseC'], 'Please select a valid database')
     .required('You must select a database'),
@@ -208,7 +223,7 @@ const schema = object({
 	
 	retrieveServerData: boolean().optional(),
 		// .nullable(), // .notRequired()
-
+		
 	radioGroupTest: string()
     .oneOf(['item1', 'item2', 'item3'], 'Please select a valid radio item')
     .required('You must select a radio item'),
@@ -216,9 +231,9 @@ const schema = object({
 	radioTableTest: string()
     .oneOf(['item1', 'item2', 'item3'], 'Please select a valid radio table item')
     .required('You must select a radio table item'),
-
+		
   checkboxTest: array().min(1, 'Skills selection is required.'),
-
+	
 	databaseLogo: mixed<File>()
     .required('A file upload is required')
     .test('fileSize', 'File size must be less than 2MB', (value) => {
@@ -227,7 +242,7 @@ const schema = object({
     .test('fileType', 'Unsupported file format', (value) => {
       return value ? VALID_FILE_TYPES.includes(value.type) : false;
     }),
-
+		
 		textareaTest: string()
 			.max(500)
 			.required(),
@@ -262,7 +277,7 @@ export const MockDatabase = () => {
       textareaTest: '',
     },
   });
-
+	
 	// Rhf hook
 	const { handleSubmit, formState: { errors } } = formMethods;
   const onSubmit = (data: TestForm) => {
@@ -272,14 +287,14 @@ export const MockDatabase = () => {
     console.log('\ninvalid Form Data:', errors);
 		console.log(`rhf state: `, formMethods.getValues());
   };
-
-
+	
+	
 	//--------------------------//
 	// Rhf Toggle								//
 	//--------------------------//
 	const usingRhf = true; 
-
-
+	
+	
 	const [email, setEmail] = useState<string>('');
 	const [pass, setPass] = useState<string>('');
 	const [textareaVal, setTextareaVal] = useState<string>('');
@@ -287,18 +302,18 @@ export const MockDatabase = () => {
 		console.log(`update email value?: ${e?.target?.value}`); 
 		if (!usingRhf) setEmail(e?.target?.value); 
 	}, []);
-
+	
 	const updatePass = useCallback((e: ChangeEvent<any>) => { 
 		console.log(`${e?.target?.value}`); 
 		if (!usingRhf) setPass(e?.target?.value); 
 	}, []);
-
+	
 	const updateTextarea = useCallback((e: ChangeEvent<any>) => { 
 		console.log(`${e?.target?.value}`); 
 		if (!usingRhf) setTextareaVal(e?.target?.value); 
 	}, []);
-
-
+	
+	
 	const [dbItems, setDbItems] = useState<SelectItem[]>([ ...databaseValues ]);
 	const updateDbItems = useCallback((updatedItem: SelectItem) => {
 		console.log(`updated ${updatedItem.value}, isSelected: ${updatedItem.selected}, data: `, {updatedItem, items: dbItems});
@@ -312,34 +327,34 @@ export const MockDatabase = () => {
 		// console.log(`updated ${updatedItem.value}, isSelected: ${updatedItem.selected}, data: `, {updatedItem, items: tableItems });
 		// if (!usingRhf) setTableItems(pv => pv.map(item => updatedItem.value == item.value ? updatedItem : item));
 	}, []);
-
-
+	
+	
 	const [chbxItems, setChbxItems] = useState<Record<string, CheckboxItem>>(makeRecord(chbxVals, item => [item.value, item]));
 	const updateChbx = useCallback((e: ChangeEvent<HTMLInputElement>, checked: CheckboxItem) => {
 		console.log(`${checked.label} ${checked.checked ? 'checked' : 'unchecked'}, data: `, { checked, chbxItems });
 		if (!usingRhf) setChbxItems(mapRecord(chbxItems, (k, v) => v.value == checked.value ? checked : v)); // useState update
 	}, []);
-
+	
 	const [retServerData, setRetServerData] = useState<'true' | 'false'>('false');
 	const updateRetServerData = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 		const checked = e?.target?.value as 'true' | 'false';
 		console.log(`retrieveServerData: ${checked}`);
 		setRetServerData(checked);
 	}, []);
-
+	
 	const [radioItem, setRadioItem] = useState<RadioItem>({ label: '', value: '' });
 	const [radioTableItem, setRadioTableItem] = useState<RadioItem>({ label: '', value: '' });
 	const updateRadioGroup = useCallback((e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
 		console.log(`${selected.label} selected: `, selected);
 		if (!usingRhf) setRadioItem(selected);
 	}, []);
-
+	
 	const updateRadioTable = useCallback((e: ChangeEvent<HTMLInputElement>, selected: RadioItem) => {
 		console.log(`${selected.label} selected: `, selected);
 		if (!usingRhf) setRadioTableItem(selected);
 	}, []);
-
-
+	
+	
   return (
 		<FormProvider {...formMethods}>
 			{/* Navbar */}
@@ -521,10 +536,8 @@ export const MockDatabase = () => {
 								onSubmit={handleSubmit(onSubmit, onInvalid)}
 							/>
 						</div>
-
-
-
-
+						
+						
 						{/* <div className='span-12 text-right pt-4'>
 							<Button displayText='Submit' type='submit' color='primary' size='md' />
 						</div> */}
@@ -580,14 +593,14 @@ const RenderedItems = ({ name, styles }: { name: string, styles?: string }) => {
 		if (val === '') return 'empty string';
 		return val;
 	}
-
+	
 	return (
 		<div className={`rendered-form-vals-c ${styles}`}>
 			<span className='rendered-form-vals-header'>
 				&nbsp;{ name }'s <span className='text-base'>values</span>
 			</span>
 			<div className='my-1 mb-2.5 border-b border-default' />
-
+			
 			<div className='rendered-form-vals-items-c'>
 				{ getValues().map(value => (
 					<div className='rendered-form-vals-item' key={`${name}-disp-${getComputedVal(value)}`}> 

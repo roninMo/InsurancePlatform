@@ -1,8 +1,8 @@
 import { useState, MouseEvent, Dispatch, SetStateAction, ChangeEvent, useId, useContext, useMemo } from 'react';
-import { Card } from '../../../Components/Content/Card/Card';
 import { 
   Alert,
   Button, 
+  Card, 
   defaultBoxMetadataTags, 
   defaultPostMetadataTags, 
   Checkbox,

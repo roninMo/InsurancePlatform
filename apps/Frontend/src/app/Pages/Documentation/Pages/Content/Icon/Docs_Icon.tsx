@@ -1,6 +1,6 @@
 import { useState, useMemo, SetStateAction, Dispatch, useContext, memo } from 'react';
 import { ParamContext, ShowcaseElement } from '../../../Components/ShowcaseElement/ShowcaseElement';
-import { getSourceCode, getValuesFromType, Icon, IconTypes, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
+import { Card, getSourceCode, getValuesFromType, Icon, IconTypes, TooltipContextActions, TooltipService } from "@Project/ReactComponents";
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
@@ -210,7 +210,6 @@ const paramTypeElements: Record<string, React.FC> = {
 
 // Code Snippets
 import SourceIconSnippets from '@lib-rc/Common/Icons/Icon?raw';
-import { Card } from '../../../../../Components/Content/Card/Card';
 const Code_IconTypes = getSourceCode(SourceIconSnippets, 'IconTypes', 'type');
 
 

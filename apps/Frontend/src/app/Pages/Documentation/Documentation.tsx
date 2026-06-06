@@ -114,15 +114,15 @@ export const Documentation = () => {
         - modal
         - tooltip
         - HashLink
-
-
+    
+    
     
     
     
     
     
     - Finished with the Docs Page and all the universal components!
-
+    
     - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
       - add documentation to UpdateRecord, and move it to the library utils
       - Add a getEntries to return either an array or the default entries list without calling Object.fromEntries
@@ -131,7 +131,7 @@ export const Documentation = () => {
     - Fix up the CustomContent page to use the proper props
     - Decide whether you want to find a place to add the tooltip on the textarea 
     - Eventually add aria specific stuff to custom components?
-
+    
     - When we're using Textastic 
       - update the props comments to be doc comments for the forms components 
 
@@ -158,7 +158,7 @@ export const Documentation = () => {
       - a by component page with a filter search for individual components. with a list of the rerenders and its info from the array
       - a config section to select each prop to have devlogs
       - filtered section should show components enabled, and then those grayed out, with old data from when it was enabled
-
+      
     - have a linked list tree search to traverse after a filtered search
     - each component ref should have a parent, component, alias (it's label or input value), and props to display as a second sidebar popover
     - check to enable disable logging, and selectable to show current rerenders and logging
@@ -174,25 +174,25 @@ export const Documentation = () => {
       - https://share.google/aimode/jI9AcgZHCDzDSxLux
       - use this to create a hierarchy of components for traversing and object structure
       - have the devlog capture this and the component's specific props as well, essential for rerender context
-
+      
     - Devlog that captures the devlogs and rerender states of components, 
       - That has multiple consoles for readability and different focuses to help debug code
-
+      
       - A popover content bar that comes from the bottom of the screen like a console, with dynamic sizing from a min height
       - It has multiple consoles, and a specific section to select a component to see it's specific devlogs.
         1. The 'Console' tab displays all components selected, their logs, their rerenders, and metadata for both in each message within dropdowns
             - option for render/console. The render view (default) captures all messages tied to a component and 
                 stores them in a rerender IF there was a recent rerender (200ms before / after).
-        
+                
         2. The 'Filtered' tab (is created when they filter on the console -> moved to this one for brevity)
             - Let's you select components to show in the console instead of everything enabled.
             - Allows them a sidebar that has a search to select, then a hierarchy (from the current component, to it's children or 
                 back up a level). 
-          
+                
         3. The 'By Component' tab allows for a different view, one that lets you select a single component, and show all it's logs and rerenders in a single list
             - The hierarchy should be more open and scrollable (by mouse), or find something to do here
             - The actual menu should be different, rather
-
+            
         4. The 'Settings' tab allows you to adjust certain settings for the devlog, and anything else used in this popover 
               - setting for displaying logs to the console
               - what components should have devlogs enabled
@@ -206,7 +206,7 @@ export const Documentation = () => {
             - Components should have their component name, and a ref of the current (their label prop, input value, or id number)
             - The hierarchy should let you click on the nested components, or go back
             - There should be a "{...}" icon in the top right of the sidebar for a popover of their specific props
-
+            
         Each specific logged message
           - the log has the message, data attached the log, and any additional used in the custom devLog
             - message should have a style for a string value
@@ -215,20 +215,19 @@ export const Documentation = () => {
             - for the timeline we should have a dropdown of the logs that occurred during this rerender
 
 
-
       - A singleton class that the devlog subscribes to passes both log types to the class for storage and use
         - the history value is a Record<index, DevLog | Rerender> that increments with each log captured
         - There will be an additional two variables created from this
-
-
+  
+  
 	*/
-
-
+  
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const onSetSidebarState = (wasOpened: boolean) => {
     console.log(`The sidebar was ` + wasOpened ? 'opened' : 'closed');
   };
-
+  
   // UseForm placeholder for no errors with doc examples 
   const formMethods = useForm();
 	
@@ -237,7 +236,7 @@ export const Documentation = () => {
   return (
     <>
       {/* Navbar */}
-		  <FormProvider {...formMethods}>
+      <FormProvider {...formMethods}>
         <Navbar />
         <div className='dropdown-spacing py-4' />
           
@@ -268,7 +267,7 @@ export const Documentation = () => {
                 
                 <div className='span-12'>
                   <div className='p-2 showcase-text'>
-
+                    
                     {/* <div className='ascii-text'> 
                           _                       
                           \`*-.                   
@@ -303,12 +302,12 @@ export const Documentation = () => {
                       <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[bue]&nbsp;.*'&nbsp;/&nbsp;&nbsp;.*'&nbsp;;&nbsp;.*`-&nbsp;+'&nbsp;&nbsp;`*'
                       <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;&nbsp;`*-*&nbsp;&nbsp;`*-*'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </p>
-
+                    
                   </div>
                 </div>
               </PageContent>
             </Content>
-
+            
             <StickySidebar className='hidden 2xl:flex items-start pt-2 min-w-[20%] 2xl:min-w-[15%]'>
               <div className="sticky top-[4.5rem] h-screen overflow-y-auto min-w-[20%] 2xl:min-w-[12%]">
                 <Hashbar />
@@ -318,14 +317,13 @@ export const Documentation = () => {
           
         </Container>
         
-          
-
+        
         {/*<div className='spacing gap-4 p-4'>*/}
         {/*  /!*<CustomContent />*!/*/}
         {/*</div>*/}
         <Footer />
       </FormProvider>
-
+      
     </>
   );
 }

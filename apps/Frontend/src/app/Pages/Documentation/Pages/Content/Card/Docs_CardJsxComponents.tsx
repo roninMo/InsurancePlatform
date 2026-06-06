@@ -1,4 +1,5 @@
-import { Card } from "../../../../../Components/Content/Card/Card";
+import { Card } from "@Project/ReactComponents";
+
 
 
 export const Example_DefaultCard = () => {
@@ -8,24 +9,24 @@ export const Example_DefaultCard = () => {
       <Card type="default" additStyles="span-12 lg:span-4 p-4">
         Default layout
       </Card>
-
+      
       <Card type="default" additStyles="span-12 lg:span-4 p-4" noBorder noBackground>
         Default layout
       </Card>
-
+      
       <Card type="default" additStyles="span-12 lg:span-4 p-4" noBackground>
         Default layout
       </Card>
-
+      
       {/* Interactive hover */}
       <Card type="default" additStyles="span-12 lg:span-4 p-4" hoverTheme>
         Default layout
       </Card>
-
+      
       <Card type="default" additStyles="span-12 lg:span-4 p-4" noBorder noBackground hoverTheme>
         Default layout
       </Card>
-
+      
       <Card type="default" additStyles="span-12 lg:span-4 p-4" noBackground hoverTheme>
         Default layout
       </Card>
@@ -42,32 +43,32 @@ export const Example_Card = () => {
         type="card" 
         title="Card Layout"
         description="The description of a card style element"
-
+        
         hoverTheme 
         additStyles="span-12 lg:span-4 p-4"
       >
         <div>Card content</div>
         <div>Card content</div>
       </Card>
-
+      
       <Card
         type="card" 
         title="Card Layout"
-        description="The description of a card style element" 
-
-        noBackground hoverTheme 
+        description="The description of a card style element"
+        
+        noBorder noBackground hoverTheme 
         additStyles="span-12 lg:span-4 p-4" 
       >
         <div>Card content</div>
         <div>Card content</div>
       </Card>
-
+      
       <Card
         type="card" 
         title="Card Layout"
-        description="The description of a card style element"
-
-        noBorder noBackground hoverTheme 
+        description="The description of a card style element" 
+        
+        noBackground hoverTheme 
         additStyles="span-12 lg:span-4 p-4" 
       >
         <div>Card content</div>

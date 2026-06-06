@@ -1,9 +1,18 @@
 import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { Dropdown } from '../../../Components/Content/Dropdown/Dropdown';
-import { Button } from '@Project/ReactComponents';
 import { Modal } from '../../../Components/Utils/Modal/Modal';
 import { HashLink } from '../../../Components/Utils/HashLink/HashLink';
-import { InsuranceAppLinks, MockDatabaseLinks, QuickLinkProps, QuickLinks, QuickLinksProps, SpotifyDemoLinks, SSAutoSaveLinks } from './QuickLinks/QuickLinks';
+import { Button } from '@Project/ReactComponents';
+import { InsuranceAppLinks, 
+  MockDatabaseLinks, 
+  QuickLinkProps, 
+  QuickLinks, 
+  SpotifyDemoLinks, 
+  SSAutoSaveLinks, 
+  QuickLinksProps, 
+} from './QuickLinks/QuickLinks';
 
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import BackgroundAnim from "../../../../assets/lottie/Background looping animation.json";
@@ -17,6 +26,9 @@ import styles from './WelcomeSection.module.scss';
 
 export const WelcomeSection = () => {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
+  
+  // UseForm placeholder for no errors with home page items using the input component 
+  const formMethods = useForm();
 
   //--------------------------------------------//
   // Background Animation                       //

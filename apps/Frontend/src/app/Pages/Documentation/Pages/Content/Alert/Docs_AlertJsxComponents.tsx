@@ -1,5 +1,4 @@
-import { Alert, AlertType } from "@Project/ReactComponents";
-import { Card } from "../../../../../Components/Content/Card/Card";
+import { Alert, AlertType, Card } from "@Project/ReactComponents";
 
 
 export const Example_Alert = ({ type }: {
