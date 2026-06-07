@@ -27,15 +27,16 @@ export const Docs_Button = () => {
   const [currentTab, setCurrentTab] = useState<string>('Primary');
   const tabs: string[] = ['Primary', 'Gray', 'GrayFocus', 'Custom'];
   const tabLabels: string[] = ['Primary', 'Gray', 'Gray-Focus', 'Custom'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -52,26 +53,26 @@ export const Docs_Button = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, buttonParamTypeElements, buttonParamDescElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
   const { show, hide } = useContext(TooltipService);
   const [buttonError, setButtonError] = useState<string>('');
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
-
-
+  
+  
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Button Component
       </h3>
-
+      
       <div className='span-12'>
         <p className='p-2 showcase-text'>
           A themed functional button component for this project. With built in functionality for events and styling.
@@ -92,7 +93,7 @@ export const Docs_Button = () => {
           . It's relatively the same, and has theme specific styles.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
@@ -153,7 +154,7 @@ export const Docs_Button = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Button Parameters' openByDefault>
           <ParamTable 
@@ -242,7 +243,7 @@ export const buttonParamDescElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Whether the button is disabled.
     </div>,
-
+  
   'size': () =>
     <div className='param-item-desc-text'>
       The preset sizes for the button. The values are "default", "md", "lg", "xl", and "none". You can add your own custom styles for other scenarios.
@@ -255,7 +256,7 @@ export const buttonParamDescElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Additional styles for the button.
     </div>,
-
+  
   'icon': () =>
     <div className='param-item-desc-text'>
       The icon you want to add to the button.

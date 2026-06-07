@@ -26,15 +26,16 @@ export const Docs_HashLink = () => {
   const [currentTab, setCurrentTab] = useState<string>('default');
   const tabs: string[] = ['default', 'page', 'useNavigate', 'custom'];
   const tabLabels: string[] = ['Default', 'Page', 'UseNavigate', 'Custom'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -52,25 +53,23 @@ export const Docs_HashLink = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(
         variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements
       );
-
+      
       params.push(...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
-  // Input State Management         //
+  // HTML                           //
   //--------------------------------//
-
-
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
         HashLink Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
           The <Kw>HashLink</Kw> component is a dynamic react router <Kw>Link</Kw> that's built to add hashLink navigation functionality 
@@ -86,12 +85,12 @@ export const Docs_HashLink = () => {
           <span onClick={hide} onMouseLeave={hide} onMouseEnter={() => show({ code: Code_NavigateOptions, type: "interface" })} >
             <DocLink label='options' url='/Documentation/Forms/Slider' />
           </span>
-
+          
           &nbsp;you can use when navigating for handling window history and internal navigation logic.
         </div>
       </div>
-
-
+      
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
@@ -133,7 +132,7 @@ export const Docs_HashLink = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <div className='span-12 p-2 pt-0'>
         <Ht show={currentTab == 'default'} cStyles='showcase-text'>
           The default <Kw>HashLink</Kw> only requires the url, and you can optionally pass in a label or html content, styles, and custom navigation state.
@@ -147,7 +146,7 @@ export const Docs_HashLink = () => {
           <span onClick={hide} onMouseLeave={hide} onMouseEnter={() => show({ code: Code_NavigateOptions, type: "interface" })} >
             <DocLink label='NavigateOptions' url='/Documentation/Forms/Slider' />
           </span>
-
+          
           &nbsp;to the navigate function. Useful for certain scenarios where you need custom navigation logic.
         </Ht>
         <Ht show={currentTab == 'custom'} cStyles='showcase-text'>
@@ -155,7 +154,7 @@ export const Docs_HashLink = () => {
           It works for all <Kw>types</Kw>, and you should use it accordingly.
         </Ht>
       </div>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='HashLink Parameters' openByDefault>
           <ParamTable 
@@ -164,7 +163,7 @@ export const Docs_HashLink = () => {
           />
         </Dropdown>
       </div>
-
+      
     </Container>
   );
 }
@@ -250,7 +249,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Custom styles for the HashLink. By default, the class used is "link-text".
     </div>,
-
+  
   'label': () => 
     <div className='param-item-desc-text'>
       The label of the HashLink. If you want custom content instead of text, omit this and add children inside your HashLink in the jsx. 
@@ -259,7 +258,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Optionally rendered content that's wrapped in a link. Used in place of the label prop. Accepted with all types.
     </div>,
-
+  
   'type': () =>
     <div className='param-item-desc-text'>
       The type of navigate you're using. The types are "router" (default nav), "page" (new page, no http refer), and "useNavigate" (adds opts: NavigateOptions).

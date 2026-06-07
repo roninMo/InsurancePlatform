@@ -22,15 +22,16 @@ export const Docs_Slider = () => {
   //--------------------------------//
   const [currentTab, setCurrentTab] = useState<string>('Default');
   const tabs: string[] = ['Default'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -47,25 +48,25 @@ export const Docs_Slider = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
   const [sliderError, setSliderError] = useState<string>('');
   const [sliderDisabled, setSliderDisabled] = useState<boolean>(false);
-
-
+  
+  
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Slider Component
       </h3>
-
+      
       <div className='span-12'>
         <p className='p-2 showcase-text'>
           A themed functional <Kw>Slider</Kw> component for this project. 
@@ -73,7 +74,7 @@ export const Docs_Slider = () => {
           You can override the styles if you need a custom theme or other styles to suit your project goal.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: string, index: number) => 
@@ -100,7 +101,7 @@ export const Docs_Slider = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Slider Parameters' openByDefault>
           <ParamTable 
@@ -162,10 +163,10 @@ const paramTypeElements: Record<string, React.FC> = {
   'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'slider-form-name') }} />, 
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Slider Label') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the slider.') }} />,
-
+  
   'value': () => <ParamType type="boolean" tooltip={{ code: dParArg('value', 'value', 'var') }} />,
   'onChange': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_OnChange }} />,
-
+  
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
@@ -196,7 +197,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description of the slider.
     </div>,
-
+  
   'value': () => 
     <div className='param-item-desc-text'>
       Whether the slider is enabled.
@@ -205,7 +206,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The function used to handle updating the slider value, as this isn't handled internally for developer customization.
     </div>,
-
+  
   'error': () =>
     <div className='param-item-desc-text'>
       Whether there's an error for the slider component.

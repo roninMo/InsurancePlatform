@@ -28,15 +28,16 @@ export const Docs_Checkbox = () => {
   const [currentTab, setCurrentTab] = useState<string>('list');
   const tabs: string[] = ['default', 'list', 'inline',];
   const tabLabels: string[] = ['Default', 'List', 'Inline',];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -53,11 +54,11 @@ export const Docs_Checkbox = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
@@ -70,15 +71,15 @@ export const Docs_Checkbox = () => {
   
   const [inlineError, setInlineError] = useState<string>('');
   const [inlineDisabled, setInlineDisabled] = useState<boolean>(false);
-
-
+  
+  
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Checkbox Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
           A styled checkbox input with <Kw>themed</Kw> styles for every form state. 
@@ -87,12 +88,12 @@ export const Docs_Checkbox = () => {
             &nbsp; <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span> &nbsp;
           </HashLink>
           or your own state hooks.
-
+          
           The variants are <Kw>default</Kw>, <Kw>list</Kw>, and <Kw>inline</Kw>.
-
+          
         </div>
       </div>
-
+      
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
           If you're looking for an input that only allows selecting a single value, try&nbsp;
@@ -116,7 +117,7 @@ export const Docs_Checkbox = () => {
           </span>.
         </div>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: string, index: number) => 
@@ -140,7 +141,7 @@ export const Docs_Checkbox = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
         { currentTab == 'list' && 
           <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_ListCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
@@ -152,7 +153,7 @@ export const Docs_Checkbox = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
         { currentTab == 'inline' && 
           <ShowcaseElement jsx={getSourceCode(CheckboxCodeSnippets, "Example_InlineCheckbox")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
@@ -165,7 +166,7 @@ export const Docs_Checkbox = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Checkbox Parameters' openByDefault>
           <ParamTable 
@@ -227,12 +228,12 @@ const paramTypeElements: Record<string, React.FC> = {
   'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'checkbox-form-name') }} />,
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Checkbox label') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the checkbox.') }} />,
-
+  
   'items': () => <ParamType type="CheckboxItems" isArray tooltip={{ code: Code_ChckbxItem, type: 'interface' }}/>,
   'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_OnSelect, type: 'type' }} />,
   'onMouseEnter': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseEnter, type: 'type' }} />,
   'onMouseLeave': () => <ParamType type="MouseEvent" tooltip={{ code: Code_MouseLeave, type: 'type' }} />,
-
+  
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var'), }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
@@ -265,7 +266,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description of the checkbox component.
     </div>,
-
+  
   'items': () =>
     <div className='param-item-desc-text'>
       A list containing the information and state of each checkbox item. You should use the 
@@ -283,7 +284,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       An optional event function for when the user's mouse leaves the checkbox component.
     </div>,
-
+  
   'error': () =>
     <div className='param-item-desc-text'>
       Whether there's an error for the checkbox component.

@@ -24,15 +24,16 @@ export const Docs_Dropbox = () => {
   const [currentTab, setCurrentTab] = useState<string>('default');
   const tabs: string[] = ['default'];
   const tabLabels: string[] = ['Default'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -49,35 +50,35 @@ export const Docs_Dropbox = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
   const { show, hide } = useContext(TooltipService);
   const [defaultError, setDefaultError] = useState<string>('');
   const [defaultDisabled, setDefaultDisabled] = useState<boolean>(false);
-
-
+  
+  
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Dropbox Component
       </h3>
-
+      
       <div className='span-12'>
         <p className='p-2 showcase-text'>
           A <Kw>drag and drop</Kw> file input component. It has themed styles with hover and error/disabled styles.
           Allows you to choose whether to accept <Kw>multiple</Kw> files, and what kind of files the user is allowed to choose.
-
+          
           There's additional functionality to edit the display and add your own background icon or custom styling if you need.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: string, index: number) => 
@@ -102,7 +103,7 @@ export const Docs_Dropbox = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Dropbox Parameters' openByDefault>
           <ParamTable 
@@ -163,7 +164,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'accept': () => <ParamType type="string" tooltip={{ code: dParArg('accept', 'image/*, .pdf, .doc, .docx, .txt') }} />,
   'handleFiles': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_HandleFiles }} />,
   'multiple': () => <ParamType type="boolean" tooltip={{ code: dParArg('multiple', 'multiple', 'var') }} />,
-
+  
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Upload files') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the dropbox.') }} />,
   'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionalStyles', 'stylesClass') }} />,
@@ -200,7 +201,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Whether the dropbox allows for uploading multiple files
     </div>,
-
+  
   'label': () =>
     <div className='param-item-desc-text'>
       The label of the dropbox component.
@@ -221,7 +222,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Custom styles for the dropbox's icon.
     </div>,
-
+  
   'error': () =>
     <div className='param-item-desc-text'>
       Whether there's an error for the dropbox component.

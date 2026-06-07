@@ -24,15 +24,16 @@ export const Docs_Dropdown = () => {
   const [currentTab, setCurrentTab] = useState<string>('default');
   const tabs: string[] = ['default'];
   const tabLabels: string[] = ['Default'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -53,32 +54,30 @@ export const Docs_Dropdown = () => {
         variantParams, variantContextParams, childParamsList, 
         combinedParamTypeEls, combinedParamDescEls
       );
-
+      
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
-  // Input State Management         //
+  // HTML                           //
   //--------------------------------//
-
-
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
         Dropdown Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 showcase-text'>
           The <Kw>Dropdown</Kw> component is a dynamic dropdown container and a label with customizable styling. You can keep track of it's 
           internal state for whether it's opened or closed, add or override it's styling and change it's icons to suit your needs.
         </div>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
@@ -177,7 +176,6 @@ const paramTypeElements: Record<string, React.FC> = {
 };
 
 // Code Snippets
-import SourceDropdownSnippets from '@lib-rc/Common/Icons/Icon?raw';
 const Code_OpenListener = 'openListener?: Dispatch<SetStateAction<boolean>>;';
 
 
@@ -194,7 +192,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       If you want to use your own custom icon for the dropdown.
     </div>,
-
+    
   'openListener': () => 
     <div className='param-item-desc-text'>
       Pass in your own state to keep track of the dropdown's.
@@ -212,7 +210,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
       A list of conditional props used to style the dropdown's components. You can either override or add to the current styles. 
       These are not nested parameters, they're a part of the dropdown's base props.
     </div>,
-
+    
   // Conditional Styling Params
   'styles': () => 
     <div className='param-item-desc-text'>

@@ -34,15 +34,16 @@ export const Docs_Input = () => {
   const [currentTab, setCurrentTab] = useState<TextInputTypes>('text');
   const tabs: TextInputTypes[] = ['text', 'number', 'email', 'password', 'search', 'policyNumber', 'phone', 'creditCard', 'currency'];
   const tabLabels: string[] = ['Text', 'Number', 'Email', 'Password', 'Search', 'Policy Number', 'Phone', 'Credit Card', 'Currency'];
-
+  
   const showTabContent = (tab: TextInputTypes) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: TextInputTypes) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: TextInputTypes) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -61,11 +62,11 @@ export const Docs_Input = () => {
       // TODO: call getParamsTableItems once [...base, 'spacing', ...variants]
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
@@ -97,16 +98,15 @@ export const Docs_Input = () => {
   const [currencyError, setCurrencyError] = useState<string>('');
   const [currencyDisabled, setCurrencyDisabled] = useState<boolean>(false);
   // #endregion
-
   const { show, hide } = useContext(TooltipService);
-
-
+  
+  
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
         Input Component
       </h3>
-
+      
       <div className='span-12'>
         <p className='p-2 showcase-text'>
           The <Kw>Input</Kw> component is designed with functionality and customization 
@@ -135,7 +135,7 @@ export const Docs_Input = () => {
           
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: TextInputTypes, index: number) => 
@@ -160,7 +160,7 @@ export const Docs_Input = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
         {/* Credit Card */}
         { currentTab == 'creditCard' && 
           <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_CreditCardInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
@@ -199,7 +199,7 @@ export const Docs_Input = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
         {/* Search */}
         { currentTab == 'search' && 
           <ShowcaseElement jsx={getSourceCode(InputCodeSnippets, "Example_SearchInput")} styles="spacing gap-0 opacity-0 animate-fade-in">
@@ -265,8 +265,8 @@ export const Docs_Input = () => {
           </ShowcaseElement>
         }
       </Variants>
-
-
+      
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Input Parameters' openByDefault>
           <ParamTable 
@@ -275,7 +275,7 @@ export const Docs_Input = () => {
           />
         </Dropdown>
       </div>
-
+      
       <div className='span-12 py-2 pt-4' id="event-handler-table">
         <Dropdown label='Event Handlers' openByDefault>
           <p className='p-2 pl-1 showcase-text'>
@@ -467,28 +467,28 @@ const paramTypeElements: Record<string, React.FC> = {
   'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
   'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' tooltip={{ code: Code_TextInputAutoCompleteTypes, type: 'type' }} />,
   'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOpts, type: 'interface' }} />,
-
+  
   'tooltip': () => <ParamType type="TooltipOptions" />,
   'context': () => <ParamType type="TooltipContextActions" tooltip={{ code: Code_TooltipContextActions, type: 'interface' }} />,
   'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
-
+  
   // Variant params
   'incrementButtons': () => <ParamType type='boolean' tooltip={{ code: dParArg('incrementButtons', 'incrementButtons', 'var') }} />,
   'showEmailIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showEmailIcon', 'showEmailIcon', 'var') }} />,
   'visibilityIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('visibilityIcon', 'visibilityIcon', 'var') }} />,
-
+  
   'sortButton': () => <ParamType type='boolean' tooltip={{ code: dParArg('sortButton', 'sortButton', 'var') }} />,
   'sortType': () => <ParamType type='SearchSortType' tooltip={{ code: Code_SearchSortType, type: 'type' }} />,
   
   'showPolicyNumberIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPolicyNumberIcon', 'showPolicyNumberIcon', 'var') }} />,
   'policyNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('policyMask', 'AB 0123456789') }} />,
-
+  
   'showPhoneIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPhoneIcon', 'showPhoneIcon', 'var') }} />,
   'phoneNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('phoneMask', '(123)-456-7890') }} />,
   
   'showCreditCardIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showCreditCardIcon', 'showCreditCardIcon', 'var') }} />,
   'creditCarkMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('creditCardMask', '0000-0000-0000-0000') }} />,
-
+  
   'showMoneySign': () => <ParamType type='boolean' tooltip={{ code: dParArg('showMoneySign', 'showMoneySign', 'var') }} />,
   'currencyTypeDropdown': () => <ParamType type='boolean' tooltip={{ code: dParArg('currencyTypeDropdown', 'currencyTypeDropdown', 'var') }} />,
 };
@@ -533,7 +533,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The input element's placeholder text. Rendered when the input is empty.
     </div>,
-
+  
   'error' : () =>
     <div className='param-item-desc-text'>
       Whether there's validation errors for this input.
@@ -554,7 +554,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The autocomplete text for this input.
     </div>,
-
+  
   'tooltip' : () =>
     <div className='param-item-desc-text'>
       Should this component have a tooltip?
@@ -567,30 +567,30 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The props to pass to the tooltip to render it's content.
     </div>,
-
-
+  
+  
   'opts' : () =>
     <div className='param-item-desc-text'>
       All the input's variant specific params stashed in a subtable. Select a variant, and they'll be displayed below. 
       Each variant only accepts these specific props to declutter the prop list and intellisense when you're coding.
     </div>,
-
+  
   // Variant params
   'incrementButtons' : () => 
   <div className='param-item-desc-text'>
     Whether to enable the increment and decrement buttons for the number input
   </div>,
-
+  
   'showEmailIcon' : () => 
   <div className='param-item-desc-text'>
     Do you want an email icon on the left hand side of the input?
   </div>,
-
+  
   'visibilityIcon' : () => 
   <div className='param-item-desc-text'>
     Whether to add the toggle password visibility icon to the input element.
   </div>,
-
+  
   'sortButton' : () => 
   <div className='param-item-desc-text'>
     Adds sorting functionality to the search results that come from this input
@@ -599,7 +599,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     What kind of sorting functionality do you want for the search?
   </div>,
-
+  
   'showPolicyNumberIcon' : () => 
   <div className='param-item-desc-text'>
     Do you want the policy number icon on the left hand side of the input?
@@ -608,7 +608,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Adds an input mask for your policy number input.
   </div>,
-
+  
   'showPhoneIcon' : () => 
   <div className='param-item-desc-text'>
     Do you want a phone icon on the left hand side of the input?
@@ -617,7 +617,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Adds an input mask for your phone number.
   </div>,
-
+  
   'showCreditCardIcon' : () => 
   <div className='param-item-desc-text'>
     Do you want a credit card icon on the left hand side of the input?
@@ -626,7 +626,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
   <div className='param-item-desc-text'>
     Adds an input mask for your credit card.
   </div>,
-
+  
   'showMoneySign' : () => 
   <div className='param-item-desc-text'>
     Do you want a money sign on the left hand side of the input?

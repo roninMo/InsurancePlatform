@@ -28,15 +28,15 @@ export const Docs_Card = () => {
   const [currentTab, setCurrentTab] = useState<string>('default');
   const tabs: string[] = ['default', 'card', 'card-button', 'card-link'];
   const tabLabels: string[] = ['Default', 'Card', 'Card Button', 'Card Link'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -57,25 +57,23 @@ export const Docs_Card = () => {
         variantParams, variantContextParams, childParamsList, 
         combinedParamTypeEls, combinedParamDescEls
       );
-
+      
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
-  // Input State Management         //
+  // HTML                           //
   //--------------------------------//
-
-
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
         Card Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
           The <Kw>Card</Kw> component is a themed container with variants that allow you to structure your content
@@ -86,10 +84,10 @@ export const Docs_Card = () => {
           <Kw onClick={() => onClickTab('card')} styles="keyword-interactive">card</Kw>, 
           <Kw onClick={() => onClickTab('card-button')} styles="keyword-interactive">card-button</Kw>, or
           <Kw onClick={() => onClickTab('card-link')} styles="keyword-interactive">card-link</Kw>.
-
+          
         </div>
       </div>
-
+      
       <div className='span-12'>
         <p className='p-2 pb-4 showcase-text'>
           If you're just looking for more of a notification-like element with various themes, use &nbsp;
@@ -104,7 +102,7 @@ export const Docs_Card = () => {
           . It functions like an html element, and you can either add content or nested html elements.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
@@ -146,8 +144,8 @@ export const Docs_Card = () => {
           </ShowcaseElement>
         }
       </Variants>
-
-
+      
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Card Parameters' openByDefault>
           <ParamTable 
@@ -181,21 +179,21 @@ const variantParamsList: Record<string, string[]> = {
   'card': [
     'noDivider',
     'spacing', 'styles', 'additStyles',
-    'headerStyles', 'additHeaderStyles',
+    'titleStyles', 'additTitleStyles',
     'descStyles', 'additDescStyles',
     'contentStyles', 'additContentStyles',
   ],
   'card-button': [
     'noDivider', 'buttonProps', 'buttonLocation', 'focusTheme',
     'spacing', 'styles', 'additStyles',
-    'headerStyles', 'additHeaderStyles',
+    'titleStyles', 'additTitleStyles',
     'descStyles', 'additDescStyles',
     'contentStyles', 'additContentStyles',
   ],
   'card-link': [
     'noDivider', 'linkText', 'onClickLink',
     'spacing', 'styles', 'additStyles',
-    'headerStyles', 'additHeaderStyles',
+    'titleStyles', 'additTitleStyles',
     'descStyles', 'additDescStyles',
     'contentStyles', 'additContentStyles',
   ]
@@ -218,19 +216,19 @@ const paramContextsList: Record<string, ParamContext[]> = {
       contextParam: true, variantOption: false 
     }, 
     { name: 'styles', contextParam: false, variantOption: true }, 
-    { name: 'headerStyles', contextParam: false, variantOption: true }, 
+    { name: 'titleStyles', contextParam: false, variantOption: true }, 
     { name: 'descStyles', contextParam: false, variantOption: true }, 
     { name: 'contentStyles', contextParam: false, variantOption: true }, 
     // { name: 'noDivider', contextParam: false, variantOption: true }, 
   ],
-
+  
   "card-button": [ 
     { 
       overwrite: 'type', name: 'type="card-button"',
       contextParam: true, variantOption: false 
     }, 
     { name: 'styles', contextParam: false, variantOption: true }, 
-    { name: 'headerStyles', contextParam: false, variantOption: true }, 
+    { name: 'titleStyles', contextParam: false, variantOption: true }, 
     { name: 'descStyles', contextParam: false, variantOption: true }, 
     { name: 'contentStyles', contextParam: false, variantOption: true }, 
     // { name: 'noDivider', contextParam: false, variantOption: true }, 
@@ -238,14 +236,14 @@ const paramContextsList: Record<string, ParamContext[]> = {
     // { name: 'buttonLocation', contextParam: false, variantOption: true }, 
     // { name: 'focusTheme', contextParam: false, variantOption: true }, 
   ],
-
+  
   "card-link": [ 
     { 
       name: 'type', overwrite: 'type="card-link"',
       contextParam: true, variantOption: false 
     }, 
     { name: 'styles', contextParam: false, variantOption: true }, 
-    { name: 'headerStyles', contextParam: false, variantOption: true }, 
+    { name: 'titleStyles', contextParam: false, variantOption: true }, 
     { name: 'descStyles', contextParam: false, variantOption: true }, 
     { name: 'contentStyles', contextParam: false, variantOption: true }, 
     // { name: 'noDivider', contextParam: false, variantOption: true }, 
@@ -281,8 +279,8 @@ const paramTypeElements: Record<string, React.FC> = {
   'styles': () => <ParamType type="string" tooltip={{ code: dParArg('styles', 'container-classes')}} />, 
   'additStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additStyles', 'additional-classes')}} />,
   
-  'headerStyles': () => <ParamType type="string" tooltip={{ code: dParArg('headerStyles', 'header-classes')}} />, 
-  'additHeaderStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additHeaderStyles', 'additional-classes')}} />,
+  'titleStyles': () => <ParamType type="string" tooltip={{ code: dParArg('titleStyles', 'title-classes')}} />, 
+  'additTitleStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additTitleStyles', 'additional-classes')}} />,
   
   'descStyles': () => <ParamType type="string" tooltip={{ code: dParArg('DescStyles', 'description-classes')}} />, 
   'additDescStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additDescStyles', 'addition-classes')}} />,
@@ -345,7 +343,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The function used to handle the Link's functionality.
     </div>,
-
+  
   // Conditional Styling Params
   'styles': () => 
     <div className='param-item-desc-text'>
@@ -359,15 +357,15 @@ const paramDescriptionElements: Record<string, React.FC> = {
       styles is restricted, and vice versa. 
       For the default type, this adds classes to the children's container. Use additContentStyles for every other type.
     </div>,
-  'headerStyles': () => 
+  'titleStyles': () => 
     <div className='param-item-desc-text'>
-      The styles of the header. If you're using headerStyles, 
-      additHeaderStyles is restricted, and vice versa.
+      The styles of the title. If you're using titleStyles, 
+      additTitleStyles is restricted, and vice versa.
     </div>,
-  'additHeaderStyles': () => 
+  'additTitleStyles': () => 
     <div className='param-item-desc-text'>
-      Additional styles for the header. If you're using additHeaderStyles, 
-      headerStyles is restricted, and vice versa.
+      Additional styles for the header. If you're using additTitleStyles, 
+      titleStyles is restricted, and vice versa.
     </div>,
   'descStyles': () => 
     <div className='param-item-desc-text'>
@@ -394,11 +392,11 @@ const paramDescriptionElements: Record<string, React.FC> = {
 
 // Combine with the button's documentation refs to prevent code duplication
 const combinedParamTypeEls: Record<string, React.FC> = {
-  ...paramTypeElements,
   ...buttonParamTypeElements,
+  ...paramTypeElements,
 }
 
 const combinedParamDescEls: Record<string, React.FC> = {
-  ...paramDescriptionElements,
   ...buttonParamDescElements,
+  ...paramDescriptionElements,
 }

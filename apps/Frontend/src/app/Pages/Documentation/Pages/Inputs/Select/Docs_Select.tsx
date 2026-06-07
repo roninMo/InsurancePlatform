@@ -26,15 +26,15 @@ export const Docs_Select = () => {
   const [currentTab, setCurrentTab] = useState<string>('Default');
   const tabs: string[] = ['Default', 'MultiSelect'];
   const tabLabels: string[] = ['Default', 'Multi Select'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -51,23 +51,23 @@ export const Docs_Select = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
   const [error, setError] = useState<string>('');
   const [disabled, setDisabled] = useState<boolean>(false);
-
+  
   const [msError, setMsError] = useState<string>('');
   const [msDisabled, setMsDisabled] = useState<boolean>(false);
-
+  
   const [dropdownSettings, setDropdownSettings] = useState<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean }>({});
   const [msDropdownSettings, setMsDropdownSettings] = useState<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean }>({});
-
+  
   const updateDropdownSettings = (
     setting: 'closeOnLeave' | 'keepOpenOnSlct' | 'preventOpenOnTab', 
     setState: Dispatch<SetStateAction<{closeOnLeave?: boolean; keepOpenOnSlct?: boolean; preventOpenOnTab?: boolean}>>
@@ -78,7 +78,7 @@ export const Docs_Select = () => {
       if (currentValue === undefined) newValue = true;
       if (currentValue === true) newValue = false;
       if (currentValue === false) newValue = undefined;
-
+      
       return {...prevState, [setting]: newValue };
     });
   }
@@ -86,11 +86,11 @@ export const Docs_Select = () => {
 
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Select Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 showcase-text'>
           The select component is a custom component that functions just like a select. It has built in styling and event functionality
@@ -98,7 +98,7 @@ export const Docs_Select = () => {
           It has themed styling, and allows you to pass in custom Icons for the <Kw>selectItems</Kw>, and allows you to take control of the state with ease.
         </div>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
@@ -126,20 +126,20 @@ export const Docs_Select = () => {
                 preventOpenOnTab={dropdownSettings.preventOpenOnTab}
               />
             </ShowcaseExample_StateRef>
-
+            
             <div className={`pb-24 showcase-state-ref-states-c`}>
               {/* Close dropdown when mouse leaves the select? */}
               <div className={ dropdownSettings.closeOnLeave === true ?  'element-state-v-green' :
                 dropdownSettings.closeOnLeave === false ? 'element-state-v-red' : 'element-state-v-gray' }>
                 <ElementState type='closeOnLeave' onClick={() => updateDropdownSettings('closeOnLeave', setDropdownSettings)} isSelected />
               </div>
-
+              
               {/* Keep dropdown open onSelect? */}
               <div className={ dropdownSettings.keepOpenOnSlct === true ?  'element-state-v-green' :
                 dropdownSettings.keepOpenOnSlct === false ? 'element-state-v-red' :'element-state-v-gray' }>
                 <ElementState type='keepOpenOnSlct' onClick={() => updateDropdownSettings('keepOpenOnSlct', setDropdownSettings)} isSelected />
               </div>
-
+              
               {/* Prevent opening the dropdown when user tabs to the select? */}
               <div className={ dropdownSettings.preventOpenOnTab === true ?  'element-state-v-green' :
                 dropdownSettings.preventOpenOnTab === false ? 'element-state-v-red' : 'element-state-v-gray' }>
@@ -170,20 +170,20 @@ export const Docs_Select = () => {
                 preventOpenOnTab={msDropdownSettings.preventOpenOnTab}
               />
             </ShowcaseExample_StateRef>
-
+            
             <div className={`pb-24 showcase-state-ref-states-c`}>
               {/* Close dropdown when mouse leaves the select? */}
               <div className={ msDropdownSettings.closeOnLeave === true ?  'element-state-v-green' :
                 msDropdownSettings.closeOnLeave === false ? 'element-state-v-red' : 'element-state-v-gray' }>
                 <ElementState type='closeOnLeave' onClick={() => updateDropdownSettings('closeOnLeave', setMsDropdownSettings)} isSelected />
               </div>
-
+              
               {/* Keep dropdown open onSelect? */}
               <div className={ msDropdownSettings.keepOpenOnSlct === true ?  'element-state-v-green' :
                 msDropdownSettings.keepOpenOnSlct === false ? 'element-state-v-red' :'element-state-v-gray' }>
                 <ElementState type='keepOpenOnSlct' onClick={() => updateDropdownSettings('keepOpenOnSlct', setMsDropdownSettings)} isSelected />
               </div>
-
+              
               {/* Prevent opening the dropdown when user tabs to the select? */}
               <div className={ msDropdownSettings.preventOpenOnTab === true ?  'element-state-v-green' :
                 msDropdownSettings.preventOpenOnTab === false ? 'element-state-v-red' : 'element-state-v-gray' }>
@@ -199,23 +199,23 @@ export const Docs_Select = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <h3 className="span-12 p-2 pt-8">
         Customizing the Dropdown's behavior
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 showcase-text'>
           There's also custom properties for overriding the dropdown behavior to suit your needs. If you want the dropdown to close 
           when the user's mouse leaves the dropdown, enable <Kw>closeDropdownOnLeave</Kw>. If you want to adjust when the dropdown closes for both the <Kw>Select</Kw> or <Kw>MultiSelect</Kw>, 
           set <Kw>keepDropdownOpenOnSelect</Kw> to true or false. Leaving it undefined will let each variant keep it's natural behavior.
-
+          
           <br/><br/>
           Finally, by default if you tab to the select component, the dropdown will automatically open. 
           If you don't want this behavior, set <Kw>preventOpenOnTabFocus</Kw> to true.
         </div>
       </div>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Select Parameters' openByDefault>
           <ParamTable 
@@ -288,22 +288,22 @@ const paramTypeElements: Record<string, React.FC> = {
   'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'select-form-name') }} />,
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Select Label') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'the description of the Select component.') }} />,
-
+  
   'value': () => <ParamType type="SelectItem" tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
   'values': () => <ParamType type="SelectItem" isArray tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
   'multiSelect': () => <ParamType type="boolean" tooltip={{ code: dParArg('multiSelect', 'multiSelect', 'var') }} />,
   'onSelect': () => <ParamType type="changeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
   'placeholder': () => <ParamType type="string" tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
-
+  
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
-
+  
   'tooltip': () => <ParamType type="TooltipOptions" />,
   'context': () => <ParamType type="TooltipContextActions" tooltip={{ code: Code_TooltipContextActions, type: 'interface' }} />,
   'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
-
+  
   'dropdownOptions': () => <ParamType type="SelectOpts" />,
   'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: Code_VariantProps, type: 'interface' }} />,
   'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: Code_NavTypeProps, type: 'interface' }} />,
@@ -311,7 +311,7 @@ const paramTypeElements: Record<string, React.FC> = {
   // 'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'true | false | undefined', 'var'), type: 'interface' }} />,
   // 'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
   // 'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'true | false | undefined', 'var'), type: 'interface' }} />,
-
+  
 };
 
 // Code Snippets
@@ -352,7 +352,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description of the radio table.
     </div>,
-
+  
   'value': () => 
     <div className='param-item-desc-text'>
       The value of the currently selected item.
@@ -373,7 +373,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The placeholder text for when the user hasn't selected a value yet.
     </div>,
-
+  
   'error': () =>
     <div className='param-item-desc-text'>
       Whether there's an error for the select component.
@@ -390,7 +390,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Whether the select component is required.
     </div>,
-
+  
   'tooltip' : () =>
     <div className='param-item-desc-text'>
       Should this component have a tooltip?
@@ -403,7 +403,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The props to pass to the tooltip to render it's content.
     </div>,
-
+  
   'dropdownOptions' : () =>
     <div className='param-item-desc-text'>
       Optional parameters to adjust the select component's dropdown functionality.

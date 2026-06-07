@@ -23,15 +23,15 @@ export const Docs_Icon = () => {
   const [currentTab, setCurrentTab] = useState<string>('default');
   const tabs: string[] = ['default'];
   const tabLabels: string[] = ['Default'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -48,14 +48,13 @@ export const Docs_Icon = () => {
       const spacing: (ParamItem | 'spacing')[] = ['spacing'];
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(
         variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements);
-
+        
       params.push(...spacing, ...variantParamItems);
     }
-
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
@@ -65,15 +64,15 @@ export const Docs_Icon = () => {
   const techIconTypes = getValuesFromType<IconTypes>(SourceIconSnippets, 'TechIconTypes') || [];
   const companyIconTypes = ['LibertyLogo', 'StateAutoLogo', 'DemandJump'] as IconTypes[];
   const iconListNames = ['Default Icons', 'Alert Icons', 'Media Icons', 'Tech Icons', 'Company Icons'];
-
-
+  
+  
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Icon Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 showcase-text'>
           The <Kw>Icon</Kw> component is a list of our own icons for this project. I could use a theme for them,
@@ -83,8 +82,8 @@ export const Docs_Icon = () => {
           There are lots of icon types listed below, give them a try.
         </div>
       </div>
-
-      {/* Showcase Input Element Variants */}
+      
+      {/* Showcase Input Element Tabs */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
           <div onClick={() => onClickTab(tab)} className={tabStyles(tab)} key={`showcase-input-tab-${tab}-${index}`} >
@@ -94,7 +93,8 @@ export const Docs_Icon = () => {
         )}
       </Tabs>
       
-      {/* Variants */}
+      
+      {/* JSX / Component Display */}
       <Variants className='span-12 py-2' id="showcase-variants">
         { currentTab == 'default' && 
           <ShowcaseElement startingTab='jsx' jsx={getSourceCode(IconCodeSnippets, "Example_Icon")} styles="spacing gap-0 opacity-0 animate-fade-in">
@@ -104,8 +104,7 @@ export const Docs_Icon = () => {
           </ShowcaseElement>
         }
       </Variants>
-
-
+      
       <div className='span-12 py-2' id="param-table">
         <Dropdown label='Icon Parameters' openByDefault>
           <ParamTable 
@@ -115,7 +114,8 @@ export const Docs_Icon = () => {
         </Dropdown>
       </div>
       
-
+      
+      {/* Icon lists */}
       <div className='spacing'>
         <h3 className="span-12 p-2 pt-12 docs-showcase-header">
           The icons for this project
@@ -124,7 +124,7 @@ export const Docs_Icon = () => {
           Hover over an icon to access it's variant
         </div>
       </div>
-
+      
       {[defaultIcons, alertIcons, mediaIconTypes, techIconTypes, companyIconTypes].map((icons, index) =>
         <div className='span-12 lg:span-8 p-2 pt-12' key={`iconList-${index}`}>
           <h5 className="span-12 pb-4 docs-showcase-header">

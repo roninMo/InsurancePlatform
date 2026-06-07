@@ -25,15 +25,15 @@ export const Docs_RadioTable = () => {
   const [currentTab, setCurrentTab] = useState<string>('block');
   const tabs: string[] = ['inline', 'block'];
   const tabLabels: string[] = ['Inline', 'Block'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -50,11 +50,11 @@ export const Docs_RadioTable = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
@@ -64,15 +64,15 @@ export const Docs_RadioTable = () => {
   
   const [blockError, setBlockError] = useState<string>('');
   const [blockDisabled, setBlockDisabled] = useState<boolean>(false);
-
-
+  
+  
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Radio Table Component
       </h3>
-
+      
       <div className='span-12'>
         <p className='p-2 showcase-text'>
           A functional radio table much like the radio group, just with nicer styles. 
@@ -80,12 +80,12 @@ export const Docs_RadioTable = () => {
           and a function to handle when the user selects one of the radio items.
         </p>
       </div>
-
+      
       <div className='span-12'>
         <p className='p-2 showcase-text'>
           A customizable radio group with multiple styles to fit your needs, and form state and theme styling for 
           a nice look and feel to it. 
-
+          
           You can use your own hooks for handling state or <Kw>react hook forms</Kw>, with built validation you can add on the fly.
           The different variants are <Kw>default</Kw>, <Kw>column</Kw>, <Kw>columnInline</Kw>, and <Kw>list</Kw>.
         </p>
@@ -105,7 +105,7 @@ export const Docs_RadioTable = () => {
           </span>.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: string, index: number) => 
@@ -129,7 +129,7 @@ export const Docs_RadioTable = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
         { currentTab == 'block' && 
           <ShowcaseElement jsx={getSourceCode(RadioTableCodeSnippets, "Example_BlockRadioTable")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
@@ -141,9 +141,9 @@ export const Docs_RadioTable = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
       </Variants>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Radio Table Parameters' openByDefault>
           <ParamTable 
@@ -206,13 +206,13 @@ const paramTypeElements: Record<string, React.FC> = {
   'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'radio-form-name') }} />,
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Radio Table Label') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the radio table.') }} />,
-
+  
   'radioItems': () => <ParamType type="RadioItem" isArray tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
   'currentValue': () => <ParamType type="RadioItem" tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
   'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
   'onMouseEnter': () => <ParamType type="MouseEvent" tooltip={{ code: Code_onMouseEnter, type: 'type' }} />,
   'onMouseLeave': () => <ParamType type="MouseEvent" tooltip={{ code: Code_onMouseLeave, type: 'type' }} />,
-
+  
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'errorMessage', 'var') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
@@ -245,7 +245,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description of the radio table.
     </div>,
-
+  
   'radioItems': () => 
     <div className='param-item-desc-text'>
       A list containing the information and state of each radio item. You should use the 
@@ -267,7 +267,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       An optional function that runs when the user's mouse leaves the element. 
     </div>,
-
+  
   'error': () =>
     <div className='param-item-desc-text'>
       Whether there's an error for the radio table component.

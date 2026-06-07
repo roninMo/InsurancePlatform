@@ -36,7 +36,7 @@ export const Docs_Introduction = ({ links }: DocsIntroductionProps) => {
         <h2 className='span-12'>
           Introduction
         </h2>
-
+        
         {/* Welcome to documentation demo */}
         <p className='span-12 py-2 text-lg lg:text-xl'>
             Welcome to the Documentation Demo. This documentation consists of the majority of functional custom components used within this project. 
@@ -52,7 +52,7 @@ export const Docs_Introduction = ({ links }: DocsIntroductionProps) => {
             even though I probably won't be using these much outside of this project, I got to design a lot of interesting things while developing each one.
         </p>
       </>}
-
+      
       <div className='spacing gap-6'>
         { links == 'all' && 
           <h2 className='span-12'>Links Section</h2>
@@ -68,7 +68,7 @@ export const Docs_Introduction = ({ links }: DocsIntroductionProps) => {
 
 const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
   const tooltipContext = useContext(TooltipService);
-
+  
   // Open the select by default, and prevent natural nav behavior from navigating from simulated event
   const [allowSelectNav, setAllowSelectNav] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -77,13 +77,13 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
     if (selectElement) selectElement.click();
     setAllowSelectNav(true);
   }, []);
-
+  
   const selectNavigateLogic = () => {
     if (!allowSelectNav) return;
     navigate('/Documentation/Forms/Select');
   }
-
-
+  
+  
   return (<>
     { links != 'all' ? 
       <h2 id='forms-quicklinks' className='span-12 pt-4'>Form Links</h2>
@@ -97,7 +97,8 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
       Between trying best practices and customizability, these were fun to spin up from reference.
       They all have variants for different scenarios, give it a try.
     </p>
-
+    
+    
     {/* input */}
     <div className='span-12 lg:span-5 col *:flex-1'>
       <HashLink url='/Documentation/Forms/Input' styles='doc-quicklink'>
@@ -112,6 +113,7 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
       </HashLink>
     </div>
     
+    
     {/* textarea */}
     <div className='span-12 lg:span-7 col *:flex-1'>
       <HashLink url='/Documentation/Forms/Textarea' styles='doc-quicklink'>
@@ -123,15 +125,15 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
             label="Box style"
             description="The description of the textarea."
             placeholder="input text..." 
-
+            
             submitButtonText="Post" onSubmit={() => {}}
             attachFile={{} as any} metadataTags
           />
         </div>
       </HashLink>
     </div>
-
-
+    
+    
     {/* checkbox */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Forms/Checkbox' styles='doc-quicklink'>
@@ -165,7 +167,7 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
           placeholder="Select a value..."
           description="The select input's description."
           multiSelect
-
+          
           // value={{ value: 'checkbox', label: "Checkbox", iconProps:            { icon: "CircleOkay", placement: 'left' }}}
           values={[
             { value: 'attachFile', label: "Attach File", iconProps:       { icon: "AttachFile", placement: 'left' }},
@@ -174,14 +176,14 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
             { value: 'plus', label: "Plus", iconProps:                    { icon: "Plus", placement: 'left' }},
           ]}
           onSelect={() => {}}
-
+          
           // Tooltip params
           tooltipContent={{ text: 'Tooltip text... '}} tooltipContext={tooltipContext}
         /> 
       </HashLink>
     </div>
-
-
+    
+    
     {/* radioTable */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Forms/RadioTable' styles='doc-quicklink'>
@@ -190,14 +192,15 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
           variant="block" name="quicklink-radioTable"
           label="Block Style"
           description="The description of the radio table."
-
+          
           radioItems={radioTableItems}
           // currentValue={radioItems[1]}
           onSelect={() => {}}
         />
       </HashLink>
     </div>
-
+    
+    
     {/* radio */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Forms/Radio' styles='doc-quicklink'>
@@ -206,15 +209,15 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
           variant="list" name="quicklink-radioGroup"
           label="List Style"
           description="The description of the radio group."
-
+          
           radioItems={radioItems}
           // currentValue={radioItems[3]}
           onSelect={() => {}}
         />
       </HashLink>
     </div>
-
-
+    
+    
     {/* dropbox */}
     <div className='span-12 lg:span-6 col'>
       <HashLink url='/Documentation/Forms/Dropbox' styles='doc-quicklink'>
@@ -228,7 +231,8 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
         />
       </HashLink>
     </div>
-
+    
+    
     {/* slider */}
     <div className='span-6 lg:span-3 col'>
       <HashLink url='/Documentation/Forms/Slider' styles='doc-quicklink'>
@@ -241,7 +245,8 @@ const FormsQuickLinks = ({ links }: DocsIntroductionProps) => {
         />
       </HashLink>
     </div>
-
+    
+    
     {/* button */}
     <div className='span-6 lg:span-3 col'>
       <HashLink url='/Documentation/Forms/Button' styles='doc-quicklink'>
@@ -272,7 +277,7 @@ const ContentQuickLinks = ({ links }: DocsIntroductionProps) => {
       Random Content functions to go along with the theme and find new ways to make 
       ease of access customizable components for the developers to use.
     </p>
-
+    
     {/* alert */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Content/Alert' styles='doc-quicklink'>
@@ -294,12 +299,13 @@ const ContentQuickLinks = ({ links }: DocsIntroductionProps) => {
         </Alert>
       </HashLink>
     </div>
-
+    
+    
     {/* card */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Content/Card' styles='doc-quicklink'>
         <h4 className='pb-2'>Card Component</h4>
-
+        
         <Card
           type='card-button' 
           title='Card Button Layout'
@@ -321,18 +327,19 @@ const ContentQuickLinks = ({ links }: DocsIntroductionProps) => {
         >
           <div>Card link content</div>
         </Card>
-
+        
         <Card type='default' additStyles='span-12 lg:span-4 p-4' hoverTheme>
           Default layout
         </Card>
       </HashLink>
     </div>
-
+    
+    
     {/* icon */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Content/Icon' styles='doc-quicklink'>
         <h4 className='pb-2'>Card Component</h4>
-
+        
         <div className='span-12 lg:span-8 rowStart gap-4 p-8 flex-wrap'>
             { conglomerateIcons.map((variant: IconTypes) => 
               <DisplayedIcon 
@@ -343,7 +350,8 @@ const ContentQuickLinks = ({ links }: DocsIntroductionProps) => {
         </div>
       </HashLink>
     </div>
-
+    
+    
     {/* dropdown */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Content/Dropdown' styles='doc-quicklink'>
@@ -371,7 +379,7 @@ const ContentQuickLinks = ({ links }: DocsIntroductionProps) => {
         </Dropdown>
       </HashLink>
     </div>
-
+    
   </>
   );
 }
@@ -391,7 +399,8 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
       Utility functions that are useful for various scenarios that help leverage other libraries,
       help with performance and efficiency, and are in general convenient to use.
     </p>
-
+    
+    
     {/* modal */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Utils/Modal' styles='doc-quicklink'>
@@ -403,7 +412,7 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
                 <label className='modal-header'> Pseudo Modal </label>
                 <div> <Icon variant='Close' styles='modal-icon' /> </div>
               </div>
-
+              
               {/* User Content */}
               <div className='px-4 py-14 pb-20 row justify-center items-center'>
                 <div>
@@ -419,7 +428,8 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
         </div>
       </HashLink>
     </div>
-
+    
+    
     {/* tooltip */}
     <div 
       className='span-12 lg:span-6 col *:flex-1' 
@@ -437,7 +447,8 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
         </div>
       </HashLink>
     </div>
-
+    
+    
     {/* hashLink */}
     <div className='span-12 lg:span-6 col *:flex-1'>
       <HashLink url='/Documentation/Utils/HashLink' styles='doc-quicklink'>
@@ -450,7 +461,7 @@ const UtilsQuickLinks = ({ links }: DocsIntroductionProps) => {
         </div>
       </HashLink>
     </div>
-
+    
   </>);
 }
 

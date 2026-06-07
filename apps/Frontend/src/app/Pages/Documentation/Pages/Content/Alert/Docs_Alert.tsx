@@ -27,15 +27,16 @@ export const Docs_Alert = () => {
   const [currentTab, setCurrentTab] = useState<string>('Default');
   const tabs: string[] = ['Default', 'Content'];
   const tabLabels: string[] = ['Default', 'With Content'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -52,27 +53,27 @@ export const Docs_Alert = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
   const [alertType, setAlertType] = useState<AlertType>('info');
-
+  
   const updateAlertType = (type: AlertType) => {
     setAlertType(type);
   }
-
-
+  
+  
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
         Alert Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
           The alert component is for displaying themed notifications for the projects I'm working on. It accepts any content, 
@@ -83,10 +84,10 @@ export const Docs_Alert = () => {
           <Kw onClick={() => updateAlertType('error')} styles="keyword-interactive">error</Kw>, 
           <Kw onClick={() => updateAlertType('ok')} styles="keyword-interactive">ok</Kw>, or
           <Kw onClick={() => updateAlertType('question')} styles="keyword-interactive">question</Kw>.
-
+          
         </div>
       </div>
-
+      
       <div className='span-12'>
         <p className='p-2 pb-4 showcase-text'>
           If you're just looking for a container to add content dynamically or in a uniform and themed manner, use &nbsp;
@@ -101,7 +102,7 @@ export const Docs_Alert = () => {
           . You can either add content with specific layouts, or just use the container to add content with themed styles.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
@@ -119,7 +120,7 @@ export const Docs_Alert = () => {
             <div className='showcase-state-ref-c'>
               <Example_Alert type={alertType} />
             </div>
-
+            
             <div className={`showcase-state-ref-states-c`}>
                 <ElementState type='info' onClick={() => updateAlertType('info')} isSelected={alertType == 'info'} />
                 <ElementState type='warning' onClick={() => updateAlertType('warning')} isSelected={alertType == 'warning'} />
@@ -138,7 +139,7 @@ export const Docs_Alert = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Alert Parameters' openByDefault>
           <ParamTable 

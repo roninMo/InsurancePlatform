@@ -27,15 +27,16 @@ export const Docs_Tooltip = () => {
   const [currentTab, setCurrentTab] = useState<string>('text');
   const tabs: string[] = ['text', 'code', 'custom'];
   const tabLabels: string[] = ['Text', 'Code', 'Custom'];
-
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -53,25 +54,23 @@ export const Docs_Tooltip = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(
         variantParams, variantContextParams, childParamsList, paramTypeElements, paramDescriptionElements
       );
-
+      
       params.push(...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
-  // Input State Management         //
+  // HTML                           //
   //--------------------------------//
-
-
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
         Tooltip Component
       </h3>
-
+      
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
           The <Kw>Tooltip</Kw> component is a highly efficient custom tooltip that works on hover with any component that utilizes the <Kw>TooltipService</Kw>. 
@@ -94,7 +93,7 @@ export const Docs_Tooltip = () => {
           Finally, the <Kw>custom</Kw> variant allows you to pass in your own component to be rendered within the tooltip.
         </div>
       </div>
-
+      
       <div className='span-12'>
         <p className='p-2 pb-4 showcase-text'>
           If you need more a popup notification, try using the &nbsp;
@@ -107,7 +106,8 @@ export const Docs_Tooltip = () => {
           </span>
         </p>
       </div>
-
+      
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container'>
         { tabs.map((tab: string, index: number) => 
@@ -117,6 +117,7 @@ export const Docs_Tooltip = () => {
           </div>
         )}
       </Tabs>
+      
       
       {/* Variants */}
       <Variants className='span-12 py-2' id="showcase-variants">
@@ -142,8 +143,8 @@ export const Docs_Tooltip = () => {
           </ShowcaseElement>
         }
       </Variants>
-
-
+      
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Tooltip Parameters' openByDefault>
           <ParamTable 
@@ -152,19 +153,19 @@ export const Docs_Tooltip = () => {
           />
         </Dropdown>
       </div>
-
-
+      
+      
       <h4 className="span-12 p-2 pt-14 docs-showcase-header">
         The Tooltip Provider
       </h4>
-
+      
       <div className='span-12'>
         <div className='p-2 showcase-text'>
           In order to use the <Kw>Tooltip</Kw>, you need to wrap your application in the <Kw>TooltipProvider</Kw>. 
           This allows the components to have access to the Tooltip's context, and interact with it when needed.   
         </div>
       </div>
-
+      
       <div className='span-12 py-2'>
         <Container className='col outline-css outline-default'>
           <Tabs className='w-full rowStart items-center gap-4 px-4 border-b border-default rounded-t-md faded-box'>
@@ -172,7 +173,7 @@ export const Docs_Tooltip = () => {
               Usage
             </div>
           </Tabs>
-    
+          
           <Content className='w-full bg-div rounded-b-md'>
             <Jsx show cStyles='content-auto'>
               <Suspense>
@@ -211,7 +212,7 @@ const MemoizedCodeSnippet = ({ jsx }: MemoizedCodeSnippetProps) => {
       </JsxCopySnippet>
     </div>
   ), [jsx]);
-
+  
   return memoizedSnippet;
 }
 
@@ -284,7 +285,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Whether the tooltip is displayed. This is handled internally, and is adjusted using the TooltipProvider's show() and hide() context functions.
     </div>,
-
+  
   // Text Tooltip
   'text': () =>
     <div className='param-item-desc-text'>
@@ -294,7 +295,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Optional custom styling for the tooltip's container
     </div>,
-
+  
   // Code Tooltip
   'code': () =>
     <div className='param-item-desc-text'>
@@ -309,8 +310,8 @@ const paramDescriptionElements: Record<string, React.FC> = {
       The type of code you're displaying. Changes the rendered styles and the label of the code block based on it's type. 
       The options are component, type, interface, and example.
     </div>,
-
-
+  
+  
   // Custom Tooltip
   'children': () =>
     <div className='param-item-desc-text'>

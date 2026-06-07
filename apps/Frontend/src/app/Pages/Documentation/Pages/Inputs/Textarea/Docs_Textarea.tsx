@@ -27,15 +27,16 @@ export const Docs_Textarea = () => {
   const [currentTab, setCurrentTab] = useState<TextareaTypes>('box');
   const tabs: TextareaTypes[] = ['default', 'box', 'post'];
   const tabLabels: string[] = ['Default', 'Box', 'Post'];
-
+  
   const showTabContent = (tab: TextareaTypes) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: TextareaTypes) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: TextareaTypes) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -52,11 +53,11 @@ export const Docs_Textarea = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
@@ -69,14 +70,14 @@ export const Docs_Textarea = () => {
   
   const [postError, setPostError] = useState<string>('');
   const [postDisabled, setPostDisabled] = useState<boolean>(false);
-
+  
   
   return (
     <Container className='spacing'>
       <h3 className="span-12 p-2 docs-showcase-header">
         Textarea Component
       </h3>
-
+      
       <div className='span-12'>
         <p className='p-2 pb-4 showcase-text'>
           The <Kw>textarea</Kw> is designed to be used for a variety of scenarios with lots of customization that works alongside
@@ -106,7 +107,7 @@ export const Docs_Textarea = () => {
             <DocLink label='Input' url='/Documentation/Forms/Input' />
           </span>.
         </p>
-
+        
         <p className='p-2 pb-4 showcase-text'>
           You can use them for things like tagging coworkers in a post,
           adding labels to new tasks you're commenting about, or assigning a calender dates for 
@@ -119,7 +120,7 @@ export const Docs_Textarea = () => {
           or if you need a post button for the input, reference the submission props.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: TextareaTypes, index: number) => 
@@ -175,8 +176,8 @@ export const Docs_Textarea = () => {
           </ShowcaseElement>
         }
       </Variants>
-
-
+      
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Textarea Parameters' openByDefault>
           <ParamTable 
@@ -254,21 +255,21 @@ const paramTypeElements: Record<string, React.FC> = {
   // Default params
   'type': () => <ParamType type='string' tooltip={{ code: Code_TextAreaTypes }} />,
   'name': () => <ParamType type='string' tooltip={{ code: dParArg('name', 'textarea-form-name') }} />,
-
+  
   'label': () => <ParamType type='string' tooltip={{ code: dParArg('label', 'Textarea Label') }} />,
   'description': () => <ParamType type='string' tooltip={{ code: dParArg('description', 'The description of the textarea.') }} />,
   'placeholder': () => <ParamType type='string' tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
   'value': () => <ParamType type='string' tooltip={{ code: dParArg('value', 'value', 'var') }} />,
-
+  
   'error': () => <ParamType type='boolean' tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'errorMessage': () => <ParamType type='string' tooltip={{ code: dParArg('errorMessage', '')}} />,
   'disabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
-
+  
   'onSubmit': () => <ParamType type='MouseEvent' tooltip={{ code: Code_OnSubmit }} />,
   'submitButtonText': () => <ParamType type='string' tooltip={{ code: dParArg('submitButtonText', '')}} />,
   'submitButtonDisabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('submitButtonDisabled', 'submitButtonDisabled', 'var') }} />,
-
+  
   'attachFile': () => <ParamType type='FileUploadProps' tooltip={{ code: Code_FileUploadProps }} />,
   'metadataTags': () => <ParamType type='MetadataTagProps' isArray tooltip={{ code: Code_MetaDataTags }} />,
 };
@@ -293,7 +294,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The name of the textarea. Acts as a key for form data during submissions.
     </div>,
-
+  
   'label' : () =>
     <div className='param-item-desc-text'>
       The label of the textarea. 
@@ -310,7 +311,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The value of the textarea. Use your own state management for handling editing this value.
     </div>,
-
+  
   'error' : () =>
     <div className='param-item-desc-text'>
       Whether there's validation errors for this textarea.
@@ -327,7 +328,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Is this textarea required during submission?
     </div>,
-
+  
   'onSubmit' : () =>
     <div className='param-item-desc-text'>
       Event handler for when the user presses the button attached to this component. It's optional, and is up to you when to utilize it.
@@ -341,7 +342,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       Is this textarea required during submission?
     </div>,
-
+  
   'attachFile' : () =>
     <div className='param-item-desc-text'>
       If you want to additionally allow the user to attach files alongside the text form, 
@@ -354,5 +355,4 @@ const paramDescriptionElements: Record<string, React.FC> = {
       For example, you could tag other users on an application, create an event and add a due date to the event,
       add tags or labels specific to a post you make, or anything you want to define and add additional functionality here.
     </div>,
-
 };

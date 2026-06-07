@@ -27,16 +27,16 @@ export const Docs_Radio = () => {
   const [currentTab, setCurrentTab] = useState<string>('default');
   const tabs: string[] = ['default', 'column', 'columnInline', 'list'];
   const tabLabels: string[] = ['Default', 'Column', 'Column Inline', 'List'];
-
-
+  
+  
   const showTabContent = (tab: string) => tab == currentTab ? 'grid-rows-[1fr] order-[-1]' : 'grid-rows-[0fr] opacity-0';
   const tabStyles = (tab: string) => `tab-default text-base ${tab == currentTab ? 'tab-active' : ''}`;
-
+  
   const onClickTab = (tab: string) => {
     setCurrentTab(tab);
     // updateParamContexts(tab);
   }
-
+  
   //--------------------------------//
   // Param Table State              //
   //--------------------------------//
@@ -53,11 +53,11 @@ export const Docs_Radio = () => {
       const variantParamItems: (ParamItem | 'spacing')[] = getParamsTableItems(variantParams, variantContextParams, {}, paramTypeElements, paramDescriptionElements);
       params.push(...spacing, ...variantParamItems);
     }
-
+    
     return params;
   }, [currentTab]);
-
-
+  
+  
   //--------------------------------//
   // Input State Management         //
   //--------------------------------//
@@ -73,20 +73,20 @@ export const Docs_Radio = () => {
   
   const [listError, setListError] = useState<string>('');
   const [listDisabled, setListDisabled] = useState<boolean>(false);
-
-
+  
+  
   return (
     <Container className='spacing'>
-
+      
       <h3 className="span-12 p-2 docs-showcase-header">
         Radio Group Component
       </h3>
-
+      
       <div className='span-12'>
         <p className='p-2 showcase-text'>
           A customizable radio group with multiple styles to fit your needs, and form state and theme styling for 
           a nice look and feel to it. 
-
+          
           You can use your own hooks for handling state or <Kw>react hook forms</Kw>, with built validation you can add on the fly.
           The different variants are <Kw>default</Kw>, <Kw>column</Kw>, <Kw>columnInline</Kw>, and <Kw>list</Kw>.
         </p>
@@ -107,7 +107,7 @@ export const Docs_Radio = () => {
           </span>.
         </p>
       </div>
-
+      
       {/* Showcase Input Element Variants */}
       <Tabs className='span-12 px-4 tab-container' id="showcase-variants">
         { tabs.map((tab: string, index: number) => 
@@ -131,7 +131,7 @@ export const Docs_Radio = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
         { currentTab == 'column' && 
           <ShowcaseElement jsx={getSourceCode(RadioCodeSnippets, "Example_ColumnRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
@@ -143,7 +143,7 @@ export const Docs_Radio = () => {
             </ShowcaseExample_StateRef>
           </ShowcaseElement>
         }
-
+        
         { currentTab == 'columnInline' && 
           <ShowcaseElement jsx={getSourceCode(RadioCodeSnippets, "Example_ColumnInlineRadioGroup")} styles="spacing gap-0 opacity-0 animate-fade-in">
             <ShowcaseExample_StateRef 
@@ -168,7 +168,7 @@ export const Docs_Radio = () => {
           </ShowcaseElement>
         }
       </Variants>
-
+      
       <div className='span-12 py-2 pt-10' id="param-table">
         <Dropdown label='Radio Group Parameters' openByDefault>
           <ParamTable 
@@ -231,11 +231,11 @@ const paramTypeElements: Record<string, React.FC> = {
   'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'radio-form-name') }} />,
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Radio Group Label') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the radio group.') }} />,
-
+  
   'radioItems': () => <ParamType type="RadioItem" isArray tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
   'currentValue': () => <ParamType type="RadioItem" tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
   'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
-
+  
   'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'errorMessage', 'var') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
@@ -266,7 +266,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description of the radio group.
     </div>,
-
+    
   'radioItems': () => 
     <div className='param-item-desc-text'>
       A list containing the information and state of each radio item. You should use the 
@@ -280,7 +280,7 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The function used to handle when a new radio item is selected.
     </div>,
-
+    
   'error': () =>
     <div className='param-item-desc-text'>
       Whether there's an error for the radio component.
