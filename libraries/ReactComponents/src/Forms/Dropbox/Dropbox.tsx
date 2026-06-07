@@ -65,8 +65,9 @@ export const Dropbox = ({
   name, label, description, handleFiles, multiple, accept, 
   disableHookForms, error, disabled, required,
   additionalStyles, fileListType = 'list', fileListTheme = 'green', customIcon, iconStyles, 
-  onClick, onFocus, onBlur, onMouseEnter, onMouseLeave
-}: DropboxProps & Omit<UniversalEventHandlers<HTMLInputElement>, 'onChange'>) => {
+  onClick, onFocus, onBlur, onChange, onMouseEnter, onMouseLeave
+}: DropboxProps & UniversalEventHandlers<HTMLInputElement>) => {
+  // #region Component State
   const dropboxRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const internalFiles = useRef<File[]>([]);
@@ -97,6 +98,7 @@ export const Dropbox = ({
   const getError = (): boolean => !disabled && !!error;
   
   
+  // #endregion
   // #region Handling file upload
   /** Utility to handle passing the new data to the events, native input, and rerender logic */
   const updateComponentState = (files: File[]) => {
@@ -163,11 +165,13 @@ export const Dropbox = ({
     updateComponentState(filteredFiles);
   }
   
+  
   /** When a user clicks on the dropbox, it invoke's the file input's native event top open the file selection menu */
   const onClickDropbox = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     fileInputRef?.current?.click();
     onClick && onClick(e as any);
   }
+  
   
   /** The drag/drop event that passes onDrop's captured files to the change event. */
   const onDropFiles = (e: DragEvent<HTMLDivElement>) => {
@@ -175,19 +179,28 @@ export const Dropbox = ({
     
     const files = e.dataTransfer.files; 
     handleFileUpload(files);
+    
+    // Pass it to the onChange
+    if (onChange) {
+      const syntheticEvent = {
+        target: {
+          name: name, // Pass your field name here
+          files: e.dataTransfer.files,
+          value: e.dataTransfer.files[0]?.name || '', // Safe fallback string
+        }
+      };
+      
+      // Cast it as any or Unknown to satisfy TypeScript, then fire directly
+      onChange(syntheticEvent as unknown as React.ChangeEvent<HTMLInputElement>);
+    }
   }
+  
+  
   // #endregion
-  
-  // * Rerender state
-  // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
-  //   getFiles(),
-  // );
-  
-  
+  // #region Drag over functionality
   //--------------------------------------//
   // drag over styling                    //
   //--------------------------------------//
-  // #region Drag over functionality
   const nestedDragCounter = useRef(0);
   useEffect(() => {
     const dropbox = dropboxRef.current;
@@ -233,6 +246,11 @@ export const Dropbox = ({
     };
   }, []);
   // #endregion
+  // #region HTML
+  // * Rerender state
+  // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
+  //   getFiles(),
+  // );
   
   
   return (
@@ -263,7 +281,7 @@ export const Dropbox = ({
         
         <HiddenInput 
           name={name} type="file" ref={fileInputRef}
-          onChange={(e) => handleFileUpload(e.target.files)}
+          onChange={(e) => {handleFileUpload(e.target.files); onChange && onChange(e); }}
           
           accept={accept || ''}
           multiple={multiple}
@@ -320,6 +338,7 @@ export const Dropbox = ({
       </SelectedFileList>
     </Container>
   );
+  // #endregion
 }
 
 

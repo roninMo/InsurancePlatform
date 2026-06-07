@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, MouseEvent, useCallback, useReducer, useState } from 'react';
+import { ChangeEvent, FocusEvent, memo, MouseEvent, useCallback, useReducer, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
@@ -62,8 +62,8 @@ export const Checkbox = ({
   variant = 'default', name, label, description,
   items, onSelect, disableHookForms = false,
   error, disabled = false, required = false,
-  onMouseEnter, onMouseLeave, onClick, onFocus, onBlur
-}: CheckboxProps & Omit<UniversalEventHandlers<HTMLElement>, 'onChange'>) => {
+  onMouseEnter, onMouseLeave, onClick, onChange, onFocus, onBlur
+}: CheckboxProps & UniversalEventHandlers<HTMLElement>) => {
   const { register, getValues } = useFormContext() || {};
   const formValues = getValues && getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -88,6 +88,7 @@ export const Checkbox = ({
     // rerender internally for visual updates, if it's rhf we're using watch()
     if (!disableHookForms) forceUpdate();
     if (onSelect) onSelect(event, updatedItem); // optional event logic
+    if (onChange) onChange(event); // native event logic
   };
   
   const isSelected = (item: CheckboxItem): boolean => {
@@ -112,7 +113,9 @@ export const Checkbox = ({
   
   
   return (
-    <Container className={variant == 'list' ? 'checkbox-cont-l' : ''}>
+    <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} 
+      className={variant == 'list' ? 'checkbox-cont-l' : ''}
+    >
       <HeaderContainer className='checkbox-header colStart px-1'>
         { label && <Label className='checkbox-label'>{ label }</Label> }
         { description && <Description className='checkbox-desc'>{ description }</Description> }
@@ -127,14 +130,12 @@ export const Checkbox = ({
             
             item={item}
             isSelected={isSelected(item)}
-            onSelect={onToggleCheckbox}
+            onSelect={onToggleCheckbox} onClick={onClick} 
             rhfBindings={!disableHookForms ? register(name) : undefined}
+            onFocus={onFocus} onBlur={onBlur}
             disabled={disabled}
             required={required}
-            error={!!error && !disabled}
-            
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
+            error={!!error && !disabled} 
           />
         )}
       </ItemContainer>
@@ -164,14 +165,18 @@ interface CheckBoxItemComponentProps {
 const CheckBoxItemComponent = memo(({
   variant, name, item, isSelected, rhfBindings, 
   error, required, disabled, 
-  onSelect, onFocus, onBlur, 
-  onClick, onMouseEnter, onMouseLeave,
-}: CheckBoxItemComponentProps & Omit<UniversalEventHandlers<HTMLElement>, 'onChange'>) => {
+  onSelect, onFocus, onBlur, onClick
+}: CheckBoxItemComponentProps & Pick<UniversalEventHandlers<HTMLElement>, 'onClick' | 'onFocus' | 'onBlur'>) => {
   // console.log(`CheckboxItem ${item.value} rerendered, checked(${isSelected})`);
   
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (rhfBindings) rhfBindings.onChange(e); 
-    onSelect(e, item);
+    if (rhfBindings) rhfBindings.onChange(e); // react-hook-forms event
+    onSelect(e, item); // our event
+  }
+  
+  const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
+    if (rhfBindings) rhfBindings.onBlur(e); // react-hook-forms event
+    onBlur && onBlur(e);
   }
   
   
@@ -179,8 +184,6 @@ const CheckBoxItemComponent = memo(({
     <label 
       tabIndex={0}
       onClick={onClick} 
-      onFocus={onFocus} onBlur={onBlur}
-      onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
       className={`group
         ${variant == 'default' ? 'checkbox-i-c-d' : variant == 'inline' ? 'checkbox-i-c-i' : 'checkbox-i-c-l'}
         ${error ? 'checkbox-i-c-error' : ''}
@@ -193,7 +196,7 @@ const CheckBoxItemComponent = memo(({
           // Rhf or useState handling
           {...(() => {
             if (rhfBindings) {
-              const { onChange: _, ...rest } = rhfBindings;
+              const { onChange: _, onBlur: __, ...rest } = rhfBindings;
               return rest;
             }
             return { name }; // default behavior
@@ -201,6 +204,8 @@ const CheckBoxItemComponent = memo(({
           value={item.value}
           checked={isSelected}
           onChange={handleOnChange}
+          onBlur={handleOnBlur}
+          onFocus={onFocus} 
           
           className={`checkbox 
             ${variant == 'list' ? 'order-1' : 'mr-1'} 

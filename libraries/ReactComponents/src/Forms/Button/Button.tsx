@@ -34,18 +34,20 @@ export interface ButtonProps {
 }
 
 export const Button = ({ 
-  displayText, onClick, onMouseEnter, onMouseLeave, disabled, type = 'button',
+  displayText, type = 'button', disabled, 
+  onClick, onMouseEnter, onMouseLeave, 
+  onFocus, onBlur,  
   size = 'default', color = 'primary', 
   additionalStyles, icon, iconStyles, 
-}: ButtonProps & Pick<UniversalEventHandlers<HTMLButtonElement>, 'onMouseEnter' | 'onMouseLeave' | 'onClick'>) => {
+}: ButtonProps & Omit<UniversalEventHandlers<HTMLButtonElement>, 'onChange' >) => {
   
   return (
     <div>
       <button 
         type={type} 
         onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        onFocus={onFocus} onBlur={onBlur}
+        onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
         disabled={disabled}
         className={`button-base 
           ${  size == 'default' ? 'btn-al-d' 

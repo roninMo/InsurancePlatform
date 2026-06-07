@@ -389,12 +389,6 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   /** Returns whether we have an error for this component, and it's not currently disabled. */
   const getError = (): boolean => (!!error && !disabled);
   
-  // * Rerender state
-  // console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), isUsingMask(${!!usingInputMask})`, 
-  //   `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
-  //   `\n config: `, { inputMask, maskOptsProp: mask }
-  // );
-  
   
   // #endregion
   // #region Input Event Logic
@@ -465,6 +459,11 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   
   // #endregion
   // #region Rendered HTML
+  // * Rerender state
+  // console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}), isUsingMask(${!!usingInputMask})`, 
+  //   `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
+  //   `\n config: `, { inputMask, maskOptsProp: mask }
+  // );
   
   
   return (

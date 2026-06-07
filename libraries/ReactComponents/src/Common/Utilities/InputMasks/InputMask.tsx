@@ -1,8 +1,13 @@
-import { ChangeEvent, FormEvent, RefObject } from "react";
-import { Filter_CHARS_NUMS, Filter_CHARS_NUMS_SPC, Filter_CHARS_ONLY, Filter_Email_CHARS, Filter_NUMS_ONLY, Validate_EMAIL, Validate_PASS_HS } from "./RegExpFilters";
+import { 
+  Filter_CHARS_NUMS, 
+  Filter_CHARS_NUMS_SPC, 
+  Filter_CHARS_ONLY, 
+  Filter_Email_CHARS, 
+  Filter_NUMS_ONLY, 
+} from "./RegExpFilters";
 
 
-
+// #region Mask Types
 /** The configuration to build the mask part of an {@link InputMask} */
 export type MaskConfig = {
   /** 
@@ -59,6 +64,23 @@ export type TMaskClass<TMask extends InputMask, TMO extends MaskOpts> = {
 };
 
 
+// #endregion
+// #region Internal InputMaskTypes
+/** The Input's Native Event classified inputTypes. */
+export type InputActionType = 
+  | 'insertText' | 'insertCompositionText' | 'insertFromPaste' 
+  | 'deleteContentBackward' | 'deleteContentForward' | 'deleteByCut'
+  | 'historyUndo' | 'historyRedo' | 'insertReplacementText' | 'deleteReplacementText' | 'undefined';
+
+/** The default wildcard character for this project's {@link InputMask} class. */
+export const DEFAULT_INPUTMASK_WILDCARD = "_";
+
+/** The metadata returned from the InputMask notifying you of what we did with the onChange event. */
+export type MaskEventHandle = string | false;
+
+
+// #endregion
+// #region Prebuilt MaskOpts
 //----------------------------------------//
 // Prebuilt Mask Configurations           //
 //----------------------------------------//
@@ -115,7 +137,7 @@ export const emailFilter: MaskOpts = {
   filter: Filter_Email_CHARS
 }
 export const passwordFilter: MaskOpts = {
-  filter: Validate_PASS_HS
+  filter: Filter_CHARS_NUMS_SPC
 }
 export const numbersOnlyFilter: MaskOpts = {
   filter: Filter_NUMS_ONLY
@@ -123,22 +145,11 @@ export const numbersOnlyFilter: MaskOpts = {
 export const charsOnlyFilter: MaskOpts = {
   filter: Filter_CHARS_ONLY
 }
-export const charsNumsSpcFilter: MaskOpts = {
-  filter: Filter_CHARS_NUMS_SPC
-}
 
 
-/** The default wildcard character for this project's {@link InputMask} class. */
-export const DEFAULT_INPUTMASK_WILDCARD = "_";
+// #endregion
 
-/** The metadata returned from the InputMask notifying you of what we did with the onChange event. */
-export type MaskEventHandle = string | false;
 
-/** The Input's Native Event classified inputTypes. */
-export type InputActionType = 
-| 'insertText' | 'insertCompositionText' | 'insertFromPaste' 
-| 'deleteContentBackward' | 'deleteContentForward' | 'deleteByCut'
-| 'historyUndo' | 'historyRedo' | 'insertReplacementText' | 'deleteReplacementText' | 'undefined';
 
 
 /**
@@ -195,7 +206,7 @@ export type InputActionType =
  * &nbsp;
  */
 export class InputMask {
-  // * Filter and mask
+  // #region InputMask Properties
   /** 
    * A regExp expression designed to filter the accepted characters for the input. There are two function that go alongside the `InputMask's` filter:
    * 1. {@link filterExp()}: Is the get function for the filter's **RegExp**. Will return undefined if you're not using a filter.
@@ -255,10 +266,11 @@ export class InputMask {
   
   
   
+  // #endregion
+  // #region Constructors
   //----------------------------------------------------------------------------//
   // Constructor Overloads                                                      //
   //----------------------------------------------------------------------------//
-  // #region Constructors
   /**
    * ### **InputMask** - Filter Only
    * This class allows you to add `filters` and `input masking` to your input using it's **onBeforeInput()** event.
@@ -366,7 +378,6 @@ export class InputMask {
   constructor(options: MaskOpts); 
   
   
-  
   //----------------------------------------------------------------------------//
   // Implementation                                                             //
   //----------------------------------------------------------------------------//
@@ -431,11 +442,10 @@ export class InputMask {
   ): T {
     return new this(options) as T;
   }
+  
+  
   // #endregion
-  
-  
-  
-  
+  // #region Masking Logic
   /**
    * ### InputMask::evaluate( `onBeforeInputEvent` )
    * Evaluates an input's new value from the onBeforeInput event using 
@@ -587,9 +597,9 @@ export class InputMask {
         return newMaskValue;
       }
     }
+    
+    
     // #endregion
-    
-    
     // #region - User pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
     // {} The user pressed deleted via backspace, cursor single/multi selected deletion, or ctrl + x (Cut)
     if (
@@ -650,7 +660,7 @@ export class InputMask {
         let shouldCallOnChange: boolean = true;
         const { rawCursorStart, rawCursorEnd } = this.getRawCursorFromMasked(cursorStart, cursorEnd, prevMaskedValue);
         
-        // {} Default Logic
+        // #region Default Backspace/Delete functionality
         // * Normal backspace/delete - single character  OR  highlighted text deletions  AND  nulled ctrl+backspaces from a highlighted selections
         if (!windowsOrMacCtrlKeyPressed || isHighlightedSelection) { 
           const removedChars = this.getRemovedCharacterCount(rawCursorStart, rawCursorEnd);
@@ -658,6 +668,8 @@ export class InputMask {
           newCursorLocation = this.getNewRawCursorLocation(rawCursorStart, rawCursorEnd, removedChars, actionType);
         }
         
+        
+        // #endregion
         // #region Ctrl + Backspace/Delete logic on an raw value
         // * We only allow it to delete the mask's individual segments. ie. (012)-345-6789| -> (012)-345-____
         else { // windowsOrMacCtrlKeyPressed && !isHighlightedSelection
@@ -842,6 +854,8 @@ export class InputMask {
             }
           }
           const displayedSegments = [...maskSegments.entries()].map(v => v[1]).map((i) => ({ i, text: refMaskVal.substring(i[0], i[1])}));
+          
+          
           // #endregion
           console.log(`Finished calculating the mask segments, data: `, 
             { currentAction, cursorSegment, displayedSegments, lastNonEmptySegment,  },
@@ -916,9 +930,9 @@ export class InputMask {
       }
       return newMaskValue; 
     }
+    
+    
     // #endregion
-    
-    
     // #region - Undo and Redo events
     // {} use the InputMaskHistory to retrieve the previous history's value
     if (actionType == 'historyUndo' || actionType == 'historyRedo') {
@@ -975,9 +989,9 @@ export class InputMask {
         return false;
       }
     }
+    
+    
     // #endregion
-    
-    
     // #region - AutoFill events
     // {} Overwrite the value completely, and store the browser's autoFill update to the history state
     if (actionType == 'insertReplacementText') {
@@ -1076,6 +1090,7 @@ export class InputMask {
     }
     // #endregion
     
+    
     // ! Fallback: we don't want to break the mask input, so just prevent this event from occurring
     console.error(`MaskEval::InputMask(${this.mask}) encountered an error while evaluating the mask on a keypress.`,
       `\n The previous input entry's actionType was ${actionType}, returning the event unaffected: `, { prevRawValue, prevMaskedValue, insertedText, inputName },
@@ -1089,10 +1104,11 @@ export class InputMask {
   
   
   
+  // #endregion
+  // #region Primary Functions
   //--------------------------------//
   // Primary Functions              //
   //--------------------------------//
-  // #region Primary Functions
   /**
    * Uses the **mask's** cursor locations to find the locations for the ***raw input*** by counting it's **non-wildcard** template characters and the **empty wildcards**.
    * 
@@ -1471,15 +1487,15 @@ export class InputMask {
     }
     console.log(`UpdateState() InputMaskState: `, { rawInputValue, maskedInputValue, start: selectionStart, end: selectionEnd, action: this.listenerInputType, _history: this.history });
   }
+  
+  
+  
+  
   // #endregion
-  
-  
-  
-  
+  // #region Filter Functions
   //--------------------------------//
   // Filter                         //
   //--------------------------------//
-  // #region Filter Functions
   /**
    * Uses a RegExp expression to `filter` out any unwanted characters to a string.
    * 
@@ -1566,15 +1582,15 @@ export class InputMask {
   public get filterExp(): RegExp {
     return this._filter || /(?!)/;
   }
+  
+  
+  
+  
   // #endregion
-  
-  
-  
-  
+  // #region Mask Functions
   //--------------------------------//
   // Mask                           //
   //--------------------------------//
-  // #region Mask Functions
   /**
    * Whether we have the `mask` enabled or valid. 
    * If undefined, we're only using a `filter`.
@@ -1749,15 +1765,13 @@ export class InputMask {
   }
   
   
+  
+  
   // #endregion
-  
-  
-  
-  
+  // #region Utility Functions
   //--------------------------------//
   // Utility                        //
   //--------------------------------//
-  // #region Utility Functions
   /** 
    * Returns what the current input value would be, based on our cached references and whether it's a `filtered` or `masked` value. 
    * 
@@ -1902,15 +1916,15 @@ export class InputMask {
     if (isHighlighted) return [beforeCursorStart, '|', selection, '|', afterCursorEnd].join("");
     else               return [beforeCursorStart, '|', afterCursorEnd].join("");
   }
+  
+  
+  
+  
   // #endregion 
-  
-  
-  
-  
+  // #region Input Event Functions
   //--------------------------------//
   // Input Event Functions          //
   //--------------------------------//
-  // #region Input Event Functions
   /**
    * Update the **cursor's** location for a specific input element. 
    * 
@@ -1968,7 +1982,7 @@ export class InputMask {
     // if (preventDefault) { // <- this is handled in the input's onBeforeInput() event if it's using the mask
     //   event.preventDefault();
     // }
-
+    
     // ? Manually call onChange: assign the masked value to the element
     if (invokeOnChange !== undefined) {
       let newValue = invokeOnChange;
@@ -1987,13 +2001,13 @@ export class InputMask {
       input.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }
+  
+  
   // #endregion
-  
-  
+  // #region Event Listener Functions
   //--------------------------------//
   // Event Listener Functions       //
   //--------------------------------//
-  // #region Event Listener Functions
   /** Add the event listeners to keep track of the user's current input action. called in the {@link constructor()} */
   public initEventListeners(input: HTMLInputElement | HTMLTextAreaElement): void {
     if (this.addedEventListeners) return;
@@ -2317,11 +2331,14 @@ export class InputMask {
     
     return { actionType, event, insertedText: '' } as any;
   }
-  // #endregion
   
+  
+  // #endregion
   
 }
 
+
+// #region Cached InputMask History 
 
 
 /** A saved snapshot of the {@link InputMask}'s current state, stored in a {@link InputMaskHistory} class. */
@@ -2407,4 +2424,4 @@ class InputMaskHistory {
     return null; // End of stack reached
   }
 }
-
+// #endregion

@@ -26,18 +26,6 @@ export const Documentation = () => {
 
     - There's a bug with the navbar if you hover over and out and back to it before the duration ends
     - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
-    
-    
-    - add the rest of the UniversalEventHandlers to the form components
-      - button
-      - checkbox
-      - dropbox
-      - input
-      - radio
-      - radioTable
-      - select
-      - slider
-      - textarea
 
 
     - Let's add universal typing to our library, specifically for handling dynamic props

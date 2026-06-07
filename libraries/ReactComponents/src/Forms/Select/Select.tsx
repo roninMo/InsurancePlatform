@@ -78,6 +78,7 @@ export const Select = ({
 }: SelectProps & UniversalEventHandlers) => {
   // #region Component state
   const { show, hide } = tooltipContext || {};  
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const selectOrder = useRef<Record<number, string>>({ 0: '' });
   
   // * Input binding logic
@@ -132,17 +133,6 @@ export const Select = ({
     if (multiSelect) return !!getSelectedVals<true>()?.includes(item.value);
     return getSelectedVals() == item.value;
   }
-  
-  
-  // * Rerender state
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
-  // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n data: `, 
-  //   isRhfMode ? multiSelect ? Array.isArray(getSelectedVals<true>()) 
-  //     ? getSelectedVals<true>()?.sort() : getSelectedVals<true>()
-  //     : getSelectedVals() 
-  //   : values.filter(item => item.selected),
-  //   `\n selected from : `, { vals: values.map(i => i.value) }
-  // );
   
   
   // #endregion 
@@ -220,11 +210,13 @@ export const Select = ({
     updateSelectionOrder(selVal);
   }
   
+  
   /** React hook forms and additional onBlur event binding */
   const handleOnBlur = (e: FocusEvent<HTMLButtonElement>) => {
     if (isRhfMode && field) field.onBlur();
     if (onBlur) onBlur(e);
   }
+  
   
   /** Keeps track of the order of selected items for proper display with multiSelects */
   const updateSelectionOrder = (selVal: SelectItem) => {
@@ -272,6 +264,7 @@ export const Select = ({
       // );
     }
   }
+  
   
   // Get functions
   const getError = (): boolean => !!error && !disabled;
@@ -334,7 +327,9 @@ export const Select = ({
   }, [dropdownOpen, isRhfMode, field]);
   
   
-  // for closeDropdownOnLeave: Closes the dropdown when hovers outside of it 
+  // #endregion
+  // #region CloseDropdownOnLeave
+  // {} for closeDropdownOnLeave: Closes the dropdown when hovers outside of it 
   useEffect(() => {
     // If the dropdown is closed or this option isn't enabled don't add the event
     if (!dropdownOpen || !closeDropdownOnLeave) {
@@ -421,7 +416,9 @@ export const Select = ({
   }, [dropdownOpen, closeDropdownOnLeave]);
   
   
-  // Open the dropdown when the user tabs to it
+  // #endregion
+  // #region OpenDropdown when tabbed to
+  // {} Open the dropdown when the user tabs to it
   useEffect(() => {
     const selectElement = selectElementRef.current;
     if (preventOpenOnTabFocus || !selectElement) return;
@@ -441,6 +438,15 @@ export const Select = ({
   }, [preventOpenOnTabFocus]);
   // #endregion
   // #region HTML
+  // * Rerender state
+  // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n data: `, 
+  //   isRhfMode ? multiSelect ? Array.isArray(getSelectedVals<true>()) 
+  //     ? getSelectedVals<true>()?.sort() : getSelectedVals<true>()
+  //     : getSelectedVals() 
+  //   : values.filter(item => item.selected),
+  //   `\n selected from : `, { vals: values.map(i => i.value) }
+  // );
+  
   
   // Return a list of the selected items, or the currently selected
   const getSelectDisplay = () => {

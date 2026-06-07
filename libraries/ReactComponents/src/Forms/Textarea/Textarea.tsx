@@ -171,16 +171,6 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   
   // #endregion
   // #region InputComp Event Handling
-  // * Nested Rerender state
-  // console.log(`InputComponent Rerendered ${name}-${type}: isRhfMode(${isRHFMode})`,
-  //   `\n bindings: `, { 
-  //     onChange:     !!onChange ?    { func: onChange } : undefined,
-  //     onUpdateValue:  !!onUpdateValue ? { func: onUpdateValue } : undefined,
-  //     onSubmit:     !!onSubmit ?    { func: onSubmit } : undefined,
-  //     onFocus:      !!onFocus  ?    { func: onFocus }  : undefined,
-  //     onBlur:       !!onBlur   ?    { func: onBlur }   : undefined,
-  //   },
-  // );
   
   
   /**
@@ -251,6 +241,16 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   
   // #endregion
   // #region InputComp HTML
+  // * Nested Rerender state
+  // console.log(`InputComponent Rerendered ${name}-${type}: isRhfMode(${isRHFMode})`,
+  //   `\n bindings: `, { 
+  //     onChange:     !!onChange ?    { func: onChange } : undefined,
+  //     onUpdateValue:  !!onUpdateValue ? { func: onUpdateValue } : undefined,
+  //     onSubmit:     !!onSubmit ?    { func: onSubmit } : undefined,
+  //     onFocus:      !!onFocus  ?    { func: onFocus }  : undefined,
+  //     onBlur:       !!onBlur   ?    { func: onBlur }   : undefined,
+  //   },
+  // );
   
   
   return (
