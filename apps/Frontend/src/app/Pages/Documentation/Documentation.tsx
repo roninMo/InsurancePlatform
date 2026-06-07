@@ -35,6 +35,14 @@ export const Documentation = () => {
       - Move to the other form components and search for universal conditional props (styles) and add them
       - If you find anything else, add them here.
 
+    - When using textastic, add jsdoc comments to the ConditionalProps
+      - we also need jsdoc comments for:
+        - Card
+        - Dropdown
+        - HashLink
+        - Modal
+        - Tooltip
+
 
     - go back through the docs and update them again
       - Forms

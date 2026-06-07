@@ -1,10 +1,12 @@
 import { ReactNode, MouseEvent, useMemo } from 'react';
 import { Button, ButtonProps } from '../../../Forms/Button/Button';
+import { ContainerStyles, ContentStyles, DescriptionStyles, TitleStyles } from '../../../Types/ConditionalProps';
 
 import styled from '@emotion/styled';
 import styles from './Card.module.scss';
 
 
+// #region Props and Types
 export type CardType = 
   | 'default'     // standard container
   | 'card'        // card layout with description, title, and custom content
@@ -32,7 +34,7 @@ type DefaultCardProps = CardPropsBase & {
 
 
 type CardContentProps = CardPropsBase 
-  & HeaderStyles 
+  & TitleStyles 
   & DescriptionStyles 
   & ContentStyles
 & {
@@ -44,7 +46,7 @@ type CardContentProps = CardPropsBase
   // // Container styles
   // (styles || additStyles)?: string;
   // // Header styles
-  // (headerStyles || additHeaderStyles)?: string;
+  // (titleStyles || additTitleStyles)?: string;
   // // Description styles
   // (descStyles || additDescStyles)?: string;
   // // Content styles
@@ -73,90 +75,16 @@ export type CardProps =
 ;
 
 
-// #region conditional style props 
-// Container Styles
-type ContainerStyles = 
-| { 
-    styles?: string; 
-    /** @deprecated CANNOT use 'additStyles' when 'styles' is present. */
-    additStyles?: never; 
-  } 
-| { 
-    additStyles?: string; 
-    /** @deprecated CANNOT use 'styles' when 'additStyles' is present. */
-    styles?: never; 
-  };
 
-// Header Styles
-type HeaderStyles = 
-| { 
-    title: string; 
-    headerStyles?: string; 
-    /** @deprecated CANNOT use 'additHeaderStyles' when 'headerStyles' is present. */
-    additHeaderStyles?: never; 
-  } 
-| { 
-    title: string; 
-    additHeaderStyles?: string; 
-    /** @deprecated CANNOT use 'headerStyles' when 'additHeaderStyles' is present. */
-    headerStyles?: never; 
-  }
-| { 
-    title?: never; 
-    headerStyles?: never; 
-    additHeaderStyles?: never; 
-  };
-
-// Description Styles
-type DescriptionStyles = 
-| { 
-    description: string; 
-    descStyles?: string; 
-    /** @deprecated CANNOT use 'additDescStyles' when 'descStyles' is present. */
-    additDescStyles?: never; 
-  } 
-| { 
-    description: string; 
-    additDescStyles?: string; 
-    /** @deprecated CANNOT use 'descStyles' when 'additDescStyles' is present. */
-    descStyles?: never; 
-  }
-| { 
-    description?: never; 
-    descStyles?: never; 
-    additDescStyles?: never; 
-  };
-
-// Content Styles
-type ContentStyles = 
-| { 
-    children: ReactNode; 
-    contentStyles?: string; 
-    /** @deprecated CANNOT use 'additContentStyles' when 'contentStyles' is present. */
-    additContentStyles?: never; 
-  } 
-| { 
-    children: ReactNode; 
-    additContentStyles?: string; 
-    /** @deprecated CANNOT use 'contentStyles' when 'additContentStyles' is present. */
-    contentStyles?: never; 
-  }
-| { 
-    children?: never; 
-    contentStyles?: never; 
-    additContentStyles?: never; 
-  };
 // #endregion
-
-
-
 export const Card = (props: CardProps) => {
+  // #region Component State
   const { 
     type, styles, additStyles, 
     noBackground, noBorder, hoverTheme, 
   } = props as CardPropsBase;
   const { focusTheme } = props as any;
-
+  
   const getContainerStyles = (): string => {
     return styles ? styles : `
       card-container
@@ -167,29 +95,33 @@ export const Card = (props: CardProps) => {
       ${additStyles}
     `;
   }
-
-
+  
+  
+  // #endregion
+  // #region HTML: Card (Default)
   //--------------------------------//
   // Default (Container)            //
   //--------------------------------//
   if (type == 'default') {
     const { children } = props as DefaultCardProps;
-
+    
     return (
       <Container className={getContainerStyles()}>
         { children }
       </Container>
     );
   }
-
-
+  
+  
+  // #endregion
+  // #region HTML: Card Variants (Card/Button/Link)
   //--------------------------------//
   // Card, Card-Button, Card-Link   //
   //--------------------------------//
   else {
     const { 
       title, description, noDivider, children, 
-      headerStyles, additHeaderStyles = '', 
+      titleStyles, additTitleStyles = '', 
       descStyles, additDescStyles = '', 
       contentStyles, additContentStyles = '' 
     } = props as CardContentProps;
@@ -219,19 +151,19 @@ export const Card = (props: CardProps) => {
         </div>
       )
     };
-
+    
     return (
       <Container className={getContainerStyles()}>
         <HeaderAndDescription className='row justify-between gap-2'>
           <div className='col gap-2'>
-            <label className={headerStyles ? headerStyles : `card-header ${additHeaderStyles}`}>
+            <label className={titleStyles ? titleStyles : `card-header ${additTitleStyles}`}>
               { title }
             </label>
             <p className={descStyles ? descStyles : `card-description ${additDescStyles}`}>
               { description }
             </p>
           </div>
-
+          
           { buttonLocation == 'top' && cardButton() }
         </HeaderAndDescription>
         
@@ -240,7 +172,7 @@ export const Card = (props: CardProps) => {
         <Content className={contentStyles ? contentStyles : `card-content ${additContentStyles}`}>
           { children }
         </Content>
-
+        
         {/* Card Button and Link */}
         { buttonLocation != 'top' && cardButton() }
         { type == 'card-link' && 
@@ -251,6 +183,7 @@ export const Card = (props: CardProps) => {
       </Container>
     );
   }
+  // #endregion
 }
 
 

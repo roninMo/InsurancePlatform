@@ -7,7 +7,7 @@ import styles from './Button.module.scss';
 
 export type ButtonSizes = 'default' | 'md' | 'lg' | 'xl' | 'none';
 export type ButtonColors = 'primary' | 'gray' | 'gray-focus' | 'none';
-export interface ButtonProps {
+export interface ButtonProps extends Omit<UniversalEventHandlers<HTMLButtonElement>, 'onChange' > {
 	/** The button's display text */
   displayText?: string;
 	
@@ -39,7 +39,7 @@ export const Button = ({
   onFocus, onBlur,  
   size = 'default', color = 'primary', 
   additionalStyles, icon, iconStyles, 
-}: ButtonProps & Omit<UniversalEventHandlers<HTMLButtonElement>, 'onChange' >) => {
+}: ButtonProps) => {
   
   return (
     <div>

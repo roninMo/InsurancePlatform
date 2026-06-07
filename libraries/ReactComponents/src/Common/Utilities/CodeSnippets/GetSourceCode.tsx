@@ -2,16 +2,12 @@ export type SourceRetrievalTypes = 'component' | 'type' | 'interface';
 
 
 /**
- * Retrieves the exported components for documentation jsx examples
- * from a stringified file import using vite. This function is used in combination with 'react-syntax-highlighter'
- * so we don't have to create redundant code.
+ * Retrieves ***exported components*** to create ***code-snippets*** for documentation
+ * from a stringified file import using `vite`. 
+ * * This function is used in combination with `react-syntax-highlighter` to prevent code duplication.
  * 
- * @param fileImportSource - The vite import ref; ex. "import CodeSnippets from './CodeSnippetsFile?raw';"
- * @param nameOrRange - The name of the component, type, or interface you want returned as a string, or the lines you want to retrieve.
- * @param type - Whether we're searching for a component () =>, type, or interface.
- * @returns The raw stringified snippet of your code.
- * 
- * @example
+ * ----
+ * #### Example
  * ```typescript
  * import CodeSnippets from './CodeSnippetsFile?raw';
  * 
@@ -21,8 +17,14 @@ export type SourceRetrievalTypes = 'component' | 'type' | 'interface';
  * 
  * // To get specific lines
  * const snippet = getSourceCode(CodeSnippetFile, [10, 25], 'lines');
+ *  
  * ```
- *  <br>&nbsp;
+ * 
+ * ----
+ * @param fileImportSource - The vite import ref; ex. "import CodeSnippets from './CodeSnippetsFile?raw';"
+ * @param nameOrRange - The name of the component, type, or interface you want returned as a string, or the lines you want to retrieve.
+ * @param type - Whether we're searching for a component () =>, type, or interface.
+ * @returns The raw stringified snippet of your code.
  */
 export const getSourceCode = (
   fileImportSource: string,
@@ -39,7 +41,7 @@ export const getSourceCode = (
   // Regex calculations
   const name = nameOrRange;
   const lines = fileImportSource.split('\n');
-
+  
   // Search for the declaration
   const startIdx = lines.findIndex(line => {
     const t = line.trim();
@@ -47,15 +49,15 @@ export const getSourceCode = (
             t.startsWith(`interface ${name} `) || t.startsWith(`export interface ${name} `) ||
             t.startsWith(`const ${name} `) || t.startsWith(`export const ${name} `);
   });
-
+  
   if (startIdx === -1) return 'Component Source not found.';
-
+  
   // Find the closing brace
   let endIdx = startIdx;
   if (type === 'component' || type === 'interface') {
     let braceCount = 0;
     let started = false;
-
+    
     for (let i = startIdx; i < lines.length; i++) {
       const line = lines[i];
       
@@ -70,7 +72,7 @@ export const getSourceCode = (
           started = true;
         }
       }
-
+      
       if (started && braceCount === 0) {
         endIdx = i;
         break;
@@ -90,17 +92,17 @@ export const getSourceCode = (
       ) break;
       endIdx = i;
     }
-
+    
     // Code from definition to next declaration
     let snippetWithSpacing = lines.slice(startIdx, endIdx + 1).join('\n');
-
+    
     // Remove trailing // comments, #regions, or extra whitespace between the end of type and the next declaration
     const lastSemicolon = snippetWithSpacing.lastIndexOf(';');
     if (lastSemicolon !== -1) snippetWithSpacing = snippetWithSpacing.substring(0, lastSemicolon + 1);
-
+    
     return snippetWithSpacing.trim();
   }
-
+  
   const sourceCode = lines.slice(startIdx, endIdx + 1).join('\n').trim();
   // console.log (`retrieving code for ${name}: `, sourceCode);
   return sourceCode;
@@ -109,29 +111,31 @@ export const getSourceCode = (
 
 
 /**
- * Retrieves the exported components for documentation jsx examples
- * from a stringified file import using vite. This function is used in combination with 'react-syntax-highlighter'
- * so we don't have to create redundant code.
+ * Retrieves ***exported components*** to create ***code-snippets*** for documentation
+ * from a stringified file import using `vite`. 
+ * * This function is used in combination with `react-syntax-highlighter` to prevent code duplication.
  * 
- * @param fileImportSource - The vite import ref; ex. "import CodeSnippets from './CodeSnippetsFile?raw';"
- * @param name - The name of the component, type, or interface you want returned as a string, or the line numbers you want to retrieve
- * @param type - Whether we're searching for a component () =>, type, or interface.
- * @returns The raw stringified snippet of your code.
- * 
- * @example
+ * ----
+ * #### Example
  * ```typescript
  * import CodeSnippets from './CodeSnippetsFile?raw';
  * 
  * // For components, types, or interfaces
- * const textInputSnippet = getSourceCode(InputCodeSnippets, "Example_TextInput", 'Component');
+ * const textInputSnippet = getSourceCode(CodeSnippetFile, "Example_TextInput", 'Component');
  * console.log('source code: ', textInputSnippet);
  * 
  * // To get specific lines
- * const snippet = getSourceCode(MyFile, [10, 25], 'lines');
+ * const snippet = getSourceCode(CodeSnippetFile, [10, 25], 'lines');
+ *  
  * ```
- *  <br>&nbsp;
  * 
+ * ----
  * @note This does not handle complex types well, and is prone to error in those cases.
+ * 
+ * @param fileImportSource - The vite import ref; ex. "import CodeSnippets from './CodeSnippetsFile?raw';"
+ * @param nameOrRange - The name of the component, type, or interface you want returned as a string, or the lines you want to retrieve.
+ * @param type - Whether we're searching for a component () =>, type, or interface.
+ * @returns The raw stringified snippet of your code.
  */
 export const getSourceCode_Regex = (
   fileImportSource: string, // Import needs a '?raw' suffix to convert to string, ex: './Jsx.tsx?raw';

@@ -2,7 +2,11 @@ import { createContext, useMemo, useState } from "react";
 import { Tooltip, TooltipProps, TooltipContentProps } from "../Tooltip";
 
 
-// Tooltip Context - pass in props to show() to render your own dynamic content @see tooltip.tsx
+/** 
+ * Tooltip Context - pass in props to the context to render your own dynamic content efficiently. 
+ * @see {@link TooltipProvider} 
+ * @see {@link Tooltip} 
+ * */ 
 export const TooltipService = createContext<TooltipContextActions>({show: (c) => {}, hide: () => {}, });
 export interface TooltipContextActions { // These are stable refs, calling them won't cause rerenders
   show: (config?: TooltipContentProps) => void;
@@ -10,11 +14,12 @@ export interface TooltipContextActions { // These are stable refs, calling them 
 }
 
 
-// Tooltip Provider. Wrapped around the router to create a performant tooltip for any component to use efficiently without rerenders
+/** Tooltip Provider. Wrapped around the router to create a performant tooltip for any component to use efficiently without rerenders */ 
 export const TooltipProvider = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [tooltipProps, setTooltipProps] = useState<any>({});
-
+  
+  // ? Adding this context, or invoking these functions never cause rerenders on the children component, or the app.
   const actions = useMemo<TooltipContextActions>(() => ({
     show: (config: any) => {
       setIsVisible(true);
@@ -25,9 +30,9 @@ export const TooltipProvider = ({ children }: { children: React.ReactNode }) => 
       setTooltipProps(undefined);
     },
   }), []);
-
-
-  // Only components inside this provider re-render when state changes
+  
+  
+  // {} Only components inside this provider re-render when state changes
   return (
     <TooltipService.Provider value={actions}>
       {children}
@@ -39,16 +44,12 @@ export const TooltipProvider = ({ children }: { children: React.ReactNode }) => 
 
 /* 
   Usage:
-  
     - const { show, hide } = useContext(TooltipContext);
+      - onMouseEnter={(e) => show({ text: 'Tooltip Text' })}
+      - onMouseLeave={hide}
 
-    - onMouseEnter={(e) => show({ text: 'Tooltip Text' })}
-    - onMouseLeave={hide}
-  
 
   When passed as props:
-
     - tooltipContext: TooltipActions
     - tooltipContent: TooltipProps
-
 */

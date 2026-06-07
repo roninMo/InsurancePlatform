@@ -83,6 +83,8 @@ import { Icon_CircleError } from "./Alerts/Icon_CircleError";
 // #endregion
 
 
+
+// #region Types
 export type IconTypes = DefaultIconTypes 
 | AlertIconTypes 
 | MediaIconTypes 
@@ -95,14 +97,15 @@ export interface IconAttributes {
   styles?: string;
 }
 
-// The place to go for specific non theme icons: https://svgicons.com/
+/** The place to go for specific non theme icons: {@link https://svgicons.com/|svgicons.com}. */ 
 interface IconProps {
   variant: IconTypes;
   styles?: string;
 }
 
 
-// TODO: LazyLoading option?
+// #endregion
+// #region Icon Component Render
 export const Icon = ({ variant, styles = ''}: IconProps) => {
   // Default Icon styles
   let iconStyles = 'icon-default'; 
@@ -114,26 +117,32 @@ export const Icon = ({ variant, styles = ''}: IconProps) => {
   iconStyles = styles ? styles : iconStyles;
   // console.log(`\nrendered ${variant} icon, styles: `, iconStyles);
   
-  // Rendered Icons
+  // ? Default Icons
   const DefaultIcon = defaultIconMap[variant];
   if (DefaultIcon) return <DefaultIcon styles={iconStyles} />;
-
+  
+  // ? Alert (Okay / Warning / Error / Info)
   const AlertIcon = alertIconMap[variant];
   if (AlertIcon) return <AlertIcon styles={iconStyles} />;
-
+  
+  // ? Social Media Icons
   const MediaIcon = mediaIconMap[variant];
   if (MediaIcon) return <MediaIcon styles={iconStyles} />;
   
+  // ? Tech Stack Icons
   const TechIcon = techIconMap[variant];
   if (TechIcon) return <TechIcon styles={iconStyles} />;
   
+  // ? Company ICons
   const CompanyIcon = companyIconMap[variant];
   if (CompanyIcon) return <CompanyIcon styles={iconStyles} />;
-
+  
   return (<></>);
 }
 
 
+// #endregion
+// #region Default IconTypes  
 //------------------------------------//
 // Default Icons                      //
 //------------------------------------//
@@ -174,6 +183,8 @@ export type DefaultIconTypes =
 | 'VennDiagram';
 
 
+// #endregion
+// #region Alert IconTypes 
 //------------------------------------//
 // Alert Icons                        //
 //------------------------------------//
@@ -191,6 +202,8 @@ export type AlertIconTypes =
 | 'OutlineInfo';
 
 
+// #endregion
+// #region Media IconTypes 
 //------------------------------------//
 // Media Icons                        //
 //------------------------------------//
@@ -203,6 +216,8 @@ export type MediaIconTypes =
 | 'Youtube';
 
 
+// #endregion
+// #region Tech IconTypes 
 //------------------------------------//
 // Tech and Language Icons            //
 //------------------------------------//
@@ -218,30 +233,32 @@ export type AutomationKeywords = 'CI/CD Pipelines' | 'Azure Devops' | 'Atlassian
 export type TechIconTypes = 
   'Angular' | 'React' | 'Vue' | 
   'Express' | 'Net' | 'Node' | 
-
+  
   'RxJs' | 'ReactHookForms' | 'Redux' | 'Jest' | 'Playwright' | 'Axios' | 
   'Orleans' | 'ApolloGraphQL' | 'Postgres' | 'MongoDB' | 
-
+  
   'DataDog' |
   'AWS' | 'Azure' | 'GCP' | 
-
+  
   'AWS CDK' |'Kubernetes' | 'Bamboo' | 'Docker' |
   'CI/CD Pipelines' | 'Azure Devops' | 'Atlassian'
 ;
 
 
+// #endregion
+// #region Company IconTypes 
 //------------------------------------//
 // Company Icons                      //
 //------------------------------------//
 export type CompanyIconTypes = 'LibertyMutual' | 'LibertyLogo' | 'StateAuto' | 'StateAutoLogo' | 'DemandJump';
 
 
-
-
+// #endregion
+// #region Icon Style Maps  
 //------------------------------------//
-// Icon Mappings                      //
+// Icon Style Maps                    //
 //------------------------------------//
-// Icon style map
+/**  */
 const infoStyleMap: Partial<Record<IconTypes, boolean>> = {
   'CircleQuestion': true,
   'OutlineQuestion': true, 
@@ -276,7 +293,12 @@ const customStyleMap: Partial<Record<IconTypes, string>> = {
 };
 
 
-// #region Icon Maps
+// #endregion
+
+// The component sizes are minimal, but loading the webpage still renders every one of these
+// TODO - Look for another way to load these dynamically (if there's an actual performance hit later)
+// ! Lazy loading will create a flicker and multiple network requests using more bandwidth than the actual content we're sending here.
+// #region React.FC Default Icon Map
 const defaultIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   'AtSymbol':        ({ styles }) => <Icon_AtSymbol styles={styles} />,
   'AttachFile':      ({ styles }) => <Icon_AttachFile styles={styles} />,
@@ -315,6 +337,8 @@ const defaultIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> =
   'VennDiagram':     ({ styles }) => <Icon_VennDiagram styles={styles} />,
 };
 
+// #endregion
+// #region React.FC Alert Icon Map
 const alertIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   'CircleQuestion':     ({ styles }) => <Icon_CircleQuestion styles={styles} />,
   'CircleWarning':    ({ styles }) => <Icon_CircleWarning styles={styles} />,
@@ -329,6 +353,8 @@ const alertIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   'OutlineInfo':    ({ styles }) => <Icon_OutlineInfo styles={styles} />,
 };
 
+// #endregion
+// #region React.FC Media Icon Map
 const mediaIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   'Facebook':   ({ styles }) => <Icon_Facebook styles={styles} />,
   'Github':     ({ styles }) => <Icon_Github styles={styles} />,
@@ -337,6 +363,8 @@ const mediaIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   'Youtube':    ({ styles }) => <Icon_Youtube styles={styles} />,
 };
 
+// #endregion
+// #region React.FC Tech Icon Map
 const techIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   // Automation
   'Atlassian':           ({ styles }) => <Icon_Atlassian styles={styles} />,
@@ -375,6 +403,8 @@ const techIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   'DataDog':             ({ styles }) => <Icon_DataDog styles={styles} />,
 }
 
+// #endregion
+// #region React.FC Company Icon Map
 const companyIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> = {
   'DemandJump':          ({ styles }) => <Icon_Demandjump styles={styles} />,
   'LibertyLogo':         ({ styles }) => <Icon_LibertyLogo styles={styles} />,
@@ -383,3 +413,4 @@ const companyIconMap: Partial<Record<IconTypes, React.FC<{ styles: string }>>> =
   'StateAutoLogo':       ({ styles }) => <Icon_StateAutoLogo styles={styles} />,
 }
 // #endregion
+

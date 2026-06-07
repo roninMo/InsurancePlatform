@@ -8,33 +8,35 @@ export const DEFAULT_NAV_STATE = { };
 export const DEFAULT_OPTS_STATE = { state: DEFAULT_NAV_STATE };
 
 
+// #region Base Props
 interface HashLinkPropsBase {
   // The url accepts hashLinks, @see Navbar.tsx
   url: string;
   
   // by default, uses the link-text class
   styles?: string;
-
+  
   /** Conditionally rendered styles
-
     // The options for how the link is rendered
     label?: string;
     children?: ReactNode;
-
-
+    
+    
     // The ways of navigation, by default it is "router"
     type?: NavTypes;
     customNavigate?: (url?: string, label?: string) => void;
-
+    
     // If you add the state or opts prop, it must be memoized in order to prevent rerenders 
     state?: Record<string, any>;
     opts?: NavigateOptions;
-
+    
   */
 }
 
-// #region Conditional props
-// Either render this component as a traditional link with optional custom styles, or a wrapped component as a link
+
+// #endregion
+// #region Conditional Props
+/** Either render this component as a traditional link with optional custom styles, or a wrapped component as a link */
 type VariantProps = 
 | { 
     children?: ReactNode; 
@@ -48,30 +50,32 @@ type VariantProps =
   };
 
 type NavTypeProps = 
-// if we're using the navigate function, we need the opts for extra nav functionality 
+/** if we're using the navigate function, we need the opts for extra nav functionality  */
 | {
     type?: Extract<NavTypes, 'useNavigate'>; 
     opts?: NavigateOptions;
-
+    
     /** @deprecated CANNOT use 'state' when 'type' is 'useNavigate'. */
     state?: never; 
     /** @deprecated CANNOT use 'customNavigate' when 'type' is 'useNavigate'. */
     customNavigate?: never; 
   }
-// if the type is not 'useNavigate', we only need state
+
+/** if the type is not 'useNavigate', we only need state */
 | { 
     type?: Extract<NavTypes, 'router' | 'page'>;
     state?: Record<string, any>;
-
+    
     /** @deprecated CANNOT use 'opts' when 'type' is 'router' | 'page'. */
     opts?: never; 
     /** @deprecated CANNOT use 'customNavigate' when 'type' is present. */
     customNavigate?: never; 
   }
-// or if they instead used the customNavigate prop, don't use both opts and state (the function handles it, we pass the static props)
+
+/** or if they instead used the customNavigate prop, don't use both opts and state (the function handles it, we pass the static props) */
 | { 
     customNavigate?: (url: string, label?: string) => void; 
-
+    
     /** @deprecated CANNOT use 'type' when 'customNavigate' is present. */
     type?: NavTypes;
     /** @deprecated CANNOT use 'state' when 'customNavigate' is present. */
@@ -79,13 +83,18 @@ type NavTypeProps =
     /** @deprecated CANNOT use 'opts' when 'customNavigate' is present. */
     opts?: never; 
   };
-// #endregion
 
+/** The HashLink's props */
 export type HashLinkProps = HashLinkPropsBase & VariantProps & NavTypeProps; 
 
 
-// These don't need to rerender
+// #endregion
+/** 
+ * A custom react-router Link component that is used for adding **id-hashes** to links, and applying smooth scroll restoration on navigation. 
+ * * See {@link hashLinkScrollRestoration()}. 
+ */
 export const HashLink = memo((props: HashLinkProps) => {
+  // #region State
   const { 
     url, 
     label, children, 
@@ -93,7 +102,7 @@ export const HashLink = memo((props: HashLinkProps) => {
     state = DEFAULT_NAV_STATE, opts, 
     styles, 
   } = props;
-
+  
   const navScrollRestoration = hashLinkScrollRestoration;
   const navigate = useNavigate(); 
   const { pathname } = useLocation();
@@ -105,7 +114,10 @@ export const HashLink = memo((props: HashLinkProps) => {
     ...DEFAULT_NAV_STATE,
     previousPathname: pathname,
   }), [state, pathname]);
-
+  
+  
+  // #endregion
+  // #region Some of the navigation Scenarios
   // Navigation logic for when they aren't using type="router"
   const clickedLink = () => {
     // Custom navigation logic
@@ -114,7 +126,7 @@ export const HashLink = memo((props: HashLinkProps) => {
       customNavigate(url, label);
       return;
     }
-
+    
     // Internal site navigation
     if (type == 'useNavigate') {
       navigate(url, {...opts, state: mergedState}); // Internal ScrollToView State @see Navbar.tsx
@@ -127,21 +139,24 @@ export const HashLink = memo((props: HashLinkProps) => {
       return;
     }
   }
-
+  
+  // #endregion
+  // #region HTML
   // Styles
   const linkStyles = styles ? styles : 'link-text';
-
+  
   // Router Type navigation
   if (type == 'router' && !customNavigate) return (
     <Link to={url} state={mergedState} className={linkStyles}>
       { label ? label : children }
     </Link>
   );
-
+  
   // UseNavigate, Page or custom navigation
   else return (
     <div onClick={clickedLink} className={linkStyles}>
       { label ? label : children }
     </div>
   );
+  // #endregion
 });

@@ -2,7 +2,7 @@
 
 
 /**
- * Updates a Record by running a transformer function on every entry.  
+ * Updates a `Record` by running a ***transformer function*** on another `Record's` entries.   
  * 
  * ---
  * ### Example
@@ -16,9 +16,9 @@
  *   
  * ```
  * ---
- * @param record        The record we're using as a reference. 
- * @param transformer   The function used to edit the data.
- * @returns             The transformed record with proper typings.
+ * @param record        The **Record** we're using as a reference. 
+ * @param transformer   The function used to edit each entry *[key, value]*.
+ * @returns             The transformed **Record** with proper *typings*.
  */
 export const mapRecord = <Key extends string | number, Value, Result>(
   record: Record<Key, Value>,
@@ -35,10 +35,11 @@ export const mapRecord = <Key extends string | number, Value, Result>(
 /*
   * Make a record list from an array 
     ? Object.fromEntries(listOfValues.map(item => [item.value, item]))
-
+      -> makeRecord(listOfValues, (item) => [item.value, item])
+    
   * Make an array from a record list (just the values) 
     ? Object.values(itemRecord);
-
+    
   * Make an array from a record list (if you need both the Record<key, value>) 
     ? const itemsArray = Object.entries(itemRecord).map(([key, item]) => ({
     ?   value: key,

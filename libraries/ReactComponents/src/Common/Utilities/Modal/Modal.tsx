@@ -26,6 +26,8 @@ export interface ModalProps {
   children: ReactNode;
 }
 
+
+/** A dynamic popup wrapper component that displays any content you pass in. Comes with custom styling and open/close options. */
 export const Modal = ({
   label, setModalOpen, onCloseModal, isModalOpen, 
   containerStyles, overlayStyles, headerStyles, 
@@ -37,43 +39,43 @@ export const Modal = ({
   const modalId = useId();
   const renderedModalId = `modal-${label}-${modalId}`;
   const closeModalId = `modal-element`;
-
+  
   const closeModal = () => {
     // console.log('modal setState function', {isModalOpen, setModalOpen});
     setModalOpen(false);
     if (onCloseModal) onCloseModal();
   }
-
+  
   //------------------------------------------------//
   // Modal Fade in Logic                            //
   //------------------------------------------------//
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-
+    
     // keyframe animations fade in smoothly
     if (isModalOpen) {
       setIsModalRendered(true);
     }
-
+    
     // Wait a second to unmount this component to allow it to fade out of view gracefully
     else if (isModalRendered && !isModalOpen) {
       timeoutId = setTimeout(() => setIsModalRendered(false), 200);
       return () => clearTimeout(timeoutId);
     }
-
+    
     // If the effect was called again before the timer completes
     return () => {
       clearTimeout(timeoutId);
     }
   }, [isModalOpen]);
-
-
+  
+  
   //------------------------------------------------//
   // Close Modal Events                             //
   //------------------------------------------------//
   const userClicked = (event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     const element: any = event?.target as HTMLElement;
-
+    
     // Checks element and ancestors
     const isWithinModal = element.closest(`#${closeModalId}`);
     if (!isWithinModal) {
@@ -81,7 +83,7 @@ export const Modal = ({
       return;
     }
   }
-
+  
   if (isModalRendered) return (
       <Overlay
         id={renderedModalId}
@@ -100,13 +102,13 @@ export const Modal = ({
             <label className={`${headerStyles ? headerStyles : 'modal-header'}`}>
               { label }
             </label>
-
+            
             <CloseButton onClick={() => closeModal()}>
               { closeModalButton && <Icon variant={closeIcon} styles={closeIconStyles ? closeIconStyles : 'modal-icon'} /> }
             </CloseButton>
           </Header>
           }
-
+          
           {/* User Content */}
           <Container className={`modal-content ${dimensionStyles} ${removeContentShadow ? '' : 'modal-content-shadow'}`}>
             { children }
@@ -114,7 +116,7 @@ export const Modal = ({
         </ModalContainer>
       </Overlay>
   );
-
+  
   return <></>;
 }
 

@@ -8,7 +8,8 @@ import styled from '@emotion/styled';
 import styles from './Tooltip.module.scss';
 
 
-// Tooltip variants 
+// #region Tooltip Props & Types
+/** Tooltip Variants */
 export type TooltipType = 'text' | 'code' | 'custom' | 'none';
 export type TooltipProps = TooltipBase & TooltipContentProps; 
 export type TooltipContentProps = TextTooltipProps | CodeTooltipProps | CustomTooltipProps;
@@ -34,29 +35,30 @@ export interface TooltipBase {
 }
 
 
+// #endregion
 /* A universal tooltip that can be used with any component. */
 export const Tooltip = (props: TooltipProps) => {
+  // #region State 
   const [shouldRender, setShouldRender] = useState<boolean>(false);
   const { showTooltip, additionalStyles } = props;
   const { code, showLineNumbers, type = 'example' } = props as CodeTooltipProps;
-
+  
   const [isVisible, setIsVisible] = useState<boolean>(false); // transitions don't work otherwise, & transform gpu rendering
   useEffect(() => { setIsVisible(!!showTooltip) }, [showTooltip]); 
-
+  
   // Wait until react has done it's initial paint of the application
   useEffect(() => {
     // We should also wait until their computer's cpu is ready 
     const handle = window.requestIdleCallback(() => setShouldRender(true) );
     return () => window.cancelIdleCallback(handle);
   }, []);
-
-
-
-
+  
+  
+  // #endregion
+  // #region Transform Logic 
   //----------------------------------------//
   // Tooltip transform logic                //
   //----------------------------------------//
-  // #region Transform Logic
   const tooltipRef = useRef<HTMLDivElement>(null); // tooltip component
   const mouse = useRef({ x: 0, y: 0 }); // target location
   const prevMouseLocation = useRef({ x: 0, y: 0 }); // prevent asynchronous errors @see captureMouseMove () & @see animate ()
@@ -67,13 +69,14 @@ export const Tooltip = (props: TooltipProps) => {
   const [isRenderDelayDone, setIsRenderDelayDone] = useState<boolean>(false);
   const currentScroll = useRef(0); 
   const targetScroll = useRef(0);
-
+  
   useEffect(() => {
     // Retrieve the mouse location and set the initial render location of the tooltip
     const captureMouseMove = (e: MouseEvent) => (mouse.current = { x: e.clientX, y: e.clientY });
     document.addEventListener('mousemove', captureMouseMove);
-
-
+    
+    
+    // #region Transform Animation Loop
     //----------------------------------//
     // The Animation Loop               //
     //----------------------------------//
@@ -87,8 +90,8 @@ export const Tooltip = (props: TooltipProps) => {
         frameId = requestAnimationFrame(animate);
         return;
       }
-
-
+      
+      
       //--------------------------//
       // Smoothed scroll logic    //
       //--------------------------//
@@ -98,19 +101,19 @@ export const Tooltip = (props: TooltipProps) => {
         currentScroll.current = interpFloat(currentScroll.current, targetScroll.current, nonLinearFactor);
         tooltip.scrollTop = Math.round(currentScroll.current); // - quick, then eases to a stop.
       }
-
+      
       //--------------------------//
       // Interpolation logic      //
       //--------------------------//
       let tooltipLoc = { ...tooltipLocation.current };
       let targetLoc = { ...mouseLoc };
-
+      
       const spacingOffset = 16; // used specifically for window bounds
       const offsetX = 12;
       const offsetY = 16;
       let shouldPlaceBelow = true;
       const interpSpeed = 0.1;
-
+      
       // if we're already at the target and scroll locations
       const isMouseSettled = Math.abs(tooltipLoc.x - targetLoc.x) < 0.1 && Math.abs(tooltipLoc.y - targetLoc.y) < 0.1;
       const isScrollSettled = Math.abs(scrollDelta) < 0.1;
@@ -118,24 +121,24 @@ export const Tooltip = (props: TooltipProps) => {
           frameId = requestAnimationFrame(animate);
           return;
       }
-
+      
       // Adjust the location based on how close the tooltip is to the edge of the screen
       const width = tooltip.offsetWidth;
       const height = tooltip.offsetHeight;
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
-
+      
       // The vertical check needs to determine whether to be above or below the mouse
       shouldPlaceBelow = (mouseLoc.y + offsetY + height) < windowHeight;
       
       // The tooltip should stay on screen when the mouse approaches the edges
       targetLoc.x = Math.min( (mouseLoc.x + offsetX), (windowWidth - (width + offsetX + spacingOffset)) );
-
+      
       // If it should be placed above the mouse, subtract by the tooltip height and invert the offset
       targetLoc.y = mouseLoc.y + offsetY;
       if (!shouldPlaceBelow) targetLoc.y = mouseLoc.y - height - offsetY;
-
-
+      
+      
       //----------------------------------//
       // Animation logic                  //
       //----------------------------------//
@@ -145,7 +148,7 @@ export const Tooltip = (props: TooltipProps) => {
         initialMove.current = false;
         frameId = requestAnimationFrame(animate);
       }
-
+      
       // Smoothly interp to the target location
       else {
         tooltipLoc = interpV2(tooltipLoc, { 
@@ -153,26 +156,29 @@ export const Tooltip = (props: TooltipProps) => {
           y: targetLoc.y 
         }, interpSpeed);
       }
-
+      
       // Tooltip animation update
       // tooltip.style.transform = `translate(calc(${tooltipLoc.x}px), calc(${tooltipLoc.y}px))`;
       // we're not combining location values with translate percents for placement
       // so calc isn't needed, and decimal pixels could cause a blurred render, so:
       tooltip.style.transform = `translate(${Math.round(tooltipLoc.x)}px, ${Math.round(tooltipLoc.y)}px)`;
-
+      
       /** Capture the ref's value from this calculation */
       tooltipLocation.current = tooltipLoc; 
       prevMouseLocation.current = { ...mouseLoc };
-
-
+      
+      
       //----------------------------------//
       // Animation loop                   //
       //----------------------------------//
       frameId = requestAnimationFrame(animate);
     };
-
-
-
+    
+    
+    
+    
+    // #endregion
+    // #region Tooltip Scroll Logic
     //----------------------------------//
     // Scroll Logic                     //
     //----------------------------------//
@@ -180,18 +186,18 @@ export const Tooltip = (props: TooltipProps) => {
     const handleGlobalWheel = (e: WheelEvent) => {
       const tooltip = tooltipRef.current;
       if (!tooltip) return;
-
-      // Check if the tooltip is currently overflowed
+      
+      // ? Check if the tooltip is currently overflowed
       const isOverflowed = tooltip.scrollHeight > tooltip.clientHeight;
       
-      // stop the page from scrolling past the top/bottom so the user can read the tooltip content.
+      // {} stop the page from scrolling past the top/bottom so the user can read the tooltip content.
       if (isOverflowed) {
         const isAtBottom = tooltip.scrollTop + tooltip.clientHeight >= tooltip.scrollHeight;
         const isAtTop = tooltip.scrollTop <= 0; 
         // scrollTop (how many pixels have been scrolled up and are out of view)
         // scrollHeight (the dimensions of the content, including what the overflow hides)
         // clientHeight (the dimensions of the overflow element, not the page location)
-
+        
         const scrollAmount = e.deltaY /// 2; // scrolls are in linear increments of 100, we're using this value additively
         if (!(scrollAmount > 0 && isAtBottom) && !(scrollAmount < 0 && isAtTop)) {
           e.preventDefault(); // Stop page scroll while tooltip is scrolling
@@ -206,13 +212,13 @@ export const Tooltip = (props: TooltipProps) => {
         }
       }
     };
-
-
-
-    // Initial frame call
+    // #endregion 
+    
+    
+    // {} Initial frame call
     window.addEventListener('wheel', handleGlobalWheel, { passive: false });
     frameId = requestAnimationFrame(animate);
-
+    
     //----------------------------------//
     // Cleanup                          //
     //----------------------------------//
@@ -230,16 +236,13 @@ export const Tooltip = (props: TooltipProps) => {
     // showTooltip        - for running the animation when the tooltip should be "rendered"
     // isRenderDelayDone  - renders scrollbar (code is up to date before this is reran (during showTooltip's change))
   }, [showTooltip, isRenderDelayDone]);
+  
+  
   // #endregion
-
-
-
-
+  // #region Code Snippet and Render Delay
   //----------------------------------------//
   // Code Snippet and Render delay          //
   //----------------------------------------//
-  // #region Code Snippet and Render Delay
-
   // Quick Render delay for jsx code and to enable the scrollbar (to allow other transition css to work via overflow)
   useEffect(() => {
     // Reset the render delay for the next time the tooltip is opened
@@ -256,8 +259,8 @@ export const Tooltip = (props: TooltipProps) => {
       
     return () => clearTimeout(timeout);
   }, [isVisible]);
-
-
+  
+  
   // We want this content to be rendered once the page has loaded
   const MemoizedCodeSnippet = useMemo(() => {
     if (!shouldRender) return null;
@@ -276,18 +279,16 @@ export const Tooltip = (props: TooltipProps) => {
       </div>
     );
   }, [shouldRender, code]);
+  
+  
   // #endregion
-
-
-
-
-  //----------------------------------------//
-  // Copy code on hover                     //
-  //----------------------------------------//
   // #region Copy Code Snippet Animation
+  //----------------------------------------//
+  // Copy code (Ctrl+C) on hover            //
+  //----------------------------------------//
   const copiedSnippetRef = useRef<HTMLDivElement>(null);
   const copyShortcutRef = useRef<HTMLDivElement>(null);
-
+  
   useEffect(() => {
     if (!('code' in props)) return;
     const copyCodeSnippet = async () => {
@@ -303,7 +304,7 @@ export const Tooltip = (props: TooltipProps) => {
       const copyShortcutEl = copyShortcutRef.current;
       const copiedNotification = copiedSnippetRef.current;
       if (!copiedNotification || !copyShortcutEl) return;
-
+      
       // hide the shortcut and notify the user it was copied to clipboard
       copyShortcutEl.classList.remove('animate-fade-pulse-i');
       copiedNotification.classList.remove('animate-fade-pulse');
@@ -314,15 +315,14 @@ export const Tooltip = (props: TooltipProps) => {
       copyShortcutEl.classList.add('animate-fade-pulse-i');
       copiedNotification.classList.add('animate-fade-pulse');
     };
-
+    
     window.addEventListener('copy', copyCodeSnippet);
     return () => window.removeEventListener('copy', copyCodeSnippet);
   }, [showTooltip]);
+  
+  
   // #endregion
-
-
-
-
+  // #region HTML
   //----------------------------------------//
   // Tooltip variants                       //
   //----------------------------------------//
@@ -340,8 +340,8 @@ export const Tooltip = (props: TooltipProps) => {
   if ('text' in props) variant = 'text';
   else if ('code' in props) variant = 'code';
   else if ('children' in props) variant = 'custom';
-
-
+  
+  
   // render
   if (variant == 'none') return <></>;
   return (
@@ -356,7 +356,7 @@ export const Tooltip = (props: TooltipProps) => {
     >
       { variant == 'code' ? 
         <CodeVariant className={`col ${type == 'type' || type == 'example' ? 'tooltip-c-type' : 'tooltip-c-class'}`}>
-
+          
           {/* Keeps transitions while using suspense and a lazy import */}
           <OpenAnimation show={isRenderDelayDone} cStyles='col gap-2' heightTransClass='height-trans-500'>
             <AnimContent className='rowStart items-center gap-4'>
@@ -366,12 +366,12 @@ export const Tooltip = (props: TooltipProps) => {
                   : 'Example'
                 }
               </label>
-
+              
               <div className='grid grid-cols-1 justify-items-start items-center'>
                 <div ref={copyShortcutRef} className='row-start-1 col-start-1 tooltip-copy-text'>
                   Ctrl + /
                 </div>
-
+                
                 <div ref={copiedSnippetRef} className='row-start-1 col-start-1 tooltip-copied-notification'>
                   Copied to clipboard
                   <Icon variant='CircleOkay' styles='tooltip-copied-icon' />
@@ -382,12 +382,12 @@ export const Tooltip = (props: TooltipProps) => {
               { MemoizedCodeSnippet }
             </Suspense>
           </OpenAnimation>
-
+          
           <OpenAnimation show={!isRenderDelayDone} cStyles='content-auto' heightTransClass='height-trans-500'>
             <p className='p-2 italic loading-text'>Loading code...</p>
           </OpenAnimation>
         </CodeVariant>
-
+        
       : variant == 'text' ? 
       <> {text} </>
       
@@ -397,6 +397,7 @@ export const Tooltip = (props: TooltipProps) => {
       : <></> }
     </div>
   );
+  // #endregion
 }
 
 

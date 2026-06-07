@@ -1,9 +1,7 @@
 export * from './Common/Content/HeightTransWrapper/HeightTransWrapper';
+
 // Common
 export * from './Common/index';
-
-// Singletons, Services, etc.
-export * from './Singletons/HashLinkScrollRef/HashLinkScrollRestoration';
 
 // Forms
 export * from './Forms/Address/AddressInfo';
@@ -19,6 +17,12 @@ export * from './Forms/Select/Select';
 export * from './Forms/Select/SelectItem/SelectItem';
 export * from './Forms/Slider/Slider';
 export * from './Forms/Textarea/Textarea';
+
+// Singletons, Services, etc.
+export * from './Singletons/HashLinkScrollRef/HashLinkScrollRestoration';
+
+// Types
+export * from './Types/index';
 
 // Misc
 export * from './ReactComponents';

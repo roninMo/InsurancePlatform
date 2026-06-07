@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 
+/** The height transition wrapper's props */
 export interface HeightTransProps {
   /** The condition to show / hide the content via transition. */
   show?: boolean;
@@ -25,11 +26,11 @@ export interface HeightTransProps {
   dynamic?: boolean;
 }
 
-// Wrapper for adding smooth open close content transitions to keep dynamic content from popping on the screen.
+/** Wrapper for adding smooth ***open / close*** content transitions to keep dynamic content from popping on the screen. */ 
 export const Ht = ({ show, cStyles, styles, children, heightTransClass, heightTransContentClass, dynamic }: HeightTransProps) => {
   const htClass = heightTransClass ? heightTransClass : 'height-trans';
   const htcClass = heightTransContentClass ? heightTransContentClass : 'height-trans-content';
-
+  
   return (
     <div className={`
       ${htClass} ${show ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} 
