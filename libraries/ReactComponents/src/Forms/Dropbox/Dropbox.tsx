@@ -1,11 +1,12 @@
 import { DragEvent, memo, MouseEvent, useEffect, useReducer, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { Icon, IconTypes } from "../../Common/Icons/Icon";
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
+import { Button } from '../Button/Button';
+import { Icon, IconTypes } from "../../Common/Icons/Icon";
 
 import styled from '@emotion/styled';
 import styles from './Dropbox.module.scss';
-import { Button } from '../Button/Button';
 
 
 /** The file input type's props. These should be memoized. */
@@ -63,8 +64,9 @@ export interface DropboxProps extends FileUploadProps {
 export const Dropbox = ({ 
   name, label, description, handleFiles, multiple, accept, 
   disableHookForms, error, disabled, required,
-  additionalStyles, fileListType = 'list', fileListTheme = 'green', customIcon, iconStyles 
-}: DropboxProps) => {
+  additionalStyles, fileListType = 'list', fileListTheme = 'green', customIcon, iconStyles, 
+  onClick, onFocus, onBlur, onMouseEnter, onMouseLeave
+}: DropboxProps & Omit<UniversalEventHandlers<HTMLInputElement>, 'onChange'>) => {
   const dropboxRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const internalFiles = useRef<File[]>([]);
@@ -76,6 +78,9 @@ export const Dropbox = ({
   const isRhfMode = !disableHookForms && !!field;
   const formValues = getValues && getValues(name);
   
+  // * File display variant
+  const [sfVariant, setSfVariant] = useState<FileListVariant>(fileListType);
+  const onChangeSfVariant = (variant: FileListVariant) => setSfVariant(variant);
   
   /** Returns the current files that we have for this input */
   const getFiles = (): File[] => {
@@ -91,6 +96,8 @@ export const Dropbox = ({
   /** Error state */ 
   const getError = (): boolean => !disabled && !!error;
   
+  
+  // #region Handling file upload
   /** Utility to handle passing the new data to the events, native input, and rerender logic */
   const updateComponentState = (files: File[]) => {
     // Update react hook form's value
@@ -110,6 +117,7 @@ export const Dropbox = ({
     // The native input will only capture the first file from the list, we clear that after the onChange to handle this behavior w/useController
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
+  
   
   /**
    * Handles passing the captured files to each of the proper events for input and state logic. 
@@ -138,13 +146,13 @@ export const Dropbox = ({
       updatedFiles = [...uniqueCurrentFiles, ...uploadedFilesArray];
     } else updatedFiles = [uploadedFilesArray[0]];
     
-    
-    // pass the updated state to the proper events
+    // ? pass the updated state to the proper events
     // console.log(`handleFileUpload(${name}), old files: `, uploadedFilesArray,
     //   `\n updatedFiles: `, updatedFiles
     // );
     updateComponentState(updatedFiles);
   }
+  
   
   /** Removes a file from the current list of files */
   const removeFileFromList = (fileToRemove: File) => {
@@ -158,6 +166,7 @@ export const Dropbox = ({
   /** When a user clicks on the dropbox, it invoke's the file input's native event top open the file selection menu */
   const onClickDropbox = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     fileInputRef?.current?.click();
+    onClick && onClick(e as any);
   }
   
   /** The drag/drop event that passes onDrop's captured files to the change event. */
@@ -167,6 +176,7 @@ export const Dropbox = ({
     const files = e.dataTransfer.files; 
     handleFileUpload(files);
   }
+  // #endregion
   
   // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${isRhfMode}), \n files: `, 
@@ -177,6 +187,7 @@ export const Dropbox = ({
   //--------------------------------------//
   // drag over styling                    //
   //--------------------------------------//
+  // #region Drag over functionality
   const nestedDragCounter = useRef(0);
   useEffect(() => {
     const dropbox = dropboxRef.current;
@@ -221,19 +232,19 @@ export const Dropbox = ({
       dropbox.removeEventListener('drop', onDrop);
     };
   }, []);
+  // #endregion
   
-  /** Changes the display for the currently selected files */
-  const [sfVariant, setSfVariant] = useState<FileListVariant>(fileListType);
-  const onChangeSfVariant = (variant: FileListVariant) => setSfVariant(variant);
   
   return (
     <Container className='dropbox-c' ref={dropboxRef}>
       { label && <label className='dropbox-label'>{ label }</label> }
       
       <FileUpload 
-        onClick={(e) => onClickDropbox(e)}
-        onDragOver={(e) => e.preventDefault() } // Prevent opening the file in a new tab
-        onDrop={(e) => onDropFiles(e)}
+        onClick={onClickDropbox}
+        onDragOver={(e) => e.preventDefault()} // Prevent opening the file in a new tab
+        onDrop={onDropFiles}
+        onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+        tabIndex={-1} onFocus={onFocus} onBlur={onBlur}
         className={`dropbox ${disabled ? 'dropbox-disabled' : error ? 'dropbox-err' : ''} ${additionalStyles}`}
       >
         { customIcon 
@@ -272,34 +283,37 @@ export const Dropbox = ({
         show={getFiles()?.length >= 1} styles='p-1'
         cStyles={getFiles()?.length >= 1 ? 'animate-fade-in' : 'animate-fade-out'}
       >
-        <div className='dropbox-sf-dropdown-hc'>
+        <FileListVariantOptions className='dropbox-sf-dropdown-hc'>
           <div className='dropbox-sf-dropdown-h'>
             Files
           </div>
           
-          <Button 
-            displayText='List' 
-            onClick={() => onChangeSfVariant('list')}
-            color='none' additionalStyles={`dropbox-sf-dd-var-l ${sfVariant == 'list' ? 'selected-box' : ''}`} 
-          />
-          <Button 
-            displayText='Box' 
-            onClick={() => onChangeSfVariant('box')}
-            color='none' additionalStyles={`dropbox-sf-dd-var-b ${sfVariant == 'box' ? 'ok-box' : ''}`} 
-          />
-        </div>
+          <div className='rowStart'>
+            <Button 
+              displayText='List' 
+              onClick={() => onChangeSfVariant('list')}
+              color='none' additionalStyles={`dropbox-sf-dd-var-l ${sfVariant == 'list' ? 'selected-box' : ''}`} 
+            />
+            <Button 
+              displayText='Box' 
+              onClick={() => onChangeSfVariant('box')}
+              color='none' additionalStyles={`dropbox-sf-dd-var-b ${sfVariant == 'box' ? 'ok-box' : ''}`} 
+            />
+          </div>
+        </FileListVariantOptions>
         
+        {/* FileList variants */}
         <Ht show={sfVariant == 'box'} styles={`${sfVariant == 'box' ? 'animate-fade-in' : 'animate-fade-out'}`}>
           <SelectedFiles 
             files={getFiles()} name={name} 
-            variant='box' theme={fileListTheme}
+            variant='box' theme={fileListTheme} disabled={disabled} 
             removeFileFromList={removeFileFromList}
           />
         </Ht>
         <Ht show={sfVariant == 'list'} styles={`${sfVariant == 'list' ? 'animate-fade-in' : 'animate-fade-out'}`}>
           <SelectedFiles 
             files={getFiles()} name={name} 
-            variant='list' theme={fileListTheme}
+            variant='list' theme={fileListTheme} disabled={disabled} 
             removeFileFromList={removeFileFromList}
           />
         </Ht>
@@ -314,6 +328,7 @@ const Container = styled.div``;
 const FileUpload = styled.div``;
 const Descriptions = styled.div``;
 const SelectedFileList = styled(Ht)``;
+const FileListVariantOptions = styled.div``;
 const ErrorAndDesc = styled(Ht)``;
 const HiddenInput = styled.input``;
 
@@ -328,28 +343,31 @@ export const defaultFilesTypes = '.pdf, .doc, .docx, .txt';
 
 /** The variant of the file list you want enabled by default */
 export type FileListVariant = 'list' | 'box';
-  
+
 /** The color theme of the select files list */
 export type FileListTheme = 'default' | 'green' | 'blue';
 
-const SelectedFiles = memo(({ name, files, removeFileFromList, variant, theme }: { 
+/** The displayed list of selected files */
+const SelectedFiles = memo(({ name, files, removeFileFromList, variant, theme, disabled }: { 
   name: string,
-  files: File[] | null,  
+  files: File[] | null, 
   removeFileFromList: (fileToRemove: File) => void;
-  variant: FileListVariant,
+  variant: FileListVariant, 
   theme: FileListTheme,
+  disabled?: boolean,
 }) => {
   if (variant == 'list') return (
     <div className='dropbox-file-c-l'>
       { files?.map((file) => 
         <SelBox key={`${name}-sf-list-${file.name}`}
-          className={`dbx-sf-list
-            ${theme == 'default' ? 'dbx-sf-box-default hover:faded-def-box' : ''}
-            ${theme == 'blue' ? 'dbx-sf-box-blue hover:selected-box' : ''}
-            ${theme == 'green' ? 'dbx-sf-box-green hover:ok-box' : ''}
+          className={disabled ? `dbx-sf-list dbx-sf-box-disabled` 
+            : `dbx-sf-list dbx-sf-box-default hover:faded-def-box
+              ${theme == 'default' ? 'dbx-sf-box-default hover:faded-def-box' : ''}
+              ${theme == 'blue' ? 'dbx-sf-box-blue hover:selected-box' : ''}
+              ${theme == 'green' ? 'dbx-sf-box-green hover:ok-box' : ''}
           `} 
         >
-          <span className='dbx-sf-desc hover:theme-f'>
+          <span className={`dbx-sf-desc ${disabled ? '': 'hover:theme-f'}`}>
             <span className='input-colors not-italic pr-2'>
               Filename:
             </span> 
@@ -368,7 +386,8 @@ const SelectedFiles = memo(({ name, files, removeFileFromList, variant, theme }:
     <div className='dropbox-file-c-b'>
       { files?.map((file) => 
         <SelBox key={`${name}-sf-box-${file.name}`}
-          className={`dbx-sf-box
+          className={disabled ? 'dbx-sf-box dbx-sf-box-disabled' 
+            : `dbx-sf-box
             ${theme == 'default' ? 'dbx-sf-box-default' : ''}
             ${theme == 'blue' ? 'dbx-sf-box-blue' : ''}
             ${theme == 'green' ? 'dbx-sf-box-green' : ''}
@@ -388,6 +407,11 @@ const SelectedFiles = memo(({ name, files, removeFileFromList, variant, theme }:
   
   // If the input itself has been rebuilt for another form
   if (prevProps.name !== nextProps.name) {
+    return false;
+  }
+  
+  // Form validations 
+  if (prevProps.disabled !== nextProps.disabled) {
     return false;
   }
   

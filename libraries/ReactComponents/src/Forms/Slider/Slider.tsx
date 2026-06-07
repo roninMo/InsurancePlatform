@@ -1,33 +1,51 @@
-import { ChangeEvent, useReducer, useRef } from 'react';
+import { ChangeEvent, FocusEvent, useReducer, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
 import styles from './Slider.module.scss';
+import { UniversalEventHandlers } from '@Project/ReactComponents/Common';
 
 
 export type SliderVariants = 'default';
 export interface SliderProps {
+  /** The variant of the slider component. */
   variant?: SliderVariants;
+  
+	/** The form group name of this input. Used in Rhf's register function . */
   name: string;
+  
+	/** The Slider's label. */
   label?: string;
+  
+	/** The Slider's description. */
   description?: string;
-
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  
+  // form state	
+  /** Whether we're using react hook forms to handle input state. */
   disableHookForms?: boolean;
-
-  error?: string;
-  disabled?: boolean;
+  
+  /** Whether the input is required. */
   required?: boolean;
+  
+  /** Whether the input is disabled. */
+  disabled?: boolean;
+  
+  /** Whether the input has an error state. */
+  error?: string;
+  
+  // styles
+  /** The additional styles for the slider component. */
   additionalStyles?: string;
 }
 
 export const Slider = ({
   variant = 'default', name, label, description, onChange, disableHookForms, 
   error, required, disabled, additionalStyles,
-}: SliderProps) => {
+  onFocus, onBlur, onClick, onMouseEnter, onMouseLeave
+}: SliderProps & UniversalEventHandlers<HTMLInputElement>) => {
   const { register, control } = useFormContext() || {};
-  const isRHFMode = disableHookForms && !!register;
+  const isRHFMode = !disableHookForms && !!register;
   const rhfBindings = isRHFMode ? register(name) : null;
   const formValue = useWatch({ name, control: control, disabled: !isRHFMode }); 
   
@@ -36,7 +54,8 @@ export const Slider = ({
   
   // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${isRHFMode}) value: `, isRHFMode ? formValue : internalValue.current);
-
+  
+  
   /**
    * Links event logic with custom user event logic for both Rhf and custom state handling.  
    * 
@@ -51,12 +70,18 @@ export const Slider = ({
     const newValue = e?.target?.checked; // update the internal state
     internalValue.current = newValue;
     // console.log(`handleOnChange(${name}) ${newValue ? 'checked' : 'unchecked'} `, e);
-
+    
     // Event functions
     if (isRHFMode && rhfBindings) rhfBindings.onChange(e);
     else forceUpdate(); // update the display
     if (onChange) onChange(e); // additional logic / custom state handling
   };
+  
+  /** Links custom events with Rhf's event bindings */
+  const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
+    if (isRHFMode && rhfBindings) rhfBindings.onBlur(e);
+    if (onBlur) onBlur(e);
+  }
   
   // Determine if the toggle is currently active
   const isChecked = isRHFMode ? !!formValue : !!internalValue.current;
@@ -81,7 +106,10 @@ export const Slider = ({
         </ErrorText>
       </Content>
       
-      <SliderContainer className={`slider-base ${additionalStyles}`}>
+      <SliderContainer 
+        onMouseEnter={onMouseEnter as any} onMouseLeave={onMouseLeave as any}
+        className={`slider-base ${additionalStyles}`}
+      >
         <input 
           type='checkbox' id={`sldr-${name}`}
           disabled={disabled} required={required}
@@ -95,7 +123,8 @@ export const Slider = ({
             }
             return { name, checked: isChecked }; // default behavior
           })()}
-          onChange={handleOnChange} // custom rhfBindings.onChange
+          onChange={handleOnChange} onBlur={handleOnBlur}
+          onFocus={onFocus} onClick={onClick}
           className='slider-input'
         />
         

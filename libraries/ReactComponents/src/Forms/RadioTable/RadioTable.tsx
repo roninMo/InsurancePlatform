@@ -1,6 +1,6 @@
 import { ChangeEvent, FocusEvent, memo, MouseEvent, useCallback, useReducer, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { UniversalEventHandlers } from '@Project/ReactComponents/Common';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { RadioItem } from '../RadioGroup/RadioGroup';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
@@ -14,7 +14,7 @@ export interface RadioTableProps {
 	/** Whether you want an inline or block style layout for each table item. */
   variant?: RadioTableVariant;
   
-	/** The form group name of this input. Used in Rhf's register function. */
+	/** The form group name of this input. Used in Rhf's register function . */
   name: string;
   
 	/** The RadioTable's label. */
@@ -51,9 +51,9 @@ export interface RadioTableProps {
 export const RadioTable = ({
   variant = 'block', name, label, description,
   radioItems, onSelect, disableHookForms,  
-  onChange, onBlur, onMouseEnter, onMouseLeave,
+  onFocus, onBlur, onChange, onClick, onMouseEnter, onMouseLeave,
   error, disabled, required,
-}: RadioTableProps & UniversalEventHandlers) => {
+}: RadioTableProps & UniversalEventHandlers<HTMLElement>) => {
   const { getValues } = useFormContext() || {};
   const formValues = getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -108,8 +108,8 @@ export const RadioTable = ({
             onSelected={onSelectedRadioItem}
             isRhfMode={!disableHookForms}
             
-            onChange={onChange} onBlur={onBlur}
-            onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+            onFocus={onFocus} onChange={onChange} onBlur={onBlur}
+            onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
             
             error={getError(item)}
             disabled={getDisabled(item)}
@@ -147,19 +147,6 @@ interface RadioTableItemProps {
   /** Whether we're using react hook forms to handle input state. */
   isRhfMode?: boolean;
   
-  // event logic
-  /** Additional logic during the input's onChange event. */
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  
-  /** Additional logic during the input's onBlur event. */
-  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
-  
-  /** Additional logic during the input's onMouseEnter event. */
-  onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-  
-  /** Additional logic during the input's onMouseLeave event. */
-  onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-  
   // form state	
   /** Whether the input is required. */
   required?: boolean;
@@ -172,10 +159,10 @@ interface RadioTableItemProps {
 }
 
 const RadioTableItem = memo(({
-  variant, name, value, selected, onSelected, isRhfMode, 
-  onChange, onBlur, onMouseEnter, onMouseLeave, 
+  variant, name, value, selected, isRhfMode, 
+  onSelected, onFocus, onChange, onBlur, onClick, onMouseEnter, onMouseLeave, 
   error, required, disabled,
-}: RadioTableItemProps) => {
+}: RadioTableItemProps & UniversalEventHandlers<HTMLElement>) => {
   const { register, getValues } = useFormContext() || {};
   const rhfBindings = isRhfMode ? register(name) : null;
   // console.log(`RadioTableItem ${value.value} rerendered, selected(${value.selected})`);
@@ -193,8 +180,8 @@ const RadioTableItem = memo(({
       rhfBindings.onChange(e);
     }
     
-    if (onChange) onChange(e); // additional optional event @see UniversalEventHandlers
     if (onSelected) onSelected(e, value); // default logic
+    if (onChange) onChange(e); // additional optional event @see UniversalEventHandlers
   }
   
   const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
@@ -205,6 +192,7 @@ const RadioTableItem = memo(({
   
   return (
   <label 
+    onClick={onClick}
     onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
     onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
     className={`radio-table-i 
@@ -228,6 +216,7 @@ const RadioTableItem = memo(({
         return { name, checked: selected }; // default logic
       }) ()}
       onChange={handleOnChange}
+      onFocus={onFocus}
       onBlur={handleOnBlur}
       
       className={`radio-button mt-[2px] ${error ? 'radio-button-error' : ''}`}

@@ -1,4 +1,5 @@
 import { HTMLAttributes, MouseEvent } from 'react';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Icon, IconTypes } from '../../Common/Icons/Icon';
 
 import styles from './Button.module.scss';
@@ -10,15 +11,12 @@ export interface ButtonProps {
 	/** The button's display text */
   displayText?: string;
 	
-	/** The button's event function. */
-  onClick?: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
-	
 	/** Whether the button is disabled. */
   disabled?: boolean;
 	
 	/** The button's type. */
   type?: "submit" | "reset" | "button" | undefined;
-
+  
 	/** The different sizes of each button. Adjusts the padding and text size. */
   size?: ButtonSizes;
 	
@@ -27,7 +25,7 @@ export interface ButtonProps {
 	
 	/** Additional styles added to the button component.  */
   additionalStyles?: string | undefined;
-
+  
 	/** An optional Icon added alongside the displayText. */
   icon?: IconTypes;
 	
@@ -36,16 +34,18 @@ export interface ButtonProps {
 }
 
 export const Button = ({ 
-  displayText,  onClick,  disabled, type = 'button',
+  displayText, onClick, onMouseEnter, onMouseLeave, disabled, type = 'button',
   size = 'default', color = 'primary', 
   additionalStyles, icon, iconStyles, 
-}: ButtonProps) => {
-
+}: ButtonProps & Pick<UniversalEventHandlers<HTMLButtonElement>, 'onMouseEnter' | 'onMouseLeave' | 'onClick'>) => {
+  
   return (
     <div>
       <button 
         type={type} 
-        onClick={(e) => onClick ? onClick(e) : null}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         disabled={disabled}
         className={`button-base 
           ${  size == 'default' ? 'btn-al-d' 
@@ -54,13 +54,13 @@ export const Button = ({
             : size == 'xl'      ? 'btn-al-xl'
             : ''
           } 
-
+          
           ${  color == 'primary'    ? 'btn-el-primary' 
             : color == 'gray'       ? 'btn-el-gray' 
             : color == 'gray-focus' ? 'btn-el-gray-focus' 
             : '' 
           }
-
+          
           ${additionalStyles}
         `}
       >

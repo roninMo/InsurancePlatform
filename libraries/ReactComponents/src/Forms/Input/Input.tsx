@@ -1,9 +1,10 @@
 import { ChangeEvent, Dispatch, FocusEvent, FormEvent, memo, RefObject, SetStateAction, useEffect, useReducer, useRef, useState } from 'react';
-import { FieldErrors, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { InputMask, MaskOpts, TMaskClass } from '@Project/ReactComponents/Common/Utilities/InputMasks/InputMask';
 import { TooltipContextActions } from '../../Common/Utilities/Tooltip/TooltipProvider/TooltipProvider';
 import { TooltipContentProps } from '../../Common/Utilities/Tooltip/Tooltip';
+
 import { CCMask, EmailFilter, PhoneMask, PolicyMask } from '@Project/ReactComponents/Common/Utilities/InputMasks/Masks';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 import { Button } from '../Button/Button';
@@ -95,8 +96,9 @@ export type InputProps<TMaskOpts extends MaskOpts = MaskOpts> = ConditionalVaria
   // hideCurrencyType?: boolean;
 }
 
+
+// #endregion
 // #region conditional variant props 
-// disableEmailFilter
 type NumberVariantProps = 
 | { 
     /** An input that's oriented for using number specific values. */
@@ -261,7 +263,8 @@ type PickType<T, K extends PropertyKey> = T extends any
 type AllVariantProps<T> = {
   [K in AllKeys<T>]?: PickType<T, K>;
 };
-// #endregion
+
+
 // #endregion
 
 
@@ -305,6 +308,9 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false); // Password visibility
   const loadBarRandDelay = Math.floor(Math.random() * (100 - 25 + 1)) + 25; // TODO: visual test, not necessary. This could mess with seeing loading with actual load times
   
+  
+  // #endregion
+  // #region Validation and Input Mask
   /** Retrieves the inputMask if there should be one */
   const createInputMask = (): TMask | undefined => {
     const maskOverrides = mask; // * for the sake of brevity
@@ -390,6 +396,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
   // );
   
   
+  // #endregion
   // #region Input Event Logic
   /**
    * Adds any input masking or custom logic to the input before updating the input component directly. 
@@ -455,7 +462,9 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
       inputMask.current.initEventListeners(node);
     }
   };
+  
   // #endregion
+  // #region Rendered HTML
   
   
   return (
@@ -531,15 +540,14 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
       </ErrorAndDesc>
     </TextInput>
   );
+  // #endregion
 }
 
 
-
-
+// #region Preceding Elements
 //------------------------------------------//
 // Preceding Variant Elements               //
 //------------------------------------------//
-// #region Preceding Elements
 interface PrecedingElProps {
   name: string;
   type: TextInputTypes;
@@ -590,15 +598,15 @@ const PrecedingIcons: Partial<Record<TextInputTypes, React.FC>> = {
   'phone': () => <Icon variant='Phone'            styles='input-icon-def' />,
   'creditCard': () => <Icon variant='CreditCard'  styles='input-icon-def' />,
 };
+
+
+
+
 // #endregion
-
-
-
-
+// #region Subsequent Elements
 //------------------------------------------//
 // Subsequent Variant Elements              //
 //------------------------------------------//
-// #region Subsequent Elements
 interface SubsequentElProps {
   name: string;
   type: TextInputTypes;
@@ -756,7 +764,12 @@ export const SubsequentElements: React.FC<SubsequentElProps> = memo(({
   // If nothing changed, safely skip the rerender
   return true; 
 });
+
+
+
+
 // #endregion
+// #region Misc
 
 
 // Component Styles
@@ -845,3 +858,9 @@ export const InputProps_Phone: InputPropsPartial = {
     }
   } 
 */
+
+
+
+
+//#endregion
+

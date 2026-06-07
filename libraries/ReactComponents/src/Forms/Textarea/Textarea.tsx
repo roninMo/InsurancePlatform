@@ -99,11 +99,12 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   & TMaskClass<TMask, TMaskOpts> // Explicitly type the constructor to return the generic type 'Mask'
   & { localInputRef: RefObject<HTMLTextAreaElement | undefined> } 
 ) => {
+  // #region InputComp State
   const MaskClass = allProps.MaskClass || (InputMask as NonNullable<typeof allProps.MaskClass>);
   const { 
     type = 'default', name, placeholder, maskOpts,
     onTyped, disableHookForms, localInputRef, disabled, required, 
-    onFocus, onUpdateValue, onChange, onBlur, onClick, onMouseEnter, onMouseLeave, onSubmit,
+    onFocus, onUpdateValue, onChange, onBlur, onClick, 
   } = allProps;
   
   // * Input binding logic
@@ -114,6 +115,9 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   // ? Masking
   const mask = useRef<TMask | undefined>( maskOpts ? MaskClass.create(maskOpts) : undefined );
   const usingInputMask = mask.current && (maskOpts?.inputMask || maskOpts?.filter);
+  
+  // #endregion
+  // #region Validation / Getters
   
   // * validation logic
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -164,6 +168,9 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
   /** Either Rhf's captured form value, or the internal ref for custom state. */
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
   
+  
+  // #endregion
+  // #region InputComp Event Handling
   // * Nested Rerender state
   // console.log(`InputComponent Rerendered ${name}-${type}: isRhfMode(${isRHFMode})`,
   //   `\n bindings: `, { 
@@ -242,6 +249,9 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
     }
   };
   
+  // #endregion
+  // #region InputComp HTML
+  
   
   return (
     <textarea 
@@ -262,10 +272,9 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
         onChange={handleOnChange}
         onBlur={handleOnBlur}
         
-        onFocus={(e) => onFocus ? onFocus(e) : null}
-        onClick={(e) => onClick ? onClick(e) : null}
-        onMouseEnter={(e) => onMouseEnter ? onMouseEnter(e) : null}
-        onMouseLeave={(e) => onMouseLeave ? onMouseLeave(e) : null}
+        // Additional events
+        onFocus={onFocus}
+        onClick={onClick}
 				
         className={`ta-base
           ${type == 'default' ? 'ta-d-base' : ''}
@@ -274,16 +283,19 @@ const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends M
         `}
       />
   );
+  // #endregion
 }
 
 
 export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts = MaskOpts>
 (allProps: TextareaProps<MO> & UniversalEventHandlers<HTMLTextAreaElement>) => {
+  // #region State
   const { 
     type = 'default', name, label, description, placeholder, 
     disableHookForms, attachFile, metadataTags = true,
     error, required = false, disabled = false, maskOpts,
     onSubmit, submitButtonText, submitButtonDisabled = false, submitButtonType = 'button', 
+    onMouseEnter, onMouseLeave,
   } = allProps;
   // * Input binding logic
   const { register, getValues, getFieldState, control } = useFormContext() || {};
@@ -294,6 +306,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
   /** Either Rhf's captured form value, or the internal ref for custom state. */
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
   
+  // #endregion
   // * Rerender state
   // console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}) `, 
   //   `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
@@ -303,6 +316,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
   // );
   
   
+  // #region Memoized Content
   //--------------------------------//
   // Memoized content               //
   //--------------------------------//
@@ -429,8 +443,10 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
       </>
     );
   }, [showPreview]);
-
-
+  
+  
+  // #endregion
+  // #region Textarea (Default)
   //--------------------------------//
   // default style                  //
   //--------------------------------//
@@ -438,7 +454,10 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
     return (
       <div className="w-full flex flex-col gap-2">
         { label && <h4 className="ta-d-label">{ label }</h4> }
-        <Container className="rowStart gap-2 justify-items-start items-start">
+        <Container 
+          onMouseEnter={onMouseEnter as any} onMouseLeave={onMouseLeave as any}
+          className="rowStart gap-2 justify-items-start items-start"
+        >
           <Avatar className="ta-d-avatar">
             <Icon variant='Profile' styles="size-4" />  
           </Avatar>
@@ -461,14 +480,19 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
       </div>
     );
   }
-
-
+  
+  
+  // #endregion
+  // #region Textarea (Box)
   //--------------------------------//
   // box style                      //
   //--------------------------------//
   else if (type == 'box') {
     return (<>
-      <InputContainer className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}>
+      <InputContainer 
+        onMouseEnter={onMouseEnter as any} onMouseLeave={onMouseLeave as any}
+        className={`ta-b-c group ${!disabled && error ? 'outline-error' : 'outline-styles'}`}
+      >
         { label && <h4 className="ta-b-label">{ label }</h4> }
 				{/* Textarea Input */}
         { MemoedInput }
@@ -486,8 +510,10 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
       />
     </>);
   }
-
-
+  
+  
+  // #endregion
+  // #region Textarea (Post)
   //--------------------------------//
   // post style                     //
   //--------------------------------//
@@ -502,10 +528,13 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
           </div>
         </Ht>
         
-        <InputContainer className={`ta-p-c group 
-          ${!disabled && error ? 'outline-error' : 'outline-styles'}
-          ${showPreview == 'write' ? 'bg-default' : ''}
-        `}>
+        <InputContainer 
+          onMouseEnter={onMouseEnter as any} onMouseLeave={onMouseLeave as any}
+          className={`ta-p-c group 
+            ${!disabled && error ? 'outline-error' : 'outline-styles'}
+            ${showPreview == 'write' ? 'bg-default' : ''}
+          `
+        }>
           {/* Textarea input */}
           <Ht show={showPreview == 'write'}>
             { MemoedInput }
@@ -549,6 +578,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
       </Container>
     );
   }
+  // #endregion
 }
 
 
@@ -564,7 +594,7 @@ const ErrAndDescElements = ({ type, error, disabled, description }: any) => (
 );
 
 
-
+// #region MetaData Tag Elements
 /** Strictly for the component to render the props */
 interface MetadataTagElementProps { 
   /** The textarea's current variant. */
@@ -695,6 +725,8 @@ const MetadataTagElements = memo(({ type, metadataTags, name, disabled }: Metada
 });
 
 
+// #endregion
+// #region AttachFile Element
 /** Textarea's file attachment component props */
 export interface TA_FileUploadProps extends FileUploadProps {
   /** The styles of the file attachment icon */
@@ -749,6 +781,8 @@ const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, re
   );
 }
 
+
+// #endregion
 
 
 // Default metadata tags

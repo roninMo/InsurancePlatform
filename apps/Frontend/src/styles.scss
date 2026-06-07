@@ -604,10 +604,10 @@
   
   
   // Dropbox selected file header and variant buttons
-  .dropbox-sf-dropdown-h { @apply text-lg header-colors font-semibold pr-2; }
+  .dropbox-sf-dropdown-h { @apply text-base input-colors font-semibold pr-3; }
   .dropbox-sf-dropdown-hc { 
     @apply 
-      pb-2 rowStart items-center
+      pb-2 rowStart items-center justify-between
       border-b border-default; 
   }
   
@@ -691,6 +691,10 @@
   
   .dbx-sf-box-blue {
     @apply [&_.dbx-sf-desc]:primary-text hover:outline-focus;
+  }
+  
+  .dbx-sf-list-disabled {
+    @apply [&_.dbx-sf-desc]:disabled-text [&_span]:label-colors
   }
   
   
@@ -1500,10 +1504,9 @@
 	
 	.metadata-tag-icon-p {
 		@apply 
-    metadata-tag-icon-base 
-    svg-colors hover:input-colors 
-    active:primary-text dark:active:text-colors
-    ;
+      metadata-tag-icon-base 
+      svg-colors hover:input-colors 
+      active:primary-text dark:active:text-colors;
 	}
   // #endregion
 

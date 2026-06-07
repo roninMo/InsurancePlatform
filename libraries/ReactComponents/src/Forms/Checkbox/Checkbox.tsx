@@ -1,6 +1,6 @@
 import { ChangeEvent, memo, MouseEvent, useCallback, useReducer, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { mapRecord } from '@Project/ReactComponents/Common';
+import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { Ht } from '../../Common/Content/HeightTransWrapper/HeightTransWrapper';
 
 import styled from '@emotion/styled';
@@ -46,14 +46,6 @@ export interface CheckboxProps {
   disableHookForms?: boolean;
   
   
-  // Additional events
-	/** Mouse event. Needs to be wrapped in a useCallback to prevent rerenders */
-  onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-	
-	/** Mouse event. Needs to be wrapped in a UseCallback to prevent rerenders.  */
-  onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-  
-  
 	// Validation logic
 	/** The error message, if there is one. */
   error?: string;
@@ -70,8 +62,8 @@ export const Checkbox = ({
   variant = 'default', name, label, description,
   items, onSelect, disableHookForms = false,
   error, disabled = false, required = false,
-  onMouseEnter, onMouseLeave
-}: CheckboxProps) => {
+  onMouseEnter, onMouseLeave, onClick, onFocus, onBlur
+}: CheckboxProps & Omit<UniversalEventHandlers<HTMLElement>, 'onChange'>) => {
   const { register, getValues } = useFormContext() || {};
   const formValues = getValues && getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -163,18 +155,18 @@ interface CheckBoxItemComponentProps {
   isSelected: boolean;
   onSelect: (event: ChangeEvent<HTMLInputElement>, item: CheckboxItem) => void;
   rhfBindings?: any;
+  
   disabled?: boolean;
   required?: boolean;
   error?: boolean;
-  
-  onMouseEnter?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
-  onMouseLeave?: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 } 
 
 const CheckBoxItemComponent = memo(({
-  variant, name, item, isSelected, onSelect, rhfBindings, 
-  error, required, disabled, onMouseEnter, onMouseLeave 
-}: CheckBoxItemComponentProps) => {
+  variant, name, item, isSelected, rhfBindings, 
+  error, required, disabled, 
+  onSelect, onFocus, onBlur, 
+  onClick, onMouseEnter, onMouseLeave,
+}: CheckBoxItemComponentProps & Omit<UniversalEventHandlers<HTMLElement>, 'onChange'>) => {
   // console.log(`CheckboxItem ${item.value} rerendered, checked(${isSelected})`);
   
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -185,8 +177,10 @@ const CheckBoxItemComponent = memo(({
   
   return (
     <label 
-      onMouseEnter={(e) => onMouseEnter && onMouseEnter(e)}
-      onMouseLeave={(e) => onMouseLeave && onMouseLeave(e)}
+      tabIndex={0}
+      onClick={onClick} 
+      onFocus={onFocus} onBlur={onBlur}
+      onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
       className={`group
         ${variant == 'default' ? 'checkbox-i-c-d' : variant == 'inline' ? 'checkbox-i-c-i' : 'checkbox-i-c-l'}
         ${error ? 'checkbox-i-c-error' : ''}

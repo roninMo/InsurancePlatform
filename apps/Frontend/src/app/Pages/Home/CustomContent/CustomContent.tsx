@@ -171,7 +171,7 @@ export const CustomContent = () => {
     // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
     setCheckedFoods({ ...checkedFoods, [item.value]: {...item, checked: !item.checked} });
   }
-  const checkedFavoriteFood2 = (item: CheckboxItem, event: ChangeEvent<HTMLElement>) => {
+  const checkedFavoriteFood2 = (event: ChangeEvent<HTMLElement>, item: CheckboxItem) => {
     // console.log(`\n${item.label} value: ${item.checked} set to ${!item.checked}`, item);
     setCheckedFoods2({ ...checkedFoods2, [item.value]: {...item, checked: !item.checked} });
   }

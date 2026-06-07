@@ -76,6 +76,7 @@ export const Select = ({
   tooltipContext, tooltipContent, 
   closeDropdownOnLeave, keepDropdownOpenOnSelect, preventOpenOnTabFocus, 
 }: SelectProps & UniversalEventHandlers) => {
+  // #region Component state
   const { show, hide } = tooltipContext || {};  
   const selectOrder = useRef<Record<number, string>>({ 0: '' });
   
@@ -143,6 +144,9 @@ export const Select = ({
   //   `\n selected from : `, { vals: values.map(i => i.value) }
   // );
   
+  
+  // #endregion 
+  // #region Handling state
   /**
    * Handles changeEvents, open/close dropdown logic, and state synchronization for display purposes. 
    * 
@@ -268,15 +272,16 @@ export const Select = ({
       // );
     }
   }
-
+  
   // Get functions
   const getError = (): boolean => !!error && !disabled;
-
-
+  
+  
+  // #endregion
+  // #region Open / Close Dropdown
   //------------------------------------//
   // Open / Close Dropdown Logic        //
   //------------------------------------//
-  // #region Open / Close Dropdown
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const dropdownId = `${name}-slct-dropdown`;
   const selectId = `${name}-slct`;
@@ -435,6 +440,7 @@ export const Select = ({
     // TODO: add arrow keys after tabbing to allow them to focus and then select an item from this.
   }, [preventOpenOnTabFocus]);
   // #endregion
+  // #region HTML
   
   // Return a list of the selected items, or the currently selected
   const getSelectDisplay = () => {
@@ -459,9 +465,11 @@ export const Select = ({
       <StyledSelect 
         name={name} id={selectId} 
         type="button" ref={selectElementRef}
+        tabIndex={0} onFocus={onFocus} 
         onBlur={handleOnBlur} // useController event
         onClick={onClickSelect} // Open/Close Dropdown
-        onFocus={onFocus} disabled={disabled}
+        onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+        disabled={disabled}
         className={`select-base group
           ${!disabled && dropdownOpen ? 'select-focus' : ''}
           ${getError() ? 'select-error' : ''}
@@ -486,8 +494,6 @@ export const Select = ({
       
 			
       <Dropdown
-        onMouseEnter={e => onMouseEnter && onMouseEnter(e)}
-        onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
         ref={dropdownElementRef}
         id={dropdownId} className={`select-dropdown
           ${dropdownOpen ? 'select-dd-open' : 'select-dd-closed'}
@@ -513,6 +519,7 @@ export const Select = ({
       </ErrorAndDescription>
     </Container>
   );
+  // #endregion
 }
 
 

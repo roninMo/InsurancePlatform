@@ -71,8 +71,8 @@ export const RadioGroup = ({
   variant = 'default', name, label, description,
   radioItems, onSelect, disableHookForms, 
   error, disabled = false, required = false, 
-  onBlur, onFocus, onClick, onMouseEnter, onMouseLeave
-}: UniversalEventHandlers & RadioGroupProps) => {
+  onFocus, onBlur, onChange, onClick, onMouseEnter, onMouseLeave
+}: RadioGroupProps & UniversalEventHandlers<HTMLElement>) => {
   const { getValues } = useFormContext() || {};
   const formValues = getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -132,8 +132,8 @@ export const RadioGroup = ({
             isRhfMode={!disableHookForms}
             
             // Optional Events
-            onFocus={onFocus} onClick={onClick} onBlur={onBlur}
-            onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+            onFocus={onFocus} onChange={onChange} onBlur={onBlur}
+            onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
           />
         )}
       </RadioItems>

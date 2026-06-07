@@ -40,7 +40,7 @@ export const RadioGroupItem = memo(({
   inputName, variant, 
   value, selected, onSelect, isRhfMode, required, disabled,
   onFocus, onChange, onBlur, onClick, onMouseEnter, onMouseLeave
-}: RadioItemProps & UniversalEventHandlers) => {
+}: RadioItemProps & UniversalEventHandlers<HTMLElement>) => {
   const { register, getValues } = useFormContext() || {};
   const rhfBindings = isRhfMode ? register(inputName) : null;
   // console.log(`RadioItem ${value.value} rerendered, selected(${value.selected})`);
@@ -58,8 +58,8 @@ export const RadioGroupItem = memo(({
       rhfBindings.onChange(e);
     }
     
-    if (onChange) onChange(e); // additional optional event @see UniversalEventHandlers
     if (onSelect) onSelect(e, value); // default logic
+    if (onChange) onChange(e); // additional optional event @see UniversalEventHandlers
   }
   
   const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
@@ -113,7 +113,7 @@ export const RadioGroupItem = memo(({
   
 // custom rerender functionality
 }, (prevProps, nextProps) => {
-
+  
   // If its selection status changed, rerender
   if (prevProps.selected !== nextProps.selected) {
     return false; 
