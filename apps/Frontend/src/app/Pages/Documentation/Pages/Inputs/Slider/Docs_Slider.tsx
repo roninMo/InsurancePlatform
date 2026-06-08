@@ -5,6 +5,7 @@ import { Dropdown, getSourceCode } from "@Project/ReactComponents";
 
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
 import { dParArg, ParamType } from "../../../Components/ParamType/ParamType";
+import { EventParamTable } from "../../../Components/EventParamTable/EventParamTable";
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
@@ -111,6 +112,14 @@ export const Docs_Slider = () => {
         </Dropdown>
       </div>
       
+      <div className='span-12 py-2 pt-4' id="event-handler-table">
+        <Dropdown label='Event Handlers' openByDefault>
+          <p className='p-2 pl-1 showcase-text'>
+            The event handlers you can use with this component. Pass in your own event functions to interact with the element.
+          </p>
+          <EventParamTable additionalStyles='mt-4' />
+        </Dropdown>
+      </div>
     </Container>
   );
 }
@@ -128,8 +137,8 @@ const Variants = styled.div``;
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
   'variant', 'name' , 'label', 'description', 
-  'spacing', 'value', 'onChange',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required', 'additionalStyles'
+  'spacing', 'onChange', 'disableHookForms', 
+  'spacing', 'error', 'disabled', 'required', 'additionalStyles'
 ];
 
 const variantParamsList: Record<string, string[]> = {
@@ -138,18 +147,7 @@ const variantParamsList: Record<string, string[]> = {
 
 
 const paramContextsList: Record<string, ParamContext[]> = {
-  "text": [],
-  "number": [
-    { name: 'type="number"', 
-      contextParam: true,
-      variantOption: false,
-			overwrite: 'type'
-    },
-    { name: 'incrementButtons', 
-      contextParam: false,
-      variantOption: true,
-    },
-  ],
+  "none": [],
 };
 
 
@@ -166,9 +164,9 @@ const paramTypeElements: Record<string, React.FC> = {
   
   'value': () => <ParamType type="boolean" tooltip={{ code: dParArg('value', 'value', 'var') }} />,
   'onChange': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_OnChange }} />,
+  'disableHookForms': () => <ParamType type='boolean' tooltip={{ code: dParArg('disableHookForms', 'disableHookForms', 'var') }} />,
   
-  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
-  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'error': () => <ParamType type="string" tooltip={{ code: dParArg('error', 'An error occurred.') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
   'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionStyles', 'additionStyles', 'var') }} />,
@@ -206,12 +204,12 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The function used to handle updating the slider value, as this isn't handled internally for developer customization.
     </div>,
+  'disableHookForms' : () =>
+    <div className='param-item-desc-text'>
+      Whether you want to leverage react-hook-forms, or handle the data using custom state.
+    </div>, 
   
   'error': () =>
-    <div className='param-item-desc-text'>
-      Whether there's an error for the slider component.
-    </div>,
-  'errorMessage': () =>
     <div className='param-item-desc-text'>
       The error message for the slider component.
     </div>,

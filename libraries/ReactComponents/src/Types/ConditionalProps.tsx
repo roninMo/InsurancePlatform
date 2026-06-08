@@ -37,13 +37,13 @@ export type ContainerStyles =
 /** `Title` element's conditional styling props. Adds either ***additional*** or ***explicit*** styling overrides. */
 export type TitleStyles = 
 | { 
-    title: string; 
+    title?: string; 
     titleStyles?: string; 
     /** @deprecated CANNOT use 'additHeaderStyles' when 'headerStyles' is present. */
     additTitleStyles?: never; 
   } 
 | { 
-    title: string; 
+    title?: string; 
     additTitleStyles?: string; 
     /** @deprecated CANNOT use 'headerStyles' when 'additHeaderStyles' is present. */
     titleStyles?: never; 
@@ -76,13 +76,13 @@ export type LabelStyleProps =
 /** `Description` element's conditional styling props. Adds either ***additional*** or ***explicit*** styling overrides. */
 export type DescriptionStyles = 
 | { 
-    description: string; 
+    description?: string; 
     descStyles?: string; 
     /** @deprecated CANNOT use 'additDescStyles' when 'descStyles' is present. */
     additDescStyles?: never; 
   } 
 | { 
-    description: string; 
+    description?: string; 
     additDescStyles?: string; 
     /** @deprecated CANNOT use 'descStyles' when 'additDescStyles' is present. */
     descStyles?: never; 
@@ -99,13 +99,13 @@ export type DescriptionStyles =
 /** Conditional styling props for wrapper's around the `children` prop. Adds either ***additional*** or ***explicit*** styling overrides. */
 export type ContentStyles = 
 | { 
-    children: ReactNode; 
+    children?: ReactNode; 
     contentStyles?: string; 
     /** @deprecated CANNOT use 'additContentStyles' when 'contentStyles' is present. */
     additContentStyles?: never; 
   } 
 | { 
-    children: ReactNode; 
+    children?: ReactNode; 
     additContentStyles?: string; 
     /** @deprecated CANNOT use 'contentStyles' when 'additContentStyles' is present. */
     contentStyles?: never; 
@@ -121,13 +121,13 @@ export type ContentStyles =
 // #region Icon ("iconStyles" / "additIconStyles")
 export type IconStyleProps = 
 | { 
-    icon: IconTypes;
+    icon?: IconTypes; // here
     iconStyles?: string; 
     /** @deprecated CANNOT use 'additStyles' when 'styles' is present. */
     additIconStyles?: never; 
   } 
 | { 
-    icon: IconTypes;
+    icon?: IconTypes; // and here
     additIconStyles?: string; 
     /** @deprecated CANNOT use 'styles' when 'additStyles' is present. */
     iconStyles?: never; 

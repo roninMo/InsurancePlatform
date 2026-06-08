@@ -37,7 +37,7 @@ export type MaskConfig = {
 
 /** For subClassing the {@link InputMask} and safely passing the props to components. */
 export type MaskOpts = {
-  /** The configuration for creating an `InputMask`. @note pass this in as a stable reference to prevent rerenders. */
+  /** The configuration for creating an `InputMask`. It holds the format, used wildcard, whether to use as a placeholder, etc. */
   inputMask?: MaskConfig;
   
   /** 

@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import styles from './Dropbox.module.scss';
 
 
+// #region Dropbox Props
 /** The file input type's props. These should be memoized. */
 export interface FileUploadProps {
 	/** the form name used for this input, and in Rhf's register function. */
@@ -61,6 +62,7 @@ export interface DropboxProps extends FileUploadProps {
 }
 
 
+// #endregion
 export const Dropbox = ({ 
   name, label, description, handleFiles, multiple, accept, 
   disableHookForms, error, disabled, required,
@@ -310,12 +312,12 @@ export const Dropbox = ({
             <Button 
               displayText='List' 
               onClick={() => onChangeSfVariant('list')}
-              color='none' additionalStyles={`dropbox-sf-dd-var-l ${sfVariant == 'list' ? 'selected-box' : ''}`} 
+              color='none' additStyles={`dropbox-sf-dd-var-l ${sfVariant == 'list' ? 'selected-box' : ''}`} 
             />
             <Button 
               displayText='Box' 
               onClick={() => onChangeSfVariant('box')}
-              color='none' additionalStyles={`dropbox-sf-dd-var-b ${sfVariant == 'box' ? 'ok-box' : ''}`} 
+              color='none' additStyles={`dropbox-sf-dd-var-b ${sfVariant == 'box' ? 'ok-box' : ''}`} 
             />
           </div>
         </FileListVariantOptions>

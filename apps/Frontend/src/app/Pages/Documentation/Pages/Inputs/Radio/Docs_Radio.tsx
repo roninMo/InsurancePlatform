@@ -5,6 +5,7 @@ import { Dropdown, getSourceCode, TooltipService } from "@Project/ReactComponent
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
+import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 
 import { DocLink } from "../../../Components/DocLink/DocLink";
 import { Kw } from "../../../Components/Keyword/Keyword";
@@ -178,6 +179,14 @@ export const Docs_Radio = () => {
         </Dropdown>
       </div>
       
+      <div className='span-12 py-2 pt-4' id="event-handler-table">
+        <Dropdown label='Event Handlers' openByDefault>
+          <p className='p-2 pl-1 showcase-text'>
+            The event handlers you can use with this component. Pass in your own event functions to interact with the element.
+          </p>
+          <EventParamTable additionalStyles='mt-4' />
+        </Dropdown>
+      </div>
     </Container>
   );
 }
@@ -195,8 +204,8 @@ const Variants = styled.div``;
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
   'variant', 'name', 'label', 'description',
-  'spacing', 'radioItems', 'currentValue', 'onSelect',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required',
+  'spacing', 'radioItems', 'onSelect', 'disableHookForms',
+  'spacing', 'error', 'disabled', 'required',
 ];
 
 
@@ -233,11 +242,10 @@ const paramTypeElements: Record<string, React.FC> = {
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'The description of the radio group.') }} />,
   
   'radioItems': () => <ParamType type="RadioItem" isArray tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
-  'currentValue': () => <ParamType type="RadioItem" tooltip={{ code: Code_RadioItem, type: 'interface' }} />,
   'onSelect': () => <ParamType type="ChangeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
+  'disableHookForms': () => <ParamType type='boolean' tooltip={{ code: dParArg('disableHookForms', 'disableHookForms', 'var') }} />,
   
-  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
-  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'errorMessage', 'var') }} />,
+  'error': () => <ParamType type="string" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
@@ -266,26 +274,22 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description of the radio group.
     </div>,
-    
+  
   'radioItems': () => 
     <div className='param-item-desc-text'>
       A list containing the information and state of each radio item. You should use the 
       @see onSelect function for handling the state and which is selected, as this isn't handled internally.
     </div>,
-  'currentValue': () => 
-    <div className='param-item-desc-text'>
-      The currently selected radio item.
-    </div>,
   'onSelect': () => 
     <div className='param-item-desc-text'>
-      The function used to handle when a new radio item is selected.
+      Called when the user selected a radio item.
     </div>,
-    
-  'error': () =>
+  'disableHookForms' : () =>
     <div className='param-item-desc-text'>
-      Whether there's an error for the radio component.
-    </div>,
-  'errorMessage': () =>
+      Whether you want to leverage react-hook-forms, or handle the data using custom state.
+    </div>, 
+  
+  'error': () =>
     <div className='param-item-desc-text'>
       The error message for the radio component.
     </div>,

@@ -6,6 +6,7 @@ import { Dropdown, getSourceCode, TooltipContextActions, TooltipService } from "
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
 import { ElementState } from '../../../Components/ShowcaseElement/ElementStates/ElementState';
+import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
@@ -201,7 +202,7 @@ export const Docs_Select = () => {
       </Variants>
       
       <h3 className="span-12 p-2 pt-8">
-        Customizing the Dropdown's behavior
+        Customizing the Select's dropdown behavior
       </h3>
       
       <div className='span-12'>
@@ -225,6 +226,14 @@ export const Docs_Select = () => {
         </Dropdown>
       </div>
       
+      <div className='span-12 py-2 pt-4' id="event-handler-table">
+        <Dropdown label='Event Handlers' openByDefault>
+          <p className='p-2 pl-1 showcase-text'>
+            The event handlers you can use with this component. Pass in your own event functions to interact with the element.
+          </p>
+          <EventParamTable additionalStyles='mt-4' />
+        </Dropdown>
+      </div>
     </Container>
   );
 }
@@ -241,9 +250,9 @@ const Variants = styled.div``;
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'name', 'label', 'description',
-  'spacing', 'value', 'values', 'multiSelect', 'onSelect', 'placeholder',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required', 'tooltip',
+  'name', 'label', 'description', 'placeholder',
+  'spacing', 'values', 'multiSelect', 'onSelect', 'disableHookForms', 
+  'spacing', 'error', 'disabled', 'required', 'tooltip',
   'dropdownOptions'
 ];
 
@@ -265,18 +274,7 @@ const childParamsList: Record<string, string[]> = {
 
 
 const paramContextsList: Record<string, ParamContext[]> = {
-  "text": [],
-  "number": [
-    { name: 'type="number"', 
-      contextParam: true,
-      variantOption: false,
-			overwrite: 'type'
-    },
-    { name: 'incrementButtons', 
-      contextParam: false,
-      variantOption: true,
-    },
-  ],
+  "none": [],
 };
 
 
@@ -288,15 +286,14 @@ const paramTypeElements: Record<string, React.FC> = {
   'name': () => <ParamType type="string" tooltip={{ code: dParArg('name', 'select-form-name') }} />,
   'label': () => <ParamType type="string" tooltip={{ code: dParArg('label', 'Select Label') }} />,
   'description': () => <ParamType type="string" tooltip={{ code: dParArg('description', 'the description of the Select component.') }} />,
+  'placeholder': () => <ParamType type="string" tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
   
-  'value': () => <ParamType type="SelectItem" tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
   'values': () => <ParamType type="SelectItem" isArray tooltip={{ code: Code_SelectItem, type: 'interface' }} />,
   'multiSelect': () => <ParamType type="boolean" tooltip={{ code: dParArg('multiSelect', 'multiSelect', 'var') }} />,
   'onSelect': () => <ParamType type="changeEvent" tooltip={{ code: Code_onSelect, type: 'type' }} />,
-  'placeholder': () => <ParamType type="string" tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
+  'disableHookForms': () => <ParamType type='boolean' tooltip={{ code: dParArg('disableHookForms', 'disableHookForms', 'var') }} />,
   
-  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var') }} />,
-  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'error': () => <ParamType type="string" tooltip={{ code: dParArg('error', 'An error occurred.') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
   
@@ -305,12 +302,9 @@ const paramTypeElements: Record<string, React.FC> = {
   'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
   
   'dropdownOptions': () => <ParamType type="SelectOpts" />,
-  'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: Code_VariantProps, type: 'interface' }} />,
-  'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: Code_NavTypeProps, type: 'interface' }} />,
-  'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: Code_HashLinkProps, type: 'interface' }} />,
-  // 'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'true | false | undefined', 'var'), type: 'interface' }} />,
-  // 'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
-  // 'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'true | false | undefined', 'var'), type: 'interface' }} />,
+  'closeDropdownOnLeave': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('closeDropdownOnLeave', 'true | false | undefined', 'var'), type: 'interface' }} />,
+  'keepDropdownOpenOnSelect': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('keepDropdownOpenOnSelect', 'true | false | undefined', 'var'), type: 'interface' }} />,
+  'preventOpenOnTabFocus': () => <ParamType type="boolean" optional tooltip={{ code: dParArg('preventOpenOnTabFocus', 'true | false | undefined', 'var'), type: 'interface' }} />,
   
 };
 
@@ -325,12 +319,6 @@ const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'Toolti
 import TooltipSnippets from '@lib-rc/Common/Utilities/Tooltip/Tooltip?raw';
 const Code_TooltipService = getSourceCode(TooltipSnippets, 'TooltipContentProps', 'type');
 
-import HashLinkSnippets from '@lib-rc/Common/Utilities/HashLink/HashLink?raw';
-const Code_VariantProps = getSourceCode(HashLinkSnippets, 'VariantProps', 'type');
-const Code_NavTypeProps = getSourceCode(HashLinkSnippets, 'NavTypeProps', 'type');
-const Code_HashLinkPropsBase = getSourceCode(HashLinkSnippets, 'HashLinkPropsBase', 'interface');
-// const Code_HashLinkProps = getFullTypeSource(HashLinkSnippets, 'HashLinkProps');
-const Code_HashLinkProps = getSourceCode(HashLinkSnippets, 'HashLinkProps', 'type');
 
 // check for any type after the =
 // check for any type after & or |
@@ -352,33 +340,29 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description of the radio table.
     </div>,
-  
-  'value': () => 
-    <div className='param-item-desc-text'>
-      The value of the currently selected item.
-    </div>,
-  'values': () => 
-    <div className='param-item-desc-text'>
-      A list of values used to construct the items that appear in the dropdown.
-    </div>,
-  'multiSelect': () => 
-    <div className='param-item-desc-text'>
-      Whether the user is allowed to select multiple values.
-    </div>,
-  'onSelect': () => 
-    <div className='param-item-desc-text'>
-      The function used to handle when a new item is selected.
-    </div>,
   'placeholder': () => 
     <div className='param-item-desc-text'>
       The placeholder text for when the user hasn't selected a value yet.
     </div>,
   
-  'error': () =>
+  'values': () => 
     <div className='param-item-desc-text'>
-      Whether there's an error for the select component.
+      A list of values used to construct the items that appear in the dropdown.
     </div>,
-  'errorMessage': () =>
+  'onSelect': () => 
+    <div className='param-item-desc-text'>
+      The function used to handle when a new item is selected.
+    </div>,
+  'disableHookForms' : () =>
+    <div className='param-item-desc-text'>
+      Whether you want to leverage react-hook-forms, or handle the data using custom state.
+    </div>, 
+  'multiSelect': () => 
+    <div className='param-item-desc-text'>
+      Whether the user is allowed to select multiple values.
+    </div>,
+  
+  'error': () =>
     <div className='param-item-desc-text'>
       The error message for the select component.
     </div>,

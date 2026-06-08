@@ -6,6 +6,7 @@ import { Dropdown, getSourceCode, HashLink, TooltipService } from "@Project/Reac
 
 import { ParamItem, getParamsTableItems, ParamTable } from '../../../Components/ParamTable/ParamTable';
 import { dParArg, ParamType } from '../../../Components/ParamType/ParamType';
+import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 
 import { DocLink } from '../../../Components/DocLink/DocLink';
 import { Kw } from '../../../Components/Keyword/Keyword';
@@ -113,6 +114,14 @@ export const Docs_Dropbox = () => {
         </Dropdown>
       </div>
       
+      <div className='span-12 py-2 pt-4' id="event-handler-table">
+        <Dropdown label='Event Handlers' openByDefault>
+          <p className='p-2 pl-1 showcase-text'>
+            The event handlers you can use with this component. Pass in your own event functions to interact with the element.
+          </p>
+          <EventParamTable additionalStyles='mt-4' />
+        </Dropdown>
+      </div>
     </Container>
   );
 }
@@ -131,7 +140,7 @@ const Variants = styled.div``;
 const defaultParams: string[] = [ 
   'name', 'accept', 'handleFiles', 'multiple',
   'spacing', 'label', 'description', 'customIcon', 'iconStyles',
-  'spacing', 'value', 'error', 'errorMessage', 'disabled', 'required',
+  'spacing', 'value', 'error', 'disabled', 'required',
 ];
 
 const variantParamsList: Record<string, string[]> = {
@@ -172,8 +181,7 @@ const paramTypeElements: Record<string, React.FC> = {
   'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'iconStylesClass') }} />,
   
   'value': () => <ParamType type="string" tooltip={{ code: dParArg('value', 'files', 'var') }} />,
-  'error': () => <ParamType type="boolean" tooltip={{ code: dParArg('error', 'error', 'var'), }} />,
-  'errorMessage': () => <ParamType type="string" tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  'error': () => <ParamType type="string" tooltip={{ code: dParArg('error', 'An error occurred.') }} />,
   'disabled': () => <ParamType type="boolean" tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type="boolean" tooltip={{ code: dParArg('required', 'required', 'var') }} />,
 };
@@ -181,7 +189,7 @@ const paramTypeElements: Record<string, React.FC> = {
 // Code Snippet imports
 import IconSourceSnippets from '@lib-rc/Common/Icons/Icon?raw';
 const Code_IconTypes = getSourceCode(IconSourceSnippets, [135, 236]);
-const Code_HandleFiles = 'handleFiles: (files: FileList | null) => void;';
+const Code_HandleFiles = 'handleFiles: (files: File[] | null) => void;';
 
 
 const paramDescriptionElements: Record<string, React.FC> = {
@@ -224,10 +232,6 @@ const paramDescriptionElements: Record<string, React.FC> = {
     </div>,
   
   'error': () =>
-    <div className='param-item-desc-text'>
-      Whether there's an error for the dropbox component.
-    </div>,
-  'errorMessage': () =>
     <div className='param-item-desc-text'>
       The error message for the dropbox component.
     </div>,

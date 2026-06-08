@@ -8,9 +8,9 @@ import styled from '@emotion/styled';
 import styles from './RadioGroup.module.scss';
 
 
+// #region RadioGroup Props
 /** default is like the native, column is a block layout, and list has dividers and a different alignment. */
 export type RadioVariant = 'default' | 'column' | 'columnInline' | 'list';
-
 
 /** The RadioGroup's props */
 export interface RadioGroupProps {	
@@ -67,12 +67,14 @@ export interface RadioItem {
 }
 
 
+// #endregion
 export const RadioGroup = ({
   variant = 'default', name, label, description,
   radioItems, onSelect, disableHookForms, 
   error, disabled = false, required = false, 
   onFocus, onBlur, onChange, onClick, onMouseEnter, onMouseLeave
 }: RadioGroupProps & UniversalEventHandlers<HTMLElement>) => {
+  // #region State
   const { getValues } = useFormContext() || {};
   const formValues = getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -100,6 +102,8 @@ export const RadioGroup = ({
   /** Uses rhf's capture values, or the reference passed in for determining whether the radio item's been selected. */
   const isSelected = (item: RadioItem): boolean => !disableHookForms ? formValues == item.value : !!item.selected;
   
+  // #endregion
+  // #region Rendered HTML
   // * Rerender state
   // console.log(`\n\nRerendered ${name}: isRhfMode(${!disableHookForms}), \n data: `, 
   //   !disableHookForms ? formValues : radioItems.filter(item => item.selected)?.[0] || [],
@@ -143,6 +147,7 @@ export const RadioGroup = ({
       </ErrorText>
     </Container>
   );
+  // #endregion
 }
 
 

@@ -45,6 +45,7 @@ export const Documentation = () => {
 
 
     - go back through the docs and update them again
+    - When that's done, read through all the props and param tables, and make sure everything is proper
       - Forms
         - button
         - checkbox

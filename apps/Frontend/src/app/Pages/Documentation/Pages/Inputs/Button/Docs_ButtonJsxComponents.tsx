@@ -97,7 +97,7 @@ export const Example_CustomButton = ({ error, disabled }: {
         
         size="default"
         color="none"
-        additionalStyles="btn-rainbow animate-rainbow text-slate-100 rounded-lg"
+        additStyles="btn-rainbow animate-rainbow text-slate-100 rounded-lg"
         
         icon="CodeBracket"
         iconStyles="cursor-pointer trans input-colors hover:text-blue-500"

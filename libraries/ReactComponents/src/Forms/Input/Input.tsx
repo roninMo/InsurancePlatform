@@ -56,16 +56,13 @@ export type InputProps<TMaskOpts extends MaskOpts = MaskOpts> = ConditionalVaria
   /** To handle custom logic, or handling state without **react-hook-forms**. */
   onTyped?: (e: ChangeEvent<HTMLInputElement>) => void;
   
-  /** An optional value if you're overriding hook forms with useState. Link to the state using the onChange event. */
-  // value?: string;
-  
 	// {} Form/Validation
 	/** The error message, if there is one. */
   error?: string;
-		
+	
 	/** Whether this input is disabled. */
   disabled?: boolean;
-		
+	
 	/** Whether this input is required. */
   required?: boolean;
   
@@ -93,7 +90,7 @@ export type InputProps<TMaskOpts extends MaskOpts = MaskOpts> = ConditionalVaria
   // hideCreditCardIcon?: boolean;
   // disableCCMask?: RefObject<any>;
   // hideMoneySign?: boolean;
-  // hideCurrencyType?: boolean;
+  // hideCurrencyTypeOpts?: boolean;
 }
 
 
@@ -226,15 +223,15 @@ type CurrencyVariantProps =
     /** Whether to hide the money sign before the value.  */
     hideMoneySign?: boolean;
     /** an optional currency type dropdown built into the input.  */
-    hideCurrencyType?: boolean;
+    hideCurrencyTypeOpts?: boolean;
   } 
 | { 
     /** The variant of input we're using. Each has different functionality for each input type. */
     type?: Exclude<TextInputTypes, 'currency'>; 
     /** @deprecated CANNOT use 'hideMoneySign' when 'type' isn't currency. */
     hideMoneySign?: never; 
-    /** @deprecated CANNOT use 'hideCurrencyType' when 'type' isn't currency. */
-    hideCurrencyType?: never;
+    /** @deprecated CANNOT use 'hideCurrencyTypeOpts' when 'type' isn't currency. */
+    hideCurrencyTypeOpts?: never;
   };
 
 /** The conditional props for each of the variants, only valid and shown when the specific variant is select. */
@@ -249,25 +246,22 @@ export type ConditionalVariantProps =
 |  CurrencyVariantProps;
 
 
-// Retrieve the keys from a conditional map, and then type them to extract from a destructured object
-// This flattens the conditions into a single object where every property is optional, regardless of whether it was 'never'.
+/** Returns the key for a specific type's value when iterating through a type. */
 type AllKeys<T> = T extends any ? keyof T : never;
-// type AllVariantProps = Partial<Record<AllKeys<ConditionalVariantProps>, any>>;
+// type AllVariantProps = Partial<Record<AllKeys<ConditionalVariantProps>>>;
 
 /** Look up a key's type across a union, ignoring 'never' */
 type PickType<T, K extends PropertyKey> = T extends any 
   ? (K extends keyof T ? (T[K] extends never ? never : T[K]) : never) 
   : never;
 
-/** The final flattened type for internal destructuring */
+/** Used to help with type assertion on union objects with conditional params. Or if you want to brute force valid type assertions for certain scenarios where typescript's flagging is redundant. */
 type AllVariantProps<T> = {
   [K in AllKeys<T>]?: PickType<T, K>;
 };
 
 
 // #endregion
-
-
 export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends MaskOpts = MaskOpts>
   (props: InputProps<TMaskOpts> & UniversalEventHandlers<HTMLInputElement> & TMaskClass<TMask, TMaskOpts>) => 
 {
@@ -294,7 +288,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
     hidePolicyNumberIcon, disablePolicyMask, 
     hidePhoneIcon, disablePhoneMask, 
     hideCreditCardIcon, disableCCMask, 
-    hideMoneySign, hideCurrencyType
+    hideMoneySign, hideCurrencyTypeOpts
   } = props as AllVariantProps<ConditionalVariantProps>;
   
   // * Input binding logic
@@ -522,7 +516,7 @@ export const Input = <TMask extends InputMask = InputMask, TMaskOpts extends Mas
           inputRef={localInputRef} isRHFMode={isRHFMode} onChange={handleOnChange}
           
           sortButton={sortButton} sortType={sortType}
-          hideCurrencyType={hideCurrencyType}
+          hideCurrencyTypeOpts={hideCurrencyTypeOpts}
         />
         
         <LoadingBar className='input-loading-bar-cont'>
@@ -624,13 +618,13 @@ interface SubsequentElProps {
   
   sortButton?: boolean;
   sortType?: SearchSortType;
-  hideCurrencyType?: boolean;
+  hideCurrencyTypeOpts?: boolean;
 }
 export const SubsequentElements: React.FC<SubsequentElProps> = memo(({
   name, type, disabled, error, 
   tooltipContext, tooltipContent, 
   hideIncrementButtons, inputRef, isRHFMode, onChange,
-  sortButton, sortType, hideCurrencyType
+  sortButton, sortType, hideCurrencyTypeOpts
 }) => {
   const { show, hide } = tooltipContext || {};
   const { getValues, setValue, control } = useFormContext() || {};
@@ -683,18 +677,18 @@ export const SubsequentElements: React.FC<SubsequentElProps> = memo(({
             <Button 
               onClick={() => onPressIncrementButtons(true)}
               icon='ChevronUp' iconStyles='input-inc-i' disabled={disabled} 
-              color='gray' additionalStyles='inc-btn-base input-inc-btn-t' 
+              color='gray' additStyles='inc-btn-base input-inc-btn-t' 
             />
             <Button 
               onClick={() => onPressIncrementButtons(false)}
               icon='ChevronDown' iconStyles='input-inc-i' disabled={disabled} 
-              color='gray' additionalStyles='inc-btn-base input-inc-btn-b' 
+              color='gray' additStyles='inc-btn-base input-inc-btn-b' 
             />
           </div>
         }
         
         {/* Currency Dropdown - type="currency" */}
-        { (type == 'currency' && !hideCurrencyType) && 
+        { (type == 'currency' && !hideCurrencyTypeOpts) && 
           <CurrencySelectContainer className='row relative'>
             <Icon variant='DropdownArrow' styles='input-curr-i' />
             <CurrencySelect 
@@ -749,7 +743,7 @@ export const SubsequentElements: React.FC<SubsequentElProps> = memo(({
     if (prevProps.sortType !== nextProps.sortType) return false;
   }
   if (nextProps.type == 'currency') {
-    if (prevProps.hideCurrencyType !== nextProps.hideCurrencyType) return false;
+    if (prevProps.hideCurrencyTypeOpts !== nextProps.hideCurrencyTypeOpts) return false;
   }
   
   // Tooltip specific edits - quick check that they passed in different content 

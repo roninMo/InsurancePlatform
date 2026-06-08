@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import styles from './Textarea.module.scss';
 
 
+// #region Textarea Props
 /** The themed textarea variant you'd like to use. */
 export type TextareaTypes = 'default' | 'box' | 'post';
 
@@ -39,11 +40,11 @@ export interface TextareaProps<T extends MaskOpts> {
   /** Optional Event to update the event.currentTarget.value to pass to the  onChange event. If you're using an input mask, this edit is ignored entirely. */
   onUpdateValue?: (pendingValue: string, event: FormEvent<HTMLTextAreaElement>) => void;
   
-	/** Whether to use Rhf or custom state through the onChange event */
-  disableHookForms?: boolean;
-  
   /** Just like the onChange, but doesn't trigger until after they stop typing. Use this to handle custom logic, or handling state without **react-hook-forms**. */
   onTyped?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  
+	/** Whether to use Rhf or custom state through the onChange event */
+  disableHookForms?: boolean;
   
   // {} Form / Validation
   /** Error message, if there's an error. */
@@ -92,6 +93,7 @@ export interface MetadataTagProps {
 }
 
 
+// #endregion
 /** The input functionality of the textarea. */
 const InputComponent = <TMask extends InputMask = InputMask, TMaskOpts extends MaskOpts = MaskOpts> ( allProps: 
   & TextareaProps<TMaskOpts> 
@@ -307,15 +309,6 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
   const getValue = (): string => isRHFMode ? getValues(name) || '' : localInputRef?.current?.value || ''; 
   
   // #endregion
-  // * Rerender state
-  // console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}) `, 
-  //   `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
-  //   `\n submitButton: `, { text: submitButtonText, disabled: submitButtonDisabled, type: submitButtonType, onSubmit },
-  //   `\n attachFile: `, { file: getValues(attachFile?.name || ' '), props: attachFile},
-  //   `\n metadataTags: `, metadataTags,
-  // );
-  
-  
   // #region Memoized Content
   //--------------------------------//
   // Memoized content               //
@@ -367,7 +360,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
               displayText={submitButtonText || "Submit"} 
               onClick={e => onSubmit && onSubmit(e)} 
               disabled={submitButtonDisabled}
-              additionalStyles="ta-submit-btn px-3" 
+              additStyles="ta-submit-btn px-3" 
             />
           </SubsequentInputElements>
         }
@@ -398,7 +391,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
               size="default" 
               onClick={e => onSubmit && onSubmit(e)} 
               disabled={submitButtonDisabled}
-              additionalStyles="ta-submit-btn px-3" 
+              additStyles="ta-submit-btn px-3" 
             />
           </div>
         }
@@ -446,6 +439,16 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
   
   
   // #endregion
+  // #region Rendered HTML
+  // * Rerender state
+  // console.log(`\n\nRerendered ${name}(${type}): isRhfMode(${isRHFMode}) `, 
+  //   `\n data: `, { value: getValue(), localRef: localInputRef, errors: { field: errors, prop: error } },
+  //   `\n submitButton: `, { text: submitButtonText, disabled: submitButtonDisabled, type: submitButtonType, onSubmit },
+  //   `\n attachFile: `, { file: getValues(attachFile?.name || ' '), props: attachFile},
+  //   `\n metadataTags: `, metadataTags,
+  // );
+  
+  
   // #region Textarea (Default)
   //--------------------------------//
   // default style                  //
@@ -563,7 +566,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
                 size="default" 
                 onClick={e => onSubmit && onSubmit(e)} 
                 disabled={submitButtonDisabled}
-                additionalStyles="ta-submit-btn px-3 self-start" 
+                additStyles="ta-submit-btn px-3 self-start" 
                 />
               )}
             </div>
@@ -578,6 +581,7 @@ export const Textarea = <TM extends InputMask = InputMask, MO extends MaskOpts =
       </Container>
     );
   }
+  // #endregion
   // #endregion
 }
 
@@ -783,8 +787,7 @@ const AttachFileElement = ({ name, accept, handleFiles, multiple, iconStyles, re
 
 
 // #endregion
-
-
+// #region Other
 // Default metadata tags
 export const defaultBoxMetadataTags: MetadataTagProps[] = [
   {
@@ -829,3 +832,6 @@ const SubsequentInputElements = styled.div``;
 const PillActions = styled.div``;
 const ButtonsAndLinks = styled.div``;
 const HiddenInput = styled.input``;
+
+//#endregion
+

@@ -142,10 +142,10 @@ export const Card = (props: CardProps) => {
               disabled={buttonProps.disabled}
               
               icon={buttonProps.icon}
-              iconStyles={buttonProps.iconStyles}
+              // iconStyles={buttonProps.iconStyles}
               size={buttonProps?.size}
               color={buttonProps.color}
-              additionalStyles={buttonProps.additionalStyles}
+              additStyles={buttonProps.additStyles}
               />
           </div>
         </div>

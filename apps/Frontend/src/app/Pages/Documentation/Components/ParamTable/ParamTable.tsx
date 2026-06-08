@@ -110,7 +110,7 @@ export const ParamTableItem = ({ item }: ParamTableItemProps)  => {
 							displayText={showSubtable ? 'Show Less' : 'Show More'}
 							onClick={() => setShowSubtable(!showSubtable)}
 							color={showSubtable ? 'gray-focus' : 'gray'} 
-							additionalStyles='px-2 py-1 mr-2 text-sm font-normal italic'
+							additStyles='px-2 py-1 mr-2 text-sm font-normal italic'
 						/>
 					)}
 					{ ParamDescriptionElement ? <ParamDescriptionElement /> : null }

@@ -362,7 +362,7 @@ export const CustomContent = () => {
                 displayText={fileUploadError ? 'Unset Error' : 'Set Error'}
                 color={fileUploadError ? 'gray-focus' : 'gray'}
                 onClick={() => setFileUploadError(!fileUploadError)}
-                additionalStyles='mr-4'
+                additStyles='mr-4'
               />
               
               <Button 

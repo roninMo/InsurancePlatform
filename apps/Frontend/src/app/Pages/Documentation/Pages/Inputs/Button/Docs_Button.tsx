@@ -5,6 +5,7 @@ import { Dropdown, getSourceCode, TooltipService } from "@Project/ReactComponent
 
 import { ParamItem, ParamTable, getParamsTableItems } from "../../../Components/ParamTable/ParamTable";
 import { dParArg, ParamType } from "../../../Components/ParamType/ParamType";
+import { EventParamTable } from '../../../Components/EventParamTable/EventParamTable';
 
 import { DocLink } from "../../../Components/DocLink/DocLink";
 import { Kw } from "../../../Components/Keyword/Keyword";
@@ -164,6 +165,14 @@ export const Docs_Button = () => {
         </Dropdown>
       </div>
       
+      <div className='span-12 py-2 pt-4' id="event-handler-table">
+        <Dropdown label='Event Handlers' openByDefault>
+          <p className='p-2 pl-1 showcase-text'>
+            The event handlers you can use with this component. Pass in your own event functions to interact with the element.
+          </p>
+          <EventParamTable additionalStyles='mt-4' />
+        </Dropdown>
+      </div>
     </Container>
   );
 }
@@ -181,8 +190,8 @@ const Variants = styled.div``;
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 export const buttonParamsList: string[] = [ 
   'displayText', 'onClick', 'disabled',
-  'spacing', 'size', 'color', 'additionalStyles',
-  'spacing', 'icon', 'iconStyles',
+  'spacing', 'size', 'color', 'additStyles', 'styles',
+  'spacing', 'icon', 'iconStyles', 'additIconStyles'
 ];
 
 const variantParamsList: Record<string, string[]> = {
@@ -217,10 +226,12 @@ export const buttonParamTypeElements: Record<string, React.FC> = {
   
   'size': () => <ParamType type="ButtonSizes" tooltip={{ code: Code_ButtonSzs, type: 'type' }}  />,
   'color': () => <ParamType type="ButtonColors" tooltip={{ code: Code_ButtonClrs, type: 'type' }} />,
-  'additionalStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additionalStyles', 'class-name') }} />,
+  'additStyles': () => <ParamType type="string" tooltip={{ code: dParArg('additStyles', 'additional-class-name') }} />,
+  'styles': () => <ParamType type="string" tooltip={{ code: dParArg('styles', 'class-name') }} />,
   
-  'icon': () => <ParamType type="IconTypes" tooltip={{ code: dParArg('icon', 'iconName') }} />,
+  'icon': () => <ParamType type="IconTypes" tooltip={{ code: dParArg('icon', 'variant-name') }} />,
   'iconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'icon-class') }} />,
+  'additIconStyles': () => <ParamType type="string" tooltip={{ code: dParArg('iconStyles', 'additional-class-name') }} />,
 };
 
 // Code Snippet imports
@@ -252,17 +263,29 @@ export const buttonParamDescElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The preset colors for this project's themes. The options are "primary", "gray", "gray-focus", and "none".
     </div>, 
-  'additionalStyles': () =>
+  'additStyles': () => 
     <div className='param-item-desc-text'>
-      Additional styles for the button.
+      Additional styles for the button. If you're using additStyles, 
+      styles is restricted, and vice versa. 
+    </div>,
+  'styles': () => 
+    <div className='param-item-desc-text'>
+      The styles of the button. If you're using styles, 
+      additStyles is restricted, and vice versa. 
     </div>,
   
   'icon': () =>
     <div className='param-item-desc-text'>
       The icon you want to add to the button.
     </div>, 
-  'iconStyles': () =>
+  'iconStyles': () => 
     <div className='param-item-desc-text'>
-      The styles for the icon paired with this button.
+      The styles of the icon paired with this button. If you're using styles, 
+      additStyles is restricted, and vice versa. 
+    </div>,
+  'additIconStyles': () => 
+    <div className='param-item-desc-text'>
+      Additional styles for the icon paired with this button. If you're using additStyles, 
+      styles is restricted, and vice versa. 
     </div>,
 };

@@ -117,14 +117,14 @@ export const WelcomeSection = () => {
               onClick={() => whatsNewMenu()}
               size='default'
               color='none'
-              additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
+              additStyles='selected-box rounded-full text-sm hover:theme-focus'
             />
 
             <Button displayText='Development 1.0.0'
               onClick={() => environmentMenu()}
               size='default'
               color='none'
-              additionalStyles='selected-box rounded-full text-sm hover:theme-focus'
+              additStyles='selected-box rounded-full text-sm hover:theme-focus'
             />
           </div>
 
@@ -151,7 +151,7 @@ export const WelcomeSection = () => {
               onClick={() => openNavMenu()}
               size='md'
               color='primary'
-              additionalStyles='text-base rounded-lg'
+              additStyles='text-base rounded-lg'
             />
 
             <HashLink url="/Documentation">
@@ -159,7 +159,7 @@ export const WelcomeSection = () => {
                 onClick={() => {}}
                 size='md'
                 color='primary'
-                additionalStyles='text-base rounded-lg'
+                additStyles='text-base rounded-lg'
               />
             </HashLink>
           </div>

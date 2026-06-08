@@ -213,9 +213,10 @@ const Variants = styled.div``;
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [
   'type', 'name',
-  'spacing', 'label', 'description', 'placeholder', 'value',
+  'spacing', 'label', 'description', 'placeholder',
+  'spacing', 'onUpdateValue', 'onTyped', 'disableHookForms', 'maskOpts',  
   'spacing', 'onSubmit', 'submitButtonText', 'submitButtonDisabled',
-  'spacing', 'error', 'errorMessage', 'disabled', 'required',
+  'spacing', 'error', 'disabled', 'required',
   'spacing', 'attachFile', 'metadataTags',
 ];
 
@@ -259,10 +260,13 @@ const paramTypeElements: Record<string, React.FC> = {
   'label': () => <ParamType type='string' tooltip={{ code: dParArg('label', 'Textarea Label') }} />,
   'description': () => <ParamType type='string' tooltip={{ code: dParArg('description', 'The description of the textarea.') }} />,
   'placeholder': () => <ParamType type='string' tooltip={{ code: dParArg('placeholder', 'Placeholder text...') }} />,
-  'value': () => <ParamType type='string' tooltip={{ code: dParArg('value', 'value', 'var') }} />,
   
-  'error': () => <ParamType type='boolean' tooltip={{ code: dParArg('error', 'error', 'var') }} />,
-  'errorMessage': () => <ParamType type='string' tooltip={{ code: dParArg('errorMessage', '')}} />,
+  'onUpdateValue': () => <ParamType type='FormEvent' tooltip={{ code: Code_OnUpdateValue }} />,
+  'onTyped': () => <ParamType type='ChangeEvent' tooltip={{ code: Code_OnTyped }} />,
+  'disableHookForms': () => <ParamType type='boolean' tooltip={{ code: dParArg('disableHookForms', 'disableHookForms', 'var') }} />,
+  'maskOpts': () => <ParamType type='MaskOpts' tooltip={{ code: Code_Mask }} />,
+  
+  'error': () => <ParamType type='string' tooltip={{ code: dParArg('error', 'An error occurred.')}} />,
   'disabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
   
@@ -282,6 +286,12 @@ const Code_OnSubmit = 'onSubmit: (e: MouseEvent<HTMLButtonElement, globalThis.Mo
 
 import SourceDropboxSnippets from '@lib-rc/Forms/Dropbox/Dropbox?raw';
 const Code_FileUploadProps = getSourceCode(SourceDropboxSnippets, 'FileUploadProps', 'interface');
+
+import MaskSnippets from '@lib-rc/Common/Utilities/InputMasks/InputMask?raw';
+const Code_Mask = getSourceCode(MaskSnippets, 'MaskOpts', 'type');
+
+const Code_OnUpdateValue = `OnUpdateValue?: (prevValue: string, event: FormEvent<HTMLInputElement>) => void;`;
+const Code_OnTyped = `OnTyped?: (e: ChangeEvent<HTMLInputElement>) => void;`;
 
 
 const paramDescriptionElements: Record<string, React.FC> = {
@@ -307,16 +317,26 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The textarea element's placeholder text. Rendered when the input is empty.
     </div>,
-  'value' : () =>
+  
+  'onUpdateValue' : () =>
     <div className='param-item-desc-text'>
-      The value of the textarea. Use your own state management for handling editing this value.
+      An event function that's triggered from onBeforeInput. Allows you to edit the input event payload to adjust the value before onChange is called. 
+      NOTE: If you're using an input mask, this is ignored
+    </div>, 
+  'onTyped' : () =>
+    <div className='param-item-desc-text'>
+      The routed onChange event function called every time the user stops typing briefly.
+    </div>,
+  'disableHookForms' : () =>
+    <div className='param-item-desc-text'>
+      Whether you want to leverage react-hook-forms, or handle the data using custom state.
+    </div>,
+  'maskOpts' : () =>
+    <div className='param-item-desc-text'>
+      Adds an input mask to the component. Use the InputMask's prebuilt masks, or a custom one. 
     </div>,
   
   'error' : () =>
-    <div className='param-item-desc-text'>
-      Whether there's validation errors for this textarea.
-    </div>,
-  'errorMessage' : () =>
     <div className='param-item-desc-text'>
       The validation error message for this textarea.
     </div>,

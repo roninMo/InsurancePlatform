@@ -106,15 +106,19 @@ interface IconProps {
 
 // #endregion
 // #region Icon Component Render
-export const Icon = ({ variant, styles = ''}: IconProps) => {
-  // Default Icon styles
+export const getIconStyles = (variant: IconTypes): string => {
   let iconStyles = 'icon-default'; 
   if (infoStyleMap?.[variant])    iconStyles = 'i-default-theme i-info-color';
   if (warningStyleMap?.[variant]) iconStyles = 'i-default-theme i-warn-color';
   if (errorStyleMap?.[variant])   iconStyles = 'i-default-theme i-err-color';
   if (okayStyleMap?.[variant])    iconStyles = 'i-default-theme i-ok-color';
   if (customStyleMap?.[variant])  iconStyles = customStyleMap[variant];
-  iconStyles = styles ? styles : iconStyles;
+  return iconStyles;
+}
+
+/** A bundled customizable Icon Library. Comes with default themes and customizable styles. */
+export const Icon = ({ variant, styles = ''}: IconProps) => {
+  const iconStyles = styles ? styles : getIconStyles(variant);
   // console.log(`\nrendered ${variant} icon, styles: `, iconStyles);
   
   // ? Default Icons

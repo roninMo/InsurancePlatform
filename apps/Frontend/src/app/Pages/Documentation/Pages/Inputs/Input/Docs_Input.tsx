@@ -300,21 +300,23 @@ const Variants = styled.div``;
 //---------------------------------------------//
 // Used as an array to add other elements and functionality from @see ParamTable (ParamItem | 'spacing') ParamTableItem /:
 const defaultParams: string[] = [ 
-  'type', 'name', 'label', 'description', 'value', 'placeholder', 
-  'spacing', 'error', 'errorMessage', 'disabled', 'required', 
+  'type', 'name', 'label', 'description', 'placeholder', 
+  'spacing', 'mask', 'disableHookForms', 'onUpdateValue', 'onTyped',
+  'spacing', 'error', 'disabled', 'required', 
   'spacing', 'autocomplete', 'tooltip', 'opts',
 ];
 
+// ? We switched to creating a nested param table instead of dynamically rendering each variant's props -> childParamList
 const variantParamsList: Record<TextInputTypes, string[]> = {
   'text': [],
-  'number':       [], // ['incrementButtons'],
-  'email':        [], // ['showEmailIcon'],
-  'password':     [], // ['visibilityIcon'],
+  'number':       [], // ['hideIncrementButtons'],
+  'email':        [], // ['hideEmailIcon'],
+  'password':     [], // ['hideVisibilityIcon'],
   'search':       [], // ['sortButton', 'sortType'],
-  'policyNumber': [], // ['showPolicyNumberIcon', 'policyNumberMask'],
-  'phone':        [], // ['showPhoneIcon', 'phoneNumberMask'],
-  'creditCard':   [], // ['showCreditCardIcon', 'creditCarkMask'],
-  'currency':     [], // ['showMoneySign', 'currencyTypeDropdown'],
+  'policyNumber': [], // ['hidePolicyNumberIcon', 'disablePolicyMask'],
+  'phone':        [], // ['hidePhoneIcon', 'disablePhoneMask'],
+  'creditCard':   [], // ['hideCreditCardIcon', 'disableCreditCarkMask'],
+  'currency':     [], // ['hideMoneySign', 'hideCurrencyTypeOpts'],
 }
 
 // The input's doc page uses a subtable to display variant specific parameters dynamically
@@ -325,14 +327,14 @@ const childParamsList: Record<string, string[]> = {
 }
 const childParamsVarList: Record<TextInputTypes, Record<string, string[]>> = {
   'text':         { "opts": [] },
-  'number':       { 'opts': ['incrementButtons'] },
-  'email':        { 'opts': ['showEmailIcon'] },
-  'password':     { 'opts': ['visibilityIcon'] },
+  'number':       { 'opts': ['hideIncrementButtons'] },
+  'email':        { 'opts': ['hideEmailIcon', 'disableEmailFilter'] },
+  'password':     { 'opts': ['hideVisibilityIcon'] },
   'search':       { 'opts': ['sortButton', 'sortType'] },
-  'policyNumber': { 'opts': ['showPolicyNumberIcon', 'policyNumberMask'] },
-  'phone':        { 'opts': ['showPhoneIcon', 'phoneNumberMask'] },
-  'creditCard':   { 'opts': ['showCreditCardIcon', 'creditCarkMask'] },
-  'currency':     { 'opts': ['showMoneySign', 'currencyTypeDropdown'] },
+  'policyNumber': { 'opts': ['hidePolicyNumberIcon', 'disablePolicyMask'] },
+  'phone':        { 'opts': ['hidePhoneIcon', 'disablePhoneMask'] },
+  'creditCard':   { 'opts': ['hideCreditCardIcon', 'disableCreditCarkMask'] },
+  'currency':     { 'opts': ['hideMoneySign', 'hideCurrencyTypeOpts'] },
 };
 
 
@@ -344,7 +346,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'incrementButtons', 
+    { name: 'hideIncrementButtons', 
       contextParam: false,
       variantOption: true,
     },
@@ -355,7 +357,11 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'showEmailIcon', 
+    { name: 'hideEmailIcon', 
+      contextParam: false,
+      variantOption: true,
+    },
+    { name: 'disableEmailFilter', 
       contextParam: false,
       variantOption: true,
     },
@@ -366,7 +372,7 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'visibilityIcon', 
+    { name: 'hideVisibilityIcon', 
       contextParam: false,
       variantOption: true,
     },
@@ -392,11 +398,11 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'showPolicyNumberIcon', 
+    { name: 'hidePolicyNumberIcon', 
       contextParam: false,
       variantOption: true,
     },
-    { name: 'policyNumberMask', 
+    { name: 'disablePolicyMask', 
       contextParam: false,
       variantOption: true,
     },
@@ -407,11 +413,11 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'showPhoneIcon', 
+    { name: 'hidePhoneIcon', 
       contextParam: false,
       variantOption: true,
     },
-    { name: 'phoneNumberMask', 
+    { name: 'disablePhoneMask', 
       contextParam: false,
       variantOption: true,
     },
@@ -422,11 +428,11 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'showCreditCardIcon', 
+    { name: 'hideCreditCardIcon', 
       contextParam: false,
       variantOption: true,
     },
-    { name: 'creditCarkMask', 
+    { name: 'disableCreditCarkMask', 
       contextParam: false,
       variantOption: true,
     },
@@ -437,11 +443,11 @@ const paramContextsList: Record<TextInputTypes, ParamContext[]> = {
       variantOption: false,
 			overwrite: 'type'
     },
-    { name: 'showMoneySign', 
+    { name: 'hideMoneySign', 
       contextParam: false,
       variantOption: true,
     },
-    { name: 'currencyTypeDropdown', 
+    { name: 'hideCurrencyTypeOpts', 
       contextParam: false,
       variantOption: true,
     },
@@ -459,38 +465,47 @@ const paramTypeElements: Record<string, React.FC> = {
   'name': () => <ParamType type='string' tooltip={{ code: dParArg('name', 'input-form-ref') }} />,
   'label': () => <ParamType type='string' tooltip={{ code: dParArg('label', 'Input Label') }}  />,
   'description': () => <ParamType type='string' tooltip={{ code: dParArg('description', 'The description of the input.') }} />,
-  'value': () => <ParamType type='string' tooltip={{ code: dParArg('value', 'inputValue', 'var') }} />,
   'placeholder': () => <ParamType type='string' tooltip={{ code: dParArg('placeholder', 'placeholder text...') }} />,
-  'error': () => <ParamType type='boolean' tooltip={{ code: dParArg('error', 'error', 'var') }} />,
-  'errorMessage': () => <ParamType type='string' tooltip={{ code: dParArg('errorMessage', 'An error occurred.') }} />,
+  
+  'mask': () => <ParamType type='MaskOpts' tooltip={{ code: Code_Mask }} />,
+  'disableHookForms': () => <ParamType type='boolean' tooltip={{ code: dParArg('disableHookForms', 'disableHookForms', 'var') }} />,
+  'onUpdateValue': () => <ParamType type='FormEvent' tooltip={{ code: Code_OnUpdateValue }} />,
+  'onTyped': () => <ParamType type='ChangeEvent' tooltip={{ code: Code_OnTyped }} />,
+  
+  'error': () => <ParamType type='string' tooltip={{ code: dParArg('error', 'An error occurred.') }} />,
   'disabled': () => <ParamType type='boolean' tooltip={{ code: dParArg('disabled', 'disabled', 'var') }} />,
   'required': () => <ParamType type='boolean' tooltip={{ code: dParArg('required', 'required', 'var') }} />,
   'autocomplete': () => <ParamType type='TextInputAutoCompleteTypes' tooltip={{ code: Code_TextInputAutoCompleteTypes, type: 'type' }} />,
-  'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOpts, type: 'interface' }} />,
   
   'tooltip': () => <ParamType type="TooltipOptions" />,
   'context': () => <ParamType type="TooltipContextActions" tooltip={{ code: Code_TooltipContextActions, type: 'interface' }} />,
   'content': () => <ParamType type="TooltipContentProps" tooltip={{ code: Code_TooltipService, type: 'interface' }} />,
   
+  // variant params placeholder
+  'opts': () => <ParamType type='InputVariantOpts' tooltip={{ code: Code_InputVariantOpts, type: 'interface' }} />,
+  
   // Variant params
-  'incrementButtons': () => <ParamType type='boolean' tooltip={{ code: dParArg('incrementButtons', 'incrementButtons', 'var') }} />,
-  'showEmailIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showEmailIcon', 'showEmailIcon', 'var') }} />,
-  'visibilityIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('visibilityIcon', 'visibilityIcon', 'var') }} />,
+  'hideIncrementButtons': () => <ParamType type='boolean' tooltip={{ code: dParArg('hideIncrementButtons', 'hideIncrementButtons', 'var') }} />,
+  
+  'hideEmailIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('hideEmailIcon', 'hideEmailIcon', 'var') }} />,
+  'disableEmailFilter': () => <ParamType type='boolean' tooltip={{ code: dParArg('disableEmailFilter', 'disableEmailFilter', 'var') }} />,
+  
+  'hideVisibilityIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('hideVisibilityIcon', 'hideVisibilityIcon', 'var') }} />,
   
   'sortButton': () => <ParamType type='boolean' tooltip={{ code: dParArg('sortButton', 'sortButton', 'var') }} />,
   'sortType': () => <ParamType type='SearchSortType' tooltip={{ code: Code_SearchSortType, type: 'type' }} />,
   
-  'showPolicyNumberIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPolicyNumberIcon', 'showPolicyNumberIcon', 'var') }} />,
-  'policyNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('policyMask', 'AB 0123456789') }} />,
+  'hidePolicyNumberIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('hidePolicyNumberIcon', 'hidePolicyNumberIcon', 'var') }} />,
+  'disablePolicyMask': () => <ParamType type='boolean' tooltip={{ code: dParArg('disablePolicyMask', 'disablePolicyMask', 'var', 'Default: AB-0123456789') }} />,
   
-  'showPhoneIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showPhoneIcon', 'showPhoneIcon', 'var') }} />,
-  'phoneNumberMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('phoneMask', '(123)-456-7890') }} />,
+  'hidePhoneIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('hidePhoneIcon', 'hidePhoneIcon', 'var') }} />,
+  'disablePhoneMask': () => <ParamType type='boolean' tooltip={{ code: dParArg('disablePhoneMask', 'disablePhoneMask', 'var', 'Default: (123)-456-7890') }} />,
   
-  'showCreditCardIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('showCreditCardIcon', 'showCreditCardIcon', 'var') }} />,
-  'creditCarkMask': () => <ParamType type='RefObject' tooltip={{ code: dParArg('creditCardMask', '0000-0000-0000-0000') }} />,
+  'hideCreditCardIcon': () => <ParamType type='boolean' tooltip={{ code: dParArg('hideCreditCardIcon', 'hideCreditCardIcon', 'var') }} />,
+  'disableCreditCarkMask': () => <ParamType type='boolean' tooltip={{ code: dParArg('disableCreditCarkMask', 'disableCreditCarkMask', 'var', 'Default: 0000-0000-0000-0000') }} />,
   
-  'showMoneySign': () => <ParamType type='boolean' tooltip={{ code: dParArg('showMoneySign', 'showMoneySign', 'var') }} />,
-  'currencyTypeDropdown': () => <ParamType type='boolean' tooltip={{ code: dParArg('currencyTypeDropdown', 'currencyTypeDropdown', 'var') }} />,
+  'hideMoneySign': () => <ParamType type='boolean' tooltip={{ code: dParArg('hideMoneySign', 'hideMoneySign', 'var') }} />,
+  'hideCurrencyTypeOpts': () => <ParamType type='boolean' tooltip={{ code: dParArg('hideCurrencyTypeOpts', 'hideCurrencyTypeOpts', 'var') }} />,
 };
 
 // Code Snippet imports
@@ -499,6 +514,12 @@ const Code_TextInputTypes = getSourceCode(SourceInputSnippets, 'TextInputTypes',
 const Code_TextInputAutoCompleteTypes = getSourceCode(SourceInputSnippets, 'TextInputAutoCompleteTypes', 'type');
 const Code_InputVariantOpts = getSourceCode(SourceInputSnippets, 'InputVariantOpts', 'interface');
 const Code_SearchSortType = getSourceCode(SourceInputSnippets, 'SearchSortType', 'type');
+
+import MaskSnippets from '@lib-rc/Common/Utilities/InputMasks/InputMask?raw';
+const Code_Mask = getSourceCode(MaskSnippets, 'MaskOpts', 'type');
+
+const Code_OnUpdateValue = `OnUpdateValue?: (prevValue: string, event: FormEvent<HTMLInputElement>) => void;`;
+const Code_OnTyped = `OnTyped?: (e: ChangeEvent<HTMLInputElement>) => void;`;
 
 import TooltipServiceSnippets from '@lib-rc/Common/Utilities/Tooltip/TooltipProvider/TooltipProvider?raw';
 const Code_TooltipContextActions = getSourceCode(TooltipServiceSnippets, 'TooltipContextActions', 'interface');
@@ -525,20 +546,30 @@ const paramDescriptionElements: Record<string, React.FC> = {
     <div className='param-item-desc-text'>
       The description for this input element.
     </div>,
-  'value' : () =>
-    <div className='param-item-desc-text'>
-      The value of the input. Use your own state management for handling editing this value.
-    </div>,
   'placeholder' : () =>
     <div className='param-item-desc-text'>
       The input element's placeholder text. Rendered when the input is empty.
     </div>,
   
-  'error' : () =>
+  'mask' : () =>
     <div className='param-item-desc-text'>
-      Whether there's validation errors for this input.
+      Adds an input mask to the component. Use the InputMask's prebuilt masks, or a custom one. 
     </div>,
-  'errorMessage' : () =>
+  'disableHookForms' : () =>
+    <div className='param-item-desc-text'>
+      Whether you want to leverage react-hook-forms, or handle the data using custom state.
+    </div>, 
+  'onUpdateValue' : () =>
+    <div className='param-item-desc-text'>
+      An event function that's triggered from onBeforeInput. Allows you to edit the input event payload to adjust the value before onChange is called. 
+      NOTE: If you're using an input mask, this is ignored
+    </div>, 
+  'onTyped' : () =>
+    <div className='param-item-desc-text'>
+      The routed onChange event function called every time the user stops typing briefly.
+    </div>,
+  
+  'error' : () =>
     <div className='param-item-desc-text'>
       The validation error message for this input.
     </div>,
@@ -576,17 +607,21 @@ const paramDescriptionElements: Record<string, React.FC> = {
     </div>,
   
   // Variant params
-  'incrementButtons' : () => 
+  'hideIncrementButtons' : () => 
   <div className='param-item-desc-text'>
-    Whether to enable the increment and decrement buttons for the number input
+    Whether to hide the increment and decrement buttons for the number input.
   </div>,
   
-  'showEmailIcon' : () => 
+  'hideEmailIcon' : () => 
   <div className='param-item-desc-text'>
-    Do you want an email icon on the left hand side of the input?
+    Whether you want to hide the email icon for this input.
+  </div>,
+  'disableEmailFilter' : () => 
+  <div className='param-item-desc-text'>
+    Filters out all non-valid email characters while the user is typing. If you don't want this behavior, then set this prop to true.
   </div>,
   
-  'visibilityIcon' : () => 
+  'hideVisibilityIcon' : () => 
   <div className='param-item-desc-text'>
     Whether to add the toggle password visibility icon to the input element.
   </div>,
@@ -600,39 +635,39 @@ const paramDescriptionElements: Record<string, React.FC> = {
     What kind of sorting functionality do you want for the search?
   </div>,
   
-  'showPolicyNumberIcon' : () => 
+  'hidePolicyNumberIcon' : () => 
   <div className='param-item-desc-text'>
-    Do you want the policy number icon on the left hand side of the input?
+    Disable the policy number icon for this input.
   </div>,
-  'policyNumberMask' : () => 
+  'disablePolicyMask' : () => 
   <div className='param-item-desc-text'>
-    Adds an input mask for your policy number input.
-  </div>,
-  
-  'showPhoneIcon' : () => 
-  <div className='param-item-desc-text'>
-    Do you want a phone icon on the left hand side of the input?
-  </div>,
-  'phoneNumberMask' : () => 
-  <div className='param-item-desc-text'>
-    Adds an input mask for your phone number.
+    The policy mask can be edited using the mask prop; however, if you prefer not using a mask, or want to use a custom one, then disable the current one with this prop.
   </div>,
   
-  'showCreditCardIcon' : () => 
+  'hidePhoneIcon' : () => 
   <div className='param-item-desc-text'>
-    Do you want a credit card icon on the left hand side of the input?
+    Whether to hide the phone icon for this input.
   </div>,
-  'creditCarkMask' : () => 
+  'disablePhoneMask' : () => 
   <div className='param-item-desc-text'>
-    Adds an input mask for your credit card.
+    You can edit the phone mask's format using the mask prop, or disable this and use your own custom mask.
   </div>,
   
-  'showMoneySign' : () => 
+  'hideCreditCardIcon' : () => 
   <div className='param-item-desc-text'>
-    Do you want a money sign on the left hand side of the input?
+    Hides the credit card icon for this input.
   </div>,
-  'currencyTypeDropdown' : () => 
+  'disableCreditCarkMask' : () => 
   <div className='param-item-desc-text'>
-    Adds a currency type select to the input, changing the money sign for this element.
+    Whether to disable the credit card mask for this input.
+  </div>,
+  
+  'hideMoneySign' : () => 
+  <div className='param-item-desc-text'>
+    Hides the money sign on the left hand side of the input.
+  </div>,
+  'hideCurrencyTypeOpts' : () => 
+  <div className='param-item-desc-text'>
+    Hides the currency type dropdown for the currency input.
   </div>,
 };

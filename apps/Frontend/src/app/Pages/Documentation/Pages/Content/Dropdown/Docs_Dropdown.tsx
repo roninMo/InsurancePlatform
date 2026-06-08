@@ -224,22 +224,22 @@ const paramDescriptionElements: Record<string, React.FC> = {
     </div>,
   'labelStyles': () => 
     <div className='param-item-desc-text'>
-      The styles of the header. If you're using labelStyles, 
+      The styles of the label. If you're using labelStyles, 
       additLabelStyles is restricted, and vice versa.
     </div>,
   'additLabelStyles': () => 
     <div className='param-item-desc-text'>
-      Additional styles for the header. If you're using additLabelStyles, 
+      Additional styles for the label. If you're using additLabelStyles, 
       labelStyles is restricted, and vice versa.
     </div>,
   'iconStyles': () => 
     <div className='param-item-desc-text'>
-      The styles of the description. If you're using iconStyles, 
+      The styles of the icon. If you're using iconStyles, 
       additIconStyles is restricted, and vice versa.
     </div>,
   'additIconStyles': () => 
     <div className='param-item-desc-text'>
-      Additional styles for the description. If you're using additIconStyles, 
+      Additional styles for the icon. If you're using additIconStyles, 
       iconStyles is restricted, and vice versa.
     </div>,
 };

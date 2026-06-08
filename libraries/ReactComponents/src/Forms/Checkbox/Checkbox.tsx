@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import styles from './Checkbox.module.scss';
 
 
+// #region Checkbox Props
 /** The form and display information for a checkbox item. */
 export interface CheckboxItem {
   label: string;
@@ -58,12 +59,14 @@ export interface CheckboxProps {
 }
 
 
+// #endregion
 export const Checkbox = ({
   variant = 'default', name, label, description,
   items, onSelect, disableHookForms = false,
   error, disabled = false, required = false,
   onMouseEnter, onMouseLeave, onClick, onChange, onFocus, onBlur
-}: CheckboxProps & UniversalEventHandlers<HTMLElement>) => {
+}: CheckboxProps & UniversalEventHandlers<HTMLElement>) => { 
+  // #region State
   const { register, getValues } = useFormContext() || {};
   const formValues = getValues && getValues(name);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -110,8 +113,8 @@ export const Checkbox = ({
   //   !disableHookForms ? formValues : Object.values(items).filter(item => item.checked),
   //   `\n selected from : `, { vals: Object.values(items).map(i => i.value) },
   // );
-  
-  
+  // #endregion
+  // #region HTML
   return (
     <Container onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} 
       className={variant == 'list' ? 'checkbox-cont-l' : ''}
@@ -145,9 +148,11 @@ export const Checkbox = ({
       </ErrorText>
     </Container>
   );
+  // #endregion
 }
 
 
+// #region CheckBoxItem Props
 interface CheckBoxItemComponentProps {
   variant: CheckboxVariant;
   name: string;
@@ -162,11 +167,13 @@ interface CheckBoxItemComponentProps {
   error?: boolean;
 } 
 
+// #endregion
 const CheckBoxItemComponent = memo(({
   variant, name, item, isSelected, rhfBindings, 
   error, required, disabled, 
   onSelect, onFocus, onBlur, onClick
 }: CheckBoxItemComponentProps & Pick<UniversalEventHandlers<HTMLElement>, 'onClick' | 'onFocus' | 'onBlur'>) => {
+  // #region CheckboxItem
   // console.log(`CheckboxItem ${item.value} rerendered, checked(${isSelected})`);
   
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -232,6 +239,8 @@ const CheckBoxItemComponent = memo(({
       </DefaultLayout>
     </label>
   );
+  // #endregion
+  // #region Rerender Conditions
 // custom rerender functionality
 }, (prevProps, nextProps) => {
   
@@ -260,7 +269,9 @@ const CheckBoxItemComponent = memo(({
   
   // If nothing changed, safely skip the rerender
   return true; 
+  // #endregion
 });
+
 
 // Styled Components
 const Container = styled.div``;
