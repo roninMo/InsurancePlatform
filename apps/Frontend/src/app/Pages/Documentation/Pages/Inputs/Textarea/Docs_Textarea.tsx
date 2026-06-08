@@ -216,7 +216,7 @@ const defaultParams: string[] = [
   'spacing', 'label', 'description', 'placeholder',
   'spacing', 'onUpdateValue', 'onTyped', 'disableHookForms', 'maskOpts',  
   'spacing', 'onSubmit', 'submitButtonText', 'submitButtonDisabled',
-  'spacing', 'error', 'disabled', 'required',
+  'spacing', 'error', 'required', 'disabled', 
   'spacing', 'attachFile', 'metadataTags',
 ];
 
@@ -356,11 +356,11 @@ const paramDescriptionElements: Record<string, React.FC> = {
     </div>,
   'submitButtonText' : () =>
     <div className='param-item-desc-text'>
-      Is this textarea required during submission?
+      The submit button's displayed text.
     </div>,
   'submitButtonDisabled' : () =>
     <div className='param-item-desc-text'>
-      Is this textarea required during submission?
+      Additional prop for exclusively disabling the button outside of the default input form logic.
     </div>,
   
   'attachFile' : () =>

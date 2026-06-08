@@ -73,14 +73,19 @@ export const Docs_Tooltip = () => {
       
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
-          The <Kw>Tooltip</Kw> component is a highly efficient custom tooltip that works on hover with any component that utilizes the <Kw>TooltipService</Kw>. 
-          It's a useContext function that gives you access to show and hide functions for rendering the tooltip without causing any extra overhead, 
-          and doesn't rerender any other components in your application. The props passed into these function are also stable, and though they're objects they don't need to be memoized.
+          The <Kw>Tooltip</Kw> component is a highly efficient custom <i>themed</i> tooltip that work well during hovers with components with the <Kw>TooltipService</Kw>. 
+          You can render text, code snippets, or custom content within it easily. 
         </div>
         
         <div className='p-2 pb-4 showcase-text'>
-          The <Kw>Tooltip</Kw> is very dynamic, and will handle rendering and transitioning smoothly anywhere on the screen, 
-          to switching views on the fly if it goes out of bounds of the viewport,
+          It's works with just a <i>useContext</i> function uses a show and hide function for rendering the tooltip without causing rerenders during invocations.
+          We pair this with a <Kw>TooltipProvider</Kw>, which is just a wrapper for the tooltip so you can put this at the base of your app without it affecting the rest of your components.
+          The props passed into these function are also stable, and though they're objects they don't need to be <i>memoized</i>.
+        </div>
+        
+        <div className='p-2 pb-4 showcase-text'>
+          The <Kw>Tooltip</Kw> is very dynamic, and will performantly handle rendering and transitioning smoothly anywhere on the screen, 
+          to sliding and switching views on the fly if it goes out of bounds of the viewport.
           and has it's own overflow logic with smoothed scrolling for content that doesn't fit within it's container.
         </div>
       </div>
@@ -88,9 +93,17 @@ export const Docs_Tooltip = () => {
       <div className='span-12'>
         <div className='p-2 pb-4 showcase-text'>
           There are multiple variants of the tooltip. From 
-          the <Kw>text</Kw> variant, that accepts the displayed text and additional styles for you to customize the tooltip. 
-          The <Kw>code</Kw> variant allows you to pass code snippets in for it to render.
-          Finally, the <Kw>custom</Kw> variant allows you to pass in your own component to be rendered within the tooltip.
+          <ul className='px-4 py-1 col gap-1'>
+            <li className='pb-1 rowStart items-center gap-4'>
+              <Kw>text:</Kw> displays text and additional styles for you to customize the tooltip. 
+            </li>
+            <li className='pb-1 rowStart items-center gap-4'>
+              <Kw>code:</Kw> Allows you to pass code snippets in for it to render.
+            </li>
+            <li className='pb-1 rowStart items-center gap-4'>
+              <Kw>custom:</Kw> variant allows you to pass in your own component to be rendered within the tooltip.
+            </li>
+          </ul>
         </div>
       </div>
       

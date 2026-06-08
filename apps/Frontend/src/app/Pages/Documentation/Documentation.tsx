@@ -35,7 +35,7 @@ export const Documentation = () => {
       - Move to the other form components and search for universal conditional props (styles) and add them
       - If you find anything else, add them here.
 
-    - When using textastic, add jsdoc comments to the ConditionalProps
+    - When using Textastic, add jsdoc comments to the ConditionalProps
       - we also need jsdoc comments for:
         - Card
         - Dropdown
@@ -43,6 +43,11 @@ export const Documentation = () => {
         - Modal
         - Tooltip
 
+    - When using Textastic, go through the descriptions of the param table and find a way to add contextual styling:
+      - @see links: link like text and hover highlighting?
+      - italic/bold text for certain keywords?
+    - Add these as styles for a span or custom tags, and add them when using textastic
+    
 
     - go back through the docs and update them again
     - When that's done, read through all the props and param tables, and make sure everything is proper
@@ -72,7 +77,6 @@ export const Documentation = () => {
     
     
     
-    - Finished with the Docs Page and all the universal components!
     
     - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
       - add documentation to UpdateRecord, and move it to the library utils

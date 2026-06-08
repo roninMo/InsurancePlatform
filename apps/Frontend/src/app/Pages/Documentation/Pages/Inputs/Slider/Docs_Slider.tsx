@@ -138,7 +138,7 @@ const Variants = styled.div``;
 const defaultParams: string[] = [ 
   'variant', 'name' , 'label', 'description', 
   'spacing', 'onChange', 'disableHookForms', 
-  'spacing', 'error', 'disabled', 'required', 'additionalStyles'
+  'spacing', 'error', 'required', 'disabled', 'additionalStyles'
 ];
 
 const variantParamsList: Record<string, string[]> = {

@@ -180,7 +180,7 @@ const Variants = styled.div``;
 const defaultParams: string[] = [ 
   'variant', 'name', 'label', 'description',
   'spacing', 'radioItems', 'onSelect', 'disableHookForms',
-  'spacing', 'error', 'disabled', 'required',
+  'spacing', 'error', 'required', 'disabled', 
 ];
 
 

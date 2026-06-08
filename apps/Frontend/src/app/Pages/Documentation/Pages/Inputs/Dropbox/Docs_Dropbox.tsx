@@ -140,7 +140,7 @@ const Variants = styled.div``;
 const defaultParams: string[] = [ 
   'name', 'accept', 'handleFiles', 'multiple',
   'spacing', 'label', 'description', 'customIcon', 'iconStyles',
-  'spacing', 'value', 'error', 'disabled', 'required',
+  'spacing', 'error', 'required', 'disabled',
 ];
 
 const variantParamsList: Record<string, string[]> = {

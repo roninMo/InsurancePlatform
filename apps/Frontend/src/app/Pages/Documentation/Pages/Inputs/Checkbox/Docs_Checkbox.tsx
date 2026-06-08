@@ -85,9 +85,9 @@ export const Docs_Checkbox = () => {
         <div className='p-2 pb-4 showcase-text'>
           A styled checkbox input with <Kw>themed</Kw> styles for every form state. 
           Easily customizable with multiple events you can use alongside 
-          <HashLink url='https://react-hook-form.com/' type='page'>
-            &nbsp; <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span> &nbsp;
-          </HashLink>
+          &nbsp;<span><HashLink url='https://react-hook-form.com/' type='page' styles='inline-block link-text'>
+            <span className='label-colors font-semibold footer-link-styles'>React Hook Forms</span>
+          </HashLink></span>&nbsp;
           or your own state hooks.
           
           The variants are <Kw>default</Kw>, <Kw>list</Kw>, and <Kw>inline</Kw>.
@@ -204,7 +204,7 @@ const defaultParams: string[] = [
   'variant', 'name', 'label', 'description',
 
   'spacing', 'items', 'onSelect', 
-  'spacing', 'error', 'disabled', 'required',
+  'spacing', 'error', 'required', 'disabled', 
 ];
 
 const variantParamsList: Record<string, string[]> = {

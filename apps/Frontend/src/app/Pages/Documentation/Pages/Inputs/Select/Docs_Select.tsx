@@ -252,7 +252,7 @@ const Variants = styled.div``;
 const defaultParams: string[] = [ 
   'name', 'label', 'description', 'placeholder',
   'spacing', 'values', 'multiSelect', 'onSelect', 'disableHookForms', 
-  'spacing', 'error', 'disabled', 'required', 'tooltip',
+  'spacing', 'error', 'required', 'disabled', 'tooltip',
   'dropdownOptions'
 ];
 
@@ -334,11 +334,11 @@ const paramDescriptionElements: Record<string, React.FC> = {
     </div>,
   'label': () => 
     <div className='param-item-desc-text'>
-      The label of the radio table.
+      The label of the select.
     </div>,
   'description': () => 
     <div className='param-item-desc-text'>
-      The description of the radio table.
+      The description of the select.
     </div>,
   'placeholder': () => 
     <div className='param-item-desc-text'>
