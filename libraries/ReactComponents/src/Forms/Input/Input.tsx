@@ -2,6 +2,7 @@ import { ChangeEvent, Dispatch, FocusEvent, FormEvent, memo, RefObject, SetState
 import { useFormContext } from 'react-hook-form';
 import { UniversalEventHandlers } from '../../Common/Utilities/Utils';
 import { InputMask, MaskOpts, TMaskClass } from '@Project/ReactComponents/Common/Utilities/InputMasks/InputMask';
+import { AllVariantProps } from '../../Types/TypeHelpers';
 import { TooltipContextActions } from '../../Common/Utilities/Tooltip/TooltipProvider/TooltipProvider';
 import { TooltipContentProps } from '../../Common/Utilities/Tooltip/Tooltip';
 
@@ -244,21 +245,6 @@ export type ConditionalVariantProps =
 |  PhoneVariantProps
 |  CreditCardVariantProps
 |  CurrencyVariantProps;
-
-
-/** Returns the key for a specific type's value when iterating through a type. */
-type AllKeys<T> = T extends any ? keyof T : never;
-// type AllVariantProps = Partial<Record<AllKeys<ConditionalVariantProps>>>;
-
-/** Look up a key's type across a union, ignoring 'never' */
-type PickType<T, K extends PropertyKey> = T extends any 
-  ? (K extends keyof T ? (T[K] extends never ? never : T[K]) : never) 
-  : never;
-
-/** Used to help with type assertion on union objects with conditional params. Or if you want to brute force valid type assertions for certain scenarios where typescript's flagging is redundant. */
-type AllVariantProps<T> = {
-  [K in AllKeys<T>]?: PickType<T, K>;
-};
 
 
 // #endregion
