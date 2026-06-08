@@ -44,13 +44,16 @@ export const Tooltip = (props: TooltipProps) => {
   const { code, showLineNumbers, type = 'example' } = props as CodeTooltipProps;
   
   const [isVisible, setIsVisible] = useState<boolean>(false); // transitions don't work otherwise, & transform gpu rendering
-  useEffect(() => { setIsVisible(!!showTooltip) }, [showTooltip]); 
+  // Internal state from the context to handle rendering when the tooltip is displayed  
+  useEffect(() => setIsVisible(!!showTooltip), [showTooltip]); 
   
   // Wait until react has done it's initial paint of the application
   useEffect(() => {
     // We should also wait until their computer's cpu is ready 
     const handle = window.requestIdleCallback(() => setShouldRender(true) );
-    return () => window.cancelIdleCallback(handle);
+    return () => {
+      window.cancelIdleCallback(handle); // clear the handle=
+    }
   }, []);
   
   
@@ -369,7 +372,7 @@ export const Tooltip = (props: TooltipProps) => {
               
               <div className='grid grid-cols-1 justify-items-start items-center'>
                 <div ref={copyShortcutRef} className='row-start-1 col-start-1 tooltip-copy-text'>
-                  Ctrl + /
+                  Ctrl + c
                 </div>
                 
                 <div ref={copiedSnippetRef} className='row-start-1 col-start-1 tooltip-copied-notification'>
