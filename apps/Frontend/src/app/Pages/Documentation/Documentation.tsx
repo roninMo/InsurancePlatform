@@ -24,17 +24,17 @@ import { FormProvider, useForm } from 'react-hook-form';
 export const Documentation = () => {
   /* TODO: From where we left off
 
+    // ? General
     - There's a bug with the navbar if you hover over and out and back to it before the duration ends
     - for performance we're using mouseEnter/Leave, but we really should just add a mouseover there
 
+    - Double check that all rhf components work with the useForm on the MockDatabase page, and render their data
+    - Fix up the CustomContent page to use the proper props
+    - Decide whether you want to find a place to add the tooltip on the textarea 
+    - Eventually add aria specific stuff to custom components?
 
-    - Let's add universal typing to our library, specifically for handling dynamic props
-      - start with Input's ConditionalVariantProps, and the AllVariantProps helper
-        - These allow us to add union types for certain variants in intellisense, 
-            while retrieving retaining type assertions without complications. 
-      - Move to the other form components and search for universal conditional props (styles) and add them
-      - If you find anything else, add them here.
 
+    // ? Textastic
     - When using Textastic, add jsdoc comments to the ConditionalProps
       - we also need jsdoc comments for:
         - Card
@@ -47,52 +47,10 @@ export const Documentation = () => {
       - @see links: link like text and hover highlighting?
       - italic/bold text for certain keywords?
     - Add these as styles for a span or custom tags, and add them when using textastic
-    
-
-    - go back through the docs and update them again
-    - When that's done, read through all the props and param tables, and make sure everything is proper
-      - Forms
-        - button
-        - checkbox
-        - dropbox
-        - input
-        - radio
-        - radioTable
-        - select
-        - slider
-        - textarea
-      - Content
-        - alert
-        - card
-        - icon
-        - dropdown
-      - Utils
-        - modal
-        - tooltip
-        - HashLink
-    
-    
-    
-    
-    
-    
-    
-    
-    - Convenience functions for object entries logic and looping (utility functions for Records mapping and retrieval)
-      - add documentation to UpdateRecord, and move it to the library utils
-      - Add a getEntries to return either an array or the default entries list without calling Object.fromEntries
-      - check if there's any other quick functions you can add for Record/map edit and retrieval scenarios
-    - Go back through and remove all onChange && onChange() refs, they're not needed unless adding additional props to a function
-    - Fix up the CustomContent page to use the proper props
-    - Decide whether you want to find a place to add the tooltip on the textarea 
-    - Eventually add aria specific stuff to custom components?
-    
-    - When we're using Textastic 
-      - update the props comments to be doc comments for the forms components 
 
 
 
-
+    // ? Later
     - TODO: This will probably be done during MockDatabase's construction  
     - Then add a notifications component that function's like an interactive dropdown for inboxes, system notifications, chat messages
       - Create the initial layout for the dropdown popup that renders the list elements, 
@@ -107,6 +65,7 @@ export const Documentation = () => {
           - A system notification system similar to above, but for account specific things 
 
 
+    // ? Devlog!
     Devlog render history for each component 
       - with an array of t: time, type: props, parent, state, context, other, log message, log values passed in.
       - a display like a console of each component rerendered with a dropdown quick info and content dropdown,
