@@ -7,21 +7,32 @@ import styled from "@emotion/styled";
 import styles from './Dropdown.module.scss';
 
 
+// #region Dropdown Props
+/** The base props for the {@link Dropdown} component. */
 export interface DropdownPropsBase {
+	/** The label of the {@link Dropdown}. It has styles for *overriding* or *adding* styles to the base. */
   label: string;
+	
+	/** Whether the dropdown should be *open* by default. Otherwise it always starts closed. */
   openByDefault?: boolean;
+	
+	/** If you want a custom {@link Dropdown|Dropdown's} open/close icon. It has styles for *overriding* or *adding* to the base. */
   icon?: IconTypes;
   
-  // retrieves whether this dropdown is opened
+	/** useState dispatch that is called whenever the dropdown *opens* or *closes*. */
   openListener?: Dispatch<SetStateAction<boolean>>;
   
+	/** The rendered *content* within the dropdown. */
   children: ReactNode;
 }
 
+/** The props for the {@link Dropdown} component. */
 export type DropdownProps = DropdownPropsBase 
   & ContainerStyles & LabelStyleProps & IconStyleProps;
 
 
+// #endregion
+/** The *Dropdown* component. Comes with customizable themes and smooth transitions when *opening* and *closing* the dropdown, as well as fade in animations for when it's first rendered. */
 export const Dropdown = ({ 
   label, openByDefault, icon, 
   openListener, children,  
@@ -30,6 +41,7 @@ export const Dropdown = ({
   labelStyles, additLabelStyles, 
   iconStyles, additIconStyles, 
 }: DropdownProps) => {
+	// #region Rendered Html
   const [internalOpen, setInternalOpen] = useState<boolean>(false);
   
   // OpenByDefault and listeners logic
@@ -68,6 +80,7 @@ export const Dropdown = ({
       </Container>
     </div>
   );
+	// #endregion
 }
 
 

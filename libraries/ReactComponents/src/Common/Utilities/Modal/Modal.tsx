@@ -5,28 +5,57 @@ import styled from '@emotion/styled';
 import styles from './Modal.module.scss';
 
 
+// #region Modal Props
+/** The props for the {@link Modal} component. lets you handle the *open and *close* state, and all the styling for the look and dimensions of the *popup modal* component. */
 export interface ModalProps {
+	/** The *header* of the {@link Modal} component. */
   label?: string;
+	
+	/** The useState dispatch for internally *opening* and *closing* the {@link Modal}. */
   setModalOpen: Dispatch<SetStateAction<boolean>>;
+	
+	/** Any additional functionality ran when the {@link Modal} is *closed*. */
   onCloseModal?: () => void;
+	
+	/** the *useState* or custom state's value for when the {@link Modal} is open. */
   isModalOpen: boolean;
   
-  containerStyles?: string; // Container Background / Border styles
-  overlayStyles?: string; // Custom overlay styles
-  headerStyles?: string; // Header font styles
-  alignmentStyles?: string; // Classes added to the topmost container - used to position the actual modal container (ex: flex item-center justify-center)
-  dimensionStyles?: string; // Preset or custom dimensions - @note adjusting the padding here may affect the container's alignment
-  removeContentShadow?: boolean; // The scrollbar container's inverse shadow for help w/visually scrolling
+	/** Custom styles for the actual {@link Modal} *container*. you can edit the border and background theme with it. */
+  containerStyles?: string;
+	
+	/** Custom styles for the overlay. By default it's a darkened blurry gradient that covers the page. */
+  overlayStyles?: string; 
+	
+	/** Custom styles for the {@link Modal|Modal's} header(*label*). Adjust the font and padding with it */
+  headerStyles?: string;
+	
+	/** Classes that are added to the *root* container. use this to position the actual {@link Modal} container on the *webpage*. ex. "flex items-center justify-center". */
+  alignmentStyles?: string;
+	
+	/** Preset or custom sizes for the {@link Modal}. - **note:** adjusting the padding here may affext the container's alignment with the *close button* and the *scrollbar*. */
+  dimensionStyles?: string; 
+	
+	/** The {@link Modal} component has an *inset* shadow to help see the content section while scrolling. set this to **true** if you'd prefer it's removed. */
+  removeContentShadow?: boolean; 
   
-  closeModalButton?: boolean; // Default = true
-  closeIconStyles?: string; // Icon styling for the close button
-  closeIcon?: IconTypes; // Optional custom close icon
+	// ? Content specific
+	// TODO: Add a close modal event when the user presses "escape".
+	/** Whether to have a *close* button on the {@link Modal}. This is **true** by default, and clicking outside of the {@link Modal} or pressing *escape* will close it. */
+  closeModalButton?: boolean;
+	
+	/** Optional custom styles for the *close* icon button.  */
+  closeIconStyles?: string;
+	
+	/** If you want a custom icon for the *close* button. */
+  closeIcon?: IconTypes;
   
-  // Rendered content
+	
+	/** The rendered content within the {@link Modal}. */
   children: ReactNode;
 }
 
 
+// #endregion
 /** A dynamic popup wrapper component that displays any content you pass in. Comes with custom styling and open/close options. */
 export const Modal = ({
   label, setModalOpen, onCloseModal, isModalOpen, 

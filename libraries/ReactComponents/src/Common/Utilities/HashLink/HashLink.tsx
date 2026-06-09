@@ -3,17 +3,19 @@ import { useNavigate, Link, useLocation, NavigateOptions } from "react-router-do
 import { hashLinkScrollRestoration } from "../../../Singletons/HashLinkScrollRef/HashLinkScrollRestoration";
 
 
+/** The *navigation* logic used in the {@link HashLink}. */
 export type NavTypes = 'router' | 'page' | 'useNavigate';
 export const DEFAULT_NAV_STATE = { };
 export const DEFAULT_OPTS_STATE = { state: DEFAULT_NAV_STATE };
 
 
 // #region Base Props
+/** The base props for the {@link HashLink}. */
 interface HashLinkPropsBase {
-  // The url accepts hashLinks, @see Navbar.tsx
+	/** The *url* accepts hashes, ***see*** {@link Navbar|Navbar.tsx}. */
   url: string;
   
-  // by default, uses the link-text class
+	/** By default, uses the universal *link-text* class. */
   styles?: string;
   
   /** Conditionally rendered styles
@@ -39,11 +41,13 @@ interface HashLinkPropsBase {
 /** Either render this component as a traditional link with optional custom styles, or a wrapped component as a link */
 type VariantProps = 
 | { 
+		/** The rendered *content* within the {@link HashLink}. */
     children?: ReactNode; 
     /** @deprecated CANNOT use 'label' when 'children' is present. */
     label?: never; 
   } 
 | { 
+		/** The {@link HashLink|HashLink's} displayed text. */
     label?: string; 
     /** @deprecated CANNOT use 'children' when 'label' is present. */
     children?: never; 
@@ -52,7 +56,10 @@ type VariantProps =
 type NavTypeProps = 
 /** if we're using the navigate function, we need the opts for extra nav functionality  */
 | {
-    type?: Extract<NavTypes, 'useNavigate'>; 
+		/** The *useNavigate* {@link HashLink} type adds the *NavigateOpts(opts)* prop for adding custom options to **react-router-dom's** `navigate` function, which is used under the hood here. */
+    type?: Extract<NavTypes, 'useNavigate'>;
+		
+		/** **react-router-dom's** navigation options when calling the `navigate` function. */
     opts?: NavigateOptions;
     
     /** @deprecated CANNOT use 'state' when 'type' is 'useNavigate'. */
@@ -63,7 +70,11 @@ type NavTypeProps =
 
 /** if the type is not 'useNavigate', we only need state */
 | { 
+	// TODO: type 'page' does not need the 'state' prop.
+		/** NavTypes **router** and **state** are handled with the default *Link* tag, and with *window.open* for safely navigating to another site. */
     type?: Extract<NavTypes, 'router' | 'page'>;
+		
+		/** The transient *state* data that's added to *react-router-dom's* `navigate` function. */
     state?: Record<string, any>;
     
     /** @deprecated CANNOT use 'opts' when 'type' is 'router' | 'page'. */
@@ -74,6 +85,7 @@ type NavTypeProps =
 
 /** or if they instead used the customNavigate prop, don't use both opts and state (the function handles it, we pass the static props) */
 | { 
+		/** Allows you to use your own custom *navigation* logic onClick. This should be **memoized** to prevent an extra rerender. */
     customNavigate?: (url: string, label?: string) => void; 
     
     /** @deprecated CANNOT use 'type' when 'customNavigate' is present. */

@@ -7,6 +7,7 @@ import styles from './Card.module.scss';
 
 
 // #region Props and Types
+/** The {@link Card} variant we're using. */
 export type CardType = 
   | 'default'     // standard container
   | 'card'        // card layout with description, title, and custom content
@@ -14,12 +15,19 @@ export type CardType =
   | 'card-link'   // card with a title, description, and a hashLink
 ;
 
-// Card Props
-export type CardPropsBase = ContainerStyles & {
-  type: CardType;
-  noBackground?: boolean; // Removed styling from the base styles
 
+/** The base peops for the {@link Card} component. */
+export type CardPropsBase = ContainerStyles & {
+	/** The variant of the {@link Card} component we're using. */
+  type: CardType;
+	
+	/** Whether to remove the default background theme for the {@link Card} component. */
+  noBackground?: boolean; 
+
+	/** Whether to remove the default border theme for the {@link Card} component. */
   noBorder?: boolean;
+	
+	/** Add a highlight to the *background* and *text* during hover. */
   hoverTheme?: boolean;
 
   // // Container styles
@@ -27,18 +35,26 @@ export type CardPropsBase = ContainerStyles & {
 }
 
 
+/** The *default* {@link Card} variant's props. */
 type DefaultCardProps = CardPropsBase & {
+	/** The *default* card variant. Just a nested themed container for displaying content. */
   type: 'default';
-  children: ReactNode; // this variant just uses styles/additStyles
+	
+	/** The content displayed in the {@link Card} component. */
+  children: ReactNode; 
 };
 
 
+/** The *card*, *card-button*, and *card-link*'s variant props. */
 type CardContentProps = CardPropsBase 
   & TitleStyles 
   & DescriptionStyles 
   & ContentStyles
 & {
+	/** Each of these variants have extra styling props for their content. */
   type: 'card' | 'card-button' | 'card-link';
+	
+	/** Whether to adda divider between the *title*, *description* and before the rendered *children*. */
   noDivider?: boolean;
   // title?: string;
   // description?: string;
@@ -53,25 +69,45 @@ type CardContentProps = CardPropsBase
   // (contentStyles || additContentStyles)?: string;
 };
 
+
+/** The *card-button's* location on the component. */
 export type ButtonLocation = 'bottomLeft' | 'bottomRight' | 'top';
+
+/** The *card-button's* props for the {@link Card} component. */
 export type CardButtonProps = CardContentProps & {
+	/** The *card-button* has styled props for it's content and button, as well as props for the {@link Button} component. */
   type: 'card-button';
+	
+	/** The props for creating a {@link Button} component. */
   buttonProps: ButtonProps;
+	
+	/** The location of the button on the {@link Card}. */
   buttonLocation: ButtonLocation;
+	
+	/** Whether to add a focus outline fo the {@link Card} component when the user *interacts* with it. */
   focusTheme?: boolean;
 }
 
+
+	/** The *card-link's* props for the {@link Card} component. */
 export type CardLinkProps = CardContentProps & {
+	/** The *card-link* has style props for it's content, and an onClick function for handling the logic for the *link*.  */
   type: 'card-link';
+	
+	/** The *link's* displayed text. */
   linkText: string;
+	
+	/** the `onClick` function for the *link*. */
   onClickLink: (e: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 }
 
+
+/** The {@link Card} component's props for each of it's *variants*. */
 export type CardProps = 
   | CardButtonProps   // card-button
   | CardLinkProps     // card-link
   | CardContentProps  // card & ^
-  | DefaultCardProps     // default (intellisense routing)
+  | DefaultCardProps  // default (intellisense routing)
 ;
 
 

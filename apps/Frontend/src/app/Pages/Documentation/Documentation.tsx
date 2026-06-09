@@ -37,9 +37,9 @@ export const Documentation = () => {
     // ? Textastic
     - When using Textastic, add jsdoc comments to the ConditionalProps
       - we also need jsdoc comments for:
-        - Card
-        - Dropdown
-        - HashLink
+        x Card
+        x Dropdown
+        x HashLink
         - Modal
         - Tooltip
 
@@ -48,6 +48,7 @@ export const Documentation = () => {
       - italic/bold text for certain keywords?
     - Add these as styles for a span or custom tags, and add them when using textastic
 
+		- Change the conditionalProp names to be more readable. ie. ContainerStyleProps should be StyleProp
 
 
     // ? Later
