@@ -66,8 +66,24 @@ export const Documentation = () => {
 
 
     // ? Devlog!
+    Devlog Component
+      - A custom universal logging component that allows us to attach functionality to certain types of logs
+      - less boilerplate, more customizability
+      - ie. devlog() or log() -> ("category", "categoryArgs...", "message")
+      - Each category can have a custom class or function attached to it
+        - This allows for tracking logs, and running specific logic on it like:
+          - A renderLog class that stores a history of the logs, and organizes them into a hierarchy of component's messages
+          - additional functions for displaying logs/capturing state history for random things, i don't know
+      - Add a builder function for the template parameter arguments to attach additional props before the console.log's messages
+      - // {} tbd -> but this is primarily for a few things: 
+          - toggling console logs, 
+          - an in app devlog for displaying rerender diagnostics 
+          - isolating a history of an individual component's log messages 
+          - a component/category hierarchy of logs. Eventually adding in a search as well
+    
+    
     Devlog render history for each component 
-      - with an array of t: time, type: props, parent, state, context, other, log message, log values passed in.
+      - with an array of t{}: time, props, parent, state, context, other, log message, log values passed in.
       - a display like a console of each component rerendered with a dropdown quick info and content dropdown,
       - a by component page with a filter search for individual components. with a list of the rerenders and its info from the array
       - a config section to select each prop to have devlogs
