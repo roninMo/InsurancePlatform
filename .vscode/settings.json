@@ -7,6 +7,7 @@
     "arrowup",
     "capslock",
     "capslocks",
+    "cfcr",
     "chashu",
     "Chbx",
     "Chckbx",
@@ -33,6 +34,7 @@
     "Svgs",
     "Textareas",
     "Textastic",
+    "uncloneable",
     "VITE"
   ],
   // Tailwind @apply css binds
