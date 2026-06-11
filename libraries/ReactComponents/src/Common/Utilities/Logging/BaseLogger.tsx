@@ -8,41 +8,50 @@
  * * `TLogStruct` - &nbsp; &nbsp; &nbsp; The custom arguments passed into the *{@link BaseLogger.initializeLogFunctions|log()}* functions.
  * * `TLogMetadata` - &nbsp; Information specific to when and what called the *{@link BaseLogger.initializeLogFunctions|log()}* function.
 */
-export type BaseLogInfo<
+export interface BaseLogInfo<
   TLogStruct extends BaseLogStruct = BaseLogStruct,
-  TLogType extends BaseLogType = BaseLogType, 
+  TLogType extends DefLogType = DefLogType, 
   TLogMetadata extends BaseLogMetadata<TLogType> = BaseLogMetadata<TLogType>
-> = {
+> {
   data: TLogStruct,
   metaData: TLogMetadata
 };
 
 
 /** The standard log types that are used for logging. Each will have their own function() call tied to them */
-export type BaseLogType = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
+export type DefLogType = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
 
 
 /** The stored log data for quickly finding and retrieving logs in history. */
-export type BaseLogStruct = {
+export interface BaseLogStruct {
   index: number,
   data?: LogParams
 };
 
 
 /** The log's base metadata information */
-export type BaseLogMetadata<TLogType extends BaseLogType> = {
+export interface BaseLogMetadata<TLogType extends DefLogType> {
   type: TLogType;
-  caller: string;
+  source: string;
   timestamp: Date;
   environment: string;
 }
 
 
 /**
+ * The standard *console's* logging function arguments.
+ */
+export interface ConsoleLogFunction {
+  /** All log functions optional arguments. */
+  (message?: any, ...optionalParams: any[]): void;
+};
+
+
+/**
  * A flexible base logging function type. `logData` is what is actually passed to the log function. 
  * * Everything else is meant to be *subclassed* for when you add context specific parameters.
  */
-export type LogFunction = {
+export interface BaseLogFunction extends ConsoleLogFunction {
   /** The category and log information tied to each specific log */
   (category: string, message?: any, ...optionalParams: any[]): void;
 };
@@ -81,7 +90,8 @@ export type LogParams =
 // #endregion
 /** The base class for storing  */
 export class BaseLogger<
-  TLogType extends BaseLogType = BaseLogType, 
+  TLogType extends DefLogType = DefLogType, 
+  TLogFunc extends ConsoleLogFunction = BaseLogFunction,
   TLogStruct extends BaseLogStruct = BaseLogStruct,
   TLogMetaData extends BaseLogMetadata<TLogType> = BaseLogMetadata<TLogType>,
   TLogInfo extends BaseLogInfo<TLogStruct, TLogType, TLogMetaData> = BaseLogInfo<TLogStruct, TLogType, TLogMetaData>
@@ -109,13 +119,13 @@ export class BaseLogger<
   /** 
    * #### LogTypes
    * A cached map containing each log function we attach to the global scope.
-   * * {@link BaseLogType|TLogType}:    The different types of log functions you'd like to add to the application. 
-   * * {@link LogFunction}:           Uses custom arguments for creating logs in the application.
+   * * {@link DefLogType|TLogType}:    The different types of log functions you'd like to add to the application. 
+   * * {@link BaseLogFunction}:           Uses custom arguments for creating logs in the application.
    * 
    * ----
    * This map should be created before you call ***{@link InitializeLogs()}. ***
    */
-  protected _logTypes: Map<TLogType, LogFunction> = new Map();
+  protected _logTypes: Map<TLogType, TLogFunc> = new Map();
   
   
   
@@ -195,7 +205,7 @@ export class BaseLogger<
   protected storeLogData(category: string, logParams: TLogStruct, logType: TLogType): void {
     const nextLogIndex: number = this.getNextLogIndex();
     const logStruct = {...logParams, index: nextLogIndex };
-    const logMetadata = this.createLogMetadata(this.getCaller(logStruct), logType);
+    const logMetadata = this.createLogMetadata(this.getSource(logStruct), logType);
     // const logInformation: TLogStruct & TLogMetaData = { ...logStruct, ...logMetadata};
     
     console.log(`storeLogData(${logType}): `, { logStruct, logMetadata, this: this });
@@ -206,7 +216,7 @@ export class BaseLogger<
   
   
   /** Helper function for storing and logging the information for all scenarios. */
-  private logFuncHelper(type: TLogType | BaseLogType, category: string, rawArgs: IArguments, sliceIndex: number): void {
+  private logFuncHelper(type: TLogType | DefLogType, category: string, rawArgs: IArguments, sliceIndex: number): void {
     const cfcr = type === 'WARN' ? 'warn' : type === 'ERROR' ? 'error' : type === 'DEBUG' ? 'debug' : 'log';
     const argsArray = Array.prototype.slice.call(rawArgs, sliceIndex); // IArguments has an array-like structure
     const message = argsArray?.[0];
@@ -287,7 +297,7 @@ export class BaseLogger<
    */
   protected addLog(logData: TLogStruct, logMetadata: TLogMetaData): void {
     if (!logData || !logData?.index === undefined) return;
-    if (!logMetadata) logMetadata = this.createLogMetadata(this.getCaller(logData), 'INFO' as TLogType);
+    if (!logMetadata) logMetadata = this.createLogMetadata(this.getSource(logData), 'INFO' as TLogType);
     let stableRefData: TLogInfo = { data: logData, metaData: logMetadata } as TLogInfo; 
     
     // ? Try cloning the data - we need stable refs, no memory leaks, and historical logged information
@@ -326,18 +336,18 @@ export class BaseLogger<
    * @param caller        What invoked the *{@link getLogFunction|log()}* function
    * @returns             The *metadata* information attached to each log.
    */
-  public createLogMetadata(caller: string, type: TLogType): TLogMetaData {
+  public createLogMetadata(source: string, type: TLogType): TLogMetaData {
     return {
       timestamp: new Date(),
       environment: import.meta.env.VITE_ENV || 'dev',
-      caller: caller,
+      source: source,
       type: type
     } as TLogMetaData;
   }
   
   
   /**
-   * ### `getCaller()`
+   * ### `getSource()`
    * Returns the caller of the log() function. For the base class, this is just the user.
    * * Subclasses can add custom logic to point to the specific component that called the *{@link getLogFunction|log()}* function.
    * 
@@ -345,7 +355,7 @@ export class BaseLogger<
    * @param logData       The data pertaining to a specific log function.
    * @returns             What invoked the *{@link getLogFunction|log()}* function
    */
-  public getCaller(logData: TLogStruct): string {
+  public getSource(logData: TLogStruct): string {
     return "user";
   }
   
@@ -446,7 +456,7 @@ export class BaseLogger<
    * ----
    * @returns           A map of the *{@link TLogType|LogTypes}* and their functions.
    */
-  public get logTypes(): Map<TLogType, LogFunction> {
+  public get logTypes(): Map<TLogType, TLogFunc> {
     return this._logTypes;
   }
   
@@ -471,7 +481,7 @@ export class BaseLogger<
    * @param type        The {@link TLogType|Log Type} the function is being mapped to 
    * @param func        The function that's added to the *global* scope.
    */
-  public addLogType(type: TLogType, func: LogFunction): void {
+  public addLogType(type: TLogType, func: TLogFunc): void {
     this.logTypes.set(type, func);
   }
   
