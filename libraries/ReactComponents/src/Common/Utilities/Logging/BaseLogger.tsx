@@ -6,36 +6,36 @@
  * ### LogInfo
  * The organized log information stored in the {@link _logs|log history} of the application's {@link BaseLogger|Logger}. 
  * * `TLogStruct` - &nbsp; &nbsp; &nbsp; The custom arguments passed into the *{@link BaseLogger.initializeLogFunctions|log()}* functions.
- * * `TLogMetadata` - &nbsp; Information specific to when and what called the *{@link BaseLogger.initializeLogFunctions|log()}* function.
+ * * `TLogMetadata` - &nbsp; Information specific to when and what called the *{@link BaseLogMetadata|log()}* function.
 */
 export interface BaseLogInfo<
   TLogStruct extends BaseLogStruct = BaseLogStruct,
-  TLogType extends DefLogType = DefLogType, 
-  TLogMetadata extends BaseLogMetadata<TLogType> = BaseLogMetadata<TLogType>
+  TLogMetadata extends BaseLogMetadata = BaseLogMetadata
 > {
   data: TLogStruct,
   metaData: TLogMetadata
 };
 
 
-/** The standard log types that are used for logging. Each will have their own function() call tied to them */
-export type DefLogType = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
-
-
 /** The stored log data for quickly finding and retrieving logs in history. */
 export interface BaseLogStruct {
   index: number,
-  data?: LogParams
+  log?: LogParams
 };
 
 
 /** The log's base metadata information */
-export interface BaseLogMetadata<TLogType extends DefLogType> {
-  type: TLogType;
+export interface BaseLogMetadata<T extends string = string> {
+  type: T;
   source: string;
   timestamp: Date;
   environment: string;
 }
+
+
+/** The standard log types that are used for logging. Each will have their own function() call tied to them */
+export type DefLogType = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
+
 
 
 /**
@@ -61,40 +61,20 @@ export interface BaseLogFunction extends ConsoleLogFunction {
  * A cached version of the values passed into the console's logging functions. 
  * * Used to store them within the ***{@link BaseLogger._logs|log history}***. 
  */
-export type LogParams = 
-| { message?: any }
-| { message?: any,  optionalParams: any[]     }
-// | {}
-;
+export type LogParams = { message?: any,  optionalParams?: any[] };
 
 
-// add the BaseLogger to the app, and it's function declarations to the global.d.ts file in the src folder
-// test that the base class works
-/**
- * ? Once that's completed
- *  - Add the devlog class, it needs
- *    - a flat array/map of the nested component hierarchy ie: 
- *        "compA": ["compA1", "compB", "compC"],
- *        "compA1": ["leafNode"],
- *        "compB": ["compB1", "compB2"],
- *        "compB1": etc.
- *    - add the traverse nodes function to retrieve all nested components in the component hierarchy
- *    - SubTypes: Add a new logType for handling renderLogs, added componentName to the logStruct
- *    - work on AST to handle creating the component hierarchy flat array, and then have it add renderLogs to all components with the captured, props, and react's hooks to track rerenders
- *    - Form components already have console logs specific to visualizing state information, they can have their own category, but shouldn't be used alongside renderLogs
- *  
- * 
- */
 
 
 // #endregion
 /** The base class for storing  */
+// export class BaseLogger<TC extends LoggerConfig = BaseLoggerConfig> {
 export class BaseLogger<
-  TLogType extends DefLogType = DefLogType, 
+  TLogType extends string = string, 
   TLogFunc extends ConsoleLogFunction = BaseLogFunction,
   TLogStruct extends BaseLogStruct = BaseLogStruct,
-  TLogMetaData extends BaseLogMetadata<TLogType> = BaseLogMetadata<TLogType>,
-  TLogInfo extends BaseLogInfo<TLogStruct, TLogType, TLogMetaData> = BaseLogInfo<TLogStruct, TLogType, TLogMetaData>
+  TLogMetadata extends BaseLogMetadata<TLogType> = BaseLogMetadata<TLogType>,
+  TLogInfo extends BaseLogInfo<TLogStruct, TLogMetadata> = BaseLogInfo<TLogStruct, TLogMetadata>
 > {
   // #region State
   // ? Stored Log information
@@ -132,7 +112,6 @@ export class BaseLogger<
   
   // #endregion
   // #region Main Functionality
-  /** The function that should be called to initialize the global log functions within your application. */
   /** 
    * #### InitializeLogs
    * Adds this class instance to the global scope, and the universal custom logging functions
@@ -206,7 +185,7 @@ export class BaseLogger<
     const nextLogIndex: number = this.getNextLogIndex();
     const logStruct = {...logParams, index: nextLogIndex };
     const logMetadata = this.createLogMetadata(this.getSource(logStruct), logType);
-    // const logInformation: TLogStruct & TLogMetaData = { ...logStruct, ...logMetadata};
+    // const logInformation: TLogStruct & TLogMetadata = { ...logStruct, ...logMetadata};
     
     console.log(`storeLogData(${logType}): `, { logStruct, logMetadata, this: this });
     // {} Add it to the history and hashmaps
@@ -224,7 +203,7 @@ export class BaseLogger<
     
     const logStruct = {
       index: this.getNextLogIndex(),
-      data: { 
+      log: { 
         ...(message !== undefined && { message }), 
         ...(optionalParams?.length && optionalParams) }
     } as TLogStruct;
@@ -248,25 +227,25 @@ export class BaseLogger<
   /** Example routed log function.  */
   private warnLog(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("WARN", category, message, ...optionalParams);
-    this.logFuncHelper("WARN", category, arguments, 1); // chop category from this function
+    this.logFuncHelper("WARN", category, arguments, 1); // chop category from this^ function's params
   }
   
   /** Example routed log function.  */
   private errorLog(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("ERROR", category, message, ...optionalParams);
-    this.logFuncHelper("ERROR", category, arguments, 1); // chop category from this function
+    this.logFuncHelper("ERROR", category, arguments, 1); // chop category from this^ function's params
   }
   
   /** Example routed log function.  */
   private debugLog(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("DEBUG", category, message, ...optionalParams);
-    this.logFuncHelper("DEBUG", category, arguments, 1); // chop category from this function
+    this.logFuncHelper("DEBUG", category, arguments, 1); // chop category from this^ function's params
   }
   
   /** Example routed log function.  */
   private infoLog(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("INFO", category, message, ...optionalParams);
-    this.logFuncHelper("INFO", category, arguments, 1); // chop category from this function
+    this.logFuncHelper("INFO", category, arguments, 1); // chop category from this^ function's params
   }
   
   
@@ -295,9 +274,9 @@ export class BaseLogger<
    * ----
    * @param logData       The combined {@link TLogStruct|LogStruct} and {@link TLogMetadata|LogMetadata} object
    */
-  protected addLog(logData: TLogStruct, logMetadata: TLogMetaData): void {
+  protected addLog(logData: TLogStruct, logMetadata: TLogMetadata): void {
     if (!logData || !logData?.index === undefined) return;
-    if (!logMetadata) logMetadata = this.createLogMetadata(this.getSource(logData), 'INFO' as TLogType);
+    if (!logMetadata || !logMetadata?.type) logMetadata = this.createLogMetadata(this.getSource(logData), 'INFO' as TLogType);
     let stableRefData: TLogInfo = { data: logData, metaData: logMetadata } as TLogInfo; 
     
     // ? Try cloning the data - we need stable refs, no memory leaks, and historical logged information
@@ -336,13 +315,13 @@ export class BaseLogger<
    * @param caller        What invoked the *{@link getLogFunction|log()}* function
    * @returns             The *metadata* information attached to each log.
    */
-  public createLogMetadata(source: string, type: TLogType): TLogMetaData {
+  public createLogMetadata(source: string, type: TLogType): TLogMetadata {
     return {
       timestamp: new Date(),
       environment: import.meta.env.VITE_ENV || 'dev',
       source: source,
       type: type
-    } as TLogMetaData;
+    } as TLogMetadata;
   }
   
   
@@ -628,5 +607,6 @@ export class BaseLogger<
 }
 
 
+// Default singleton export
 const baseLogger = new BaseLogger();
 export default baseLogger;
