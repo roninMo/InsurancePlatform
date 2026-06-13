@@ -19,17 +19,24 @@ export interface BaseLogInfo<
 
 /** The stored log data for quickly finding and retrieving logs in history. */
 export interface BaseLogStruct {
+  /** This log's index in the *{@link BaseLogger._logs|log history}*. */
   index: number,
-  log?: LogParams
+  
+  /** The actual info of the log. */
+  log: LogParams
 };
 
 
 /** The log's base metadata information */
 export interface BaseLogMetadata<T extends string = string> {
+  /** What log function created the message. */
   type: T;
+  
+  /** What called the log function. The **{@link Devlog}** uses component names attached to the {@link BaseLogStruct|LogStruct} to handle ref component. */
   source: string;
+  
+  /** When this was logged. Use {@link BaseLogger.getLogTimestamp|getLogTimestamp()} to convert it to a readable string. */
   timestamp: Date;
-  environment: string;
 }
 
 
@@ -123,10 +130,10 @@ export class BaseLogger<
    */
   public initializeLogFunctions(): void {
     const globalScope = globalThis as any;
-    const warnLogFunc = this.warnLog.bind(this);
-    const errLogFunc = this.errorLog.bind(this);
-    const debugLogFunc = this.debugLog.bind(this);
-    const infoLogFunc = this.infoLog.bind(this);
+    const warnLogFunc = this.warnLogExample.bind(this) as TLogFunc;
+    const errLogFunc = this.errorLogExample.bind(this) as TLogFunc;
+    const debugLogFunc = this.debugLogExample.bind(this) as TLogFunc;
+    const infoLogFunc = this.infoLogExample.bind(this) as TLogFunc;
     
     // ? Don't recreate this if there's already the same instance running.
     if (isAlreadyInitializedOrNewClass(this)) {
@@ -152,6 +159,12 @@ export class BaseLogger<
     globalScope.warnLog = warnLogFunc;
     globalScope.log   = infoLogFunc;
     
+    // The added log types to this class
+    this.addLogType("DEBUG" as TLogType, debugLogFunc);
+    this.addLogType("ERROR" as TLogType, errLogFunc);
+    this.addLogType("WARN" as TLogType, warnLogFunc);
+    this.addLogType("INFO" as TLogType, infoLogFunc);
+    
     // -> Set that we've already added the log functions to the global scope
     this._functionsInitialized = true;
     return;
@@ -173,8 +186,10 @@ export class BaseLogger<
   
   /** 
    * ### `get storeLogData()`
-   * Stores the log's information and metadata to our cached *{@link _logs|history}*, and links it's index to the *{@link _categoryLogs|category}* hashmap.
-   * * Subclass this to add additional functionality when storing the log data.
+   * Handles creating and storing the necessary information for keeping log history and other functionality. This class's function handles:
+   * * Storing the log's *information* and *metadata* to our cached *{@link _logs|history}*
+   * * Links it's index to the *{@link _categoryLogs|category}* hashmap.
+   * > *Subclass this to add additional functionality when storing the log data.*
    * 
    * ----
    * @param category      The *category* this log pertains to
@@ -225,25 +240,25 @@ export class BaseLogger<
   
   
   /** Example routed log function.  */
-  private warnLog(category: string, message?: any, ...optionalParams: any[]): void {
+  private warnLogExample(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("WARN", category, message, ...optionalParams);
     this.logFuncHelper("WARN", category, arguments, 1); // chop category from this^ function's params
   }
   
   /** Example routed log function.  */
-  private errorLog(category: string, message?: any, ...optionalParams: any[]): void {
+  private errorLogExample(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("ERROR", category, message, ...optionalParams);
     this.logFuncHelper("ERROR", category, arguments, 1); // chop category from this^ function's params
   }
   
   /** Example routed log function.  */
-  private debugLog(category: string, message?: any, ...optionalParams: any[]): void {
+  private debugLogExample(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("DEBUG", category, message, ...optionalParams);
     this.logFuncHelper("DEBUG", category, arguments, 1); // chop category from this^ function's params
   }
   
   /** Example routed log function.  */
-  private infoLog(category: string, message?: any, ...optionalParams: any[]): void {
+  private infoLogExample(category: string, message?: any, ...optionalParams: any[]): void {
     // this.logFuncHelper("INFO", category, message, ...optionalParams);
     this.logFuncHelper("INFO", category, arguments, 1); // chop category from this^ function's params
   }
@@ -268,6 +283,7 @@ export class BaseLogger<
   
   /** 
    * ### `get addLog()`
+   * Stores the log's information and metadata to our cached *{@link _logs|history}*
    * Retrieves the map that contains an indexed list of the log's *data*, and metadata pertaining to when the log occurred.
    * * Subclassed logs that extend {@link TLogType} will have information specific to their log types (ie. renderLog) containing other relevant information. 
    * 
@@ -318,7 +334,6 @@ export class BaseLogger<
   public createLogMetadata(source: string, type: TLogType): TLogMetadata {
     return {
       timestamp: new Date(),
-      environment: import.meta.env.VITE_ENV || 'dev',
       source: source,
       type: type
     } as TLogMetadata;
@@ -475,7 +490,7 @@ export class BaseLogger<
    * 
    * @param {Date} [date=new Date()] - The Date object to format. Defaults to the current time.
    * @returns {{ monthDay: string; timeOnly: string }} An object containing two formatted strings:
-   * - `monthDay`: Formatted as `MM/DD:HH:mm:ss:f` (e.g., "06/09:10:28:00:4")
+   * - `monthDay`: Formatted as `MM/DD::HH:mm:ss:f` (e.g., "06/09::10:28:00:4")
    * - `timeOnly`: Formatted as `HH:mm:ss:f` (e.g., "10:28:00:4")
    * 
    * ----
@@ -495,7 +510,7 @@ export class BaseLogger<
     const tenth = Math.floor(date.getMilliseconds() / 100);
     
     if (timeOnly) return `${h}:${min}:${s}:${tenth}`;
-    else return `${m}/${d}:${h}:${min}:${s}:${tenth}`;
+    else return `${m}/${d}::${h}:${min}:${s}:${tenth}`;
   };
   
   
