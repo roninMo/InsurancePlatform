@@ -9,6 +9,7 @@ import { BaseLogger, BaseLogFunction, BaseLogInfo, BaseLogMetadata, BaseLogStruc
  * * `TLogMetadata` - &nbsp; Information specific to when and what called the *{@link BaseLogger.initializeLogFunctions|log()}* function.
 */
 export interface LogInfo extends BaseLogInfo<LogStruct, LogMetadata> {
+  compId: string,
   data: LogStruct,
   renderData: LogRenderData,
   metaData: LogMetadata,
@@ -30,12 +31,17 @@ export interface LogStruct extends BaseLogStruct {
 
 /** The component's contextual information for when it's rerendered, using a snapshot of the state that is has at any given time. */
 export interface LogRenderData {
-  parentName: string,
-  componentName: string,
-  props?: any[],
-  contexts?: any[],
-  hooks?: any[],
+  propsChanged: Record<string, { prev: any; next: any }>;
+  isInitialRender: boolean;
+  renderCount: number;
 }
+// export interface LogRenderData {
+//   parentName: string, // Can this be "safely" initialized before runtime?
+//   componentName: string,
+//   props?: any[],
+//   contexts?: any[],
+//   hooks?: any[],
+// }
 
 
 /** The log's base metadata information */
@@ -54,17 +60,20 @@ export type LogType = DefLogType | 'RENDER';
  */
 export interface LogFunction extends BaseLogFunction {
   /** The category and log information tied to each specific log */
-  (category: string, message?: any, ...optionalParams: any[]): void;
+  (category: string, compId: string, message?: any, ...optionalParams: any[]): void;
 };
 
 
+export interface RenderLogFunction extends LogFunction {
+  (category: string, compId: string, renderData: LogRenderData, message?: any, ...optionalParams: any[]): void;
+}
 
 
 // #endregion
 /** Devlog */
-export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetadata, LogInfo> {
+export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetadata, LogInfo> {
   /**
-   *  {} Add the devlog class, it needs
+   *  {} Add the Devlog class, it needs
    *    - a flat array/map of the nested component hierarchy ie: 
    *        "compA": ["compA1", "compB", "compC"],
    *        "compA1": ["leafNode"],
@@ -90,7 +99,146 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
   
   
   
-  // #region Create Log Functions
+  
+  // #region Component Hierarchy Retrieval
+  /**
+   * Crawls React's live internal Fiber tree from the DOM to map parent-child relationships.
+   * Runs in O(N) microsecond speeds. Execute once right after navigation/layout shifts.
+   */
+  public getComponentHierarchy(): void {
+    const rootDOM = document.getElementById('root') || document.querySelector('[data-reactroot]');
+    if (!rootDOM) return;
+    
+    // Locate the internal React Fiber container key on the root element
+    const reactKey = Object.keys(rootDOM).find(key => key.startsWith('__reactContainer$'));
+    if (!reactKey) return;
+    
+    // Extract React's internal fiber root node for discovering the current component hierarchy
+    const rootFiber = (rootDOM as any)[reactKey];
+    
+    
+    // {} Depth-First Search (DFS) traversal via React's left-child/right-sibling pointers
+    // ? Build the adjacencyList - Crawl the new tree hierarchy
+    this.adjacencyList.clear();
+    this.traverse(rootFiber.child); 
+    
+    // {} Flatten the adjacency list into a nested deep-descendant Set map
+    // ? Build the flattened deep descendant map for O(1) filtering
+    // descendantMap: Process all components discovered in the tree
+    this.descendantMap.clear();
+    Object.keys(this.adjacencyList).forEach(component => {
+      // Flatten the adjacency list into a nested deep-descendant Set map
+      this.buildDescendants(component);
+    });
+  }
+  
+    /**
+   * Recursively traverses the *React Fiber tree* using a Left-Child/Right-Sibling pattern.
+   * Filters out native HTML elements and populates a global {@link adjacencyList|adjacency list} map 
+   * of each react component name, and an array of it's child component names.
+   *
+   * @param {object|null} fiber           The current React *Fiber node* to process.
+   * @param {string} currentParentName    The name of the closest valid *parent component* up the tree.
+   * @returns {void}                      This function builds the *{@link adjacencyList}*.
+   *  
+   * @example
+   * // Mutates global state:
+   * // adjacencyList = { "App": ["Dashboard"], "Dashboard": ["ComponentB"] }
+   * traverse(rootFiber, "App");
+   */
+  protected traverse(fiber: any, currentParentName: string = "Root"): void {
+    if (!fiber) return;
+    let nextParent = currentParentName;
+    
+    // Filter for functional/class components (ignore native HTML nodes like 'div')
+    if (typeof fiber.type === 'function') {
+      const componentName = fiber.type.name || fiber.type.displayName || 'UnknownComponent';
+      const uniqueName = this.getComponentId(fiber); // e.g., "ComponentA_1"
+      
+      // Initialize the adjacency list array for the parent if missing
+      if (!this.adjacencyList.has(currentParentName)) {
+        this.adjacencyList.set(currentParentName, []);
+      }
+      
+      // Add the child to the parent's list (avoiding duplicate logs for re-renders)
+      if (!this.adjacencyList.get(currentParentName)?.includes(componentName)) { // TODO - use uniqueName
+        this.adjacencyList?.get(currentParentName)?.push(componentName); // TODO - use uniqueName
+      }
+      
+      // Update the parent context for deeper elements down this branch
+      nextParent = componentName; // TODO - use uniqueName
+    }
+    
+    // Traverse the first child
+    if (fiber.child) {
+      this.traverse(fiber.child, nextParent);
+    }
+    
+    // Traverse the immediate sibling under the same parent context
+    if (fiber.sibling) {
+      this.traverse(fiber.sibling, currentParentName);
+    }
+  }
+  
+  
+  /**
+   * Recursively flattens the `adjacencyList` to find every deep descendant of a given component.
+   * * Populates the *{@link descendantMap}* with a **Set** of of all nested components within each component.
+   *
+   * @param {string} node         The name of the component to find all descendants for.
+   * @returns {Set<string>}       A *Set* containing all **descendants** of a given component.
+   * 
+   * ----
+   * @example
+   * const adjacencyList = { "App": ["Dashboard"], "Dashboard": ["ComponentB"], "ComponentB": ["ComponentC"] };
+   * const cache = new Map();
+   * 
+   * const descendants = buildDescendants("Dashboard", adjacencyList, cache);
+   * // Returns: Set { "ComponentB", "ComponentC" }
+   */
+  protected buildDescendants(node: string): Set<string> {
+    if (this.descendantMap.has(node)) return this.descendantMap.get(node) as Set<string>;
+    
+    const children = this.adjacencyList.get(node) || [];
+    const allDescendants: Set<string> = new Set(children);
+    
+    // ? Recursively pull sub-children into this component's descendant set
+    for (const child of children) {
+      const childDescendants = this.buildDescendants(child);
+      childDescendants.forEach((d: any) => allDescendants.add(d));
+    }
+    
+    this.descendantMap.set(node, allDescendants); // Add the component's nested components to it's array
+    return allDescendants;
+  }
+  
+  
+  /**
+   * Extracts the compiler-generated unique name from a Fiber node.
+   * Fallbacks to the standard name if the unique ID isn't found.
+   * 
+   * @param {object} fiber - The React Fiber node.
+   * @returns {string} The unique component string identifier.
+   */
+  protected getComponentId(fiber: any) {
+    const compFunction = fiber.type || fiber.elementType;
+    
+    if (compFunction && typeof compFunction === 'function') {
+      // Read the static property injected by your AST compiler
+      if (compFunction.__uniqueComponentId__) {
+        return compFunction.__uniqueComponentId__;
+      }
+    }
+    
+    // Fallback to normal name if it didn't go through the compiler
+    return fiber.type?.name || "UnknownComponent";
+  }
+  
+  
+  
+  
+  // #endregion
+  // #region Logging Functionality
   /** 
    * ### `get storeLogData()`
    * Handles creating and storing the necessary information for keeping log history and other functionality. This class's function handles:
@@ -204,20 +352,17 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
       globalScope.logClass = this;
     }
     
-    // The base log functions
-    globalScope.debugLog = debugLogFunc;
-    globalScope.errorLog = errLogFunc;
-    globalScope.warnLog = warnLogFunc;
-    globalScope.log   = infoLogFunc;
-    globalScope.renderLog = renderLogFunc;
+    // Store the log function's name and function references using it's type
+    this.addLogType("DEBUG", debugLogFunc, "debugLog");
+    this.addLogType("ERROR", errLogFunc, "errorLog");
+    this.addLogType("WARN", warnLogFunc, "warnLog");
+    this.addLogType("INFO", infoLogFunc, "log");
+    this.addLogType("RENDER", renderLogFunc, "render");
     
-    // The added log types to this class
-    this.addLogType("DEBUG", debugLogFunc);
-    this.addLogType("ERROR", errLogFunc);
-    this.addLogType("WARN", warnLogFunc);
-    this.addLogType("INFO", infoLogFunc);
-    this.addLogType("RENDER", renderLogFunc);
-    
+    // ? Add the base log functions to the global scope
+    for (const { name, func } of this._logFuncs.values()) {
+      globalScope[name] = func;
+    }
     
     // -> Set that we've already added the log functions to the global scope
     this._functionsInitialized = true;
@@ -225,7 +370,7 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
     
     
     /** Return whether we already initialized, are creating a new logging engine, or if we called with the same one. */
-    function isAlreadyInitializedOrNewClass(classInstance: BaseLogger | DevLog): boolean {
+    function isAlreadyInitializedOrNewClass(classInstance: BaseLogger | Devlog): boolean {
       console.log(`isAlreadyInitializedOrNewClass: data: `, { classInstance, globalClass: globalScope?.logClass });
       
       const currentClass = globalScope?.logClass;
@@ -298,130 +443,6 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
   
   
   // #endregion
-  // #region Component Hierarchy Retrieval
-  /**
-   * Crawls React's live internal Fiber tree from the DOM to map parent-child relationships.
-   * Runs in O(N) microsecond speeds. Execute once right after navigation/layout shifts.
-   */
-  public getComponentHierarchy(): void {
-    const rootDOM = document.getElementById('root') || document.querySelector('[data-reactroot]');
-    if (!rootDOM) return;
-    
-    // Locate the internal React Fiber container key on the root element
-    const reactKey = Object.keys(rootDOM).find(key => key.startsWith('__reactContainer$'));
-    if (!reactKey) return;
-    
-    // Extract React's internal fiber root node for discovering the current component hierarchy
-    const rootFiber = (rootDOM as any)[reactKey];
-    
-    
-    // {} Depth-First Search (DFS) traversal via React's left-child/right-sibling pointers
-    // ? Build the adjacencyList - Crawl the new tree hierarchy
-    this.adjacencyList.clear();
-    this.traverse(rootFiber.child); 
-    
-    // {} Flatten the adjacency list into a nested deep-descendant Set map
-    // ? Build the flattened deep descendant map for O(1) filtering
-    // descendantMap: Process all components discovered in the tree
-    this.descendantMap.clear();
-    Object.keys(this.adjacencyList).forEach(component => {
-      // Flatten the adjacency list into a nested deep-descendant Set map
-      this.buildDescendants(component);
-    });
-  }
-  
-    /**
-   * Recursively traverses the *React Fiber tree* using a Left-Child/Right-Sibling pattern.
-   * Filters out native HTML elements and populates a global {@link adjacencyList|adjacency list} map 
-   * of each react component name, and an array of it's child component names.
-   *
-   * @param {object|null} fiber           The current React *Fiber node* to process.
-   * @param {string} currentParentName    The name of the closest valid *parent component* up the tree.
-   * @returns {void}                      This function builds the *{@link adjacencyList}*.
-   *  
-   * @example
-   * // Mutates global state:
-   * // adjacencyList = { "App": ["Dashboard"], "Dashboard": ["ComponentB"] }
-   * traverse(rootFiber, "App");
-   */
-  protected traverse(fiber: any, currentParentName: string = "Root"): void {
-    if (!fiber) return;
-    let nextParent = currentParentName;
-    
-    // Filter for functional/class components (ignore native HTML nodes like 'div')
-    if (typeof fiber.type === 'function') {
-      const componentName = fiber.type.name || fiber.type.displayName || 'UnknownComponent';
-      
-      // Initialize the adjacency list array for the parent if missing
-      if (!this.adjacencyList.has(currentParentName)) {
-        this.adjacencyList.set(currentParentName, []);
-      }
-      
-      // Add the child to the parent's list (avoiding duplicate logs for re-renders)
-      if (!this.adjacencyList.get(currentParentName)?.includes(componentName)) {
-        this.adjacencyList?.get(currentParentName)?.push(componentName);
-      }
-      
-      // Update the parent context for deeper elements down this branch
-      nextParent = componentName;
-    }
-    
-    // Traverse the first child
-    if (fiber.child) {
-      this.traverse(fiber.child, nextParent);
-    }
-    
-    // Traverse the immediate sibling under the same parent context
-    if (fiber.sibling) {
-      this.traverse(fiber.sibling, currentParentName);
-    }
-  }
-  
-  
-  /**
-   * Recursively flattens the `adjacencyList` to find every deep descendant of a given component.
-   * * Populates the *{@link descendantMap}* with a **Set** of of all nested components within each component.
-   *
-   * @param {string} node         The name of the component to find all descendants for.
-   * @returns {Set<string>}       A *Set* containing all **descendants** of a given component.
-   * 
-   * ----
-   * @example
-   * const adjacencyList = { "App": ["Dashboard"], "Dashboard": ["ComponentB"], "ComponentB": ["ComponentC"] };
-   * const cache = new Map();
-   * 
-   * const descendants = buildDescendants("Dashboard", adjacencyList, cache);
-   * // Returns: Set { "ComponentB", "ComponentC" }
-   */
-  protected buildDescendants(node: string): Set<string> {
-    if (this.descendantMap.has(node)) return this.descendantMap.get(node) as Set<string>;
-    
-    const children = this.adjacencyList.get(node) || [];
-    const allDescendants: Set<string> = new Set(children);
-    
-    // ? Recursively pull sub-children into this component's descendant set
-    for (const child of children) {
-      const childDescendants = this.buildDescendants(child);
-      childDescendants.forEach((d: any) => allDescendants.add(d));
-    }
-    
-    this.descendantMap.set(node, allDescendants); // Add the component's nested components to it's array
-    return allDescendants;
-  }
-  
-  
-  
-  
-  // #endregion
-  // #region Inject Render logs to application
-  public addRenderLogging(): void {
-    
-  }
-  
-  
-  
-  
-  // #endregion
   // #region _logs
   /** 
    * ### `get addLog()`
@@ -432,7 +453,7 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
    * @param logData       The combined {@link TLogStruct|LogStruct} and {@link TLogMetadata|LogMetadata} object
    */
   protected addLog(logData: LogStruct, logMetadata: LogMetadata): void;
-  protected addLog(logData: LogStruct, renderData: LogRenderData, logMetadata: LogMetadata): void;
+  protected addLog(logData: LogStruct, renderData: LogRenderData, logMetadata: LogMetadata, id: string): void;
   
   
   /** 
@@ -443,11 +464,12 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
    * ----
    * @param logData       The combined {@link TLogStruct|LogStruct} and {@link TLogMetadata|LogMetadata} object
    */
-  protected override addLog(arg1: any, arg2: any, arg3?: any): void {
+  protected override addLog(arg1: any, arg2: any, arg3?: any, arg4?: any): void {
     // ? Retrieve the overloaded parameters
     const logData: LogStruct = arg1;
     let renderData: LogRenderData = {} as any;
     let logMetadata: LogMetadata = {} as any;
+    let compId: string = arg4 || "";
     
     // LogRenderData
     const renderDataOrMetadata = arg2 || {};
@@ -466,7 +488,7 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
     // <- Early out if we did not retrieve the proper information for storing a log.
     if (!logData || !logData?.index === undefined) return;
     if (!logMetadata || !logMetadata?.type) return;
-    if (!renderData || !renderData?.componentName) {
+    if (!renderData) {
       super.addLog(logData, logMetadata);
       return;
     }
@@ -474,7 +496,7 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
     
     // {} Try cloning the data - we need stable refs, no memory leaks, and historical logged information
     const deepCopyDebugging: any[] = [];
-    let stableRefData: LogInfo = { data: logData, renderData, metaData: logMetadata }; 
+    let stableRefData: LogInfo = { data: logData, renderData, metaData: logMetadata, compId }; 
     try {
       stableRefData = this.deepCopyData(logData, new Map(), deepCopyDebugging);
     } catch (e: any) {
@@ -509,5 +531,5 @@ export class DevLog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
 
 
 // Default singleton export
-const devLog = new DevLog();
-export default devLog;
+const devlog = new Devlog();
+export default devlog;

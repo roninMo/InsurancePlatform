@@ -1,5 +1,5 @@
 // src/global.d.ts
-import { DevLog, LogRenderData } from "@Project/ReactComponents/Common/Utilities/Logging/DevLog";
+import { Devlog, LogRenderData } from "@Project/ReactComponents/Common/Utilities/Logging/Devlog";
 import { BaseLogger } from "@Project/ReactComponents/Common/Utilities/Logging/BaseLogger";
 
 
@@ -18,7 +18,7 @@ declare global {
   
   // #endregion
   // #region Devlog Functions and Values
-  logClass: typeof DevLog
+  logClass: typeof Devlog
   function debugLog( category: string, compId: string, message?: any, ...optionalParams: any[]): void;
   function errorLog( category: string, compId: string, message?: any, ...optionalParams: any[]): void;
   function warnLog(  category: string, compId: string, message?: any, ...optionalParams: any[]): void;

@@ -2,6 +2,7 @@
 
 
 // #region Log Types
+// #region LogInfo - Information on the message, what, and when it was called.
 /** 
  * ### LogInfo
  * The organized log information stored in the {@link _logs|log history} of the application's {@link BaseLogger|Logger}. 
@@ -40,9 +41,18 @@ export interface BaseLogMetadata<T extends string = string> {
 }
 
 
+// #endregion
+// #region LogFuncData - Information for the log's type, it's name, and the actual function used on the global scope
+/** An object that holds a reference to it's *{@link BaseLogType|LogType}*, it's name on the ***global-scope***, and the *{@link ConsoleLogFunction|function}* that's used there. */
+export interface LogFuncData {
+  type: string;
+  name: string;
+  func: ConsoleLogFunction;
+}
+
+
 /** The standard log types that are used for logging. Each will have their own function() call tied to them */
 export type DefLogType = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
-
 
 
 /**
@@ -75,13 +85,12 @@ export type LogParams = { message?: any,  optionalParams?: any[] };
 
 // #endregion
 /** The base class for storing  */
-// export class BaseLogger<TC extends LoggerConfig = BaseLoggerConfig> {
 export class BaseLogger<
   TLogType extends string = string, 
   TLogFunc extends ConsoleLogFunction = BaseLogFunction,
   TLogStruct extends BaseLogStruct = BaseLogStruct,
   TLogMetadata extends BaseLogMetadata<TLogType> = BaseLogMetadata<TLogType>,
-  TLogInfo extends BaseLogInfo<TLogStruct, TLogMetadata> = BaseLogInfo<TLogStruct, TLogMetadata>
+  TLogInfo extends BaseLogInfo<TLogStruct, TLogMetadata> = BaseLogInfo<TLogStruct, TLogMetadata>,
 > {
   // #region State
   // ? Stored Log information
@@ -104,15 +113,15 @@ export class BaseLogger<
   protected _functionsInitialized: boolean = false;
   
   /** 
-   * #### LogTypes
-   * A cached map containing each log function we attach to the global scope.
+   * #### LogFuncs
+   * A cached map containing each log function and it's information we attach to the global scope.
    * * {@link DefLogType|TLogType}:    The different types of log functions you'd like to add to the application. 
-   * * {@link BaseLogFunction}:           Uses custom arguments for creating logs in the application.
+   * * {@link BaseLogFunction}:        The custom arguments and it's name for each log function used in the application.
    * 
    * ----
    * This map should be created before you call ***{@link InitializeLogs()}. ***
    */
-  protected _logTypes: Map<TLogType, TLogFunc> = new Map();
+  protected _logFuncs: Map<TLogType, LogFuncData> = new Map<TLogType, LogFuncData>();
   
   
   
@@ -153,17 +162,16 @@ export class BaseLogger<
       globalScope.logClass = this;
     }
     
-    // The base log functions
-    globalScope.debugLog = debugLogFunc;
-    globalScope.errorLog = errLogFunc;
-    globalScope.warnLog = warnLogFunc;
-    globalScope.log   = infoLogFunc;
-    
     // The added log types to this class
-    this.addLogType("DEBUG" as TLogType, debugLogFunc);
-    this.addLogType("ERROR" as TLogType, errLogFunc);
-    this.addLogType("WARN" as TLogType, warnLogFunc);
-    this.addLogType("INFO" as TLogType, infoLogFunc);
+    this.addLogType("DEBUG" as TLogType, debugLogFunc, "debugLog");
+    this.addLogType("ERROR" as TLogType, errLogFunc, "errorLog");
+    this.addLogType("WARN" as TLogType, warnLogFunc, "warnLog");
+    this.addLogType("INFO" as TLogType, infoLogFunc, "log");
+    
+    // ? Add the base log functions to the global scope
+    for (const {type, name, func } of this._logFuncs.values()) {
+      globalScope[name] = func;
+    }
     
     // -> Set that we've already added the log functions to the global scope
     this._functionsInitialized = true;
@@ -445,13 +453,13 @@ export class BaseLogger<
   // #region Log Types
   /** 
    * ### `get logTypes()`
-   * Retrieves a map of the **{@link TLogType|LogTypes}** and their called functions from this {@link BaseLogger|class}.
+   * Retrieves a map of the **{@link TLogFuncData|Log's Function data}}** and their called function's relevant information from this {@link BaseLogger|class}.
    * 
    * ----
-   * @returns           A map of the *{@link TLogType|LogTypes}* and their functions.
+   * @returns           A map of the *{@link TLogFuncData|Log's Function data}*.
    */
-  public get logTypes(): Map<TLogType, TLogFunc> {
-    return this._logTypes;
+  public get logTypes(): Map<TLogType, LogFuncData> {
+    return this._logFuncs;
   }
   
   
@@ -469,14 +477,16 @@ export class BaseLogger<
   
   /** 
    * ### `addLogType()`
-   * Adds the blueprint of a new log function mapped to a **{@link TLogType|LogTypes}**.
+   * Adds the blueprint of a new log function mapped to the *global scope* using **{@link TLogType|LogTypes}**.
    * 
    * ----
-   * @param type        The {@link TLogType|Log Type} the function is being mapped to 
-   * @param func        The function that's added to the *global* scope.
+   * @param type        The *{@link TLogType|Log Type}* this function is being mapped to 
+   * @param func        The function that's added to the **global** scope.
+   * @param name        The **name** of the function that's added to the *global* scope.
    */
-  public addLogType(type: TLogType, func: TLogFunc): void {
-    this.logTypes.set(type, func);
+  public addLogType(type: TLogType, func: TLogFunc, name: string): void {
+    const logFunctionData: LogFuncData = { type, func, name };
+    this.logTypes.set(type, logFunctionData);
   }
   
   
