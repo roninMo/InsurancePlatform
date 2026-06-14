@@ -1,7 +1,6 @@
 import { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { RouterProvider, ScrollRestoration, useLocation } from 'react-router-dom';
 import { router } from './routes';
-import baseLogger from '@Project/ReactComponents/Common/Utilities/Logging/BaseLogger';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { UserTokenInformation } from '@Project/Classes';
@@ -26,36 +25,35 @@ export interface LoginContextProps {
 }
 export const LoginContext = createContext<LoginContextProps>({});
 
-// Add the custom logging
-baseLogger.initializeLogFunctions();
 
 export function App() {
   const [userTokenInformation, setUserTokenInformation] = useState<UserTokenInformation | null>(null);
   const [accessToken, setAccessToken] = useState<string>();
   
+  console.log('\n\n');
   log('content', `App rerendered: data: `, { userTokenInformation, accessToken }, "another value", { another: 'object' });
   console.log('content', `App rerendered: data: `, { userTokenInformation, accessToken }, "another value", { another: 'object' });
   console.log(`globalThis`, globalThis);
-
+  
   // Authentication
   useEffect(() => {
     // Retrieve login information
     if (!accessToken || !userTokenInformation) {
       getAccessToken();
     }
-
+    
     // Retrieve Cookies -> metadata, etc.
     Cookies.get('thisWebsite-metadata');
-
+    
     // Console Information
     console.log('\ninformation: ', { userTokenInformation, accessToken });
   }, [accessToken, userTokenInformation]);
-
+  
   // Retrieve the access token (login info) in the event the user is already logged in.
   const getAccessToken = async () => {
       let token = localStorage.getItem('accessToken') || '';
       let tokenInformation: UserTokenInformation | null;
-
+      
       if (token) {
         setAccessToken(token);
         tokenInformation = jwtDecode<UserTokenInformation>(token);

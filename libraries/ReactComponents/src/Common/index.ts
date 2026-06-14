@@ -32,9 +32,9 @@ export * from './Utilities/Tooltip/TooltipProvider/TooltipProvider';
 // Devlog Functionality
 export * from './Utilities/Logging/BaseLogger';
 export * from './Utilities/Logging/Devlog';
-export * from './Utilities/Logging/useRenderTracker';
+export * from './Utilities/Logging/useRerenderStats';
 export * from './Utilities/Logging/DevLogCompHierarchyBuilder_React';
-export { vitePluginDevLog } from './Utilities/Logging/vite-plugin-devlog';
+export { vitePluginDevlog } from './Utilities/Logging/vite-plugin-devlog';
 
 // Utility stuff
 export * from './Utilities/Utils';

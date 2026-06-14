@@ -1,6 +1,10 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
+import devlog from '@Project/ReactComponents/Common/Utilities/Logging/Devlog';
 import App from './app/app';
+
+// Add the custom logging
+devlog.initializeLogFunctions();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

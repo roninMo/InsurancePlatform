@@ -357,7 +357,8 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
     this.addLogType("ERROR", errLogFunc, "errorLog");
     this.addLogType("WARN", warnLogFunc, "warnLog");
     this.addLogType("INFO", infoLogFunc, "log");
-    this.addLogType("RENDER", renderLogFunc, "render");
+    this.addLogType("RENDER", renderLogFunc, "renderLog");
+    console.log(`devlog added the custom logging functions!`);
     
     // ? Add the base log functions to the global scope
     for (const { name, func } of this._logFuncs.values()) {
@@ -435,7 +436,8 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
   }
   
   /** Example routed log function.  */
-  private renderLog(category: string, compId: string, message?: any, ...optionalParams: any[]): void {
+  private renderLog(category: string, compId: string, renderData: LogRenderData, message?: any, ...optionalParams: any[]): void {
+    console.log(`${compId} rerendered: `, renderData);
     this.logFuncRef("RENDER", category, compId, arguments, 2); // chop category and compId from the "this"^ function's arguments
   }
   

@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 // This is retrieved before vite rolls up the project into flat optimized bundles
-import { vitePluginDevlog } from '../../libraries/ReactComponents/dist/Common/Utilities/Logging/vite-plugin-devlog.ts';
+import { vitePluginDevlog } from '../../libraries/ReactComponents/src/Common/Utilities/Logging/vite-plugin-devlog.ts';
 // WE may get a crash here because this plugin is also using files from the library, import them here to be safe, or stick with relative imports
 
 import react from '@vitejs/plugin-react';
@@ -12,6 +12,9 @@ import * as path from 'path';
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/Frontend',
+  define: {
+    'process.env': {} // Catch for babel plugin's old webpack logic for implementing environmental stuff
+  },
   server: {
     port: 4200,
     host: 'localhost',
