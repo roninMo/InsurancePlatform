@@ -11,7 +11,7 @@ import { BaseLogger, BaseLogFunction, BaseLogInfo, BaseLogMetadata, BaseLogStruc
 export interface LogInfo extends BaseLogInfo<LogStruct, LogMetadata> {
   compId: string,
   data: LogStruct,
-  renderData: LogRenderData,
+  renderData: RenderLogData,
   metaData: LogMetadata,
 };
 
@@ -30,18 +30,14 @@ export interface LogStruct extends BaseLogStruct {
 
 
 /** The component's contextual information for when it's rerendered, using a snapshot of the state that is has at any given time. */
-export interface LogRenderData {
-  propsChanged: Record<string, { prev: any; next: any }>;
-  isInitialRender: boolean;
-  renderCount: number;
+export interface RenderLogData {
+  componentName: string,
+  parentName?: string, // This is retrieved during runtime
+  props?: any[],
+  stateHooks?: any[],
+  reducers?: any[],
+  contexts?: any[],
 }
-// export interface LogRenderData {
-//   parentName: string, // Can this be "safely" initialized before runtime?
-//   componentName: string,
-//   props?: any[],
-//   contexts?: any[],
-//   hooks?: any[],
-// }
 
 
 /** The log's base metadata information */
@@ -65,7 +61,7 @@ export interface LogFunction extends BaseLogFunction {
 
 
 export interface RenderLogFunction extends LogFunction {
-  (category: string, compId: string, renderData: LogRenderData, message?: any, ...optionalParams: any[]): void;
+  (category: string, compId: string, renderData: RenderLogData, message?: any, ...optionalParams: any[]): void;
 }
 
 
@@ -436,7 +432,7 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
   }
   
   /** Example routed log function.  */
-  private renderLog(category: string, compId: string, renderData: LogRenderData, message?: any, ...optionalParams: any[]): void {
+  private renderLog(category: string, compId: string, renderData: RenderLogData, message?: any, ...optionalParams: any[]): void {
     console.log(`${compId} rerendered: `, renderData);
     this.logFuncRef("RENDER", category, compId, arguments, 2); // chop category and compId from the "this"^ function's arguments
   }
@@ -455,7 +451,7 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
    * @param logData       The combined {@link TLogStruct|LogStruct} and {@link TLogMetadata|LogMetadata} object
    */
   protected addLog(logData: LogStruct, logMetadata: LogMetadata): void;
-  protected addLog(logData: LogStruct, renderData: LogRenderData, logMetadata: LogMetadata, id: string): void;
+  protected addLog(logData: LogStruct, renderData: RenderLogData, logMetadata: LogMetadata, id: string): void;
   
   
   /** 
@@ -469,11 +465,11 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
   protected override addLog(arg1: any, arg2: any, arg3?: any, arg4?: any): void {
     // ? Retrieve the overloaded parameters
     const logData: LogStruct = arg1;
-    let renderData: LogRenderData = {} as any;
+    let renderData: RenderLogData = {} as any;
     let logMetadata: LogMetadata = {} as any;
     let compId: string = arg4 || "";
     
-    // LogRenderData
+    // RenderLogData
     const renderDataOrMetadata = arg2 || {};
     if ('componentName' in renderDataOrMetadata) {
       renderData = renderDataOrMetadata;
