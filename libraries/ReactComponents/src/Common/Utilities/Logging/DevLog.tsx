@@ -1,19 +1,70 @@
 import { BaseLogger, BaseLogFunction, BaseLogInfo, BaseLogMetadata, BaseLogStruct, DefLogType, LogParams } from "./BaseLogger";
+import { devLogCompHierarchyBuilder } from './DevLogCompHierarchyBuilder_React';
 
 
 // #region Types
 /** 
- * ### LogInfo
  * The organized log information stored in the {@link _logs|log history} of the application's {@link BaseLogger|Logger}. 
- * * `TLogStruct` - &nbsp; &nbsp; &nbsp; The custom arguments passed into the *{@link BaseLogger.initializeLogFunctions|log()}* functions.
- * * `TLogMetadata` - &nbsp; Information specific to when and what called the *{@link BaseLogger.initializeLogFunctions|log()}* function.
+ * 
+ * *Values*:
+ * * `CompId` - &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ *      The unique name created from the {@link devLogCompHierarchyBuilder}
+ * * `LogStruct` - &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ *      The custom arguments passed into the *{@link BaseLogger.initializeLogFunctions|log()}* functions.
+ * * `LogRenderData` - &nbsp; 
+ *      The custom arguments passed into the *{@link BaseLogger.initializeLogFunctions|log()}* functions.
+ * * `LogMetadata` - &nbsp; &nbsp; &nbsp; 
+ *      Information specific to when and what called the *{@link BaseLogger.initializeLogFunctions|log()}* function.
 */
 export interface LogInfo extends BaseLogInfo<LogStruct, LogMetadata> {
   compId: string,
   data: LogStruct,
-  renderData: RenderLogData,
+  renderData: LogRenderData,
   metaData: LogMetadata,
 };
+
+
+/** 
+ * **{@link Devlog}** context information and settings specific to each component, 
+ * stored within a flat map on the global scope using the `compId` from {@link devLogCompHierarchyBuilder}. 
+ * 
+ * ----
+ * This stores the component's identifiers, whether it has certain types of state, and settings for each individual component.
+*/
+export interface ComponentLogConfig {
+  /** A reliable name for record keeping. It's just created from a instanced component counter hash. */
+  id: string;
+  
+  /** The function's name */
+  componentName: string;
+  /** Presentational: has no hooks or state that would cause rerendering, whereas Dynamic could cause rerenders for itself, or other components. */
+  componentType?: 'Dynamic' | 'Presentational' | 'Other' | 'Unknown';
+  
+  // * Context Information and Settings 
+  hasProps?: boolean;
+  hasHooks?: boolean | {
+    useStateValues?: boolean;
+    useReducerValues?: boolean;
+    useContextValues?: boolean;
+  };
+  
+  // * Settings specific to each component
+  consoleLoggingDisabled?: boolean;
+  loggingDisabled?: boolean;
+};
+
+
+/** 
+ * **{@link Devlog}** settings for how it handles logging and displaying historical information for each component, 
+ * as well as display settings for the *Devlog's* ui component. This is stored in the *Devlog* class on the global scope.
+ * 
+ * ----
+ * This stores the component's identifiers, whether it has certain types of state,
+*/
+export interface UniversalDevlogConsoleSettings {
+  enableConsoleLogs?: boolean;
+  // Other devlog console settings displayed here
+}
 
 
 /** The stored log data for quickly finding and retrieving logs in history. */
@@ -30,7 +81,7 @@ export interface LogStruct extends BaseLogStruct {
 
 
 /** The component's contextual information for when it's rerendered, using a snapshot of the state that is has at any given time. */
-export interface RenderLogData {
+export interface LogRenderData {
   componentName: string,
   parentName?: string, // This is retrieved during runtime
   props?: any[],
@@ -61,7 +112,7 @@ export interface LogFunction extends BaseLogFunction {
 
 
 export interface RenderLogFunction extends LogFunction {
-  (category: string, compId: string, renderData: RenderLogData, message?: any, ...optionalParams: any[]): void;
+  (category: string, compId: string, renderData: LogRenderData, message?: any, ...optionalParams: any[]): void;
 }
 
 
@@ -354,7 +405,7 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
     this.addLogType("WARN", warnLogFunc, "warnLog");
     this.addLogType("INFO", infoLogFunc, "log");
     this.addLogType("RENDER", renderLogFunc, "renderLog");
-    console.log(`devlog added the custom logging functions!`);
+    console.log(`devlog added the custom logging functions! LogTypes: `, this.logTypes);
     
     // ? Add the base log functions to the global scope
     for (const { name, func } of this._logFuncs.values()) {
@@ -432,7 +483,7 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
   }
   
   /** Example routed log function.  */
-  private renderLog(category: string, compId: string, renderData: RenderLogData, message?: any, ...optionalParams: any[]): void {
+  private renderLog(category: string, compId: string, renderData: LogRenderData, message?: any, ...optionalParams: any[]): void {
     console.log(`${compId} rerendered: `, renderData);
     this.logFuncRef("RENDER", category, compId, arguments, 2); // chop category and compId from the "this"^ function's arguments
   }
@@ -451,7 +502,7 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
    * @param logData       The combined {@link TLogStruct|LogStruct} and {@link TLogMetadata|LogMetadata} object
    */
   protected addLog(logData: LogStruct, logMetadata: LogMetadata): void;
-  protected addLog(logData: LogStruct, renderData: RenderLogData, logMetadata: LogMetadata, id: string): void;
+  protected addLog(logData: LogStruct, renderData: LogRenderData, logMetadata: LogMetadata, id: string): void;
   
   
   /** 
@@ -465,11 +516,11 @@ export class Devlog extends BaseLogger<LogType, LogFunction, LogStruct, LogMetad
   protected override addLog(arg1: any, arg2: any, arg3?: any, arg4?: any): void {
     // ? Retrieve the overloaded parameters
     const logData: LogStruct = arg1;
-    let renderData: RenderLogData = {} as any;
+    let renderData: LogRenderData = {} as any;
     let logMetadata: LogMetadata = {} as any;
     let compId: string = arg4 || "";
     
-    // RenderLogData
+    // LogRenderData
     const renderDataOrMetadata = arg2 || {};
     if ('componentName' in renderDataOrMetadata) {
       renderData = renderDataOrMetadata;

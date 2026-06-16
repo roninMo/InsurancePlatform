@@ -1,7 +1,21 @@
-import { NodePath, PluginObj, types as BabelTypes, BabelFile, PluginPass } from "@babel/core";
+import { NodePath, PluginObj, types as t, BabelFile, PluginPass } from "@babel/core";
 import { addNamed } from "@babel/helper-module-imports";
-import { Devlog, LogInfo, RenderLogData } from "./Devlog";
-import { ArrowFunctionExpression, BlockStatement, BlockStatement, FunctionDeclaration, VariableDeclarator } from "@babel/types";
+import { ComponentLogConfig, Devlog, LogInfo, LogRenderData } from "./Devlog";
+import { 
+  ArrowFunctionExpression,   CallExpression,   FunctionDeclaration,   VariableDeclarator,   ClassExpression,  
+  isArrowFunctionExpression, isCallExpression, isFunctionDeclaration, isVariableDeclarator, isClassExpression,
+  
+  BlockStatement, 
+  expressionStatement, 
+  
+  assignmentExpression, 
+  memberExpression, 
+  Program, 
+  valueToNode,
+  isIdentifier,
+  FunctionExpression,
+  isFunctionExpression,
+} from "@babel/types";
 
 
 
@@ -55,6 +69,9 @@ import { ArrowFunctionExpression, BlockStatement, BlockStatement, FunctionDeclar
 
 */
 
+/** The specific Node types we're accessing react components from. */
+type CompNodeTypes = FunctionDeclaration | ArrowFunctionExpression | ClassExpression;
+
 
 /** 
  * ### *addRenderLogs()*
@@ -76,20 +93,40 @@ import { ArrowFunctionExpression, BlockStatement, BlockStatement, FunctionDeclar
  * ----
  * @note In order to use this and the {@link Devlog} properly, **{@link createCompReferenceHierarchy()}** must first be ran.
  */
-export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTypes }): PluginObj {
-  const devlogHelper = new ASTComponentHelper();
+export function devLogCompHierarchyBuilder(): PluginObj {
+  // React utilities for finding jsx components, retrieving component information, and validating component's logic
+  const devlogHelper = new ReactComponentUtils();
+  
+  // Component List with settings attached to each component that the DevLog uses for context and functionality
+  const componentMetadata = new Map<string, ComponentLogConfig>();
   
   // Keep track of how many times the component has been "created"
   const componentInstances = new Map<string, number>();
   
+  // Log information
+  const capturedLogs: any = [];
+  const funcLogLimitCounter: number = 5;
+  const arrExpLogLimitCounter: number = 5;
   
+  // TODO: Add logMessages to the window, and have them ran at runtime so we have a minified log list that's more readable
+  // TODO: Add a function to ReactComponentUtils - 
+  //  () getMemoizedReactComponents(path: NodePath<t.ClassExpression>): NodePath<t.FunctionDeclaration | t.ArrowFunctionExpression> {}
+  // TODO: Add renderLog() right before the first return statement. Scenarios to account for:
+  //      - The function needs to be called after all hooks have been declared to access them
+  //      - In react, it's required that they're always defined, and not conditionally defined
+  //      - So we should search for the first root return JSX statement, whether it's found on the root of the component, or inside of a conditional statement
+  // TODO: Check that renderLog() is being added and components are printing them properly during runtime
+  // TODO: Check that we're grabbing the proper compId and displaying it to the console, with reference to the componentTreeHierarchy in Devlog
+  
+  
+  // #region Component Processing
   /** Checks that these are react components before running all the devlog's necessary functionality on the component. */
   function handleFunction(path: NodePath<FunctionDeclaration | ArrowFunctionExpression>) {
     const node = path.node;
     let name: string = "Unknown";
     if (!node) return;
     
-    // Retrieve the function's code
+    // ? Does this component have code
     const code = devlogHelper.getCodeFromFuncTypes(path);
     if (!code) { // <- We found an arrow func that's only returns something, whether it be a function or just a displayed jsx element
       return;
@@ -101,19 +138,22 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
     }
     
     // Add the necessary information and functionality to each component
-    addCompIdAndName(path);
-    addRenderLogAndData(path);
+    let componentConfig: ComponentLogConfig = {} as any;
+    initComponentForDevlog(path, componentConfig);
+    addRenderLogAndData(path, componentConfig);
   }
   
   
-  /** Attaches a unique component id and the component name to the component function for access from React.Fiber, and during runtime. */
-  function addCompIdAndName(path: NodePath<FunctionDeclaration | ArrowFunctionExpression>) {
+  // #endregion
+  // #region Add Component's id and name, and it devlog config to every component
+  /** Attaches a unique component id and the component name to the component function for access from React.Fiber, and during runtime. Then adds metadata for the devLog */
+  function initComponentForDevlog(path: NodePath<FunctionDeclaration | ArrowFunctionExpression>, config: ComponentLogConfig) {
     const node = path.node;
     let name: string = "Unknown";
     
     // Retrieve the component's name
-    if (BabelTypes.isArrowFunctionExpression(node)) name = devlogHelper.getArrowFuncExpName(path as NodePath<ArrowFunctionExpression>) || name;
-    if (BabelTypes.isFunctionDeclaration(node)) name = node.id?.name || name;
+    if (t.isArrowFunctionExpression(node)) name = devlogHelper.getArrowFuncExpName(path as NodePath<ArrowFunctionExpression>) || name;
+    if (t.isFunctionDeclaration(node)) name = node.id?.name || name;
     
     // Manage counter safely with Map APIs
     const currentCount = componentInstances.get(name) ?? 0;
@@ -123,6 +163,7 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
     // Create the component's id // * assignment = ComponentA.__uniqueComponentId__ = "ComponentA_1";
     const compId = `${name}_${nextCount}`; // e.g., "ComponentA_1", "ComponentA_2"
     
+    // TODO - This will not work with instanced components, add this to the props list of component w/state. (any comp with props OR hooks)
     const addVar_CompId = t.expressionStatement(
       t.assignmentExpression(
         "=", // equals assignment operation
@@ -132,6 +173,7 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
     );
     
     // Because component names are destroyed in production, let's just create another ref here:
+    // TODO - we still need CompName because the native Component.name is minified and non-unique among other component names at runtime in non-development modes
     const addVar_CompName = t.expressionStatement(
       t.assignmentExpression(
         "=",
@@ -146,128 +188,61 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
     const insertionPath = path.getStatementParent() || path; // ? add cleanly to new lines after the declaration
     insertionPath.insertAfter(addVar_CompId);
     insertionPath.insertAfter(addVar_CompName);
+    // Add the component's metadata to the config
+    config.id = compId;
+    config.componentName = name;
   }
   
   
-  function addRenderLogAndData(path: NodePath<FunctionDeclaration | ArrowFunctionExpression>) {
+  // #endregion
+  // #region Add RenderLogs and render context data capture to every component
+  function addRenderLogAndData(path: NodePath<FunctionDeclaration | ArrowFunctionExpression>, config: ComponentLogConfig) {
     const node = path.node;
     if (!node) return;
     
     // Check that the component has props / hooks. If it does not, it doesn't need to have renderLogs
     const props = devlogHelper.getComponentProps(node.params);
-    const renderInformation: Partial<RenderLogData> = devlogHelper.getHooks(path);
+    const renderInformation: Partial<LogRenderData> = devlogHelper.getHooks(path);
     
+    // Update the component's logging config with this information
     let hasProps = false; // Props either returns as "props", or an destructured object. Check both here
     let hasHooks = renderInformation?.stateHooks?.length || renderInformation?.contexts?.length || renderInformation?.reducers?.length;
     if (props.name === 'props' || props.keys?.length) hasProps = true;
+    config.hasProps = hasProps;
     
+    // <- Early out: We're logging components that cause rerenders, not representational ones
     if (!hasProps && !hasHooks) {
       console.log(`component ${(node as any)?.id?.name} did not have any props(${props.type})! propName: ${props.name}, keys: `, props.keys);
+      config.hasHooks = false;
       return;
+    } else { // () Else: Update config and continue
+      config.hasHooks = {
+        useStateValues: !!renderInformation?.stateHooks?.length,
+        useReducerValues: !!renderInformation?.reducers?.length,
+        useContextValues: !!renderInformation.contexts?.length
+      };
     }
     
     // ? Add the render log function, and map the arguments to the function
-    if (BabelTypes.isArrowFunctionExpression(node)) {
+    if (t.isArrowFunctionExpression(node)) {
+      // Use the variable names within render information to pass the props and hooks to the renderLog function
+      // ? Recreate renderInformation as multiple expressions
+      //    * AllHooks - ArrayExpressions with a list of each of the hooks
+      //    * Props - ObjectExpression of the list of props. Either props, or the destructured list of values
+      //    * Pass the Component Name via the reference we created in initCompForDevlog)
+      // ? Pass these props into a function created right before the jsxElement return statement 
       
     }
     
-    if (BabelTypes.isFunctionDeclaration(node)) {
-      
-    }
+    if (t.isFunctionDeclaration(node)) {
+        }
   }
   
   
-  function createCompHierarchyRefMap() {
-    // We need a hashmap of each compId with an object containing what kind of component it is
-    // For devlog specific ui settings, etc.  (toggle on/off logging for a specific component)
-    // Having access to each individual component with metadata specific to config, and even the captured values here might be helpful
-  }
-  
-  
+  // #endregion
+  // #region Old Logic
   function processComponent(path: NodePath<any>, name: string, functionBlock: any) {
-    const component = functionBlock; // Use functionBlock parameter reference safely
-    if (!component || !name) return;
-    
-    // <- Opt-in check: Only target uppercase names (React components)
-    if (!/^[A-Z]/.test(name)) return;
-    console.log(`functionDeclaration / arrowComponent was ran on: ${name}`)
-    
-    
-    // #region Add The compId
-    // Manage counter safely with Map APIs
-    const currentCount = componentInstances.get(name) ?? 0;
-    const nextCount = currentCount + 1;
-    componentInstances.set(name, nextCount);
-    
-    // Create the component's id
-    // * assignment = ComponentA.__uniqueComponentId__ = "ComponentA_1";
-    const compId = `${name}_${nextCount}`; // e.g., "ComponentA_1", "ComponentA_2"
-    
-    const insertionPath = path.isVariableDeclarator() ? path.parentPath : path; // Direct statement line alignment
-    const addVar_CompId = t.expressionStatement(
-      t.assignmentExpression(
-        "=", // equals assignment operation
-        t.memberExpression(t.identifier(name), t.identifier("__uniqueComponentId__")), // left side of the equals sign
-        t.stringLiteral(compId) // the right side of the equals sign
-      )
-    );
-    
-    // Because component names are destroyed in production, let's just create another ref here:
-    const addVar_CompName = t.expressionStatement(
-      t.assignmentExpression(
-        "=",
-        t.memberExpression(t.identifier(name), t.identifier("__ComponentName__")),
-        t.stringLiteral(name)
-      )
-    );
-    
-    // -> Complete: Insert these right after the function definition
-    insertionPath.insertAfter(addVar_CompId);
-    insertionPath.insertAfter(addVar_CompName);
-    // #endregion
-    
-    
-    // 1. Core Injection: Automatically manage named library hook import statements securely
-    const importUseRerenderStats = addNamed(
-      path, 
-      "useRerenderStats", 
-      "@Project/ReactComponents/Common/Utilities/Logging/useRerenderStats"
-    );
-    
-    // {} Gather and structure the props
-    // ? Determine how props are named in the component parameters (usually the first param, e.g., 'props')
-    const hasParams = Array.isArray(component.params) && component.params.length > 0;
-    const firstParam = hasParams ? component.params[0] : null;
-    
-    let propsIdentifier: BabelTypes.Expression = t.objectExpression([]); // Fallback to an empty object if no props exist
-    let destructuringRestorationNode: BabelTypes.Statement | null = null;
-    
-    if (firstParam) {
-      // ? Case: function MyComponent(props) { ... }
-      if (t.isIdentifier(firstParam)) {
-        propsIdentifier = t.identifier(firstParam.name);
-      }
-      // ? Case Destructured: function MyComponent({ title, userId }) { ... }
-      else if (t.isObjectPattern(firstParam)) {
-        const tempPropsName = `_devlog_props_${name}`;
-        
-        // A. Create the props extractor pointer variable: _devlog_props_Home[0]
-        propsIdentifier = t.memberExpression(
-          t.identifier(tempPropsName),
-          t.numericLiteral(0),
-          true
-        );
-        
-        // B. Create the restoration line statement: const { name, styles } = _devlog_props_Home[0];
-        destructuringRestorationNode = t.variableDeclaration("const", [
-          t.variableDeclarator(firstParam, propsIdentifier)
-        ]);
-        
-        // C. Rewrite the function signature parameters to accept the rest expression capture array: (..._devlog_props_Home)
-        component.params = [t.restElement(t.identifier(tempPropsName))];
-      }
-    }
-    
+    // To be deleted
     // 2. Build tracking hook execution: const _renderData = useRerenderStats("Comp_1", props);
     // const trackerHookCall = t.variableDeclaration("const", [
     //   t.variableDeclarator(
@@ -280,27 +255,28 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
     // ]);
     
     // 3. Build master logging statement call expression: window._devlog_renderLog('rerender', "Comp_1", _renderData);
-    const logCall = t.expressionStatement(
-      t.callExpression(t.identifier("renderLog"), [
-        t.stringLiteral("rerender"),
-        t.stringLiteral(compId),
-        t.identifier("_renderData")
-      ])
-    );
+    // const logCall = t.expressionStatement(
+    //   t.callExpression(t.identifier("renderLog"), [
+    //     t.stringLiteral("rerender"),
+    //     t.stringLiteral(compId),
+    //     t.identifier("_renderData")
+    //   ])
+    // );
     
-    // 4. Inject statements inside the block statement body safely
-    if (component.body && Array.isArray(component.body.body)) {
-      // If the component used destructuring, place the restoration statement at the absolute top first!
-      if (destructuringRestorationNode) {
-        component.body.body.unshift(destructuringRestorationNode, trackerHookCall, logCall);
-      } else {
-        component.body.body.unshift(trackerHookCall, logCall);
-      }
-    }
+    // // 4. Inject statements inside the block statement body safely
+    // if (component.body && Array.isArray(component.body.body)) {
+    //   // If the component used destructuring, place the restoration statement at the absolute top first!
+    //   if (destructuringRestorationNode) {
+    //     component.body.body.unshift(destructuringRestorationNode, logCall);
+    //   } else {
+    //     component.body.body.unshift(logCall);
+    //   }
+    // }
   }
   
   
-  
+  // #endregion
+  // #region Component File Search and Traversal
   return {
     name: "devlog-component-hierarchy-builder",
     
@@ -312,6 +288,7 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
     
     // Targets specific code within a file
     visitor: {
+      // #region FunctionDeclaration ->  Logic ran on Functions() {}
       /**
        * Is ran on every function within a file. It has direct access to things like:
        * * id.name   - The component name
@@ -329,12 +306,32 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
       },
       
       
+      // #endregion
+      // #region ArrowFunctionExpression ->  Logic ran on Arrow functions () => {}
+      /**
+       * Is ran on every arrow function expression within a file.
+       * * params - Array of parameter nodes passed to the function.
+       * * params[0] - The first parameter node. Can be an Identifier (e.g., "props") or an "ObjectPattern" if destructured.
+       * * body - The body of the arrow function. 
+       * * init.body - If it uses brackets {}, then this is a BlockStatement, which you can access via "init.body.body". 
+       * * body.type - If a single expression without brackets (e.g., `() => x`), this is the explicit expression node type (e.g., Identifier, BinaryExpression).
+       * * typeParameters - The type parameter declaration matrix for generics (e.g., `<T>(props: T) => {}`).
+       * * async - Boolean indicating if the arrow function is marked with the `async` keyword.
+       * () => {} Arrow functions are *anonymous*, so you have to use the `parentNode` (VariableDeclarator) to find the name of the function.
+       * 
+       * ----
+       * @example // ? const MyComponent = () => {}
+       * @example // ? array.map(x => x * 2)
+       * @param path The current `arrow function` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<ArrowFunctionExpression>
+       */
       ArrowFunctionExpression(path: NodePath<ArrowFunctionExpression>) {
         
       },
       
       
-      
+      // #endregion
+      // #region VariableDeclarator ->  const str = 'val'; const num = 1; const dispData => {};  const theme = useContext(themeContext);
       /**
        * Is ran on every variable within a file. This contains only the key-value pair of the variable. 
        * * id       - The name of the variable
@@ -342,9 +339,9 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
        * 
        * () Init Parameters:
        * * init.params    - The function's parameters?
-       * * init.params[0] - The props node. It contains things like Identifier if written as "props", or "ObjectPattern" if destructured
+       * * init.params[0] - The first parameter node. Can be an Identifier (e.g., "props") or an "ObjectPattern" if destructured.
        * * init.body      - If it uses brackets {}, then this is a BlockStatement, which you can access via "init.body.body". 
-       * * init.typeParameters - The type matrix used for this templated variable declarations ( const Comp = <T,>(props: T) => {} )
+       * * typeParameters - The type parameter declaration matrix for generics (e.g., `<T>(props: T) => {}`).
        * () => {} Also useful in the event of arrow functions 
        * 
        * ----
@@ -353,31 +350,103 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
        * @param path    The current `variable` we're viewing.
        * @remarks At the bottom of the page are the different structures for NodePath<VariableDeclaration>
        */
-      VariableDeclarator(path: NodePath<BabelTypes.VariableDeclarator>, pass: PluginPass) {
-        const name = t.isIdentifier(path.node.id) ? path.node.id.name : null;
-        if (!name) return;
-        const init: BabelTypes.Expression = path.node.init as BabelTypes.Expression;
+      VariableDeclarator(path: NodePath<t.VariableDeclarator>, pass: PluginPass) {
+        // if (!(path.isArrowFunctionExpression || path.isFunctionDeclaration || path.isFunctionExpression)) return;
+        const varPath = path.get('init');
+        if (!varPath || !varPath.node) return; // everything is undefined?
         
-        if (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init)) {
-          // we're trying to avoid React.FC and other component only with visual purposes created without brackets: const MyComp = () => <div />;
-          if (!t.isBlockStatement(init.body)) {
-            return;
-          }
+        const isFunctionValue = 
+        varPath.isArrowFunctionExpression() || 
+        varPath.isFunctionExpression() ||
+          // Catch components wrapped in memo() or forwardRef()
+          varPath.isCallExpression(); 
+        if (!isFunctionValue) {
+          return;
+        }
+        
+        // ? Does is have a PascalCase name?
+        let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
+        const isPascalCase = /^[A-Z]/.test(name);
+        if (!isPascalCase) return false;
+        
+        // TODO: Fix the isReactComponent functions aren't working yet
+        const isReactComponent = devlogHelper.isReactComponent(path);
+        const isMemoComponent = devlogHelper.isMemoComponent(path);
+        capturedLogs.push([`component ${name}: `, { isReactComponent, isMemoComponent}]);
+        if (isReactComponent || isMemoComponent) {
           
-          processComponent(path, name, init);
         }
       },
       
+      
+      // #endregion
+      // #region CallExpression ->  A function call anywhere in the code
+      /**
+       * Is ran on every function within a file. It has direct access to things like:
+       * * callee.name    - The props array
+       * * callee.type    - The component name
+       * * arguments      - This is an array of variable types "StringLiteral", "ObjectExpression", etc.
+       * * gen/async - Whether it's a normal or an async function. note: React components cannot be async!
+       * 
+       * ----
+       * @example       // ? foo(), or const val = useHook(), or const ComponentA = memo(() => { ...code });
+       * @param path    The current `function` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<FunctionDeclaration>
+       */
+      CallExpression(path: NodePath<CallExpression>) {
+        
+      },
+      
+      
+      // #endregion
+      // #region Program ->  Enter and Exit functionality
+      Program: {
+        enter(path: NodePath<Program>) {
+          // Clear the bucket at the start of EVERY file so logs don't bleed
+          capturedLogs.length = 0;},
+        exit(path: NodePath<Program>) {
+          // If the file didn't find any variables, don't inject empty arrays
+          if (capturedLogs.length === 0) return;
+
+          // Convert our raw JS objects into hardcoded browser-safe AST nodes
+          const fileLogNodes = t.valueToNode(capturedLogs);
+
+          // Build: window.myAstLogs = (window.myAstLogs || []).concat([...])
+          const appendExpression = t.expressionStatement(
+            t.assignmentExpression(
+              '=',
+              t.memberExpression(t.identifier('window'), t.identifier('myAstLogs')),
+              t.callExpression(
+                t.memberExpression(
+                  t.logicalExpression(
+                    '||',
+                    t.memberExpression(t.identifier('window'), t.identifier('myAstLogs')),
+                    t.arrayExpression([])
+                  ),
+                  t.identifier('concat')
+                ),
+                [fileLogNodes]
+              )
+            )
+          );
+
+          // Push this logic to the bottom of the current file
+          path.pushContainer('body', appendExpression);
+        }
+      },
+      
+      
+      // #endregion
       // #region Other useful syntax targets
-      ImportDeclaration(path: NodePath<BabelTypes.ImportDeclaration>, pass: PluginPass) {},
-      ExportDeclaration(path: NodePath<BabelTypes.ExportDeclaration>, pass: PluginPass) {},
-      ReturnStatement(path: NodePath<BabelTypes.ReturnStatement>, pass: PluginPass) {},
+      ImportDeclaration(path: NodePath<t.ImportDeclaration>, pass: PluginPass) {},
+      ExportDeclaration(path: NodePath<t.ExportDeclaration>, pass: PluginPass) {},
+      ReturnStatement(path: NodePath<t.ReturnStatement>, pass: PluginPass) {},
       
       // Triggers whenever any function or method is executed in the code. You can intercept hooks with this?
-      CallExpression(path: NodePath<BabelTypes.CallExpression>, pass: PluginPass) {},
+      // CallExpression(path: NodePath<t.CallExpression>, pass: PluginPass) {},
       
       // Ran on any html-like tag (e.g. <div className="custom-class" />)
-      JSXElement(path: NodePath<BabelTypes.JSXElement>, pass: PluginPass) {},
+      JSXElement(path: NodePath<t.JSXElement>, pass: PluginPass) {},
       
       // ArrayExpression
       // ArrowFunctionExpression 
@@ -385,20 +454,23 @@ export function devLogCompHierarchyBuilder({ types: t }: { types: typeof BabelTy
       // BlockParent
       // DeclareVariable
       
+      
+      // #endregion
     }, 
     
     
     // Ran once per file after the file is traversed 
     post(state: BabelFile) {
       
-    }
+    },
   };
+  // #endregion
 }
-
+// #region React Component Utils
 
 
 /** Utilities for finding/accessing data within `React` components. */
-export class ASTComponentHelper {
+export class ReactComponentUtils {
   
   
   constructor() {}
@@ -413,22 +485,13 @@ export class ASTComponentHelper {
     // Find out whether we're dealing with an arrow function, or a function declaration
     
     // ? Arrow Function: Check if it contains code, or is a one-liner
-    if (BabelTypes.isArrowFunctionExpression(node)) {
-      if (BabelTypes.isBlockStatement(node.body)) return node.body;
+    if (t.isArrowFunctionExpression(node)) {
+      if (t.isBlockStatement(node.body)) return node.body;
       else return undefined;
     }
     
-    // if ('init' in node && node?.init?.type === "ArrowFunctionExpression") { // const MyComponent = () => 
-    //   const arrowFuncNode = node.init;
-    //   if (arrowFuncNode.body.type === 'BlockStatement') {
-    //     return arrowFuncNode.body.body;
-    //   }
-    //   
-    //   return undefined; // If there isn't code to parse, return undefined
-    // }
-    
     // ? Normal function syntax
-    if (BabelTypes.isFunctionDeclaration(node)) { // function myComponent() {}
+    if (t.isFunctionDeclaration(node)) { // function myComponent() {}
       return node.body;
     }
     
@@ -436,42 +499,204 @@ export class ASTComponentHelper {
   }
   
   
-  /** Checks whether this is a valid react jsx component, not just a function */
-  public isReactComponent(path: NodePath<FunctionDeclaration | ArrowFunctionExpression>): boolean {
+  /** 
+   * Checks whether this is a valid react jsx component, not just a function 
+   * * Currently used for FunctionDeclaration and ArrowFunctionExpression nodes
+   * 
+   * ----
+   * Validation Criteria:
+   * 1. Does this function live on the root of the file, or is it nested within a component or another function?
+   * 2. Does it only return JSX/HTML? (no brackets, just a return(<div> Content Component </div>)  // TODO - Should we account for Services and other non react jsx components?
+   * 3. Does the component (with code) return JSX/HTML?
+   * 
+   * @returns true if it's a valid react component
+  */
+  public isReactComponent(path: NodePath<FunctionDeclaration | ArrowFunctionExpression | VariableDeclarator>): boolean {
     const node = path.node;
+    let name: string;
     if (!node) return false;
     
     // ? Arrow Function: Check if it contains code, or is a one-liner
-    if (BabelTypes.isArrowFunctionExpression(node)) { // const MyComponent = () => 
-      return this.isJsxArrowComponent(path as NodePath<ArrowFunctionExpression>);
+    if (path.isArrowFunctionExpression()) { // const MyComponent = () => 
+      return this.isJsxArrowComponent(path);
     }
     
     // ? Normal function syntax
-    if (node.type === 'FunctionDeclaration') { // function myComponent() {}
-      return this.isJsxComponent(path as NodePath<FunctionDeclaration>);
+    if (path.isFunctionDeclaration()) { // function myComponent() {}
+      return this.isJsxComponent(path);
+    }
+    
+    // ? Find if it's a const var = arrow function
+    if (path.isVariableDeclarator()) {
+      // Check if this is a PascalCase component name
+      let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
+      const isPascalCase = /^[A-Z]/.test(name);
+      if (!isPascalCase) return false;
+      
+      // Check that the function is a react component
+      const varPath = path.get('init');
+      if (varPath.isArrowFunctionExpression()) {
+        return this.isJsxArrowComponent(varPath);
+      }
     }
     
     return false;
   }
   
   
+  /** 
+   * Returns true if this is a memoized component. Don't try to access the nodes because we can't safely retrieve the `name` from the individual nodes inside the memo(node).
+   * * Checks that the `VariableDeclarator`'s name is memo, and that the first argument is a valid function type.
+  */
+  public isMemoComponent(path: NodePath<VariableDeclarator>): boolean {
+    const varPath = path.get('init');
+    if (!varPath) return false;
+    
+    // Retrieve the function name from the VariableDeclarator
+    let callExpressionName: string = '';
+    let args: (t.ArgumentPlaceholder | t.SpreadElement | t.Expression)[] | undefined;
+    
+    // If this the variableDeclarator defines a memo function
+    if (varPath.isCallExpression() && isIdentifier(varPath.node.callee)) {
+      const callee = varPath.node.callee;
+      if (isIdentifier(callee)) { 
+        callExpressionName = varPath.node.callee.name;
+        args = varPath.node.arguments;
+      }
+    }
+    
+    // <- If it isn't a memo function, return
+    if (callExpressionName !== 'memo' || !args) return false;
+    
+    // Check the function types
+    const argsPaths = varPath.get('arguments'); // args?.[0]
+    if (!Array.isArray(argsPaths) || argsPaths.length === 0) return false;
+    
+    const compRef = argsPaths[0]; // args?.[0]
+    if (compRef.isArrowFunctionExpression()) return true;
+    if (compRef.isFunctionExpression()) return true;
+    if (compRef.isIdentifier()) {
+      const binding = compRef.scope.getBinding(compRef.node.name);
+      if (binding?.path?.isFunctionDeclaration()) return true;
+    }
+    return false;
+  }
+  
+  /** 
+   * Retrieves the **React component** from a memoized function in AST. Searches from `VariableDeclarators` because we need reliable access to the component's name inside the memo.
+   * * If it doesn't safely find the react component, it will return undefined
+   * * If we found an arrow function, we create a `VariableDeclarator`, so we can pass the function's proper name to it (only for the actual react-component)
+   * 
+   * ----
+   * @returns         An object containing the component's name, the react component, and it's custom rerenderFunction.
+  */
+  public getReactComponentFromMemo(path: NodePath<VariableDeclarator>):
+    { 
+      component: FunctionDeclaration | FunctionExpression | VariableDeclarator, 
+      customRerenderFunc: ArrowFunctionExpression | FunctionDeclaration | FunctionExpression | undefined 
+    } | undefined
+  {
+    const varPath = path.get('init');
+    if (!varPath) return;
+    
+    // Retrieve the function name from the VariableDeclarator
+    let functionName: string = isIdentifier(path.node.id) ? path.node.id.name : 'Unknown';
+    let callExpressionName: string = '';
+    let args: (t.ArgumentPlaceholder | t.SpreadElement | t.Expression)[] | undefined;
+    
+    // If this the variableDeclarator defines a memo function
+    if (!varPath.isCallExpression() || !isIdentifier(varPath.node.callee)) return;
+    const callee = varPath.node.callee;
+    if (isIdentifier(callee)) { 
+      callExpressionName = varPath.node.callee.name;
+      args = varPath.node.arguments;
+    }
+    
+    // <- If it isn't a memo function, return
+    if (callExpressionName !== 'memo' || !args) return undefined;
+    
+    // {} We need to extract the actual function references from these. They can be: 
+    //   - ArrowFunctionExpression: const ComponentA = memo((props) => {});
+    //   - FunctionDeclaration(from Identifier): const MemoComponent = memo(ComponentA);
+    //   - FunctionExpression: const MemoComponent = memo(function(props) {})
+    // The same is true for the optional customRerenderFunction 
+    
+    const argsPaths = varPath.get('arguments'); // Check the function types
+    if (!Array.isArray(argsPaths) || argsPaths.length === 0) return undefined;
+    const compRef = argsPaths[0]; // args?.[0]
+    const customRerenderFuncRef = argsPaths?.[1]; // args?.[1]
+    let reactComponent: VariableDeclarator | FunctionDeclaration | FunctionExpression | undefined;
+    let customRerenderFunc: ArrowFunctionExpression | FunctionDeclaration | FunctionExpression | undefined;
+    for (let i = 0; i < [compRef, customRerenderFuncRef].length; i++) {
+      const func = i === 0 ? compRef : customRerenderFuncRef;
+      if (!func || Array.isArray(func) || !func.node) continue; // for the optional customRerenderProps function in a memo
+      
+      // If it's an arrow function inside the memo
+      if (func.isArrowFunctionExpression()) { // TODO: if we want this function's name safely, we need to create a variableDeclarator return
+        const compName = t.identifier(functionName);
+        const arrowFuncExp = func.node;
+        const varDeclarator = t.variableDeclarator(compName, arrowFuncExp);
+        
+        if (i === 0) reactComponent = varDeclarator;
+        else customRerenderFunc = func.node;
+      }
+      // If the function is declared in the memo like const ComponentA = memo(function(props) {});
+      else if (func.isFunctionExpression()) {
+        // Add the component's name to FunctionExpressions where it's id reference is usually null
+        func.node.id = t.identifier(functionName);
+        
+        if (i === 0) reactComponent = func.node;
+        else customRerenderFunc = func.node;
+      }
+      // If it's a standard function declared outside of the - memo(ComponentA)
+      else if (func.isIdentifier()) {
+        const binding = func.scope.getBinding(func.node.name);
+        if (binding?.path?.isFunctionDeclaration()) {        
+          // Change it's identifier directly to the actual component's name, what's used in the jsx ->  const useThisName = memo(refFuncName)
+          const funcDeclNode = binding.path.node as FunctionDeclaration;
+          funcDeclNode.id = t.identifier(functionName);
+          
+          if (i === 0) reactComponent = binding.path.node;
+          else customRerenderFunc = binding.path.node;
+        }
+      }
+    }
+    
+    // -> Return the memoized Function/ArrowFunction
+    if (!reactComponent) return undefined;
+    return {
+      component: reactComponent,
+      customRerenderFunc
+    }
+  } 
+  
+  
   // #endregion
   // #region Visitor::FunctionDeclaration Search Utils
-  public isJsxComponent(path: NodePath<FunctionDeclaration>): boolean {
+  /**
+   * Determines if an FunctionDeclaration node is a valid React Component.
+   * Criteria: Must live at the module root (un-nested) and must return a JSX Element.
+   */
+  protected isJsxComponent(path: NodePath<FunctionDeclaration>): boolean {
     const node = path.node;
     if (!node) return false;
+    
+    // ? Does is have a PascalCase name?
+    let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
+    const isPascalCase = /^[A-Z]/.test(name);
+    if (!isPascalCase) return false;
     
     // ? Is it nested?
     // Check the parent structure. If it is wrapped in an array map, an event handler, 
     // or another function, its immediate parent will NOT be the file root ("Program").
     // Using path.scope.parentBlock safely accounts for standard files AND direct 'export function' modules!
-    if (path.scope.parentBlock && !BabelTypes.isProgram(path.scope.parentBlock)) {
+    if (path.scope.parentBlock && !t.isProgram(path.scope.parentBlock)) {
       return false; // Exit immediately if it's nested deep inside anything!
     }
     
     // ? Does it return JSX/HTML?
     const body = path.node.body;
-    if (BabelTypes.isJSXElement(body) || BabelTypes.isJSXFragment(body)) {
+    if (t.isJSXElement(body) || t.isJSXFragment(body)) {
       return true;
     }
     
@@ -481,7 +706,7 @@ export class ASTComponentHelper {
     path.traverse({
       ReturnStatement(returnPath) {
         const arg = returnPath.node.argument;
-        if (BabelTypes.isJSXElement(arg) || BabelTypes.isJSXFragment(arg)) {
+        if (t.isJSXElement(arg) || t.isJSXFragment(arg)) {
           returnsJsx = true;
           returnPath.stop(); // Found it! Stop searching this function.
         }
@@ -509,19 +734,19 @@ export class ASTComponentHelper {
    * Determines if an ArrowFunctionExpression node is a valid React Component.
    * Criteria: Must live at the module root (un-nested) and must return a JSX Element.
    */
-  public isJsxArrowComponent(path: NodePath<ArrowFunctionExpression>): boolean {
+  protected isJsxArrowComponent(path: NodePath<ArrowFunctionExpression>): boolean {
     // ? Is it nested?
     // Check the parent structure. If it is wrapped in an array map, an event handler, 
     // or another function, its immediate parent parent will NOT be the file root ("Program").
     const parentParent = path.parentPath?.parentPath;
-    if (!parentParent || !BabelTypes.isProgram(parentParent as any)) {
+    if (!parentParent || !t.isProgram(parentParent as any)) {
       return false; // Exit immediately if it's nested inside loops, objects, or variables!
     }
     
     // Implicit Return (e.g., () => <div />)
     // ? Does it return JSX/HTML?
     const body = path.node.body;
-    if (BabelTypes.isJSXElement(body) || BabelTypes.isJSXFragment(body)) {
+    if (t.isJSXElement(body) || t.isJSXFragment(body)) {
       return true;
     }
     
@@ -531,7 +756,7 @@ export class ASTComponentHelper {
     path.traverse({
       ReturnStatement(returnPath) {
         const arg = returnPath.node.argument;
-        if (BabelTypes.isJSXElement(arg) || BabelTypes.isJSXFragment(arg)) {
+        if (t.isJSXElement(arg) || t.isJSXFragment(arg)) {
           returnsJsx = true;
           returnPath.stop(); // Found it! Stop searching this function.
         }
@@ -542,13 +767,13 @@ export class ASTComponentHelper {
   }
   
   
-  /** Retrieves the name of the arrowFunctionExpression by accessing it from the parentNode (VariableDeclarator) */
+  /** Retrieves the name of the ArrowFunctionExpression by accessing it from the parentNode (VariableDeclarator) */
   public getArrowFuncExpName(path: NodePath<ArrowFunctionExpression>): string | undefined {
     const parentPath = path.parentPath;
     
     if (parentPath && parentPath.isVariableDeclarator()) {
       const arrowDeclaratorNode = parentPath.node;
-      if (BabelTypes.isIdentifier(arrowDeclaratorNode.id)) {
+      if (t.isIdentifier(arrowDeclaratorNode.id)) {
         const componentName =  arrowDeclaratorNode.id.name;
         return componentName;
       }
@@ -582,16 +807,16 @@ export class ASTComponentHelper {
     if (!paramsArray || paramsArray.length === 0) return { type: "none" };
     
     const firstParam = paramsArray[0];
-    if (BabelTypes.isIdentifier(firstParam)) {
+    if (t.isIdentifier(firstParam)) {
       return { type: "plain", name: firstParam.name }; // e.g., (props)
     }
     
-    if (BabelTypes.isObjectPattern(firstParam)) {
+    if (t.isObjectPattern(firstParam)) {
       const keys = firstParam.properties.map((prop) => {
-        if (BabelTypes.isObjectProperty(prop) && BabelTypes.isIdentifier(prop.key)) {
+        if (t.isObjectProperty(prop) && t.isIdentifier(prop.key)) {
           return prop.key.name; // Standard destructured keys
         }
-        if (BabelTypes.isRestElement(prop) && BabelTypes.isIdentifier(prop.argument)) {
+        if (t.isRestElement(prop) && t.isIdentifier(prop.argument)) {
           return `...${prop.argument.name}`; // Rest assignments
         }
         return null;
@@ -621,13 +846,13 @@ export class ASTComponentHelper {
   }
   
   
-  public getHooks(startPath: NodePath<FunctionDeclaration | ArrowFunctionExpression>): Partial<RenderLogData> {
+  public getHooks(startPath: NodePath<FunctionDeclaration | ArrowFunctionExpression>): Partial<LogRenderData> {
     if (!startPath || !startPath.node) return {};
     const code = this.getCodeFromFuncTypes(startPath);
     if (!code) return {};
     
-    // Create the renderLogData state hooks structs
-    let renderInformation: Partial<RenderLogData> = {
+    // Create the LogRenderData state hooks structs
+    let renderInformation: Partial<LogRenderData> = {
       stateHooks: [],
       reducers: [],
       contexts: [],
@@ -639,25 +864,25 @@ export class ASTComponentHelper {
         
         // UseState and UseContext hooks
         const funcNode = node.init;
-        if (BabelTypes.isCallExpression(funcNode)) {
+        if (t.isCallExpression(funcNode)) {
           const calleeNode = funcNode.callee;
-          if (BabelTypes.isIdentifier(calleeNode)) {
+          if (t.isIdentifier(calleeNode)) {
             // Capture the useState's state variable
-            if (calleeNode.name === 'useState' && BabelTypes.isArrayPattern(node.id)) {
+            if (calleeNode.name === 'useState' && t.isArrayPattern(node.id)) {
               const stateHook = node.id.elements?.[0];
-              if (BabelTypes.isIdentifier(stateHook) && stateHook.name) renderInformation.stateHooks?.push(stateHook.name);
+              if (t.isIdentifier(stateHook) && stateHook.name) renderInformation.stateHooks?.push(stateHook.name);
             }
             
             // Capture the useContext's variable name
-            if (calleeNode.name === 'useContext' && BabelTypes.isIdentifier(node.id)) {
+            if (calleeNode.name === 'useContext' && t.isIdentifier(node.id)) {
               const contextHook = node.id.name;
               if (contextHook) renderInformation.contexts?.push(contextHook);
             }
             
             // Capture the useReducer's state variable
-            if (calleeNode.name === 'useReducer' && BabelTypes.isArrayPattern(node.id)) {
+            if (calleeNode.name === 'useReducer' && t.isArrayPattern(node.id)) {
               const reducerHook = node.id.elements?.[0];
-              if (BabelTypes.isIdentifier(reducerHook) && reducerHook.name) renderInformation.reducers?.push(reducerHook.name);
+              if (t.isIdentifier(reducerHook) && reducerHook.name) renderInformation.reducers?.push(reducerHook.name);
             }
           }
         }
@@ -681,13 +906,13 @@ export class ASTComponentHelper {
         
         // Capture the useState's state variable
         const funcNode = node.init;
-        if (BabelTypes.isCallExpression(funcNode)) {
+        if (t.isCallExpression(funcNode)) {
           const calleeNode = funcNode.callee;
           
-          if (BabelTypes.isIdentifier(calleeNode)) {
-            if (calleeNode.name === 'useState' && BabelTypes.isArrayPattern(node.id)) {
+          if (t.isIdentifier(calleeNode)) {
+            if (calleeNode.name === 'useState' && t.isArrayPattern(node.id)) {
               const stateHook = node.id.elements?.[0];
-              if (BabelTypes.isIdentifier(stateHook) && stateHook.name) hooks.push(stateHook.name);
+              if (t.isIdentifier(stateHook) && stateHook.name) hooks.push(stateHook.name);
             }
           }
         }
@@ -711,11 +936,11 @@ export class ASTComponentHelper {
         
         // Capture the useContext's variable name
         const funcNode = node.init;
-        if (BabelTypes.isCallExpression(funcNode)) {
+        if (t.isCallExpression(funcNode)) {
           
           const calleeNode = funcNode.callee;
-          if (BabelTypes.isIdentifier(calleeNode)) {
-            if (calleeNode.name === 'useContext' && BabelTypes.isIdentifier(node.id)) {
+          if (t.isIdentifier(calleeNode)) {
+            if (calleeNode.name === 'useContext' && t.isIdentifier(node.id)) {
               const contextHook = node.id.name;
               if (contextHook) contexts.push(contextHook);
             }
@@ -741,14 +966,14 @@ export class ASTComponentHelper {
         
         // Capture the useReducer's state variable
         const funcNode = node.init;
-        if (BabelTypes.isCallExpression(funcNode)) {
+        if (t.isCallExpression(funcNode)) {
           const calleeNode = funcNode.callee;
-          if (BabelTypes.isIdentifier(calleeNode)) {
+          if (t.isIdentifier(calleeNode)) {
             
             // Capture the useReducer's state variable
-            if (calleeNode.name === 'useReducer' && BabelTypes.isArrayPattern(node.id)) {
+            if (calleeNode.name === 'useReducer' && t.isArrayPattern(node.id)) {
               const reducerHook = node.id.elements?.[0];
-              if (BabelTypes.isIdentifier(reducerHook) && reducerHook.name) reducers?.push(reducerHook.name);
+              if (t.isIdentifier(reducerHook) && reducerHook.name) reducers?.push(reducerHook.name);
             }
           }
         }
@@ -765,37 +990,14 @@ export class ASTComponentHelper {
 }
 
 
-/* 
-  * By recognizing these CallExpression layouts, 
-  * you can add a listener inside your plugin visitor to automatically detect what features a component uses:
-  
-  // ? Inside your plugin visitor block:
-    CallExpression(path) {
-      const calleeName = path.node.callee.name;
-      
-      if (calleeName === "useContext") {
-        const contextName = path.node.arguments[0]?.name;
-        console.log(`AST Scanner -> Component hooks into context provider: ${contextName}`);
-      }
-      
-      if (calleeName === "useState") {
-        // Determine the variable names bound to this hook instantiation
-        const parentNode = path.parent;
-        if (t.isVariableDeclarator(parentNode) && t.isArrayPattern(parentNode.id)) {
-          const stateVariableName = parentNode.id.elements[0]?.name;
-          console.log(`AST Scanner -> Component instantiates a slice of state tracked via variable: ${stateVariableName}`);
-        }
-      }
-    }
-*/
-
-
-
-
+// #endregion
+// #region AST Return Type Examples (Understanding how the compiler captures and evaluates on code)
 //----------------------------------------------------------------------------------//
 // Component Return Type Examples                                                   //
 //----------------------------------------------------------------------------------//
-// #region Pathing Help?
+// #region - Pathing Help?
+// * Most of the values in code are stored within VariableDeclarator, however there are some structures that are different. 
+// * This is for help with node pathing, and how to find where it is within the file
 /*
 ? You need to know what parent to search within a path to find the root file (Program)
 {} VariableDeclarator
@@ -806,14 +1008,14 @@ export class ASTComponentHelper {
   [ VariableDeclarator ]   <-- The Assignment Node (path) e.g., "Badge = () => {}"
       |
   [ ArrowFunctionExpression ] <-- The Function Node itself
-
+  
 // ? Is it nested?
-    // Check the parent structure. If it is wrapped in an array map, an event handler, 
-    // or another function, its immediate parent parent will NOT be the file root ("Program").
-    const parentParent = path.parentPath?.parentPath;
-    if (!parentParent || !BabelTypes.isProgram(parentParent as any)) {
-      return false; // Exit immediately if it's nested inside loops, objects, or variables!
-    }
+  // Check the parent structure. If it is wrapped in an array map, an event handler, 
+  // or another function, its immediate parent parent will NOT be the file root ("Program").
+  const parentParent = path.parentPath?.parentPath;
+  if (!parentParent || !BabelTypes.isProgram(parentParent as any)) {
+    return false; // Exit immediately if it's nested inside loops, objects, or variables!
+  }
 
 
 {} FunctionDeclarator
@@ -826,26 +1028,44 @@ export class ASTComponentHelper {
                   ├── .scope: Core manager tracking all active variables in this block space
                   │    └── .scope.block: Points to the body block of the function context
                   └── .scope.getProgramParent(): Utility jumping directly to the root file module scope
-
+  
 // ? Usecases?
   // 1. Access the raw data properties of the current function directly:
-  const functionName = path.node.id?.name; // "App"
+    const functionName = path.node.id?.name; // "App"
   
   // 2. Access the immediate outer statement wrapping this function line:
-  const parentStatementLine = path.parentPath; 
+    const parentStatementLine = path.parentPath; 
   
   // 3. Jump completely to the top-level file root module ("Program" block)
   // This lets you append tracking arrays, caches, or global configs at the top of the file!
-  const fileRootPath = path.findParent((p) => p.isProgram());
+    const fileRootPath = path.findParent((p) => p.isProgram());
   
   // 4. Access the global scope manager to declare files without collisions:
-  const globalScope = path.scope.getProgramParent();
+    const globalScope = path.scope.getProgramParent();
+
+
+{} ClassExpression
+  [ Program ]  <-- The Grandparent (path.parentPath.parentPath)
+      |
+  [ VariableDeclaration ]  <-- The Parent Line (path.parentPath) e.g., "export const Badge = ..."
+      |
+  [ VariableDeclarator ]   <-- The Assignment Node (path) e.g., "Badge = () => {}"
+      |
+  [ ClassExpression ] <-- The Function Node itself
+// ? Is it nested?
+  // Check the parent structure. If it is wrapped in an array map, an event handler, 
+  // or another function, its immediate parent parent will NOT be the file root ("Program").
+  const parentParent = path.parentPath?.parentPath;
+  if (!parentParent || !BabelTypes.isProgram(parentParent as any)) {
+    return false; // Exit immediately if it's nested inside loops, objects, or variables!
+  }
 
 
 */
 // #endregion
-// #region VariableDeclarator
-// {} Normal Variables
+// #region - VariableDeclarator
+// {} VariableDeclarators carry the type, identifier (id), and another type for defining the variable within "init"
+// * Normal Variables
 // #region const value: string = 'foo' as any;
 // ? const value: string = 'foo' as any;
 /*
@@ -870,6 +1090,7 @@ export class ASTComponentHelper {
 
 // #endregion 
 // #region Arrow Functions
+// -> Arrow functions are captured within VariableDeclarators, or via ArrowFunctionExpression() within Visitor/Traverse
 // ? To check whether this is a block statement arrow Func:
 /*
   if (t.isBlockStatement(init.body)) {
@@ -1084,6 +1305,8 @@ node = {
             }
           ]
         },
+        
+        etc...
 
         // =========================================================
         // Line 3: const theme = useContext(themeContext);
@@ -1343,7 +1566,7 @@ node = {
 
 
 // #endregion
-// #region Map
+// #region Maps<key, value>();
 // ? const cache = new Map<string, any>();
 /*
 node = {
@@ -1368,7 +1591,8 @@ node = {
 
 
 // #endregion
-// () In source code, React hooks are structural CallExpression nodes (functions being executed). 
+// #region ReactHooks (useState, useContext, useReducer)
+// * React Hooks:  In source code, they're defined as structural CallExpression nodes (functions being executed). 
 // ? They are typically captured inside a VariableDeclarator because they return arrays or objects that developers immediately destructure
 // #region UseState
 // ? const [user, setUser] = useState<UserObject>({ id: 1 });
@@ -1491,11 +1715,12 @@ node = {
 
 
 // #endregion
-
-
-// ? Function Declarators has argument types for params with default values, and rest params syntax 
 // #endregion
-// #region FunctionDeclarator
+
+
+// #endregion
+// #region - FunctionDeclarator
+// {} FunctionDeclarators are structurally stable, have the body containing the functions code you can "traverse" through just like "visitor", and other metadata specific to the function
 /*
   ? Quick recap, functions are stable refs with access to specific variables out of the box
   * export async function* StreamLayout(props: LayoutProps) {}
@@ -1702,4 +1927,439 @@ node = {
 
 
 // #endregion
+
+
+// #endregion
+// #region - ArrowFunctionExpression
+// () ArrowFunctionExpressions are always wrapped in "VariableDeclarators", and we have examples within VariableDeclarator for this!
+// ? The arrow function is mapped to the node.init variable, and is pretty much the same as a FunctionDeclaration, except that the body can be a BlockStatement, or a return Expression
+
+
+// #endregion
+// #region - CallExpression
+// () Within VariableDeclarator we have captured call expression examples for all of react's hook variables that are stored within components
+// ? We're primarily using this for finding memoized components within the application
+// #region function call from a variable
+// ? const value = foo("bar", { valA: 1, valB: "strVal" });
+/*
+  node = {
+    "type": "CallExpression",
+    "callee": {
+      "type": "Identifier",
+      "name": "foo"
+    },
+    "arguments": [
+      {
+        "type": "StringLiteral",
+        "value": "bar"
+      },
+      {
+        "type": "ObjectExpression",
+        "properties": [
+          {
+            "type": "ObjectProperty",
+            "method": false,
+            "shorthand": false,
+            "computed": false,
+            "key": {
+              "type": "Identifier",
+              "name": "valA"
+            },
+            "value": {
+              "type": "NumericLiteral",
+              "value": 1
+            }
+          },
+          {
+            "type": "ObjectProperty",
+            "method": false,
+            "shorthand": false,
+            "computed": false,
+            "key": {
+              "type": "Identifier",
+              "name": "valB"
+            },
+            "value": {
+              "type": "StringLiteral",
+              "value": "strVal"
+            }
+          }
+        ]
+      }
+    ]
+  }
+*/
+
+
+// #endregion
+// #region Default Memo
+// ? Default Memo
+/*
+const Badge = memo(({ name, styles }) => { 
+  const strVal: string = 'foo';
+  const [foo, setFoo] = useState<string>("bar");
+  const theme = useContext(themeContext);
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  
+  useEffect(() => {
+    console.log(`foo was changed, ${strVal}:`, foo);
+  }, [foo]);
+  
+  const fooFunction = () => {
+    const nestedVar = 'nestedValue';
+    console.log(`fooFunction was called`, { var: nestedVar });
+  }
+  
+  return( 
+    <div>
+      <span>Span element</span>
+    </div> 
+  ); 
+});
+
+*/
+/*
+  node = {
+    "type": "VariableDeclarator",
+    "id": {
+      "type": "Identifier",
+      "name": "Badge"
+    },
+    "init": {
+      "type": "CallExpression",
+      "callee": {
+        "type": "Identifier",
+        "name": "memo"
+      },
+      "arguments": [
+        {
+          "type": "ArrowFunctionExpression",
+          "params": [
+            {
+              "type": "ObjectPattern",
+              "properties": [
+                {
+                  "type": "ObjectProperty",
+                  "key": { "type": "Identifier", "name": "name" },
+                  "value": { "type": "Identifier", "name": "name" },
+                  "computed": false,
+                  "shorthand": true
+                },
+                {
+                  "type": "ObjectProperty",
+                  "key": { "type": "Identifier", "name": "styles" },
+                  "value": { "type": "Identifier", "name": "styles" },
+                  "computed": false,
+                  "shorthand": true
+                }
+              ]
+            }
+          ],
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              // Internal component lines (useState, useEffect, return statement) remain exactly the same here
+              // ? Refer to VariableDeclarator - With Content
+            ]
+          }
+        }
+      ]
+    }
+  }
+*/
+
+
+// #endregion
+// #region Memo w/prevProps and nextProps
+// ? Default Memo
+/*
+const Badge = memo(({ name, styles }) => { 
+  const strVal: string = 'foo';
+  const [foo, setFoo] = useState<string>("bar");
+  const theme = useContext(themeContext);
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  
+  useEffect(() => {
+    console.log(`foo was changed, ${strVal}:`, foo);
+  }, [foo]);
+  
+  const fooFunction = () => {
+    const nestedVar = 'nestedValue';
+    console.log(`fooFunction was called`, { var: nestedVar });
+  }
+  
+  return( 
+    <div>
+      <span>Span element</span>
+    </div> 
+  ); 
+}, (prevProps, nextProps) => {});
+
+*/
+/*
+  node = {
+    "type": "VariableDeclarator",
+    "id": {
+      "type": "Identifier",
+      "name": "Badge"
+    },
+    "init": {
+      "type": "CallExpression",
+      "callee": {
+        "type": "Identifier",
+        "name": "memo"
+      },
+      "arguments": [
+        // * const Component = () => {}
+        {
+          "type": "ArrowFunctionExpression",
+          "id": null, // Note: BadgeExample = () => {} inside memo assigns it here if named, or stays null
+          "params": [], // Component props
+          "body": { "type": "BlockStatement", "body": [ ComponentCode ] }
+        },
+        // * (prevProps, nextProps) => {}
+        {
+          "type": "ArrowFunctionExpression",
+          "id": null,
+          "params": [
+            { "type": "Identifier", "name": "prevProps" },
+            { "type": "Identifier", "name": "nextProps" }
+          ],
+          "body": {
+            // ? Typically returns a BinaryExpression or boolean logic evaluating equality
+            "type": "BinaryExpression", 
+            "operator": "===",
+            "left": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "prevProps" }, "property": { "type": "Identifier", "name": "name" } },
+            "right": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "nextProps" }, "property": { "type": "Identifier", "name": "name" } }
+          }
+        }
+      ]
+    }
+  }
+*/
+
+
+// #endregion
+// #region (prevProps, nextProps) => Example
+// ? (prevProps, nextProps) => Example
+/*
+  // custom rerender functionality
+  }, (prevProps, nextProps) => {
+    
+    // If its selection status changed, rerender
+    if (prevProps.isSelected !== nextProps.isSelected) {
+      return false; 
+    }
+    
+    // If the internal item selection flag changed, rerender (custom state handling)
+    if (prevProps.item.checked !== nextProps.item.checked) {
+      return false;
+    }
+    
+    // Form / Validation
+    if ( prevProps.disabled !== nextProps.disabled 
+      || prevProps.required !== nextProps.required
+      || prevProps.item.disabled !== nextProps.item.disabled
+      || prevProps.error !== nextProps.error) {
+      return false;
+    }
+    
+    // If configurations change, rerender
+    if (prevProps.name !== nextProps.name) {
+      return false;
+    }
+    
+    // If nothing changed, safely skip the rerender
+    return true; 
+  });
+
+*/
+/*
+  node = {
+    "type": "ArrowFunctionExpression",
+    "id": null,
+    "generator": false,
+    "async": false,
+    "params": [
+      { "type": "Identifier", "name": "prevProps" },
+      { "type": "Identifier", "name": "nextProps" }
+    ],
+    "body": {
+      "type": "BlockStatement",
+      "body": [
+        // =========================================================
+        // IF #1: if (prevProps.isSelected !== nextProps.isSelected) { return false; }
+        // =========================================================
+        {
+          "type": "IfStatement",
+          "test": {
+            "type": "BinaryExpression",
+            "operator": "!==",
+            "left": {
+              "type": "MemberExpression",
+              "object": { "type": "Identifier", "name": "prevProps" },
+              "property": { "type": "Identifier", "name": "isSelected" },
+              "computed": false
+            },
+            "right": {
+              "type": "MemberExpression",
+              "object": { "type": "Identifier", "name": "nextProps" },
+              "property": { "type": "Identifier", "name": "isSelected" },
+              "computed": false
+            }
+          },
+          "consequent": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ReturnStatement",
+                "argument": { "type": "BooleanLiteral", "value": false }
+              }
+            ]
+          },
+          "alternate": null
+        },
+        // =========================================================
+        // IF #2: if (prevProps.item.checked !== nextProps.item.checked) { return false; }
+        // =========================================================
+        {
+          "type": "IfStatement",
+          "test": {
+            "type": "BinaryExpression",
+            "operator": "!==",
+            "left": {
+              "type": "MemberExpression",
+              "object": {
+                "type": "MemberExpression",
+                "object": { "type": "Identifier", "name": "prevProps" },
+                "property": { "type": "Identifier", "name": "item" },
+                "computed": false
+              },
+              "property": { "type": "Identifier", "name": "checked" },
+              "computed": false
+            },
+            "right": {
+              "type": "MemberExpression",
+              "object": {
+                "type": "MemberExpression",
+                "object": { "type": "Identifier", "name": "nextProps" },
+                "property": { "type": "Identifier", "name": "item" },
+                "computed": false
+              },
+              "property": { "type": "Identifier", "name": "checked" },
+              "computed": false
+            }
+          },
+          "consequent": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ReturnStatement",
+                "argument": { "type": "BooleanLiteral", "value": false }
+              }
+            ]
+          },
+          "alternate": null
+        },
+        // =========================================================
+        // IF #3: Logical OR chain (disabled || required || ...)
+        // =========================================================
+        {
+          "type": "IfStatement",
+          "test": {
+            "type": "LogicalExpression",
+            "operator": "||",
+            "left": {
+              "type": "LogicalExpression",
+              "operator": "||",
+              "left": {
+                "type": "LogicalExpression",
+                "operator": "||",
+                "left": {
+                  "type": "BinaryExpression",
+                  "operator": "!==",
+                  "left": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "prevProps" }, "property": { "type": "Identifier", "name": "disabled" } },
+                  "right": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "nextProps" }, "property": { "type": "Identifier", "name": "disabled" } }
+                },
+                "right": {
+                  "type": "BinaryExpression",
+                  "operator": "!==",
+                  "left": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "prevProps" }, "property": { "type": "Identifier", "name": "required" } },
+                  "right": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "nextProps" }, "property": { "type": "Identifier", "name": "required" } }
+                }
+              },
+              "right": {
+                "type": "BinaryExpression",
+                "operator": "!==",
+                "left": {
+                  "type": "MemberExpression",
+                  "object": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "prevProps" }, "property": { "type": "Identifier", "name": "item" } },
+                  "property": { "type": "Identifier", "name": "disabled" }
+                },
+                "right": {
+                  "type": "MemberExpression",
+                  "object": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "nextProps" }, "property": { "type": "Identifier", "name": "item" } },
+                  "property": { "type": "Identifier", "name": "disabled" }
+                }
+              }
+            },
+            "right": {
+              "type": "BinaryExpression",
+              "operator": "!==",
+              "left": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "prevProps" }, "property": { "type": "Identifier", "name": "error" } },
+              "right": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "nextProps" }, "property": { "type": "Identifier", "name": "error" } }
+            }
+          },
+          "consequent": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ReturnStatement",
+                "argument": { "type": "BooleanLiteral", "value": false }
+              }
+            ]
+          },
+          "alternate": null
+        },
+        // =========================================================
+        // IF #4: if (prevProps.name !== nextProps.name) { return false; }
+        // =========================================================
+        {
+          "type": "IfStatement",
+          "test": {
+            "type": "BinaryExpression",
+            "operator": "!==",
+            "left": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "prevProps" }, "property": { "type": "Identifier", "name": "name" } },
+            "right": { "type": "MemberExpression", "object": { "type": "Identifier", "name": "nextProps" }, "property": { "type": "Identifier", "name": "name" } }
+          },
+          "consequent": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ReturnStatement",
+                "argument": { "type": "BooleanLiteral", "value": false }
+              }
+            ]
+          },
+          "alternate": null
+        },
+        // =========================================================
+        // FINAL LINE: return true;
+        // =========================================================
+        {
+          "type": "ReturnStatement",
+          "argument": {
+            "type": "BooleanLiteral",
+            "value": true
+          }
+        }
+      ]
+    }
+  }
+*/
+
+
+// #endregion
+
+
 // #endregion

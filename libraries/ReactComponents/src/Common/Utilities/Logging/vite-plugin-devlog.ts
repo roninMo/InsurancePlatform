@@ -1,7 +1,7 @@
 // vite-plugin-devlog.ts
 import { Plugin } from 'vite';
 import * as babel from '@babel/core';
-import { createCompReferenceHierarchy, addRenderLogs } from './DevLogCompHierarchyBuilder_React';
+import { devLogCompHierarchyBuilder } from './DevLogCompHierarchyBuilder_React';
 
 
 export function vitePluginDevlog(): Plugin {
@@ -21,8 +21,8 @@ export function vitePluginDevlog(): Plugin {
         filename: id,
         sourceMaps: true,
         plugins: [
-          // createCompReferenceHierarchy, 
-          addRenderLogs 
+          /** Adds the compId to every component for creating a component hierarchy, the compName, and renderLogs and component data capture for analyzing component efficiency and behavior. */
+          devLogCompHierarchyBuilder
         ],
       });
       
