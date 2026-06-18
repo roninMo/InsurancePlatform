@@ -6,6 +6,7 @@ import axios from 'axios';
 import { UserTokenInformation } from '@Project/Classes';
 import { jwtDecode } from 'jwt-decode';
 import { hashLinkScrollRestoration, TooltipProvider } from '@Project/ReactComponents';
+// import astCompLogs from '../assets/astCompLogs.json'; 
 
 import styled from '@emotion/styled';
 
@@ -36,11 +37,22 @@ export function App() {
   console.log(`global state`, { globalThis, window });
   console.log(`App rerendered (default console.log): data: `, { userTokenInformation, accessToken }, "another value", { another: 'object' });
   log('content', `App rerendered: data: `, { userTokenInformation, accessToken }, "another value", { another: 'object' });
+  useEffect(() => {
+    loadLogs();
+    
+    // Dynamically import the JSON file, it may not be defined
+    async function loadLogs() {
+      let abstractComponentLogHistory; // : Promise<{ default: any[] }>;
+      try { abstractComponentLogHistory = await import('../assets/astCompLogs.json');
+      } catch (e) {}
+      
+      console.log(`Ast's captured logs: `, abstractComponentLogHistory);
+      // astLogs?.sort()?.forEach((args: any) => console.log(...args)); // Loop through and spread the stored arguments into a real console.log
+      console.log('\n\n');
+    }
+  }, []);
   
-  const astLogs = (window as any)?.myAstLogs;
-  console.log(`Ast's captured logs: `, astLogs);
-  astLogs?.sort()?.forEach((args: any) => console.log(...args)); // Loop through and spread the stored arguments into a real console.log
-  console.log('\n\n');
+  
   
   
   // #endregion

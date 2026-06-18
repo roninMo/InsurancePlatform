@@ -34,7 +34,8 @@
     "src/**/*.jsx", 
     "src/**/*.ts", 
     "src/**/*.tsx",
-    "src/assets/lottie/**/*.json" // Captures all Lottie files in this folder
+    "src/assets/lottie/**/*.json", // Captures all Lottie files in this folder
+    "src/assets/astCompLogs.json" // Used for potentially logging the Abstract Syntax Tree history
   ],
   "references": [
     {

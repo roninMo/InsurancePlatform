@@ -15,7 +15,26 @@ import {
   isIdentifier,
   FunctionExpression,
   isFunctionExpression,
+  Node,
 } from "@babel/types";
+import fs from 'fs';
+import fPath from 'path';
+import generate from "@babel/generator";
+
+// babel generate() options
+const generateOpts = {
+  retainLines: false,
+  compact: false, // This forces the pretty-printed, object-like layout
+  concise: false
+};
+
+// util for path.getSource()
+const prettifySource = (path: NodePath<any>) => path.getSource().split(/\r?\n/);
+// const prettifySource = (path: NodePath<any>) => path.getSource()
+//   .replace(/(=>\s*\{)/g, "$1\n  ")
+//   .replace(/(;)\s*/g, "$1\n  ")
+//   .replace(/(\}\s*)$/g, "\n$1");
+
 
 
 
@@ -73,6 +92,19 @@ import {
 type CompNodeTypes = FunctionDeclaration | ArrowFunctionExpression | ClassExpression;
 
 
+interface AstCompInfo {
+  /** Cached globally and initialized/cleared during Program -> enter()/exit() */
+  fileName: string;
+  
+  /** this file had a React Component, we'll print logs for it and use it's safe function name for reference */
+  componentName: string;
+  
+  /** An indexed history of this component's logs specifically. Minified for the console */
+  componentLogs: Record<number, any>;
+}
+
+
+
 /** 
  * ### *addRenderLogs()*
  * Adds a *{@link LogInfo|renderLog}* to every functional component in your project, attaching all prop and context information for tracking rerender functionality. 
@@ -104,9 +136,13 @@ export function devLogCompHierarchyBuilder(): PluginObj {
   const componentInstances = new Map<string, number>();
   
   // Log information
-  const capturedLogs: any = [];
-  const funcLogLimitCounter: number = 5;
-  const arrExpLogLimitCounter: number = 5;
+  devlogHelper.syntaxTreeLogs_clearHistory();
+  const allComponentLogs: Record<string, AstCompInfo> = {};
+  let compName: string = '';
+  let thisFilesComps: Record<string, AstCompInfo> = {};
+  let logs: Record<number, any> = {};
+  let logs_len = () => Object.keys(logs).length;
+  let logs_clear = () => logs = {};
   
   // TODO: Add logMessages to the window, and have them ran at runtime so we have a minified log list that's more readable
   // TODO: Add a function to ReactComponentUtils - 
@@ -140,6 +176,9 @@ export function devLogCompHierarchyBuilder(): PluginObj {
     // Add the necessary information and functionality to each component
     let componentConfig: ComponentLogConfig = {} as any;
     initComponentForDevlog(path, componentConfig);
+    // TODO: 
+    // /** In AST, we search all functions for react-components, and store them in a hash map. Later, we search for all **instantiated** components, and use this stored comp as the parent component. */
+    // parentComponent: string;
     addRenderLogAndData(path, componentConfig);
   }
   
@@ -350,13 +389,13 @@ export function devLogCompHierarchyBuilder(): PluginObj {
        * @param path    The current `variable` we're viewing.
        * @remarks At the bottom of the page are the different structures for NodePath<VariableDeclaration>
        */
-      VariableDeclarator(path: NodePath<t.VariableDeclarator>, pass: PluginPass) {
-        // if (!(path.isArrowFunctionExpression || path.isFunctionDeclaration || path.isFunctionExpression)) return;
+      VariableDeclarator(path: NodePath<t.VariableDeclarator>, state: PluginPass) {
         const varPath = path.get('init');
-        if (!varPath || !varPath.node) return; // everything is undefined?
+        if (!varPath || !varPath.node) return;
+        logs_clear();
         
         const isFunctionValue = 
-        varPath.isArrowFunctionExpression() || 
+        varPath.isArrowFunctionExpression() || // TODO: also check this during FunctionDeclaration()
         varPath.isFunctionExpression() ||
           // Catch components wrapped in memo() or forwardRef()
           varPath.isCallExpression(); 
@@ -369,13 +408,26 @@ export function devLogCompHierarchyBuilder(): PluginObj {
         const isPascalCase = /^[A-Z]/.test(name);
         if (!isPascalCase) return false;
         
-        // TODO: Fix the isReactComponent functions aren't working yet
-        const isReactComponent = devlogHelper.isReactComponent(path);
-        const isMemoComponent = devlogHelper.isMemoComponent(path);
-        capturedLogs.push([`component ${name}: `, { isReactComponent, isMemoComponent}]);
+        // ? Store this within a list containing all the found react component instantiations
+        logs[logs_len()] = `${name}(${varPath.node.type}) found. Checking if it's a react component`;
+        const isReactComponent = devlogHelper.isReactComponent(varPath, logs);
+        const isMemoComponent = devlogHelper.isMemoComponent(path, logs);
         if (isReactComponent || isMemoComponent) {
+          logs[logs_len()] = { Pass: `It's a valid react function`, isReactComponent, isMemoComponent};
           
+          
+          
+        } else {
+          logs[logs_len()] = { Fail: `It isn't a react function`, isReactComponent, isMemoComponent};
         }
+        
+        // Store the logs for this specific component's instance
+        compName = name;
+        thisFilesComps[compName] = {
+          fileName: state.filename || 'Unknown',
+          componentName: compName,
+          componentLogs: logs,
+        };
       },
       
       
@@ -401,38 +453,18 @@ export function devLogCompHierarchyBuilder(): PluginObj {
       // #endregion
       // #region Program ->  Enter and Exit functionality
       Program: {
-        enter(path: NodePath<Program>) {
+        exit(path: NodePath<Program>, state: PluginPass) {
+          // Add this component's logs the abstract syntax tree's log history
+          // console.log('file: ', state.filename);
+          devlogHelper.syntaxTreeLogs_addHistory<Record<string, AstCompInfo>>(thisFilesComps);
+        },
+        
+        
+        enter(path: NodePath<Program>, state: PluginPass) {
           // Clear the bucket at the start of EVERY file so logs don't bleed
-          capturedLogs.length = 0;},
-        exit(path: NodePath<Program>) {
-          // If the file didn't find any variables, don't inject empty arrays
-          if (capturedLogs.length === 0) return;
-
-          // Convert our raw JS objects into hardcoded browser-safe AST nodes
-          const fileLogNodes = t.valueToNode(capturedLogs);
-
-          // Build: window.myAstLogs = (window.myAstLogs || []).concat([...])
-          const appendExpression = t.expressionStatement(
-            t.assignmentExpression(
-              '=',
-              t.memberExpression(t.identifier('window'), t.identifier('myAstLogs')),
-              t.callExpression(
-                t.memberExpression(
-                  t.logicalExpression(
-                    '||',
-                    t.memberExpression(t.identifier('window'), t.identifier('myAstLogs')),
-                    t.arrayExpression([])
-                  ),
-                  t.identifier('concat')
-                ),
-                [fileLogNodes]
-              )
-            )
-          );
-
-          // Push this logic to the bottom of the current file
-          path.pushContainer('body', appendExpression);
-        }
+          thisFilesComps = {};
+          logs_clear()
+        },
       },
       
       
@@ -511,32 +543,42 @@ export class ReactComponentUtils {
    * 
    * @returns true if it's a valid react component
   */
-  public isReactComponent(path: NodePath<FunctionDeclaration | ArrowFunctionExpression | VariableDeclarator>): boolean {
+  public isReactComponent(path: NodePath<FunctionDeclaration | FunctionExpression | ArrowFunctionExpression | CallExpression | VariableDeclarator>, logs?: Record<number, any>): boolean {
+    let name: string = isIdentifier((path as any)?.node?.id) ? (path as any)?.node?.id?.name || 'Unknown' : 'Unknown';
     const node = path.node;
-    let name: string;
-    if (!node) return false;
+    if (!node) {
+      return false;
+    }
+    
+    // TODO: first the todo below, but see if the type's are similar and safe enough to combine these funcs. So there's not multiple functions with redundant checks for different types 
     
     // ? Arrow Function: Check if it contains code, or is a one-liner
     if (path.isArrowFunctionExpression()) { // const MyComponent = () => 
-      return this.isJsxArrowComponent(path);
+      // if (logs) logs[Object.keys(logs).length] = { "${name}(ArrowFunctionExp)": JSON.stringify(path.getSource(), ['name', 'id', 'init', 'params', 'properties', 'key'], 2)  };
+      // if (logs) logs[Object.keys(logs).length] = { [`${name}(ArrowFunctionExp)`]: { sourceCode: prettifySource(path) } };
+      this.astLog(logs, { [`${name}(ArrowFunctionExp)`]: this.getSafeNodeInfo(path) });
+      return this.isJsxArrowComponent(path, logs);
     }
     
     // ? Normal function syntax
     if (path.isFunctionDeclaration()) { // function myComponent() {}
+      this.astLog(logs, { [`${name}(FunctionDeclaration)`]: this.getSafeNodeInfo(path) });
       return this.isJsxComponent(path);
     }
     
-    // ? Find if it's a const var = arrow function
+    // ? From VariableDeclarator: Find what type of component it is
+    // TODO: Can we check this before we do the expression checks, and convert this as the used path?
     if (path.isVariableDeclarator()) {
+      this.astLog(logs, { [`${name}(VariableDeclarator)`]: this.getSafeNodeInfo(path) });
+      
       // Check if this is a PascalCase component name
-      let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
       const isPascalCase = /^[A-Z]/.test(name);
       if (!isPascalCase) return false;
       
       // Check that the function is a react component
-      const varPath = path.get('init');
-      if (varPath.isArrowFunctionExpression()) {
-        return this.isJsxArrowComponent(varPath);
+      const initPath = path.get('init');
+      if (initPath.isArrowFunctionExpression()) {
+        return this.isJsxArrowComponent(initPath);
       }
     }
     
@@ -548,7 +590,7 @@ export class ReactComponentUtils {
    * Returns true if this is a memoized component. Don't try to access the nodes because we can't safely retrieve the `name` from the individual nodes inside the memo(node).
    * * Checks that the `VariableDeclarator`'s name is memo, and that the first argument is a valid function type.
   */
-  public isMemoComponent(path: NodePath<VariableDeclarator>): boolean {
+  public isMemoComponent(path: NodePath<VariableDeclarator>, logs?: Record<number, any>): boolean {
     const varPath = path.get('init');
     if (!varPath) return false;
     
@@ -734,29 +776,72 @@ export class ReactComponentUtils {
    * Determines if an ArrowFunctionExpression node is a valid React Component.
    * Criteria: Must live at the module root (un-nested) and must return a JSX Element.
    */
-  protected isJsxArrowComponent(path: NodePath<ArrowFunctionExpression>): boolean {
+  protected isJsxArrowComponent(path: NodePath<ArrowFunctionExpression>, logs?: Record<number, any>): boolean {
     // ? Is it nested?
-    // Check the parent structure. If it is wrapped in an array map, an event handler, 
-    // or another function, its immediate parent parent will NOT be the file root ("Program").
-    const parentParent = path.parentPath?.parentPath;
-    if (!parentParent || !t.isProgram(parentParent as any)) {
-      return false; // Exit immediately if it's nested inside loops, objects, or variables!
+    // path.parentPath is the VariableDeclarator
+    // path.parentPath.parentPath is what holds the statement (e.g. Program, ExportNamedDeclaration)
+    const declarationPath = path?.parentPath?.parentPath?.parentPath; // ArrowFunc -> VarDeclarator -> VarDeclaration -> isRoot?
+    const isRootLevel = 
+      declarationPath?.isProgram() ||                 // This is at the root of the file, i.e. not a nested component.
+      declarationPath?.isExportNamedDeclaration()     // e.x. export const myComponent = () => {};
+      declarationPath?.isExportDefaultDeclaration();  // e.x. export default function myComponent() {}
+    
+    // ? If it isn't at the root of the file (isProgram), or an 
+    if (!declarationPath || !isRootLevel) {
+      this.astLog(logs, { 
+        "This was a nested function, or something happened with the declarationPath, data: ": {
+          isProgram: declarationPath?.isProgram(),
+          isExportNamedDeclaration: declarationPath?.isExportNamedDeclaration(),
+          isExportDefaultDeclaration: declarationPath?.isExportDefaultDeclaration(),
+        }
+      });
+      return false;
     }
+    this.astLog(logs, {
+      'isRootLevel data': {
+        isProgram: declarationPath?.isProgram(),
+        isExportNamedDeclaration: declarationPath?.isExportNamedDeclaration(),
+        isExportDefaultDeclaration: declarationPath?.isExportDefaultDeclaration(),
+        parentData: this.getSafeNodeInfo(path?.parentPath),
+        declarationPathData: this.getSafeNodeInfo(declarationPath)
+      }
+    });
     
     // Implicit Return (e.g., () => <div />)
     // ? Does it return JSX/HTML?
     const body = path.node.body;
     if (t.isJSXElement(body) || t.isJSXFragment(body)) {
+      this.astLog(logs, { "Pass: implicitly returns html. e.g., () => <div />": path.node.type });
       return true;
     }
     
     // Block Returns (e.g., () => { return <div />; })
     // ? We must scan the lines inside the brackets to see if a ReturnStatement outputs JSX.
+    const self = this;
+    this.astLog(logs, `checking if it's blockStatement has a jsx return statement. `);
     let returnsJsx = false;
     path.traverse({
+      // Skip nested function's return statements
+      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) { nestedPath.skip(); },
+      
+      // ? Find the first jsx return statement
       ReturnStatement(returnPath) {
-        const arg = returnPath.node.argument;
-        if (t.isJSXElement(arg) || t.isJSXFragment(arg)) {
+        self.astLog(logs, { 'ReturnStatement': self.getSafeNodeInfo(returnPath.get('argument')) });
+        const argNode = returnPath.node.argument;
+        
+        // Check for raw jsx elements
+        returnsJsx = t.isJSXElement(argNode) || t.isJSXFragment(argNode);
+        
+        // Check for babel's compiled jsx code (JsxDev CallExpressions)
+        if (!returnsJsx && t.isCallExpression(argNode)) {
+          const callee = argNode.callee;
+          if (t.isIdentifier(callee)) {
+            returnsJsx = ['jsxDEV', 'jsx', 'jsxs', 'createElement'].includes(callee.name);
+          }
+        }
+        
+        if (returnsJsx) {
+          self.astLog(logs, "Pass: Found a valid html return statement!");
           returnsJsx = true;
           returnPath.stop(); // Found it! Stop searching this function.
         }
@@ -986,6 +1071,115 @@ export class ReactComponentUtils {
   
   
   
+  // #endregion
+  // #region Logging in the dev console
+  /** The relative path to where you want to store the log history for your project.  */
+  public abstractSyntaxTreeLogHistoryLoc: string = './src/assets/astCompLogs.json';
+  
+  /** At the beginning of the plugin, clear the history before you run any logic. */
+  public syntaxTreeLogs_clearHistory(): void {
+    const cachedCompLogsFilePath = fPath.resolve(process.cwd(), this.abstractSyntaxTreeLogHistoryLoc);
+    fs.writeFileSync(cachedCompLogsFilePath, "{}");
+  }
+  
+  
+  /** Adds log information to the specified file location from **{@link abstractSyntaxTreeLogHistoryLoc}**. */
+  public syntaxTreeLogs_addHistory<T extends Record<string, any> = Record<string, any>>(logs: any): void {
+    // ? Read existing accumulated logs from previous files (if any exist)
+    let accumulatedLogs = {} as T;
+    const cachedCompLogsFilePath = fPath.resolve(process.cwd(), this.abstractSyntaxTreeLogHistoryLoc);
+    
+    // try loading existing data
+    if (fs.existsSync(cachedCompLogsFilePath)) { 
+      try {
+        accumulatedLogs = JSON.parse(fs.readFileSync(cachedCompLogsFilePath, 'utf-8'));
+        // console.log(`added data to file: `, accumulatedLogs);
+      } catch (e) {
+        accumulatedLogs = {} as T;
+        // console.log(`threw an error parsing the data: `, e);
+      }
+    } // else console.log('did not find current data in the file?');
+    
+    // Add the new data to the current
+    accumulatedLogs = { ...accumulatedLogs, ...logs};
+    fs.writeFileSync(cachedCompLogsFilePath, JSON.stringify(accumulatedLogs, null, 2)); // Persist the updated data right back down to disk
+  }
+  
+  
+  /**
+   * Recursively extracts a safe, clean JSON object representation of a Babel AST NodePath.
+   * Speeds up execution by swapping deep 'BlockStatement' bodies with fast source text strings
+   * while maintaining the structural node type.
+   */
+  public getSafeNodeInfo(pathContext: NodePath<any> | null | undefined): any {
+    const node = pathContext?.node;
+    if (!pathContext || !node) {
+      return null;
+    }
+    
+    // If it's a block statement, just pretty print the source code. It takes too much time to recursively return this information
+    if (pathContext.isBlockStatement() && Array.isArray(node.body)) {
+      return {
+        type: node.type,
+        // Retained your block statement changes: Split by newlines for Chrome DevTools
+        sourceCodeBlock: typeof pathContext.getSource === 'function' 
+          ? pathContext.getSource().split(/\r?\n/) 
+          : "[Source Unavailable]"
+      };
+    }
+    
+    // Properties to skip to prevent circular loops, noise, and private fields
+    const propertiesToSkip = new Set([
+      'parent', 'parentPath', 'hub', 'state', 'container', '_container', 
+      'loc', 'start', 'end', 'range', 'tokens', 'extra', 
+      'leadingComments', 'trailingComments'
+    ]);
+    
+    // Iterate over the keys of the current node
+    const cleanNode: Record<string, any> = {};
+    for (const key in node) {
+      if (Object.prototype.hasOwnProperty.call(node, key)) {
+        if (propertiesToSkip.has(key)) continue;
+        if (key.startsWith('_')) continue;
+        
+        // Handle child properties that are arrays (e.g., path.get('params'))
+        const value = (node as any)[key];
+        if (Array.isArray(value)) {
+          const listPaths = pathContext.get(key);
+          
+          if (Array.isArray(listPaths)) {
+            cleanNode[key] = listPaths.map(childPath => this.getSafeNodeInfo(childPath));
+          } else {
+            // Fallback if path.get didn't return an array matching the node data structure
+            cleanNode[key] = [];
+          }
+        } 
+        
+        // Handle child properties that are nested nodes (e.g., path.get('body'))
+        else if (value && typeof value === 'object' && typeof value.type === 'string') {
+          const childPath = pathContext.get(key);
+          // Ensure we successfully resolved a single NodePath before recursing
+          if (childPath && !Array.isArray(childPath)) cleanNode[key] = this.getSafeNodeInfo(childPath);
+          else cleanNode[key] = null;
+        } 
+        
+        // Handle primitive values (strings, booleans, numbers) directly
+        else {
+          cleanNode[key] = value;
+        }
+      }
+    }
+    
+    return cleanNode;
+  }
+  
+  
+  /** Quick convenience function that Attaches log information to an object for keeping abstract syntax tree history */
+  public astLog(logs: any, message: any): void {
+    if (typeof logs === 'object' && logs !== null && !Array.isArray(logs)) {
+      logs[Object.keys(logs).length] = message;
+    }
+  }
   // #endregion
 }
 

@@ -49,3 +49,6 @@ vite.config.*.timestamp*
 test-output
 
 vitest.config.*.timestamp*
+
+# For the devLogCompHierarchyBuilder (Abstract Syntax Tree - hacky, but abbreviated logging within google's dev console)
+**/astCompLogs.json
