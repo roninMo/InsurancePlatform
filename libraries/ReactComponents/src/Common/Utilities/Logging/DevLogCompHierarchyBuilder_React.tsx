@@ -126,13 +126,13 @@ interface AstCompInfo {
  * @note In order to use this and the {@link Devlog} properly, **{@link createCompReferenceHierarchy()}** must first be ran.
  */
 export function devLogCompHierarchyBuilder(): PluginObj {
-  // React utilities for finding jsx components, retrieving component information, and validating component's logic
+  /** React utilities for finding jsx components, retrieving component information, and validating component's logic */
   const devlogHelper = new ReactComponentUtils();
   
-  // Component List with settings attached to each component that the DevLog uses for context and functionality
+  /** Component List with settings attached to each component that the DevLog uses for context and functionality */
   const componentMetadata = new Map<string, ComponentLogConfig>();
   
-  // Keep track of how many times the component has been "created"
+  /** Keep track of how many times the component has been "created" */
   const componentInstances = new Map<string, number>();
   
   // Log information
@@ -428,6 +428,58 @@ export function devLogCompHierarchyBuilder(): PluginObj {
           componentName: compName,
           componentLogs: logs,
         };
+				
+				
+				// TODO: Let's divide up the NodeType's extraction from the actual validity checks and searching for components
+				/*
+					Having one function that checks if it's a react component instead of multiple would help with speeding up the process and making everything faster
+					However; each NodeType has different values, different ways of finding the component name, and looping through the component's html should be universal and the found instanced components should be tied to the parent component
+					
+					1. We need the NodeType, the blueprint component's name, and access to it's original path (e.x. from Vardeclarator)
+						- Just check if the potential react component follows the proper naming convention
+					2. We need to add the compName to all blueprints, and a compId to all instanced components found within all of each bp comp's html return statements
+						- Start by finding all blueprint components within Visitor's VariableDeclarator and FunctionDeclaration. VarDeclar should find all ArrowFuncExps, FuncExps, CallExps(memos => ArrowFunc, Func, etc Exp.), and anonymous/inline = FuncExp
+							- ArrowFuncExp = VarDecl.init = "const myComp = () => {}"
+							- Anojymous/inline = CallExp.args: "const myFunc = function() {}"
+							- Func = "FunctDecl = function myComp()"
+							- Memo = "CallExp = callee.name: memo, args: [firstItem: any of the above based on how you declared your component, secondItem: same except for the customRerenderProps function]"
+							- Check with how imported components work because they might be an import type for things like export const myImportedFunction. I don't know how jsx instances of those components work in returnStatements, but we'll probably be dealing with an identifier, or it's just the JsxDev type and wee add the props
+							
+						3. Once we've gone through all the variableDeclarator items, we'll have a captured list of every unique react component name, and an object containing it's node, path, and the source patth we found it from.
+							- Find a way to then loop through these before the Visitor return (set it to a const or somethting), and then add the props for renderLogs (compId, and parentCompName). Add compName as a static var on the bp for react fiber to have access to it. Find how to safelt retrive the compName for adding compId to the instanced component's props.
+						4. At this point we should have everything complete, and the renderLogs() function should work
+				
+						
+				{} Capturing the components:
+					- If we have the raw node types, we can run through the logic for checking if it's a react component in one function
+						1. Create a function to extract the target func's node, and create the object data of the potential react component
+						2. have isReactComponent's argument the extracted object of the source and potential node. If it's a reactComponent, add it to the captured list.
+						3. after we've found all the react components, THEN add the componentName to the source component's code for every component in a new func. 
+						4. after that, loop through their return statements, and add the props to every comp (compId, parentName). this should be safe even for found react component's that we're not actually adding the renderLog to (if it's soley a representational comp without state/hooks).
+						
+						
+				*/
+				
+				// Grab the name of this component here (nested funcExps store their name on VarDecl), memo callExps and anonymous funcs would also have it stored here.
+				
+				// Find the actual component's code. Arrow and const func = function() are right here, memo's are in callee arguments, and wee need to loop through FuncDecl to find the rest. 
+				// TODO: double check that imported funcs that arent jsx elements are accounted for here! we may need to check for exportFunc... other import/export types (including export const...)
+				
+				// Use the created object { nodePath, componentName sourcePath } and pass it to isReactComponent
+				
+				// Add all functions that are reactComponents to a record using it's component name
+				
+				// Once the visitor function is done, store it's value to a variable and return it after these two steps
+				// 1. loop through the record and add all compName's to the actual component code.
+				// 2. loop through the returnStatements of each component blueprint, and find dvery instanced react component we've created, capture it's component name, create and pass a compId from it's name and the instanceCount using a hash, and finally pass it's parent name. 
+				// 3. finally, go through all component blueprints again, and we need to safely extract it's props. grab them from the params:
+				//		if it's not destructured, extract the renderLog values from it. 
+				//		if it is destructured, we need to add those props to it
+				//		if it doesn't have the props argument we need to add it, and then extract the required values
+				// 4. Once that's done, add the renderLog function, capture the component's hooks, and place it before the first return statement (or better yet, after the location of the last hook declared in the code)
+				
+				// check that it works, log the conditional logic, and finish out the abstract tree function!
+				
       },
       
       
