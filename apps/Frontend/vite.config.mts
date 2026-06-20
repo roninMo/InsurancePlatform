@@ -26,7 +26,7 @@ export default defineConfig(() => ({
   },
   plugins: [
     nxViteTsPaths(), // when you serve an app that uses this library, vite watches this library and reloads the app when there are saved changes 
-    vitePluginDevlog(),
+    vitePluginDevlog(), 
     react()
   ],
   

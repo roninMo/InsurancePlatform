@@ -23,6 +23,7 @@ import {
 import fs from 'fs';
 import fPath from 'path';
 import generate from "@babel/generator";
+import { ReactComponentUtils } from "./vite-plugin-devlog";
 
 // babel generate() options
 const generateOpts = {

@@ -5,14 +5,27 @@ import { NodePath, PluginObj, types as t, BabelFile, PluginPass, transformAsync 
 import { LogRenderData } from './Devlog';
 import { devLogCompHierarchyBuilder } from './DevLogCompHierarchyBuilder_React';
 import { 
-  VariableDeclarator, FunctionDeclaration, 
-  ArrowFunctionExpression, FunctionExpression, CallExpression, 
-  ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, 
   Node,
   
-  isVariableDeclarator, isFunctionDeclaration, 
+  // ? react component declaration containers
+  VariableDeclarator, FunctionDeclaration, Identifier,
+  ImportSpecifier, ImportDefaultSpecifier, ImportNamespaceSpecifier, 
+  ExportDeclaration, ExportDefaultDeclaration, ExportNamedDeclaration,
+  
+  isVariableDeclarator, isFunctionDeclaration, isIdentifier, 
+  isImportSpecifier, isImportDefaultSpecifier, isImportNamespaceSpecifier,
+  isExportDeclaration, isExportDefaultDeclaration, isExportNamedDeclaration,
+  
+  // ? All react component's source should be in one of these
+  ArrowFunctionExpression, FunctionExpression, CallExpression, 
   isArrowFunctionExpression, isFunctionExpression, isCallExpression,
-  isIdentifier, isObjectExpression, isArrayExpression, isBlockStatement, BlockStatement,
+  
+  // ? Any and all code within functions, classes, etc.
+  BlockStatement, isBlockStatement, 
+  
+  // ? function params / callExpression arguments are usually (ObjectProperty | RestElement)[]
+  ObjectProperty, RestElement,
+  isObjectProperty, isRestElement,
   
 } from '@babel/types';
 import fs from 'fs';
@@ -44,7 +57,6 @@ type ReactFCType =
   | FunctionDeclaration 
   | ArrowFunctionExpression
   | FunctionExpression 
-  | CallExpression
 ;
 
 
@@ -55,6 +67,23 @@ type ReactFCImportTypes =
   | ImportDefaultSpecifier 
   | ImportNamespaceSpecifier
 ;
+
+/** Export name variables that come from VariableDeclarator. i.e:  export const componentA = () => { return(<div />); } */
+type ReactFCExportTypes = 
+  | ExportDeclaration
+  | ExportDefaultDeclaration
+  | ExportNamedDeclaration
+;
+
+
+/** 
+ * The Node types that contain potential react components. We primarily search through {@link VariableDeclarator} and {@link FunctionDeclaration}, 
+ * but *memoized* and *forwardRef* components are wrapped in {@link CallExpression|CallExpressions}. 
+ */
+type ReactFCContainerTypes = 
+  | VariableDeclarator
+  | FunctionDeclaration
+  | CallExpression;
 
 
 interface AstComponentInfo {
@@ -72,7 +101,7 @@ interface AstComponentInfo {
 interface ComponentData<T extends Node = ReactFCType> {
   node: T;
   path: NodePath<T>;
-  sourcePath: NodePath<VariableDeclarator | FunctionDeclaration | T>;
+  sourcePath: NodePath<ReactFCContainerTypes | T>;
   componentName: string;
 }
 
@@ -128,7 +157,44 @@ export function vitePluginDevlog(): Plugin {
 export class ReactComponentUtils {
   constructor() {}
   
+  /** The relative path to where you want to store the log history for your project.  */
+  public abstractSyntaxTreeLogHistoryLoc: string = './src/assets/astCompLogs.json';
   
+  /** The cached logs of all components in a specific file. During **Program.exit()**, we store these in a file to display in google chrome's *dev console*. */
+  public fileComponentLogs: Record<string, AstComponentInfo> = {};
+  
+  /** The stored logs for a specific component during one of the visitor functions */
+  public logs = {
+    data: {} as Record<number, any>,
+    safeIncrementCounter: 0,
+    
+    /** Adds the log to the next index */
+    add: (log: any) => {
+      this.logs.data[this.logs.nextIndex] = log;
+    },
+    
+    /** The next safe index */
+    get nextIndex(): number {
+      return Math.max(...Object.keys(this.data).map(Number)) + 1;
+    },
+    
+    /** Getter for length */
+    get len(): number {
+      return Object.keys(this.data).length;
+    },
+    
+    /** Clear the logs for the current component. */
+    clear: () => {
+      this.logs.data = {};
+    }
+  };
+  
+  
+  
+  
+  
+  // #region General Utils
+  /** We use this on a couple of the visitor functions to extract the react component's node and keep a safe reference to it's component name and source component */
   public getComponentInfo(sourcePath: babel.NodePath<VariableDeclarator | FunctionDeclaration | CallExpression>): ComponentData | undefined {
     const sourceNode = sourcePath?.node;
     let callPath: NodePath<Node | undefined | null> | undefined | null;
@@ -164,6 +230,7 @@ export class ReactComponentUtils {
       // ? We can get declared component(const), which are wrapped in memo or forwardRef, which is also a callExpression()
       if (initPath.isCallExpression()) {
         callPath = initPath;
+        // -> Scroll to "if (callPath.isCallExpression())"
       }
       
       // If it was an identifier pointing to another component // ! If the component was imported, we will not find it here
@@ -211,6 +278,115 @@ export class ReactComponentUtils {
   }
   
   
+  /** 
+   * Checks whether this is a valid react jsx component, not just a function 
+   * * Currently used for FunctionDeclaration and ArrowFunctionExpression nodes
+   * 
+   * ----
+   * Validation Criteria:
+   * 1. Does this function live on the root of the file, or is it nested within a component or another function?
+   * 2. Does it only return JSX/HTML? (no brackets, just a return(<div> Content Component </div>)  // TODO - Should we account for Services and other non react jsx components?
+   * 3. Does the component (with code) return JSX/HTML, or is it a memo/forwardRef component?
+   * 
+   * @returns true if it's a valid react component
+  */
+  public isReactComponent(data: ComponentData): boolean {
+    if (!data.node) {
+      return false;
+    }
+    
+    // ? Check if this has PascalCase component syntax 
+    const isPascalCase = /^[A-Z]/.test(data.componentName);
+    if (!isPascalCase) return false;
+    
+    // Log the data passed to isReactComponent
+    this.addLog(`isReactComponent(${data.componentName})`);
+    this.addLog(this.getSafeReactCompData(data));
+    
+    // ? Only valid if this is defined on the root level of the file
+    let searchPath = data.sourcePath; // For call expressions, let's check if it was defined in a variableDeclarator before continuing
+    if (searchPath.isCallExpression() && searchPath.parentPath.isVariableDeclarator()) {
+      searchPath = searchPath.parentPath;
+    }
+    
+    // path.parentPath is the VariableDeclarator
+    // path.parentPath.parentPath is what holds the statement (e.g. Program, ExportNamedDeclaration)
+    const declarationPath = searchPath?.parentPath?.parentPath; // [() => {} / func() {}] -> VarDeclarator -> VarDeclaration -> isRoot?
+    if (
+      !( declarationPath?.isProgram()                   // This is at the root of the file, i.e. not a nested component.
+      || declarationPath?.isExportNamedDeclaration()    // e.x. export const myComponent = () => {};
+      || declarationPath?.isExportDefaultDeclaration()) // e.x. export default function myComponent() {}
+    ) {
+      this.addLog(`Fail: ${data.componentName} wasn't defined on the root.`)
+      return false;
+    }
+    
+    // ? Does this component explicitly implicitly return jsx/html?  (e.g., () => <div />)
+    const body = data.node.body;
+    if (t.isJSXElement(body) || t.isJSXFragment(body)) {
+      this.addLog(`Pass: implicitly returns html. e.g., () => <div />`);
+      return true;
+    }
+    
+    // ? Is the a memo'd component or a forwardRef - quick early out
+    if (data.sourcePath.isCallExpression()) {
+      const callee = data.sourcePath.node.callee; // check if the function invoked was a memo wrapped around the react component.
+      if (isIdentifier(callee) && ['memo', 'forwardRef'].includes(callee.name)) {
+        this.addLog(`Pass: This is a memo'd component, or a forwardRef component.`);
+        return true; 
+      }
+    }
+    
+    // ? Does a ReturnStatement output JSX?  e.g., () => { return <div />; })
+    const self = this;
+    this.addLog(`checking if it's blockStatement(code) has a jsx return statement. `);
+    let returnsJsx = false;
+    data.path.traverse({
+      // Skip nested function's return statements
+      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) { nestedPath.skip(); },
+      
+      // * Find the first jsx return statement
+      ReturnStatement(returnPath) {
+        const argNode = returnPath.node.argument;
+        self.addLog({ 'ReturnStatement': self.getSafeNodeInfo(returnPath) });
+        
+        // Check for raw jsx elements
+        returnsJsx = t.isJSXElement(argNode) || t.isJSXFragment(argNode);
+        
+        // Check for babel's compiled jsx code (JsxDev CallExpressions)
+        if (!returnsJsx && t.isCallExpression(argNode)) {
+          const callee = argNode.callee;
+          if (t.isIdentifier(callee)) {
+            returnsJsx = ['jsxDEV', 'jsx', 'jsxs', 'createElement'].includes(callee.name);
+          }
+        }
+        
+        if (returnsJsx) {
+          self.addLog("Pass: Found a valid html return statement!");
+          returnsJsx = true;
+          returnPath.stop(); // Found it! Stop searching this function.
+        }
+      }
+    });
+    
+    return returnsJsx;
+  }
+  
+  
+  /** On the second pass, we specifically search through all valid react components we found, and add  */
+  public reactFC_addComponentNameAndRenderLog(): void {
+    
+  }
+  
+  
+  
+  // reactFC_addComponentNameAndRenderLog
+  // jsxEl_addParentNameAndCompId
+  //    -> We may actually want to tie the parent name to the component's id because it's depth first search, and random indexes across the application will be confusing
+  
+  
+  
+  
   /** Convenience function to check if a path or a node is a valid react component node. */
   public isValidReactFCType
     <T extends NodePath<Node> | Node = Node>(pathOrNode: NodePath<Node> | Node): 
@@ -237,350 +413,25 @@ export class ReactComponentUtils {
   }
   
   
-  // #region General Utils
-  /** Retrieves the BlockStatement from `VariableDeclarators` and `FunctionDeclarations`. */
-  public getCodeFromFuncTypes(path: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): BlockStatement | undefined {
-    const node = path.node;
-    if (!node) return undefined;
-    
-    // Find out whether we're dealing with an arrow function, or a function declaration
-    
-    // ? Arrow Function: Check if it contains code, or is a one-liner
-    if (t.isArrowFunctionExpression(node)) {
-      if (t.isBlockStatement(node.body)) return node.body;
-      else return undefined;
-    }
-    
-    // ? Normal function syntax
-    if (t.isFunctionDeclaration(node)) { // function myComponent() {}
-      return node.body;
-    }
-    
-    return undefined;
+  public componentHasNoProps(): boolean {
+    return true;
+  }
+  
+  public componentHasNoDestructuredProps(): boolean {
+    return true;
   }
   
   
-  /** 
-   * Checks whether this is a valid react jsx component, not just a function 
-   * * Currently used for FunctionDeclaration and ArrowFunctionExpression nodes
-   * 
-   * ----
-   * Validation Criteria:
-   * 1. Does this function live on the root of the file, or is it nested within a component or another function?
-   * 2. Does it only return JSX/HTML? (no brackets, just a return(<div> Content Component </div>)  // TODO - Should we account for Services and other non react jsx components?
-   * 3. Does the component (with code) return JSX/HTML?
-   * 
-   * @returns true if it's a valid react component
-  */
-  public isReactComponent(path: babel.NodePath<FunctionDeclaration | FunctionExpression | ArrowFunctionExpression | CallExpression | VariableDeclarator>): boolean {
-    let name: string = isIdentifier((path as any)?.node?.id) ? (path as any)?.node?.id?.name || 'Unknown' : 'Unknown';
-    const node = path.node;
-    if (!node) {
-      return false;
-    }
-    
-    // TODO: first the todo below, but see if the type's are similar and safe enough to combine these funcs. So there's not multiple functions with redundant checks for different types 
-    
-    // ? Arrow Function: Check if it contains code, or is a one-liner
-    if (path.isArrowFunctionExpression()) { // const MyComponent = () => 
-      // if (logs) logs[Object.keys(logs).length] = { "${name}(ArrowFunctionExp)": JSON.stringify(path.getSource(), ['name', 'id', 'init', 'params', 'properties', 'key'], 2)  };
-      // if (logs) logs[Object.keys(logs).length] = { [`${name}(ArrowFunctionExp)`]: { sourceCode: prettifySource(path) } };
-      this.addLog({ [`${name}(ArrowFunctionExp)`]: this.getSafeNodeInfo(path) });
-      return this.isJsxArrowComponent(path, this.logs);
-    }
-    
-    // ? Normal function syntax
-    if (path.isFunctionDeclaration()) { // function myComponent() {}
-      this.addLog({ [`${name}(FunctionDeclaration)`]: this.getSafeNodeInfo(path) });
-      return this.isJsxComponent(path);
-    }
-    
-    // ? From VariableDeclarator: Find what type of component it is
-    // TODO: Can we check this before we do the expression checks, and convert this as the used path?
-    if (path.isVariableDeclarator()) {
-      this.addLog({ [`${name}(VariableDeclarator)`]: this.getSafeNodeInfo(path) });
-      
-      // Check if this is a PascalCase component name
-      const isPascalCase = /^[A-Z]/.test(name);
-      if (!isPascalCase) return false;
-      
-      // Check that the function is a react component
-      const initPath = path.get('init');
-      if (initPath.isArrowFunctionExpression()) {
-        return this.isJsxArrowComponent(initPath);
-      }
-    }
-    
-    return false;
-  }
-  
-  
-  /** 
-   * Returns true if this is a memoized component. Don't try to access the nodes because we can't safely retrieve the `name` from the individual nodes inside the memo(node).
-   * * Checks that the `VariableDeclarator`'s name is memo, and that the first argument is a valid function type.
-  */
-  public isMemoComponent(path: babel.NodePath<VariableDeclarator>): boolean {
-    const varPath = path.get('init');
-    if (!varPath) return false;
-    
-    // Retrieve the function name from the VariableDeclarator
-    let callExpressionName: string = '';
-    let args: (t.ArgumentPlaceholder | t.SpreadElement | t.Expression)[] | undefined;
-    
-    // If this the variableDeclarator defines a memo function
-    if (varPath.isCallExpression() && isIdentifier(varPath.node.callee)) {
-      const callee = varPath.node.callee;
-      if (isIdentifier(callee)) { 
-        callExpressionName = varPath.node.callee.name;
-        args = varPath.node.arguments;
-      }
-    }
-    
-    // <- If it isn't a memo function, return
-    if (callExpressionName !== 'memo' || !args) return false;
-    
-    // Check the function types
-    const argsPaths = varPath.get('arguments'); // args?.[0]
-    if (!Array.isArray(argsPaths) || argsPaths.length === 0) return false;
-    
-    const compRef = argsPaths[0]; // args?.[0]
-    if (compRef.isArrowFunctionExpression()) return true;
-    if (compRef.isFunctionExpression()) return true;
-    if (compRef.isIdentifier()) {
-      const binding = compRef.scope.getBinding(compRef.node.name);
-      if (binding?.path?.isFunctionDeclaration()) return true;
-    }
-    return false;
-  }
-  
-  
-  /** 
-   * Retrieves the **React component** from a memoized function in AST. Searches from `VariableDeclarators` because we need reliable access to the component's name inside the memo.
-   * * If it doesn't safely find the react component, it will return undefined
-   * * If we found an arrow function, we create a `VariableDeclarator`, so we can pass the function's proper name to it (only for the actual react-component)
-   * 
-   * ----
-   * @returns         An object containing the component's name, the react component, and it's custom rerenderFunction.
-  */
-  public getReactComponentFromMemo(path: babel.NodePath<VariableDeclarator>):
-    { 
-      component: FunctionDeclaration | FunctionExpression | VariableDeclarator, 
-      customRerenderFunc: ArrowFunctionExpression | FunctionDeclaration | FunctionExpression | undefined 
-    } | undefined
-  {
-    const varPath = path.get('init');
-    if (!varPath) return;
-    
-    // Retrieve the function name from the VariableDeclarator
-    let functionName: string = isIdentifier(path.node.id) ? path.node.id.name : 'Unknown';
-    let callExpressionName: string = '';
-    let args: (t.ArgumentPlaceholder | t.SpreadElement | t.Expression)[] | undefined;
-    
-    // If this the variableDeclarator defines a memo function
-    if (!varPath.isCallExpression() || !isIdentifier(varPath.node.callee)) return;
-    const callee = varPath.node.callee;
-    if (isIdentifier(callee)) { 
-      callExpressionName = varPath.node.callee.name;
-      args = varPath.node.arguments;
-    }
-    
-    // <- If it isn't a memo function, return
-    if (callExpressionName !== 'memo' || !args) return undefined;
-    
-    // {} We need to extract the actual function references from these. They can be: 
-    //   - ArrowFunctionExpression: const ComponentA = memo((props) => {});
-    //   - FunctionDeclaration(from Identifier): const MemoComponent = memo(ComponentA);
-    //   - FunctionExpression: const MemoComponent = memo(function(props) {})
-    // The same is true for the optional customRerenderFunction 
-    
-    const argsPaths = varPath.get('arguments'); // Check the function types
-    if (!Array.isArray(argsPaths) || argsPaths.length === 0) return undefined;
-    const compRef = argsPaths[0]; // args?.[0]
-    const customRerenderFuncRef = argsPaths?.[1]; // args?.[1]
-    let reactComponent: VariableDeclarator | FunctionDeclaration | FunctionExpression | undefined;
-    let customRerenderFunc: ArrowFunctionExpression | FunctionDeclaration | FunctionExpression | undefined;
-    for (let i = 0; i < [compRef, customRerenderFuncRef].length; i++) {
-      const func = i === 0 ? compRef : customRerenderFuncRef;
-      if (!func || Array.isArray(func) || !func.node) continue; // for the optional customRerenderProps function in a memo
-      
-      // If it's an arrow function inside the memo
-      if (func.isArrowFunctionExpression()) { // TODO: if we want this function's name safely, we need to create a variableDeclarator return
-        const compName = t.identifier(functionName);
-        const arrowFuncExp = func.node;
-        const varDeclarator = t.variableDeclarator(compName, arrowFuncExp);
-        
-        if (i === 0) reactComponent = varDeclarator;
-        else customRerenderFunc = func.node;
-      }
-      // If the function is declared in the memo like const ComponentA = memo(function(props) {});
-      else if (func.isFunctionExpression()) {
-        // Add the component's name to FunctionExpressions where it's id reference is usually null
-        func.node.id = t.identifier(functionName);
-        
-        if (i === 0) reactComponent = func.node;
-        else customRerenderFunc = func.node;
-      }
-      // If it's a standard function declared outside of the - memo(ComponentA)
-      else if (func.isIdentifier()) {
-        const binding = func.scope.getBinding(func.node.name);
-        if (binding?.path?.isFunctionDeclaration()) {        
-          // Change it's identifier directly to the actual component's name, what's used in the jsx ->  const useThisName = memo(refFuncName)
-          const funcDeclNode = binding.path.node as FunctionDeclaration;
-          funcDeclNode.id = t.identifier(functionName);
-          
-          if (i === 0) reactComponent = binding.path.node;
-          else customRerenderFunc = binding.path.node;
-        }
-      }
-    }
-    
-    // -> Return the memoized Function/ArrowFunction
-    if (!reactComponent) return undefined;
-    return {
-      component: reactComponent,
-      customRerenderFunc
-    }
-  } 
   
   
   // #endregion
   // #region Visitor::FunctionDeclaration Search Utils
-  /**
-   * Determines if an FunctionDeclaration node is a valid React Component.
-   * Criteria: Must live at the module root (un-nested) and must return a JSX Element.
-   */
-  protected isJsxComponent(path: babel.NodePath<FunctionDeclaration>): boolean {
-    const node = path.node;
-    if (!node) return false;
-    
-    // ? Does is have a PascalCase name?
-    let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
-    const isPascalCase = /^[A-Z]/.test(name);
-    if (!isPascalCase) return false;
-    
-    // ? Is it nested?
-    // Check the parent structure. If it is wrapped in an array map, an event handler, 
-    // or another function, its immediate parent will NOT be the file root ("Program").
-    // Using path.scope.parentBlock safely accounts for standard files AND direct 'export function' modules!
-    if (path.scope.parentBlock && !t.isProgram(path.scope.parentBlock)) {
-      return false; // Exit immediately if it's nested deep inside anything!
-    }
-    
-    // ? Does it return JSX/HTML?
-    const body = path.node.body;
-    if (t.isJSXElement(body) || t.isJSXFragment(body)) {
-      return true;
-    }
-    
-    // Block Returns (e.g., () => { return <div />; })
-    // ? We must scan the lines inside the brackets to see if a ReturnStatement outputs JSX.
-    let returnsJsx = false;
-    path.traverse({
-      ReturnStatement(returnPath) {
-        const arg = returnPath.node.argument;
-        if (t.isJSXElement(arg) || t.isJSXFragment(arg)) {
-          returnsJsx = true;
-          returnPath.stop(); // Found it! Stop searching this function.
-        }
-      }
-    });
-    
-    return returnsJsx;
-  }
-  
-  public functionHasNoArgs(): boolean {
-    return true;
-  }
-  
-  public functionHasNoDestructuredArgs(): boolean {
-    return true;
-  }
   
   
   
   
   // #endregion
   // #region Visitor::ArrowFunctionExpression Search Utils
-  /**
-   * Determines if an ArrowFunctionExpression node is a valid React Component.
-   * Criteria: Must live at the module root (un-nested) and must return a JSX Element.
-   */
-  protected isJsxArrowComponent(path: babel.NodePath<ArrowFunctionExpression>, logs?: Record<number, any>): boolean {
-    // ? Is it nested?
-    // path.parentPath is the VariableDeclarator
-    // path.parentPath.parentPath is what holds the statement (e.g. Program, ExportNamedDeclaration)
-    const declarationPath = path?.parentPath?.parentPath?.parentPath; // ArrowFunc -> VarDeclarator -> VarDeclaration -> isRoot?
-    const isRootLevel = 
-      declarationPath?.isProgram() ||                 // This is at the root of the file, i.e. not a nested component.
-      declarationPath?.isExportNamedDeclaration()     // e.x. export const myComponent = () => {};
-      declarationPath?.isExportDefaultDeclaration();  // e.x. export default function myComponent() {}
-    
-    // ? If it isn't at the root of the file (isProgram), or an 
-    if (!declarationPath || !isRootLevel) {
-      this.addLog({ 
-        "This was a nested function, or something happened with the declarationPath, data: ": {
-          isProgram: declarationPath?.isProgram(),
-          isExportNamedDeclaration: declarationPath?.isExportNamedDeclaration(),
-          isExportDefaultDeclaration: declarationPath?.isExportDefaultDeclaration(),
-        }
-      });
-      return false;
-    }
-    this.addLog({
-      'isRootLevel data': {
-        isProgram: declarationPath?.isProgram(),
-        isExportNamedDeclaration: declarationPath?.isExportNamedDeclaration(),
-        isExportDefaultDeclaration: declarationPath?.isExportDefaultDeclaration(),
-        parentData: this.getSafeNodeInfo(path?.parentPath),
-        declarationPathData: this.getSafeNodeInfo(declarationPath)
-      }
-    });
-    
-    // Implicit Return (e.g., () => <div />)
-    // ? Does it return JSX/HTML?
-    const body = path.node.body;
-    if (t.isJSXElement(body) || t.isJSXFragment(body)) {
-      this.addLog({ "Pass: implicitly returns html. e.g., () => <div />": path.node.type });
-      return true;
-    }
-    
-    // Block Returns (e.g., () => { return <div />; })
-    // ? We must scan the lines inside the brackets to see if a ReturnStatement outputs JSX.
-    const self = this;
-    this.addLog(`checking if it's blockStatement has a jsx return statement. `);
-    let returnsJsx = false;
-    path.traverse({
-      // Skip nested function's return statements
-      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) { nestedPath.skip(); },
-      
-      // ? Find the first jsx return statement
-      ReturnStatement(returnPath) {
-        self.addLog({ 'ReturnStatement': self.getSafeNodeInfo(returnPath.get('argument')) });
-        const argNode = returnPath.node.argument;
-        
-        // Check for raw jsx elements
-        returnsJsx = t.isJSXElement(argNode) || t.isJSXFragment(argNode);
-        
-        // Check for babel's compiled jsx code (JsxDev CallExpressions)
-        if (!returnsJsx && t.isCallExpression(argNode)) {
-          const callee = argNode.callee;
-          if (t.isIdentifier(callee)) {
-            returnsJsx = ['jsxDEV', 'jsx', 'jsxs', 'createElement'].includes(callee.name);
-          }
-        }
-        
-        if (returnsJsx) {
-          self.addLog("Pass: Found a valid html return statement!");
-          returnsJsx = true;
-          returnPath.stop(); // Found it! Stop searching this function.
-        }
-      }
-    });
-    
-    return returnsJsx;
-  }
-  
-  
   public getArrowFunctionExpName(path: NodePath<ArrowFunctionExpression>): string {
     return '';
   }
@@ -590,6 +441,9 @@ export class ReactComponentUtils {
   
   // #endregion
   // #region Visitor::VariableDeclarator Search Utils
+  public isOnRootLevel(path: NodePath<VariableDeclarator>): boolean {
+    return false;
+  }
   
   
   
@@ -605,16 +459,16 @@ export class ReactComponentUtils {
     if (!paramsArray || paramsArray.length === 0) return { type: "none" };
     
     const firstParam = paramsArray[0];
-    if (t.isIdentifier(firstParam)) {
+    if (isIdentifier(firstParam)) {
       return { type: "plain", name: firstParam.name }; // e.g., (props)
     }
     
     if (t.isObjectPattern(firstParam)) {
-      const keys = firstParam.properties.map((prop) => {
-        if (t.isObjectProperty(prop) && t.isIdentifier(prop.key)) {
+      const keys = firstParam.properties.map((prop: ObjectProperty | RestElement) => {
+        if (isObjectProperty(prop) && isIdentifier(prop.key)) {
           return prop.key.name; // Standard destructured keys
         }
-        if (t.isRestElement(prop) && t.isIdentifier(prop.argument)) {
+        if (isRestElement(prop) && isIdentifier(prop.argument)) {
           return `...${prop.argument.name}`; // Rest assignments
         }
         return null;
@@ -644,7 +498,73 @@ export class ReactComponentUtils {
   }
   
   
-  public getHooks(startPath: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): Partial<LogRenderData> {
+  // TODO: These are DRY, they're accessing the same data and storing them in different arrays.
+  // TODO: create ONE getHooks(dataToRet: { calleeName: 'useState' | 'etc.', stateArray: any[] }) 
+  // TODO: Delete the old getHooks, getUseStates, getUseContexts, getUseReducers all retrieve the code the same way. 
+  /** Retrieves a react component's hooks. Pass in an with a reference to your array, and the hooks you want to retrieve */
+  public getHooks(data: ComponentData, hooksToRetrieve: ('useState' | 'useContext' | 'useReducer')[]): { stateHooks: any[], contexts: any[], reducers: any[] } {
+    const capturedHooks = { stateHooks: [], contexts: [], reducers: [] };
+    const codePath = data?.path?.get('body');
+    if (!data.node || !codePath || !codePath.isBlockStatement()) {
+      return capturedHooks;
+    }
+    
+    // <- Early out if it's not code within brackets, i.e an implicit return ->  const componentA = () => <div />;
+    if (!codePath.isBlockStatement()) {
+      return capturedHooks;
+    }
+    
+    // Only loop through the component's code, not the component's construction/metadata
+    codePath.traverse({ // () startPath.get("body").traverse()  - fix
+      // Only search for declared hooks, and skip their internal invocations or any nested function's content within this component.
+      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) {
+        nestedPath.skip(); 
+      },
+      
+      // Find all hook instantiations
+      VariableDeclarator(varPath) {
+        const path = varPath.get('init');
+        const varNode = varPath?.node;
+        if (!varNode || !path.isCallExpression()) {
+          return;
+        }
+        
+        // Search for a valid function invocation's name
+        const callNode = path.node;
+        if (!isIdentifier(callNode.callee)) {
+          return;
+        }
+        
+        // ? Target the hooks we want to capture
+        const callee = callNode.callee;
+        for (const hookName of hooksToRetrieve) {
+          
+          // Add each hook based on what hooks we want to capture:
+          if (callee.name === 'useState' && t.isArrayPattern(varNode.id)) {
+            const stateHook = varNode.id.elements?.[0];
+            if (t.isIdentifier(stateHook) && stateHook.name) renderInformation.stateHooks?.push(stateHook.name);
+          }
+          
+            // Capture the useContext's variable name
+            if (callee.name === 'useContext' && t.isIdentifier(varNode.id)) {
+              const contextHook = varNode.id.name;
+              if (contextHook) renderInformation.contexts?.push(contextHook);
+            }
+            
+            // Capture the useReducer's state variable
+            if (callee.name === 'useReducer' && t.isArrayPattern(varNode.id)) {
+              const reducerHook = varNode.id.elements?.[0];
+              if (t.isIdentifier(reducerHook) && reducerHook.name) renderInformation.reducers?.push(reducerHook.name);
+            }
+        }
+      }
+    })
+    
+    return capturedHooks;
+  }
+  
+  
+  public oldGetHooks(startPath: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): Partial<LogRenderData> {
     if (!startPath || !startPath.node) return {};
     const code = this.getCodeFromFuncTypes(startPath);
     if (!code) return {};
@@ -655,7 +575,14 @@ export class ReactComponentUtils {
       reducers: [],
       contexts: [],
     };
-    startPath.traverse({
+    // We need to target the body in the case of default parameters (somehow being hooks here)  -> and to only loop through the component's code, not the component's construction/metadata
+    startPath.traverse({ // () startPath.get("body").traverse()  - fix
+      // Only search for declared hooks, and skip their internal invocations or any nested function's content within this component.
+      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) {
+        nestedPath.skip(); 
+      },
+      
+      // Find all hook instantiations
       VariableDeclarator(path) {
         const node = path.node;
         if (!node) return;
@@ -782,42 +709,32 @@ export class ReactComponentUtils {
   }
   
   
+  /** Retrieves the BlockStatement from `VariableDeclarators` and `FunctionDeclarations`. */
+  public getCodeFromFuncTypes(path: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): BlockStatement | undefined {
+    const node = path.node;
+    if (!node) return undefined;
+    
+    // Find out whether we're dealing with an arrow function, or a function declaration
+    
+    // ? Arrow Function: Check if it contains code, or is a one-liner
+    if (t.isArrowFunctionExpression(node)) {
+      if (t.isBlockStatement(node.body)) return node.body;
+      else return undefined;
+    }
+    
+    // ? Normal function syntax
+    if (t.isFunctionDeclaration(node)) { // function myComponent() {}
+      return node.body;
+    }
+    
+    return undefined;
+  }
+  
+  
   
   
   // #endregion
   // #region Logging in the dev console
-  /** The relative path to where you want to store the log history for your project.  */
-  public abstractSyntaxTreeLogHistoryLoc: string = './src/assets/astCompLogs.json';
-  
-  /** The cached logs of all components in a specific file. During **Program.exit()**, we store these in a file to display in google chrome's *dev console*. */
-  public fileComponentLogs: Record<string, AstComponentInfo> = {};
-  
-  /** The stored logs for a specific component during one of the visitor functions */
-  public logs = {
-    data: {} as Record<number, any>,
-    safeIncrementCounter: 0,
-    
-    /** Adds the log to the next index */
-    add: (log: any) => {
-      this.logs.data[this.logs.nextIndex] = log;
-    },
-    
-    /** The next safe index */
-    get nextIndex(): number {
-      return Math.max(...Object.keys(this.data).map(Number)) + 1;
-    },
-    
-    /** Getter for length */
-    get len(): number {
-      return Object.keys(this.data).length;
-    },
-    
-    /** Clear the logs for the current component. */
-    clear: () => {
-      this.logs.data = {};
-    }
-  };
-  
   /** Convenience function for adding a log to a component's cached logs during the Visitor function  */
   public addLog(log: any): void {
     this.logs.add(log);
@@ -943,10 +860,15 @@ export class ReactComponentUtils {
   }
   
   
-  /** Quick convenience function that Attaches log information to an object for keeping abstract syntax tree history */
-  public astLog(logs: any, message: any): void {
-    if (typeof logs === 'object' && logs !== null && !Array.isArray(logs)) {
-      logs[Object.keys(logs).length] = message;
+  /**
+   * Creates a safe contextual object of a React component's node and it's source.
+   * uses {@link getSafeNode} to extract safe, clean JSON object representations of each Babel AST NodePath.
+   */
+  public getSafeReactCompData(data: ComponentData): any {
+    return {
+      name: data.componentName,
+      node: this.getSafeNodeInfo(data.path),
+      source: this.getSafeNodeInfo(data.sourcePath),
     }
   }
   // #endregion
