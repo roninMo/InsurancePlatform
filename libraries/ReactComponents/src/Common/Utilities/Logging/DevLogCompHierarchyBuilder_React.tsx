@@ -87,13 +87,12 @@ const prettifySource = (path: NodePath<any>) => path.getSource().split(/\r?\n/);
           - By Component:  that shows a specific component's layout in a more personalized way, with a separate layout and contextual information. tbd - 
           - Settings:  Enable/Disable logging for specific components to reduce clutter, as well as any other settings for the devlog in general, and extra additions we find along the way
         // TODO - Start building this component and perhaps create a new library for this, to later create this for other frameworks, or as a plugin we create from a separate project
-    
 
-				
+
 				Add devlog diagnostics for each component that tracks and calculates
 					- first render, duplicate rerenders, nested rerenders (how many children and grandchildren, etc.) do these rerenders trigger on avg, and child rerenders
 					
-					capture the reac hooks data, finding each declared hook, it's line location, and any other information needed for traversing back through it later quickly
+					capture the react hooks data, finding each declared hook, it's line location, and any other information needed for traversing back through it later quickly
 
 */
 

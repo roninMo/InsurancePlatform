@@ -26,6 +26,7 @@ import {
   // ? function params / callExpression arguments are usually (ObjectProperty | RestElement)[]
   ObjectProperty, RestElement,
   isObjectProperty, isRestElement,
+  isArrayPattern,
   
 } from '@babel/types';
 import fs from 'fs';
@@ -373,6 +374,78 @@ export class ReactComponentUtils {
   }
   
   
+  /** Retrieves a react component's hooks. Pass in an with a reference to your array, and the hooks you want to retrieve */
+  public getHooks(data: ComponentData, hooksToRetrieve: ('useState' | 'useContext' | 'useReducer')[]): { stateHooks: any[], contexts: any[], reducers: any[] } {
+    const capturedHooks: { stateHooks: any[], contexts: any[], reducers: any[] } = { 
+      stateHooks: [], 
+      contexts: [], 
+      reducers: [] 
+    };
+    
+    const codePath = data?.path?.get('body');
+    if (!data.node || !codePath || !codePath.isBlockStatement()) {
+      return capturedHooks;
+    }
+    
+    // <- Early out if it's not code within brackets, i.e an implicit return ->  const componentA = () => <div />;
+    if (!codePath.isBlockStatement()) {
+      return capturedHooks;
+    }
+    
+    // Only loop through the component's code, not the component's construction/metadata
+    codePath.traverse({ // () startPath.get("body").traverse()  - fix
+      // Only search for declared hooks, and skip their internal invocations or any nested function's content within this component.
+      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) {
+        nestedPath.skip(); 
+      },
+      
+      // Find all hook instantiations
+      VariableDeclarator(varPath) {
+        const path = varPath.get('init');
+        const varNode = varPath?.node;
+        if (!varNode || !path.isCallExpression()) {
+          return;
+        }
+        
+        // Search for a valid function invocation's name
+        const callNode = path.node;
+        if (!isIdentifier(callNode.callee)) {
+          return;
+        }
+        
+        // ? Target and retrieve the hooks we want to capture
+        const callee = callNode.callee;
+        if (hooksToRetrieve.includes('useState') && callee.name === 'useState') {
+          if (isArrayPattern(varNode.id)) {
+            const stateGetter = varNode.id.elements?.[0];
+            if (isIdentifier(stateGetter) && stateGetter.name) {
+              capturedHooks.stateHooks.push(stateGetter.name);
+            }
+          }
+        }
+        
+        if (hooksToRetrieve.includes('useContext') && callee.name === 'useContext') {
+          if (isIdentifier(varNode.id) && varNode.id.name) {
+            const contextHook = varNode.id.name;
+            capturedHooks.contexts.push(contextHook);
+          }
+        }
+        
+        if (hooksToRetrieve.includes('useReducer') && callee.name === 'useReducer') {
+          if (isArrayPattern(varNode.id)) {
+            const reducerHook = varNode.id.elements?.[0];
+            if (isIdentifier(reducerHook) && reducerHook.name) {
+              capturedHooks.reducers.push(reducerHook.name);
+            }
+          }
+        }
+      }
+    });
+    
+    return capturedHooks;
+  }
+  
+  
   /** On the second pass, we specifically search through all valid react components we found, and add  */
   public reactFC_addComponentNameAndRenderLog(): void {
     
@@ -495,239 +568,6 @@ export class ReactComponentUtils {
         }
       }
     */
-  }
-  
-  
-  // TODO: These are DRY, they're accessing the same data and storing them in different arrays.
-  // TODO: create ONE getHooks(dataToRet: { calleeName: 'useState' | 'etc.', stateArray: any[] }) 
-  // TODO: Delete the old getHooks, getUseStates, getUseContexts, getUseReducers all retrieve the code the same way. 
-  /** Retrieves a react component's hooks. Pass in an with a reference to your array, and the hooks you want to retrieve */
-  public getHooks(data: ComponentData, hooksToRetrieve: ('useState' | 'useContext' | 'useReducer')[]): { stateHooks: any[], contexts: any[], reducers: any[] } {
-    const capturedHooks = { stateHooks: [], contexts: [], reducers: [] };
-    const codePath = data?.path?.get('body');
-    if (!data.node || !codePath || !codePath.isBlockStatement()) {
-      return capturedHooks;
-    }
-    
-    // <- Early out if it's not code within brackets, i.e an implicit return ->  const componentA = () => <div />;
-    if (!codePath.isBlockStatement()) {
-      return capturedHooks;
-    }
-    
-    // Only loop through the component's code, not the component's construction/metadata
-    codePath.traverse({ // () startPath.get("body").traverse()  - fix
-      // Only search for declared hooks, and skip their internal invocations or any nested function's content within this component.
-      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) {
-        nestedPath.skip(); 
-      },
-      
-      // Find all hook instantiations
-      VariableDeclarator(varPath) {
-        const path = varPath.get('init');
-        const varNode = varPath?.node;
-        if (!varNode || !path.isCallExpression()) {
-          return;
-        }
-        
-        // Search for a valid function invocation's name
-        const callNode = path.node;
-        if (!isIdentifier(callNode.callee)) {
-          return;
-        }
-        
-        // ? Target the hooks we want to capture
-        const callee = callNode.callee;
-        for (const hookName of hooksToRetrieve) {
-          
-          // Add each hook based on what hooks we want to capture:
-          if (callee.name === 'useState' && t.isArrayPattern(varNode.id)) {
-            const stateHook = varNode.id.elements?.[0];
-            if (t.isIdentifier(stateHook) && stateHook.name) renderInformation.stateHooks?.push(stateHook.name);
-          }
-          
-            // Capture the useContext's variable name
-            if (callee.name === 'useContext' && t.isIdentifier(varNode.id)) {
-              const contextHook = varNode.id.name;
-              if (contextHook) renderInformation.contexts?.push(contextHook);
-            }
-            
-            // Capture the useReducer's state variable
-            if (callee.name === 'useReducer' && t.isArrayPattern(varNode.id)) {
-              const reducerHook = varNode.id.elements?.[0];
-              if (t.isIdentifier(reducerHook) && reducerHook.name) renderInformation.reducers?.push(reducerHook.name);
-            }
-        }
-      }
-    })
-    
-    return capturedHooks;
-  }
-  
-  
-  public oldGetHooks(startPath: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): Partial<LogRenderData> {
-    if (!startPath || !startPath.node) return {};
-    const code = this.getCodeFromFuncTypes(startPath);
-    if (!code) return {};
-    
-    // Create the LogRenderData state hooks structs
-    let renderInformation: Partial<LogRenderData> = {
-      stateHooks: [],
-      reducers: [],
-      contexts: [],
-    };
-    // We need to target the body in the case of default parameters (somehow being hooks here)  -> and to only loop through the component's code, not the component's construction/metadata
-    startPath.traverse({ // () startPath.get("body").traverse()  - fix
-      // Only search for declared hooks, and skip their internal invocations or any nested function's content within this component.
-      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) {
-        nestedPath.skip(); 
-      },
-      
-      // Find all hook instantiations
-      VariableDeclarator(path) {
-        const node = path.node;
-        if (!node) return;
-        
-        // UseState and UseContext hooks
-        const funcNode = node.init;
-        if (t.isCallExpression(funcNode)) {
-          const calleeNode = funcNode.callee;
-          if (t.isIdentifier(calleeNode)) {
-            // Capture the useState's state variable
-            if (calleeNode.name === 'useState' && t.isArrayPattern(node.id)) {
-              const stateHook = node.id.elements?.[0];
-              if (t.isIdentifier(stateHook) && stateHook.name) renderInformation.stateHooks?.push(stateHook.name);
-            }
-            
-            // Capture the useContext's variable name
-            if (calleeNode.name === 'useContext' && t.isIdentifier(node.id)) {
-              const contextHook = node.id.name;
-              if (contextHook) renderInformation.contexts?.push(contextHook);
-            }
-            
-            // Capture the useReducer's state variable
-            if (calleeNode.name === 'useReducer' && t.isArrayPattern(node.id)) {
-              const reducerHook = node.id.elements?.[0];
-              if (t.isIdentifier(reducerHook) && reducerHook.name) renderInformation.reducers?.push(reducerHook.name);
-            }
-          }
-        }
-      }
-    })
-    
-    return renderInformation;
-  }
-  
-  
-  public getStateHooks(path: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): any[] {
-    if (!path || !path.node) return [];
-    const code = this.getCodeFromFuncTypes(path);
-    if (!code) return [];
-    
-    const hooks: any[] = [];
-    path.traverse({
-      VariableDeclarator(path) {
-        const node = path.node;
-        if (!node) return;
-        
-        // Capture the useState's state variable
-        const funcNode = node.init;
-        if (t.isCallExpression(funcNode)) {
-          const calleeNode = funcNode.callee;
-          
-          if (t.isIdentifier(calleeNode)) {
-            if (calleeNode.name === 'useState' && t.isArrayPattern(node.id)) {
-              const stateHook = node.id.elements?.[0];
-              if (t.isIdentifier(stateHook) && stateHook.name) hooks.push(stateHook.name);
-            }
-          }
-        }
-      }
-    })
-    
-    return hooks;
-  }
-  
-  
-  public getContextHooks(path: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): any[] {
-    if (!path || !path.node) return [];
-    const code = this.getCodeFromFuncTypes(path);
-    if (!code) return [];
-    
-    const contexts: any[] = [];
-    path.traverse({
-      VariableDeclarator(path) {
-        const node = path.node;
-        if (!node) return;
-        
-        // Capture the useContext's variable name
-        const funcNode = node.init;
-        if (t.isCallExpression(funcNode)) {
-          
-          const calleeNode = funcNode.callee;
-          if (t.isIdentifier(calleeNode)) {
-            if (calleeNode.name === 'useContext' && t.isIdentifier(node.id)) {
-              const contextHook = node.id.name;
-              if (contextHook) contexts.push(contextHook);
-            }
-          }
-        }
-      }
-    })
-    
-    return contexts;
-  }
-  
-  
-  public getReducerHooks(path: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): any[] {
-    if (!path || !path.node) return [];
-    const code = this.getCodeFromFuncTypes(path);
-    if (!code) return [];
-    
-    const reducers: any[] = [];
-    path.traverse({
-      VariableDeclarator(path) {
-        const node = path.node;
-        if (!node) return;
-        
-        // Capture the useReducer's state variable
-        const funcNode = node.init;
-        if (t.isCallExpression(funcNode)) {
-          const calleeNode = funcNode.callee;
-          if (t.isIdentifier(calleeNode)) {
-            
-            // Capture the useReducer's state variable
-            if (calleeNode.name === 'useReducer' && t.isArrayPattern(node.id)) {
-              const reducerHook = node.id.elements?.[0];
-              if (t.isIdentifier(reducerHook) && reducerHook.name) reducers?.push(reducerHook.name);
-            }
-          }
-        }
-      }
-    })
-    
-    return reducers;
-  }
-  
-  
-  /** Retrieves the BlockStatement from `VariableDeclarators` and `FunctionDeclarations`. */
-  public getCodeFromFuncTypes(path: babel.NodePath<FunctionDeclaration | ArrowFunctionExpression>): BlockStatement | undefined {
-    const node = path.node;
-    if (!node) return undefined;
-    
-    // Find out whether we're dealing with an arrow function, or a function declaration
-    
-    // ? Arrow Function: Check if it contains code, or is a one-liner
-    if (t.isArrowFunctionExpression(node)) {
-      if (t.isBlockStatement(node.body)) return node.body;
-      else return undefined;
-    }
-    
-    // ? Normal function syntax
-    if (t.isFunctionDeclaration(node)) { // function myComponent() {}
-      return node.body;
-    }
-    
-    return undefined;
   }
   
   
