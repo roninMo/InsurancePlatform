@@ -3,9 +3,8 @@ import { Plugin } from 'vite';
 import { NodePath, PluginObj, types as t, BabelFile, PluginPass, transformAsync } from "@babel/core";
 
 import { LogRenderData } from './Devlog';
-import { devLogCompHierarchyBuilder } from './DevLogCompHierarchyBuilder_React';
 import { 
-  Node,
+  Node, Program,
   
   // ? react component declaration containers
   VariableDeclarator, FunctionDeclaration, Identifier,
@@ -84,27 +83,78 @@ type ReactFCExportTypes =
 type ReactFCContainerTypes = 
   | VariableDeclarator
   | FunctionDeclaration
-  | CallExpression;
+  | CallExpression
+;
 
+/** 
+ * An Id created from the `component's name`, the `parent's name`, and the `indexed number` of created components in the parent. 
+ * > i.e. &nbsp; ***PageContentComp_HomePage_1***. 
+ * * If there are multiple instances of the parent, the index *does not reset*.
+ * @remarks There's too much ambiguity if we don't use the **parentName** with the indexed number. We're traversing via a *Depth-First Search*, so the actual numbering would be out of order as well.
+ */
+type ReactComponentId = string;
 
+/** The literal component name. Stored on the component because in production the naming conventions are unsafe and could be the same as other components. TODO: eventually account for this scenario */
+type ReactComponentName = string;
+
+/** The hooks that we capture for validating each component's cause for rerendering. */
+type ReactCompHookName = 'useState' | 'useContext' | 'useReducer' | (string & {});
+
+/** A react component's data that's captured for implementing rerender functionality via the Abstract Syntax Tree. We additionally capture the props when we edit each of the components. */
+interface ComponentRerenderInfo {
+  componentName: ReactComponentName,
+  data: ComponentInfo,
+  hooks: ComponentHooks,
+  fileName: string,
+}
+
+/** Cached component data use when traversing through the source code. */
+interface ComponentInfo<T extends Node = ReactFCType> {
+  node: T,
+  path: NodePath<T>,
+  sourcePath: NodePath<ReactFCContainerTypes | T>,
+  componentName: ReactComponentName,
+}
+
+/** Captured variables of react hooks, and their locations within the component. */
+interface ComponentHooks {
+  stateHooks: ComponentHookData[],
+  contextHooks: ComponentHookData[],
+  reducerHooks: ComponentHookData[],
+}
+
+/** A declared react hook's variable name and location within the component. */
+interface ComponentHookData {
+  varName: ReactCompHookName,
+  startLine: number,
+  endLine: number,
+}
+
+interface ComponentRerenderMetadata {
+  hasProps: boolean;
+  hookCounts: false | {
+    useStates: number,
+    useContexts: number,
+    useReducers: number,
+  }
+}
+
+/** A specific component's history during the Abstract Syntax Tree's traversal. There's separate logs for both searching for and editing each of the components. */
 interface AstComponentInfo {
   /** this file had a React Component, we'll print logs for it and use it's safe function name for reference */
-  componentName: string;
+  componentName: ReactComponentName,
   
-  /** An indexed history of this component's logs specifically. Minified for the console */
-  componentLogs: Record<number, any>;
+  /** An indexed history of this component's logs while searching for react components */
+  searchLogs: Record<number, any>,
+  
+  /** An indexed history of this component's logs while adding the render logging's functionality */
+  editLogs?: Record<number, any>,
   
   /** Cached globally and initialized/cleared during Program -> enter()/exit() */
-  fileName: string;
+  fileName: string,
 }
 
 
-interface ComponentData<T extends Node = ReactFCType> {
-  node: T;
-  path: NodePath<T>;
-  sourcePath: NodePath<ReactFCContainerTypes | T>;
-  componentName: string;
-}
 
 
 // #endregion
@@ -115,7 +165,7 @@ export function vitePluginDevlog(): Plugin {
     // enforce: 'pre', // This apparently helps, but doesn't seem necessary or worthwhile
     
     async transform(code: string, id: string) {
-      // #region File 
+      // #region File search filter
       // Look for jsx and tsx files
       const isTargetExtension = /\.(t|j)sx?$/.test(id);
       
@@ -131,15 +181,19 @@ export function vitePluginDevlog(): Plugin {
       }
       
       
+      // #endregion
+      // #region Ast plugin logic
       // () Add the devlog's contextual functions and props to all of our react components - Runs Babel transformations sequentially
+      const utils = new ReactComponentEditorUtils();
+      utils.syntaxTreeLogs_clearFileHistory();
+      
       const result = await transformAsync(code, {
         filename: id,
         sourceMaps: true,
         plugins: [
           /** Adds the compId to every component for creating a component hierarchy, the compName, and renderLogs and component data capture for analyzing component efficiency and behavior. */
-          devLogCompHierarchyBuilder()
-          // pluginObj1(devLogUtils), // Finds the react components, and captures the location, and other contextual information needed
-          // pluginObj2(devLogUtils) // Has a list of the react components found, and their files. Traverses those files, and does logic on them
+          reactComponentSearchPlugin(utils),
+          addRenderLoggingPlugin(utils),
         ],
       });
       
@@ -147,6 +201,7 @@ export function vitePluginDevlog(): Plugin {
         code: result?.code ?? code,
         map: result?.map
       };
+      // #endregion
     }
   };
 }
@@ -154,15 +209,385 @@ export function vitePluginDevlog(): Plugin {
 
 
 
-/** Utilities for finding/accessing data within `React` components. */
-export class ReactComponentUtils {
-  constructor() {}
+// #region - ReactComponentSearchPlugin
+/** 
+ * ### *addRenderLogs()*
+ * Adds a *{@link LogInfo|renderLog}* to every functional component in your project, attaching all prop and context information for tracking rerender functionality. 
+ * This is used in the **{@link Devlog}** for:
+ * ----
+ * 
+ * 
+ * * This gives the **{@link Devlog}** access to their `component name`, and a unique component ref `id` for traceable logging and diagnostics.
+ * * This allows ***react-fiber*** to have access to the values, for bridging component tree references on the fly.
+ * * You can utilize filtering and searches to quickly extract which components are logging what, to help with troubleshooting
+ * 
+ * ----
+ * * Capturing the *{@link Devlog._logs|log history}* of component's, in order to increase performance and remove bottlenecks in efficiency
+ * * Combine brief sections of *rerendered information* in a custom ui that displays a **{@link Devlog.getComponentHierarchy|historical view}** of what just rerendered
+ * * The ability to *search*, *select*, or *traverse* a **component hierarchy**, and opt into seeing and logging **specific component's** logs (including Dev/Render logs)
+ * * Easy to read, calculated information based on rerenders, to find the source of a component's inefficiency between *multiple* components.
+ * 
+ * ----
+ * @note In order to use this and the {@link Devlog} properly, **{@link createCompReferenceHierarchy()}** must first be ran.
+ */
+export function reactComponentSearchPlugin(utils: ReactComponentEditorUtils): PluginObj {
+  utils.clearFileComponentLogs();
+  utils.logType = 'edit';
   
+  // #region Component File Search and Traversal
+  return {
+    name: "react-component-search-plugin",
+    visitor: {
+      // #region FunctionDeclaration ->  Logic ran on Functions() {}
+      /**
+       * Is ran on every function within a file. It has direct access to things like
+       * * These are stable, have a direct reference to the component's name, and no nested properties to access the code within it's *BlockStatement*.
+       * 
+       * ----
+       * @example       // ? function MyComponent() {}
+       * @param path    The current `function` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<FunctionDeclaration>
+       */
+      FunctionDeclaration(path: NodePath<FunctionDeclaration>, state: PluginPass) {
+        const node = path.node;
+        const name = node.id?.name;
+        const fileName = state.filename;
+        if (!name || !fileName) {
+          if (!fileName) utils.addLog({[`ERROR: Couldn't find the source file during visitor.VariableDeclarator! Data: `]: { callExp: utils.getSafeNodeInfo(path) }});
+          return;
+        }
+        
+        // Logging
+        utils.setLogTarget(name, fileName);
+        utils.addLog(`${name}(${path.node.type}) found. Checking if it's a react component. `);
+        
+        // ? Does it have a PascalCase name?
+        if (!utils.isNamePascalCase(name)) {
+          return false;
+        }
+        
+        // Capture the component's contextual data
+        const componentInfo = utils.getComponentInfo(path);
+        if (!componentInfo || !utils.isReactComponent(componentInfo)) {
+          utils.addLog(`Fail: ${name} wasn't a react component, data: `);
+          utils.addLog(utils.getSafeNodeInfo(path));
+          return; // <- We did not find a function, or a potential react component
+        }
+        
+        // -> Store them in the utils for when the addRenderLoggingPlugin edits each of the components
+        const hooks = utils.getHooks(componentInfo);
+        const rerenderInformation: ComponentRerenderInfo = { componentName: name, data: componentInfo, hooks, fileName };
+        utils.reactComponents[name] = rerenderInformation;
+        
+        // Logging - Store the logs for this specific component's instance
+        utils.addLog(`Pass: ${name} was a valid react component, data: `);
+        utils.addLog(utils.getSafeReactCompRerenderData(rerenderInformation));
+      },
+      
+      
+      
+      
+      // #endregion
+      // #region ArrowFunctionExpression ->  Logic ran on Arrow functions () => {}
+      /**
+       * Is ran on every arrow function expression within a file.
+       * * Arrow functions are *anonymous*, so you have to use the `parentNode` (VariableDeclarator) to find the name of the function.
+       * 
+       * ----
+       * @example // ? const MyComponent = () => {}
+       * @example // ? array.map(x => x * 2)
+       * @param path The current `arrow function` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<ArrowFunctionExpression>
+       */
+      ArrowFunctionExpression(path: NodePath<ArrowFunctionExpression>) {
+        
+      },
+      
+      
+      
+      
+      // #endregion
+      // #region VariableDeclarator ->  const str = 'val'; const num = 1; const dispData => {};  const theme = useContext(themeContext);
+      /**
+       * Is ran on every variable within a file. This contains the key-value pair of the variable, and it's contents.
+       * * This covers every React Component Declaration except for *FunctionDeclarations*, and imported functions that are declared in another file.
+       * 
+       * ----
+       * @example       // ? const MyComponent = () => {}
+       * @example       // ? const variable = 'value';
+       * @param path    The current `variable` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<VariableDeclaration>
+       */
+      VariableDeclarator(path: NodePath<t.VariableDeclarator>, state: PluginPass) {
+        const varPath = path.get('init');
+        const fileName = state.filename;
+        if (!varPath || !varPath.node || !fileName) {
+          if (!fileName) utils.addLog({[`ERROR: Couldn't find the source file during visitor.VariableDeclarator! Data: `]: { callExp: utils.getSafeNodeInfo(path) }});
+          return;
+        }
+				
+        // ? Does it have a PascalCase name?
+        let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
+        if (!utils.isNamePascalCase(name)) {
+          return false;
+        }
+        
+        // Logging
+        utils.setLogTarget(name, fileName);
+        utils.addLog(`${name}(${path.node.type}) found. Checking if it's a react component. `);
+        
+        // ? Is this potentially a react component?
+        utils.logs.clear();
+        const isFunctionValue = 
+          varPath.isArrowFunctionExpression() || 
+          varPath.isFunctionExpression() || 
+          varPath.isCallExpression(); // Catch components wrapped in memo() or forwardRef()
+        
+        if (!isFunctionValue) {
+          return;
+        }
+        
+        // Capture the component's contextual data
+        const componentInfo = utils.getComponentInfo(path);
+        if (!componentInfo || !utils.isReactComponent(componentInfo)) {
+          utils.addLog(`Fail: ${name} wasn't a react component, data: `);
+          utils.addLog(utils.getSafeNodeInfo(path));
+          return; // <- We did not find a function, or a potential react component
+          // TODO: "if undefined" - some declarations could be imports from another file. We don't account for this yet
+        }
+        
+        
+        // -> Store them in the utils for when the addRenderLoggingPlugin edits each of the components
+        const hooks = utils.getHooks(componentInfo);
+        const rerenderInformation: ComponentRerenderInfo = { componentName: name, data: componentInfo, hooks, fileName};
+        utils.reactComponents[name] = rerenderInformation;
+        
+        // Logging - Store the logs for this specific component's instance
+        utils.addLog(`Pass: ${name} was a valid react component, data: `);
+        utils.addLog(utils.getSafeReactCompRerenderData(rerenderInformation));
+      },
+      
+      
+      
+      
+      // #endregion
+      // #region Program ->  Enter and Exit functionality
+      Program: {
+        exit(path: NodePath<Program>, state: PluginPass) {
+          // Add this component's logs to the abstract syntax tree's log history
+          utils.addComponentLogData(); // Previous component's data
+          utils.syntaxTreeLogs_addHistoryToFile<Record<string, AstComponentInfo>>(utils.fileComponentLogs);
+          utils.clearFileComponentLogs();
+          utils.clearLogTarget();
+        },
+        
+        
+        enter(path: NodePath<Program>, state: PluginPass) {
+        },
+      },
+      
+      
+      // #endregion
+      // #region Other useful syntax targets
+      // ImportDeclaration(path: NodePath<t.ImportDeclaration>, pass: PluginPass) {},
+      // ExportDeclaration(path: NodePath<t.ExportDeclaration>, pass: PluginPass) {},
+      // ReturnStatement(path: NodePath<t.ReturnStatement>, pass: PluginPass) {},
+      
+      // Ran on any html-like tag (e.g. <div className="custom-class" />)
+      // JSXElement(path: NodePath<t.JSXElement>, pass: PluginPass) {},
+      
+      // ArrayExpression
+      // ArrowFunctionExpression 
+      
+      // BlockParent
+      // DeclareVariable
+      
+      
+      // #endregion
+    }, 
+    
+    // Ran once per file before and after the file is traversed 
+    pre(state: BabelFile) {}, 
+    post(state: BabelFile) {},
+    
+    
+  };
+  // #endregion
+}
+
+
+// #endregion
+// #region - AddRenderLoggingPlugin
+export function addRenderLoggingPlugin(utils: ReactComponentEditorUtils): PluginObj {
+  utils.clearFileComponentLogs();
+  utils.logType = 'retrieval';
+  
+  const filesToSearch = new Set(
+    Object.values(utils.reactComponents).map(data => data.fileName)
+  );
+  
+  
+  // #region Add render logging functionality to each of the react components
+  return {
+    name: "add-render-logging",
+    visitor: {
+      // #region FunctionDeclaration ->  Logic ran on Functions() {}
+      /**
+       * Is ran on every function within a file. It has direct access to things like
+       * * These are stable, have a direct reference to the component's name, and no nested properties to access the code within it's *BlockStatement*.
+       * 
+       * ----
+       * @example       // ? function MyComponent() {}
+       * @param path    The current `function` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<FunctionDeclaration>
+       */
+      FunctionDeclaration(path: NodePath<FunctionDeclaration>) {
+        if (this.skipFile) return;
+        // processComponent(path, name, path.node);
+      },
+      
+      
+      // #endregion
+      // #region VariableDeclarator ->  const str = 'val'; const num = 1; const dispData => {};  const theme = useContext(themeContext);
+      /**
+       * Is ran on every variable within a file. This contains the key-value pair of the variable, and it's contents.
+       * * This covers every React Component Declaration except for *FunctionDeclarations*, and imported functions that are declared in another file.
+       * 
+       * ----
+       * @example       // ? const MyComponent = () => {}
+       * @example       // ? const variable = 'value';
+       * @param path    The current `variable` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<VariableDeclaration>
+       */
+      VariableDeclarator(path: NodePath<t.VariableDeclarator>, state: PluginPass) {
+        if (this.skipFile) return;
+        
+        // Component information
+        const varPath = path.get('init');
+        let name: string = isIdentifier(path?.node?.id) ? path.node.id.name : '';
+        if (!varPath || !varPath.node || !name) {
+          return;
+        }
+				
+        // TODO: we have a way to reverse the traversal, check if there's a way to just use our captured nodes as the return array.
+        //   - If not, we need to loop through for specific source nodes
+        //      1. VariableDeclarator     - const componentA = () => {}
+        //      2. FunctionDeclaration    - function componentA() {}
+        //      3. CallExpression         - memos/forwardRefs
+        
+        
+        // 1. Should we add rerender logging, or is it just a representational component. (no props and hooks)
+        // 2. Capture the component's props if it's defined, the destructure props, or create the props arg if it hasn't been defined
+        // 3. Find the safe location to add the render log using the hook's context information
+        // 4. Add the render log function, and finish out the component with creating it's metadata
+        
+        
+        
+				/*
+          {} Capturing the components:
+            - If we have the raw node types, we can run through the logic for checking if it's a react component in one function
+              1. Create a function to extract the target func's node, and create the object data of the potential react component
+              2. have isReactComponent's argument the extracted object of the source and potential node. If it's a reactComponent, add it to the captured list.
+              3. after we've found all the react components, THEN add the componentName to the source component's code for every component in a new func. 
+              4. after that, loop through their return statements, and add the props to every comp (compId, parentName). 
+                  - This should be safe even for found react component's that we're not actually adding the renderLog to (if it's solely a representational comp without state/hooks).
+            
+            // TODO: double check that imported funcs that aren't jsx elements are accounted for here! we may need to check for exportFunc... other import/export types (including export const...)
+				*/;
+      },
+      
+      
+      // #endregion
+      // #region CallExpression ->  A function call anywhere in the code
+      /**
+       * These are function invocations within the file. For this plugin, it's primary use would be finding react components wrapped in `memo()` or `forwardRef()`
+       * 
+       * ----
+       * @example       // ? foo(), or const val = useHook(), or const ComponentA = memo(() => { ...code });
+       * @param path    The current `function` we're viewing.
+       * @remarks At the bottom of the page are the different structures for NodePath<FunctionDeclaration>
+       */
+      CallExpression(path: NodePath<CallExpression>) {
+        
+      },
+      
+      
+      // ImportDeclaration(path: NodePath<t.ImportDeclaration>, pass: PluginPass) {},
+      // ExportDeclaration(path: NodePath<t.ExportDeclaration>, pass: PluginPass) {},
+      // ReturnStatement(path: NodePath<t.ReturnStatement>, pass: PluginPass) {},
+      
+      // Ran on any html-like tag (e.g. <div className="custom-class" />)
+      // JSXElement(path: NodePath<t.JSXElement>, pass: PluginPass) {},
+      
+      
+      // #endregion
+      // #region Program ->  Enter and Exit functionality
+      Program: {
+        exit(path: NodePath<Program>, state: PluginPass) {
+          // Add this component's logs to the abstract syntax tree's log history
+          utils.addComponentLogData(); // Previous component's data
+          utils.syntaxTreeLogs_addHistoryToFile<Record<string, AstComponentInfo>>(utils.fileComponentLogs);
+          utils.clearFileComponentLogs();
+          utils.clearLogTarget();
+        },
+        
+        
+        // Filtering specific files
+        enter(path: NodePath<Program>, state: PluginPass) {
+          const currentFile = state.filename || 'unknown-fileName';
+          if (!filesToSearch.has(currentFile)) {
+            utils.addLog(`Skipping file: ${currentFile}`);
+            this.skipFile = true;
+            return;
+          }
+          
+          utils.addLog(`Valid file: ${currentFile}`);
+          this.skipFile = false;
+        },
+      },
+      
+      
+      // #endregion
+    }, 
+    
+    // Check that we're targeting the right files 
+    pre(state: BabelFile) {}, 
+    post(state: BabelFile) {},
+    
+    
+  };
+  // #endregion
+}
+
+
+// #endregion
+// #region - ReactComponentUtils
+/** Utilities for finding/accessing data within `React` components. */
+export class ReactComponentEditorUtils {
+  constructor() {}
+  // #region React Component State
+  /** A list of the captured react components. Use this for filtering searches for components, and editing the react component's code. */
+  public reactComponents: Record<ReactComponentName, ComponentRerenderInfo> = {};
+  
+  /** Used to create the {@link ReactComponentId}. Counts each instance of a component. @remarks parentName -> componentName -> componentCount */
+  protected componentInstanceCount: Record<ReactComponentName, Record<ReactComponentName, number>> = {};
+  
+  /** Metadata that's specific to each react component. This is passed to the devlog later for handling context specific logic in a number of ways */
+  public componentMetadata: Record<ReactComponentName, ComponentRerenderMetadata> = {};
+  
+  
+  
+  
+  // #endregion
+  // #region Dev Console Logging Functionality
   /** The relative path to where you want to store the log history for your project.  */
   public abstractSyntaxTreeLogHistoryLoc: string = './src/assets/astCompLogs.json';
   
   /** The cached logs of all components in a specific file. During **Program.exit()**, we store these in a file to display in google chrome's *dev console*. */
   public fileComponentLogs: Record<string, AstComponentInfo> = {};
+  
+  /** The type of logs we're populating right now. If we're searching for react components, then we add the logs to the search list */
+  public logType: 'retrieval' | 'edit' = 'retrieval';
   
   /** The stored logs for a specific component during one of the visitor functions */
   public logs = {
@@ -193,10 +618,10 @@ export class ReactComponentUtils {
   
   
   
-  
+  // #endregion
   // #region General Utils
   /** We use this on a couple of the visitor functions to extract the react component's node and keep a safe reference to it's component name and source component */
-  public getComponentInfo(sourcePath: babel.NodePath<VariableDeclarator | FunctionDeclaration | CallExpression>): ComponentData | undefined {
+  public getComponentInfo(sourcePath: babel.NodePath<VariableDeclarator | FunctionDeclaration | CallExpression>): ComponentInfo | undefined {
     const sourceNode = sourcePath?.node;
     let callPath: NodePath<Node | undefined | null> | undefined | null;
     if (!sourcePath || !sourceNode) {
@@ -218,13 +643,13 @@ export class ReactComponentUtils {
       
       // Most of our components are arrow function syntax
       if (initPath.isArrowFunctionExpression()) {
-        const arrFuncData: ComponentData<ArrowFunctionExpression> = { node: initPath.node, path: initPath, sourcePath, componentName: varName };
+        const arrFuncData: ComponentInfo<ArrowFunctionExpression> = { node: initPath.node, path: initPath, sourcePath, componentName: varName };
         return arrFuncData;
       }
       
       // For the component's that are declared like functions
       if (initPath.isFunctionExpression()) {
-        const funcExpData: ComponentData<FunctionExpression> = { node: initPath.node, path: initPath, sourcePath, componentName: varName };
+        const funcExpData: ComponentInfo<FunctionExpression> = { node: initPath.node, path: initPath, sourcePath, componentName: varName };
         return funcExpData;
       }
       
@@ -239,27 +664,27 @@ export class ReactComponentUtils {
         const binding = initPath.scope.getBinding(initPath.node.name);
         if (binding && this.isValidReactFCType<NodePath>(binding.path)) {
           const refPath = binding.path;
-          const isolatedCompData: ComponentData<ReactFCType> = { node: refPath.node, path: refPath, sourcePath, componentName: varName };
+          const isolatedCompData: ComponentInfo<ReactFCType> = { node: refPath.node, path: refPath, sourcePath, componentName: varName };
           return isolatedCompData;
         }
       }
       
     }
     
-    // * Search for memo functions (We aren't using any other hooks, however divvying up the search specific hooks, and just checking arguments will fix this later)
+    // * Search for memo/forwardRef functions ->  we check if it's a react component during isReactComponent()
     // ? We combine the callExpressions from the source and from variableDeclarators here
     callPath = callPath ? callPath : sourcePath;
     if (callPath.isCallExpression()) {
       // Find the component's name, check for var declarations
-      let varName = isIdentifier((sourcePath as any)?.node?.id) ? (sourcePath as any)?.node?.id?.name : 'Unknown'; // hacky
       const varPath = callPath?.parentPath?.isVariableDeclarator() ? callPath.parentPath : undefined;
+      let varName = isIdentifier((sourcePath as any)?.node?.id) ? (sourcePath as any)?.node?.id?.name : 'Unknown'; // hacky
       if (varPath) varName = isIdentifier(varPath.node.id) ? varPath.node.id.name : varName;
       
       // The first argument is the component, and the second is the customRerenderPropsFunc or the ref
       const argumentsPath = callPath.get("arguments");
       const componentPath = argumentsPath?.[0];
       if (componentPath && this.isValidReactFCType<NodePath>(componentPath)) {
-        const hookCompData: ComponentData<ReactFCType> = { node: componentPath.node, path: componentPath, sourcePath: callPath, componentName: varName };
+        const hookCompData: ComponentInfo<ReactFCType> = { node: componentPath.node, path: componentPath, sourcePath: callPath, componentName: varName };
         return hookCompData;
       }
       
@@ -268,7 +693,7 @@ export class ReactComponentUtils {
         const binding = componentPath.scope.getBinding(componentPath.node.name);
         if (binding && this.isValidReactFCType<NodePath>(binding.path)) {
           const refPath = binding.path;
-          const isolatedCompData: ComponentData<ReactFCType> = { node: refPath.node, path: refPath, sourcePath: callPath, componentName: varName };
+          const isolatedCompData: ComponentInfo<ReactFCType> = { node: refPath.node, path: refPath, sourcePath: callPath, componentName: varName };
           return isolatedCompData;
         }
       }
@@ -291,7 +716,7 @@ export class ReactComponentUtils {
    * 
    * @returns true if it's a valid react component
   */
-  public isReactComponent(data: ComponentData): boolean {
+  public isReactComponent(data: ComponentInfo): boolean {
     if (!data.node) {
       return false;
     }
@@ -375,13 +800,9 @@ export class ReactComponentUtils {
   
   
   /** Retrieves a react component's hooks. Pass in an with a reference to your array, and the hooks you want to retrieve */
-  public getHooks(data: ComponentData, hooksToRetrieve: ('useState' | 'useContext' | 'useReducer')[]): { stateHooks: any[], contexts: any[], reducers: any[] } {
-    const capturedHooks: { stateHooks: any[], contexts: any[], reducers: any[] } = { 
-      stateHooks: [], 
-      contexts: [], 
-      reducers: [] 
-    };
-    
+  public getHooks(data: ComponentInfo, hooksToRetrieve: ReactCompHookName[] = ['useState', 'useContext', 'useReducer']): ComponentHooks {
+    const hooksForRetrieval: Set<ReactCompHookName> = new Set(hooksToRetrieve);
+    const capturedHooks: ComponentHooks = { stateHooks: [], contextHooks: [], reducerHooks: [] };
     const codePath = data?.path?.get('body');
     if (!data.node || !codePath || !codePath.isBlockStatement()) {
       return capturedHooks;
@@ -393,6 +814,7 @@ export class ReactComponentUtils {
     }
     
     // Only loop through the component's code, not the component's construction/metadata
+    const self = this;
     codePath.traverse({ // () startPath.get("body").traverse()  - fix
       // Only search for declared hooks, and skip their internal invocations or any nested function's content within this component.
       "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) {
@@ -413,29 +835,37 @@ export class ReactComponentUtils {
           return;
         }
         
-        // ? Target and retrieve the hooks we want to capture
+        // Retrieve the components line locations
         const callee = callNode.callee;
-        if (hooksToRetrieve.includes('useState') && callee.name === 'useState') {
+        const startLine = callNode.loc?.start?.line;
+        const endLine = callNode.loc?.end?.line;
+        if (!startLine || !endLine) {
+          console.error(`Traversed through a programmatically generated CallExpression of a react hook inside ${data.componentName}. Skipping!`, { callExp: self.getSafeNodeInfo(varPath) });
+          return;
+        }
+        
+        // ? Target and retrieve the hooks we want to capture
+        if (hooksForRetrieval.has('useState') && callee.name === 'useState') {
           if (isArrayPattern(varNode.id)) {
             const stateGetter = varNode.id.elements?.[0];
             if (isIdentifier(stateGetter) && stateGetter.name) {
-              capturedHooks.stateHooks.push(stateGetter.name);
+              capturedHooks.stateHooks.push({ varName: stateGetter.name, startLine, endLine });
             }
           }
         }
         
-        if (hooksToRetrieve.includes('useContext') && callee.name === 'useContext') {
+        if (hooksForRetrieval.has('useContext') && callee.name === 'useContext') {
           if (isIdentifier(varNode.id) && varNode.id.name) {
             const contextHook = varNode.id.name;
-            capturedHooks.contexts.push(contextHook);
+            capturedHooks.contextHooks.push({ varName: contextHook, startLine, endLine });
           }
         }
         
-        if (hooksToRetrieve.includes('useReducer') && callee.name === 'useReducer') {
+        if (hooksForRetrieval.has('useReducer') && callee.name === 'useReducer') {
           if (isArrayPattern(varNode.id)) {
             const reducerHook = varNode.id.elements?.[0];
             if (isIdentifier(reducerHook) && reducerHook.name) {
-              capturedHooks.reducers.push(reducerHook.name);
+              capturedHooks.reducerHooks.push({ varName: reducerHook.name, startLine, endLine });
             }
           }
         }
@@ -446,14 +876,17 @@ export class ReactComponentUtils {
   }
   
   
-  /** On the second pass, we specifically search through all valid react components we found, and add  */
-  public reactFC_addComponentNameAndRenderLog(): void {
+  /** On the second pass, we specifically search through all valid react components we found, and add logging for rerender diagnostics. */
+  public reactFC_addComponentRenderLogic(data: ComponentInfo, hooks: ComponentHooks): void {
+    this.addLog("");
+    this.addLog("addComponentRenderLogic() ->  Parsing the component's props, and adding the renderLog() function. Data: ");
+    this.addLog(this.getSafeReactCompData(data));
+    
     
   }
   
   
   
-  // reactFC_addComponentNameAndRenderLog
   // jsxEl_addParentNameAndCompId
   //    -> We may actually want to tie the parent name to the component's id because it's depth first search, and random indexes across the application will be confusing
   
@@ -483,6 +916,14 @@ export class ReactComponentUtils {
       isFunctionExpression(node) || 
       isCallExpression(node)
     );
+  }
+  
+  
+  /** Whether the current function follows react's *Pascal Case* naming convention */
+  public isNamePascalCase(name: string | undefined): boolean {
+    if (!name) return false
+    const isPascalCase = /^[A-Z]/.test(name);
+    return isPascalCase;
   }
   
   
@@ -574,10 +1015,37 @@ export class ReactComponentUtils {
   
   
   // #endregion
+  // #region var componentInstanceCount
+  public getComponentCount(parentName: string, componentName: string): number {
+    if (!this.componentInstanceCount[parentName]) {
+      this.componentInstanceCount[parentName] = {};
+    }
+    
+    if (!this.componentInstanceCount[parentName]?.[componentName]) {
+      this.componentInstanceCount[parentName][componentName] = 1;
+    }
+    
+    return this.componentInstanceCount[parentName][componentName];
+  }
+  
+  
+  public addToComponentCount(parentName: string, componentName: string): void {
+    const currentCount = this.getComponentCount(parentName, componentName);
+    this.componentInstanceCount[parentName][componentName] = currentCount + 1;
+  }
+  // #endregion
   // #region Logging in the dev console
+  /** Stored references so when traverse finish a specific component, we can transition internally without losing reference to these values. */
+  public log_compDataSourceFile: string | undefined;
+  public log_compDataTarget: ReactComponentName | undefined;
+  
   /** Convenience function for adding a log to a component's cached logs during the Visitor function  */
-  public addLog(log: any): void {
+  public addLog(log: any, last: boolean = false): void {
     this.logs.add(log);
+    
+    if (last) {
+      this.addComponentLogData()
+    }
   }
   
   
@@ -588,11 +1056,34 @@ export class ReactComponentUtils {
    * ----
    * @note We use **{@link logs|The cached log history}** that's stored within this utils class.
    */
-  public addComponentLogData(name: string, fileName: string = "Unknown"): void {
-    this.fileComponentLogs[name] = {
-      componentName: name,
-      componentLogs: this.logs,
-      fileName
+  public addComponentLogData(): void {
+    const fileName = this.log_compDataSourceFile || 'UnknownFileSource';
+    const name = this.log_compDataTarget;
+    if (!name) {
+      return;
+    }
+    
+    // ? Component Search
+    if (this.logType === 'retrieval') {
+      this.fileComponentLogs[name] = {
+        componentName: name,
+        searchLogs: this.logs,
+        fileName
+      };
+      return;
+    }
+    
+    // ? While adding render logging functionality 
+    // Check if we have search history on this component
+    const compLogs = this.fileComponentLogs[name];
+    if (compLogs) this.fileComponentLogs[name].editLogs = this.logs;
+    else {
+      this.fileComponentLogs[name] = {
+        componentName: name,
+        searchLogs: [],
+        editLogs: this.logs,
+        fileName
+      };
     }
   }
   
@@ -600,6 +1091,18 @@ export class ReactComponentUtils {
   public clearFileComponentLogs(clearLogsVarCache: boolean = true): void {
     this.fileComponentLogs = {};
     if (clearLogsVarCache) this.logs.clear();
+  }
+  
+  /** Update which component's history we're currently capturing internally. */
+  public setLogTarget(name: string, fileName: string): void {
+    this.log_compDataSourceFile = fileName;
+    this.log_compDataTarget = name;
+  }
+  
+  /** Update which component's history we're currently capturing internally. */
+  public clearLogTarget(): void {
+    this.log_compDataSourceFile = undefined;
+    this.log_compDataTarget = undefined;
   }
   
   /** At the beginning of the plugin, clear the history before you run any logic. */
@@ -704,11 +1207,29 @@ export class ReactComponentUtils {
    * Creates a safe contextual object of a React component's node and it's source.
    * uses {@link getSafeNode} to extract safe, clean JSON object representations of each Babel AST NodePath.
    */
-  public getSafeReactCompData(data: ComponentData): any {
+  public getSafeReactCompData(data: ComponentInfo): any {
     return {
       name: data.componentName,
       node: this.getSafeNodeInfo(data.path),
       source: this.getSafeNodeInfo(data.sourcePath),
+    }
+  }
+  
+  
+  /**
+   * Creates a safe contextual object of a React component's rerender info, and it's node/source information.
+   * uses {@link getSafeNode} to extract safe, clean JSON object representations of each Babel AST NodePath.
+   */
+  public getSafeReactCompRerenderData(info: ComponentRerenderInfo): any {
+    return {
+      componentName: info.componentName,
+      componentInfo: {
+        name: info.data.componentName,
+        node: this.getSafeNodeInfo(info.data.path),
+        source: this.getSafeNodeInfo(info.data.sourcePath),
+      },
+      hooks: info.hooks,
+      fileName: info.fileName
     }
   }
   // #endregion
@@ -2087,4 +2608,5 @@ const Badge = memo(({ name, styles }) => {
 // #endregion
 
 
+// #endregion
 // #endregion

@@ -345,10 +345,10 @@ export function devLogCompHierarchyBuilder(): PluginObj {
         
         // ? Store this within a list containing all the found react component instantiations
         utils.addLog(`${name}(${varPath.node.type}) found. Checking if it's a react component`);
-        const isReactComponent = utils.isReactComponent(varPath);
-        const isMemoComponent = utils.isMemoComponent(path);
-        if (isReactComponent || isMemoComponent) utils.addLog({ Pass: `It's a valid react function`, isReactComponent, isMemoComponent});
-        else utils.addLog({ Fail: `It isn't a react function`, isReactComponent, isMemoComponent});
+        // const isReactComponent = utils.isReactComponent(varPath);
+        // const isMemoComponent = utils.isMemoComponent(path);
+        // if (isReactComponent || isMemoComponent) utils.addLog({ Pass: `It's a valid react function`, isReactComponent, isMemoComponent});
+        // else utils.addLog({ Fail: `It isn't a react function`, isReactComponent, isMemoComponent});
         
         
         // Capture the component's contextual data
