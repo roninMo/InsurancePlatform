@@ -763,8 +763,7 @@ export class ReactComponentEditorUtils {
     if (!isPascalCase) return false;
     
     // Log the data passed to isReactComponent
-    this.addLog(`isReactComponent(${data.componentName})`);
-    this.addLog(this.getSafeReactCompData(data));
+    this.addLog({[`isReactComponent(${data.componentName})`]: this.getSafeReactCompData(data) });
     
     // ? Only valid if this is defined on the root level of the file
     let searchPath = data.sourcePath; // For call expressions, let's check if it was defined in a variableDeclarator before continuing
@@ -800,13 +799,27 @@ export class ReactComponentEditorUtils {
       }
     }
     
+    // If we have a useMemo that just returns html w/out brackets, the blockStatement is a callExpression ie. useMemoVar = (() => (<div />), []);
+    // And we run this func twice to find it: 
+    //    - return compWithUseMemoRet; ... -> Identifier (callExpression) -> arrow/functionExpression(myReactComponent).body( callExpression(jsxDev) | standard scenarios )
+    //    - useMemoRet -> .body(CallExpression OR BlockStatement)
+    const astHtmlCompiledTypes =  ['jsxDEV', 'jsx', 'jsxs', 'createElement'];
+    const funcBody = data.node.body;
+    if (isCallExpression(funcBody)) { // ? Rarely will we have a react component that only returns html that should be account for that would cause rerendering issues
+      const callNode = funcBody.callee;
+      if (isIdentifier(callNode) && astHtmlCompiledTypes.includes(callNode.name)) {
+        this.addLog(`Pass: The useMemo only returned html code: useMemoVar = (() => (<div />), []);`)
+        return true;
+      }
+    }
+    
     // ? Does a ReturnStatement output JSX?  e.g., () => { return <div />; })
     const self = this;
     this.addLog(`checking if it's blockStatement(code) has a jsx return statement. `);
     let returnsJsx = false;
     data.path.traverse({
       // Skip nested function's return statements
-      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) { nestedPath.skip(); },
+      "FunctionDeclaration|FunctionExpression|ArrowFunctionExpression"(nestedPath) { nestedPath.skip(); }, 
       
       // * Find the first jsx return statement
       ReturnStatement(returnPath) {
@@ -820,29 +833,35 @@ export class ReactComponentEditorUtils {
         if (!returnsJsx && isCallExpression(argNode)) {
           const callee = argNode.callee;
           if (isIdentifier(callee)) {
-            returnsJsx = ['jsxDEV', 'jsx', 'jsxs', 'createElement'].includes(callee.name);
+            returnsJsx = astHtmlCompiledTypes.includes(callee.name);
           }
         }
         
         // ? Check if they're returning a useMemo that returns html
+        // return useMemoCode; ... -> Identifier (callExpression) -> arrow/functionExpression(myReactComponent).body( callExpression(ASTJsxDev) | standard scenarios )
         if (!returnsJsx && isIdentifier(argNode)) {
           const binding = returnPath.scope.getBinding(argNode.name);
-          if (binding) { // const variableName = useMemo("() => (...), [...]); // ? we're searching for any func inside the useMemo
+          if (binding) {
             const useMemoVarPath = binding.path; 
-            self.addLog(`we found an identifier, and it's content within the same file. data: `);
-            self.addLog(self.getSafeNodeInfo(useMemoVarPath));
+            self.addLog({[`we found an identifier, and it's content within the same file. data: `]: self.getSafeNodeInfo(useMemoVarPath) });
             
             // TODO: This is checking a useMemo within a component, but we first need access to the useMemo content. Is there an easier way?
             const useMemoPath = useMemoVarPath.isVariableDeclarator() ? useMemoVarPath : undefined;
             const useMemoFuncPath = useMemoPath?.get("init");
-            if (useMemoFuncPath && useMemoFuncPath.isCallExpression()) { // useMemo(myReactComponent, [...]);
+            if (useMemoFuncPath && useMemoFuncPath.isCallExpression()) { 
               
-              // Add the proper source path and variable name so we make it to the return check
-              const useMemoFuncInfo = self.getComponentInfo(useMemoFuncPath);
+              // These return some wily nested code, we made it to the 
+              const useMemoFuncInfo = self.getComponentInfo(useMemoFuncPath); 
+              self.addLog({ "useMemoFuncInfo": self.getSafeNodeInfo(useMemoFuncPath)});
               if (useMemoFuncInfo) {
+                // We need to match for the name/source defined on the root. Check the return logic 
                 useMemoFuncInfo.componentName = data.componentName;
                 useMemoFuncInfo.sourcePath = data.sourcePath;
-                return self.isReactComponent(useMemoFuncInfo);
+                const useMemoReturnedHTML = self.isReactComponent(useMemoFuncInfo);
+                if (useMemoReturnedHTML) {
+                  returnsJsx = true;
+                  returnPath.stop();
+                }
               }
             }
           }
@@ -854,7 +873,8 @@ export class ReactComponentEditorUtils {
           returnsJsx = true;
           returnPath.stop(); // Found it! Stop searching this function.
         }
-      }
+      },
+      
     });
     
     return returnsJsx;
