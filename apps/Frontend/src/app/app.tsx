@@ -39,15 +39,19 @@ export function App() {
   log('content', `App rerendered: data: `, { userTokenInformation, accessToken }, "another value", { another: 'object' });
   useEffect(() => {
     loadLogs();
-    
-    // Dynamically import the JSON file, it may not be defined
+
+    // Retrieve and destructure the default export from the imported module
     async function loadLogs() {
-      let abstractComponentLogHistory; // : Promise<{ default: any[] }>;
-      try { abstractComponentLogHistory = await import('../assets/astCompLogs.json');
-      } catch (e) {}
-      
-      console.log(`Ast's captured logs: `, abstractComponentLogHistory);
-      // astLogs?.sort()?.forEach((args: any) => console.log(...args)); // Loop through and spread the stored arguments into a real console.log
+      try {
+        // @ts-ignore - Ignore tsconfig lookup constraints for this dynamic JSON import
+        const { default: abstractComponentLogHistory } = await import('../assets/astCompLogs.json'); 
+        
+        // This will now print your actual clean { [compName]: data } object!
+        console.log(`Ast's captured logs: `, abstractComponentLogHistory);
+        
+      } catch (e) {
+        console.error("Failed to load AST logs", e);
+      }
       console.log('\n\n');
     }
   }, []);
