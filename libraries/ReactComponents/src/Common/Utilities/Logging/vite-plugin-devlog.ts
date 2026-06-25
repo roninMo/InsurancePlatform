@@ -230,6 +230,7 @@ export function vitePluginDevlog(): Plugin {
       const result = await transformAsync(code, {
         filename: id,
         sourceMaps: true,
+        // ? These plugin's visitor functions are combined and ran in order based on the array order
         plugins: [
           /** Adds the compId to every component for creating a component hierarchy, the compName, and renderLogs and component data capture for analyzing component efficiency and behavior. */
           reactComponentSearchPlugin(utils),
@@ -276,7 +277,48 @@ export function reactComponentSearchPlugin(utils: ReactComponentEditorUtils): Pl
   utils.clearCachedComponentLogs();
   utils.logType = 'retrieval';
   
-  // #region Component File Search and Traversal
+  
+  // #region Component Search Handling
+  // Visitors don't need a return statement.
+  // path.skip(): Stops Babel from traversing the children of the current node.
+  // path.stop(): Stops Babel completely from traversing the entire remaining AST.
+  /** Validates that this is a react component. If it is, we store it inside {@link ReactComponentEditorUtils.reactComponents|the utils class} for editing in other plugins within *TransformAsync()*. */
+  const handleReactComponentSearch = (path: NodePath<VariableDeclarator | FunctionDeclaration>, filePath: string) => {
+    // ? Does it have a PascalCase name?
+    let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
+    if (!utils.isNamePascalCase(name)) {
+      return false;
+    }
+    
+    // Logging
+    utils.setLogTarget(name, filePath); // TODO: RemoveSetLogTarget, and make addLogs not transient perhaps? "setLogTarget" adds a new compLogObject, and we just store the logs to that
+    utils.addLog(`${path.node.type}(${name}) found. Checking if it's a react component. `);
+    
+    // Capture the component's contextual data
+    const componentInfo = utils.getComponentInfo(path);
+    if (!componentInfo || !utils.isReactComponent(componentInfo)) {
+      utils.addLog(`Finished: ${name} wasn't a react component, data: `);
+      utils.addLog(utils.getSafeNodeInfo(path), 'saveCompData');
+      return; // <- We did not find a function, or a potential react component
+      // TODO: "if undefined" - some declarations could be imports from another file. We don't account for this yet
+    }
+    
+    
+    // -> Store them in the utils for when the addRenderLoggingPlugin edits each of the components
+    const hooks = utils.getHooks(componentInfo);
+    const rerenderInformation = utils.addValidReactComponent(componentInfo, hooks, filePath);
+    // TODO: should we find/add all devLog declarations here, and convert them to compLogs(adds the compId, and parentId) !Required! (render + comp's contextual logs)
+    
+    // Logging - Store the logs for this specific component's instance
+    utils.addLog(`Finished: ${name} was a valid react component, data: `);
+    utils.addLog(utils.getSafeReactCompRerenderData(rerenderInformation), 'saveCompData');
+    console.log(`\n`);
+    console.log(`reactComponentSearchPlugin(): ${name} was a valid react component, stored it's data.`);
+  }
+  
+  
+  // #endregion
+  // #region Component File Search and Traversal functions
   return {
     name: "react-component-search-plugin",
     visitor: {
@@ -291,40 +333,13 @@ export function reactComponentSearchPlugin(utils: ReactComponentEditorUtils): Pl
        * @remarks At the bottom of the page are the different structures for NodePath<FunctionDeclaration>
        */
       FunctionDeclaration(path: NodePath<FunctionDeclaration>, state: PluginPass) {
-        const node = path.node;
-        const name = node.id?.name;
         const filePath = state.filename;
-        if (!name || !filePath) {
+        if (!path || !path.node || !filePath) {
           if (!filePath) console.error(`Couldn't find the source file during visitor.VariableDeclarator! Data: `, { callExp: utils.getSafeNodeInfo(path) });
           return;
         }
         
-        // ? Does it have a PascalCase name?
-        if (!utils.isNamePascalCase(name)) {
-          return false;
-        }
-        
-        // Logging
-        utils.setLogTarget(name, filePath);
-        utils.addLog(`${path.node.type}(${name}) found. Checking if it's a react component. `);
-        
-        // Capture the component's contextual data
-        const componentInfo = utils.getComponentInfo(path);
-        if (!componentInfo || !utils.isReactComponent(componentInfo)) {
-          utils.addLog(`Finished: ${name} wasn't a react component, data: `);
-          utils.addLog(utils.getSafeNodeInfo(path), 'saveCompData');
-          return; // <- We did not find a function, or a potential react component
-        }
-        
-        // -> Store them in the utils for when the addRenderLoggingPlugin edits each of the components
-        const hooks = utils.getHooks(componentInfo);
-        const rerenderInformation = utils.addValidReactComponent(componentInfo, hooks, filePath);
-        // TODO: should we find/add all devLog declarations here, and convert them to compLogs(adds the compId, and parentId) !Required! (render + comp's contextual logs)
-        
-        // Logging - Store the logs for this specific component's instance
-        utils.addLog(`Finished: ${name} was a valid react component, data: `);
-        utils.addLog(utils.getSafeReactCompRerenderData(rerenderInformation), 'saveCompData');
-        console.log(`reactComponentSearchPlugin: ${name} was a valid react component, stored it's data.`);
+        return handleReactComponentSearch(path, filePath);
       },
       
       
@@ -343,7 +358,7 @@ export function reactComponentSearchPlugin(utils: ReactComponentEditorUtils): Pl
        * @remarks At the bottom of the page are the different structures for NodePath<ArrowFunctionExpression>
        */
       ArrowFunctionExpression(path: NodePath<ArrowFunctionExpression>) {
-        
+        return;
       },
       
       
@@ -369,12 +384,6 @@ export function reactComponentSearchPlugin(utils: ReactComponentEditorUtils): Pl
           return;
         }
 				
-        // ? Does it have a PascalCase name?
-        let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
-        if (!utils.isNamePascalCase(name)) {
-          return false;
-        }
-        
         // ? Is this potentially a react component?
         const isFunctionValue = 
           varPath.isArrowFunctionExpression() || 
@@ -385,37 +394,14 @@ export function reactComponentSearchPlugin(utils: ReactComponentEditorUtils): Pl
           return;
         }
         
-        // Logging
-        utils.setLogTarget(name, filePath); // TODO: RemoveSetLogTarget, and make addLogs not transient perhaps? "setLogTarget" adds a new compLogObject, and we just store the logs to that
-        utils.addLog(`${path.node.type}(${name}) found. Checking if it's a react component. `);
-        
-        // Capture the component's contextual data
-        const componentInfo = utils.getComponentInfo(path);
-        if (!componentInfo || !utils.isReactComponent(componentInfo)) {
-          utils.addLog(`Finished: ${name} wasn't a react component, data: `);
-          utils.addLog(utils.getSafeNodeInfo(path), 'saveCompData');
-          return; // <- We did not find a function, or a potential react component
-          // TODO: "if undefined" - some declarations could be imports from another file. We don't account for this yet
-        }
-        
-        
-        // -> Store them in the utils for when the addRenderLoggingPlugin edits each of the components
-        const hooks = utils.getHooks(componentInfo);
-        const rerenderInformation = utils.addValidReactComponent(componentInfo, hooks, filePath);
-        // TODO: should we find/add all devLog declarations here, and convert them to compLogs(adds the compId, and parentId) !Required! (render + comp's contextual logs)
-        
-        // Logging - Store the logs for this specific component's instance
-        utils.addLog(`Finished: ${name} was a valid react component, data: `);
-        utils.addLog(utils.getSafeReactCompRerenderData(rerenderInformation), 'saveCompData');
-        console.log(`\n`);
-        console.log(`reactComponentSearchPlugin(): ${name} was a valid react component, stored it's data.`);
+        return handleReactComponentSearch(path, filePath);
       },
       
       
       
       
       // #endregion
-      // #region Program ->  Enter and Exit functionality
+      // #region Program ->  Enter and Exit functionality (storing log info and clearing the cache)
       Program: {
         exit(path: NodePath<Program>, state: PluginPass) {
           // Console Logging context
@@ -466,6 +452,43 @@ export function addRenderLoggingPlugin(utils: ReactComponentEditorUtils): Plugin
   utils.logType = 'render';
   
   
+  // #region Component Search Handling
+  // Visitors don't need a return statement.
+  // path.skip(): Stops Babel from traversing the children of the current node.
+  // path.stop(): Stops Babel completely from traversing the entire remaining AST.
+  /** Validates that this is a react component. If it is, we store it inside {@link ReactComponentEditorUtils.reactComponents|the utils class} for editing in other plugins within *TransformAsync()*. */
+  const handleAddRenderLogging = (path: NodePath<VariableDeclarator | FunctionDeclaration>, state: PluginPass) => {    
+    // ? Is it one of the found valid react components?
+    let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
+    if (!utils.reactComponents?.[name]) {
+      console.warn(`${utils.getFileNameFromPath(state.filename)} was valid, but ${name} isn't a react component.`);
+      return false;
+    }
+    
+    utils.setLogTarget(name, state.filename); // TODO: RemoveSetLogTarget, and make addLogs not transient perhaps? "setLogTarget" adds a new compLogObject, and we just store the logs to that
+    console.log(`react component "${name}" was valid, adding render logging functionality`);
+    
+    // ? AddRenderLogging breakdown
+    const compData = utils.reactComponents[name];
+    if (!compData) {
+      utils.addLog(`Error: We had a valid react component(${name}), but didn't find it's cached information!`);
+      return;
+    }
+    
+    utils.addLog("Retrieving this component's props!");
+    utils.addLog(utils.getSafeReactCompData(compData.data));
+    
+    // 1. Should we add rerender logging, or is it just a representational component? (no props and hooks)
+    // 2. Capture the component's props if it's defined, the destructured props, or create the props arg if it hasn't been defined
+    // 3. Find the safe location to add the render log using the hook's context information
+    // 4. Add the render log function, and finish out the component with creating it's metadata
+    
+    
+    
+  }
+  
+  
+  // #endregion
   // #region Add render logging functionality to each of the react components
   return {
     name: "add-render-logging",
@@ -480,9 +503,14 @@ export function addRenderLoggingPlugin(utils: ReactComponentEditorUtils): Plugin
        * @param path    The current `function` we're viewing.
        * @remarks At the bottom of the page are the different structures for NodePath<FunctionDeclaration>
        */
-      FunctionDeclaration(path: NodePath<FunctionDeclaration>) {
-        if (this.skipFile) return;
-        // processComponent(path, name, path.node);
+      FunctionDeclaration(path: NodePath<FunctionDeclaration>, state: PluginPass) {
+        const filePath = state.filename;
+        if (!path || !path.node || !filePath) {
+          if (!filePath) console.error(`Couldn't find the source file during visitor.VariableDeclarator! Data: `, { callExp: utils.getSafeNodeInfo(path) });
+          return;
+        }
+        
+        return handleAddRenderLogging(path, state);
       },
       
       
@@ -500,58 +528,20 @@ export function addRenderLoggingPlugin(utils: ReactComponentEditorUtils): Plugin
        */
       VariableDeclarator(path: NodePath<t.VariableDeclarator>, state: PluginPass) {
         const currentFile = state.filename || 'unknown-fileName';
-        const fileName = utils.getFileNameFromPath(currentFile);
         const varPath = path.get('init');
         if (!varPath || !varPath.node || !utils.filesToSearch.includes(currentFile)) { // This seems slow? checking if utils.reactComponents[varName] would be faster
-          if (!utils.filesToSearch.includes(currentFile)) console.error(`Skipping ${isIdentifier(path.node.id) ? path.node.id.name : ''}, file: ${fileName}`);
-          return;
-        }
-				
-        // ? Is it one of the found valid react components?
-        let name: string = isIdentifier(path.node.id) ? path.node.id.name : '';
-        if (!utils.reactComponents?.[name]) {
-          console.warn(`${fileName} was valid, but ${name} isn't a react component.`);
-          return false;
-        }
-        
-        utils.setLogTarget(name, currentFile); // TODO: RemoveSetLogTarget, and make addLogs not transient perhaps? "setLogTarget" adds a new compLogObject, and we just store the logs to that
-        console.log(`react component "${name}" was valid, adding render logging functionality`);
-				
-        // ? AddRenderLogging breakdown
-        const compData = utils.reactComponents[name];
-        if (!compData) {
-          utils.addLog(`Error: We had a valid react component(${name}), but didn't find it's cached information!`);
+          if (!utils.filesToSearch.includes(currentFile)) console.error(`Skipping ${isIdentifier(path.node.id) ? path.node.id.name : ''}, file: ${utils.getFileNameFromPath(currentFile)}`);
           return;
         }
         
-        utils.addLog("Retrieving this component's props!");
-        utils.addLog(utils.getSafeReactCompData(compData.data));
-        
-        // 1. Should we add rerender logging, or is it just a representational component. (no props and hooks)
-        // 2. Capture the component's props if it's defined, the destructured props, or create the props arg if it hasn't been defined
-        // 3. Find the safe location to add the render log using the hook's context information
-        // 4. Add the render log function, and finish out the component with creating it's metadata
-        
-        
-        
+        return handleAddRenderLogging(path, state);
       },
       
       
       // #endregion
-      // #region CallExpression ->  A function call anywhere in the code
-      /**
-       * These are function invocations within the file. For this plugin, it's primary use would be finding react components wrapped in `memo()` or `forwardRef()`
-       * 
-       * ----
-       * @example       // ? foo(), or const val = useHook(), or const ComponentA = memo(() => { ...code });
-       * @param path    The current `function` we're viewing.
-       * @remarks At the bottom of the page are the different structures for NodePath<FunctionDeclaration>
-       */
-      CallExpression(path: NodePath<CallExpression>) {
-        
-      },
+      // #region Other useful functions we may use
       
-      
+      // CallExpression(path: NodePath<t.CallExpression>, pass: PluginPass) {},
       // ImportDeclaration(path: NodePath<t.ImportDeclaration>, pass: PluginPass) {},
       // ExportDeclaration(path: NodePath<t.ExportDeclaration>, pass: PluginPass) {},
       // ReturnStatement(path: NodePath<t.ReturnStatement>, pass: PluginPass) {},
@@ -559,9 +549,8 @@ export function addRenderLoggingPlugin(utils: ReactComponentEditorUtils): Plugin
       // Ran on any html-like tag (e.g. <div className="custom-class" />)
       // JSXElement(path: NodePath<t.JSXElement>, pass: PluginPass) {},
       
-      
       // #endregion
-      // #region Program ->  Enter and Exit functionality
+      // #region Program ->  Enter and Exit functionality (storing log info and clearing the cache)
       Program: {
         exit(path: NodePath<Program>, state: PluginPass) {
           // Add this component's logs to the abstract syntax tree's log history
@@ -1248,7 +1237,7 @@ export class ReactComponentEditorUtils {
   }
   // #endregion
   // #region Misc
-  public getFileNameFromPath(filePath: string): string {
+  public getFileNameFromPath(filePath: string | undefined): string {
     if (!filePath) return 'undefined';
     return filePath.match(/[^/\\]+$/)?.[0] || filePath; 
   }
